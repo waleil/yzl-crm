@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.yzl.crm.dao.ExpressAbnormalWaybillMapper">
+  <resultMap id="BaseResultMap" type="cn.net.yzl.crm.model.ExpressAbnormalWaybill">
+    <id column="r_id" jdbcType="INTEGER" property="rId" />
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="mail_id" jdbcType="VARCHAR" property="mailId" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="bill_status" jdbcType="TINYINT" property="billStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_code" jdbcType="VARCHAR" property="createCode" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_code" jdbcType="VARCHAR" property="updateCode" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    r_id, id, mail_id, order_id, bill_status, create_time, create_code, update_time, 
+    update_code
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from express_abnormal_waybill
+    where r_id = #{rId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from express_abnormal_waybill
+    where r_id = #{rId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.net.yzl.crm.model.ExpressAbnormalWaybill">
+    insert into express_abnormal_waybill (r_id, id, mail_id, 
+      order_id, bill_status, create_time, 
+      create_code, update_time, update_code
+      )
+    values (#{rId,jdbcType=INTEGER}, #{id,jdbcType=VARCHAR}, #{mailId,jdbcType=VARCHAR}, 
+      #{orderId,jdbcType=VARCHAR}, #{billStatus,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createCode,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateCode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.net.yzl.crm.model.ExpressAbnormalWaybill">
+    insert into express_abnormal_waybill
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="rId != null">
+        r_id,
+      </if>
+      <if test="id != null">
+        id,
+      </if>
+      <if test="mailId != null">
+        mail_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="billStatus != null">
+        bill_status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createCode != null">
+        create_code,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateCode != null">
+        update_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="rId != null">
+        #{rId,jdbcType=INTEGER},
+      </if>
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="mailId != null">
+        #{mailId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="billStatus != null">
+        #{billStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createCode != null">
+        #{createCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateCode != null">
+        #{updateCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.net.yzl.crm.model.ExpressAbnormalWaybill">
+    update express_abnormal_waybill
+    <set>
+      <if test="id != null">
+        id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="mailId != null">
+        mail_id = #{mailId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="billStatus != null">
+        bill_status = #{billStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createCode != null">
+        create_code = #{createCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateCode != null">
+        update_code = #{updateCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where r_id = #{rId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.net.yzl.crm.model.ExpressAbnormalWaybill">
+    update express_abnormal_waybill
+    set id = #{id,jdbcType=VARCHAR},
+      mail_id = #{mailId,jdbcType=VARCHAR},
+      order_id = #{orderId,jdbcType=VARCHAR},
+      bill_status = #{billStatus,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_code = #{createCode,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_code = #{updateCode,jdbcType=VARCHAR}
+    where r_id = #{rId,jdbcType=INTEGER}
+  </update>
+
+</mapper>
