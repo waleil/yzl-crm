@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.yzl.crm.dao.ProvinceMapper">
+
+    <select id="getProvince" resultType="cn.net.yzl.crm.model.Province">
+        select * from province limit 1
+    </select>
+
+    <insert id="saveProvince" parameterType="cn.net.yzl.crm.model.Province" >
+        insert into province(name,code,country_id,zname,aname,pname,abbr)
+        values (#{name},#{code},#{country_id},#{zname},#{aname},#{pname},#{abbr})
+    </insert>
+
+</mapper>

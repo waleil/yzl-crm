@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: yzl-crm
+  profiles:
+    active: dev
+mybatis:
+  mapper-locations: classpath:cn/net/yzl/crm/dao/*/*.xml
+  type-aliases-package: cn.net.yzl.crm.api.model
+logging:
+  level:
+    cn:
+      net:
+        yzl:
+          yzloauth:
+            mapper: debug
+token:
+  expire:
+    seconds: 7200
+  jwtSecret: yzlzuohaozhongyao
+server:
+  port: 8080
+
