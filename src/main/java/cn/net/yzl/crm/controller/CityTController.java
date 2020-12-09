@@ -4,14 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.dto.PageDTO;
-import cn.net.yzl.crm.dto.region.CityTResDTO;
 import cn.net.yzl.crm.dto.region.CityTSaveDTO;
-import cn.net.yzl.crm.dto.region.ProvinceTResDTO;
-import cn.net.yzl.crm.dto.region.ProvinceTSaveDTO;
 import cn.net.yzl.crm.model.CityT;
-import cn.net.yzl.crm.model.ProvinceT;
 import cn.net.yzl.crm.service.CityTService;
-import cn.net.yzl.crm.service.ProvinceTService;
 import cn.net.yzl.crm.sys.BizException;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +27,8 @@ public class CityTController {
 
     @Autowired
     private CityTService service;
+
+
 
     @ApiOperation(value="分页查询城市地区列表")
     @PostMapping("listPage")
@@ -58,8 +55,8 @@ public class CityTController {
                                                            @NotBlank(message="城市地区id不能为空")
                                                            @ApiParam(name="id",value="城市地区id",required=true)  Integer id) {
         Optional<CityT> byId = service.getById(id);
-        byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
-        return GeneralResult.success(byId.get());
+        CityT cityT = byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
+        return GeneralResult.success(cityT);
     }
 
 

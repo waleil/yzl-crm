@@ -51,7 +51,7 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 指定数据库表 -->
-        <table tableName="city_t"
+        <table tableName="product_crowd_group"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
