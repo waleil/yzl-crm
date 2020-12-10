@@ -1,4 +1,4 @@
-package cn.net.yzl.crm.bean;
+package cn.net.yzl.crm.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
