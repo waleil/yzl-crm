@@ -52,8 +52,8 @@ public class CityTController {
     @ApiOperation(value="查询城市地区详情")
     @PostMapping("getById")
     public GeneralResult<CityT> getById(@RequestParam("id")
-                                                           @NotBlank(message="城市地区id不能为空")
-                                                           @ApiParam(name="id",value="城市地区id",required=true)  Integer id) {
+                                           @NotBlank(message="城市地区id不能为空")
+                                           @ApiParam(name="id",value="城市地区id",required=true)  Integer id) {
         Optional<CityT> byId = service.getById(id);
         CityT cityT = byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
         return GeneralResult.success(cityT);

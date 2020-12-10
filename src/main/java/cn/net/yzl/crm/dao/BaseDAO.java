@@ -1,6 +1,5 @@
 package cn.net.yzl.crm.dao;
 
-import cn.net.yzl.crm.model.CityT;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
@@ -14,7 +13,7 @@ public interface BaseDAO<T ,PK extends Serializable>{
 
 	T selectById(PK id);
 
-	Integer update(T record);
+	Integer update(T t);
 
 	List<T> selectList(@Param("params") Map<String,Object> params);
 	
