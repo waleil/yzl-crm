@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.dto.region;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,13 +21,13 @@ public class CityTResDTO {
     private Integer pvcId;
 
     @ApiModelProperty(value = "是否为省会城市")
-    private Short pvcCapital;
+    private Integer pvcCapital;
 
     @ApiModelProperty(value = "座机电话区号")
-    private Short phonePrefixCode;
+    private Integer phonePrefixCode;
 
     @ApiModelProperty(value = "座机电话长度")
-    private Short phoneLength;
+    private Integer phoneLength;
 
     @ApiModelProperty(value = "城市拼音简写")
     private String enAbbr;
@@ -34,9 +35,11 @@ public class CityTResDTO {
     @ApiModelProperty(value = "邮编")
     private String zip;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
 

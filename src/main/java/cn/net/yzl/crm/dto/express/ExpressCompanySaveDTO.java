@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.dto.express;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class ExpressCompanySaveDTO {
     @ApiModelProperty(value = "联系人/负责人电话")
     private String contactNumber;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty(value = "合作开始时间")
     private Date cooperationStartTime;
 
@@ -44,12 +46,14 @@ public class ExpressCompanySaveDTO {
     @ApiModelProperty(value = "状态：0=停用，1=启用")
     private Integer status;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
     @ApiModelProperty(value = "创建人编号")
     private String createCode;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty(value = "修改时间")
     private Date updateTime;
 

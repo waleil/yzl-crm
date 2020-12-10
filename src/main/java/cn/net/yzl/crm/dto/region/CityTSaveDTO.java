@@ -18,13 +18,13 @@ public class CityTSaveDTO {
     private Integer pvcId;
 
     @ApiModelProperty(value = "是否为省会城市")
-    private Short pvcCapital;
+    private Integer pvcCapital;
 
     @ApiModelProperty(value = "座机电话区号")
-    private Short phonePrefixCode;
+    private Integer phonePrefixCode;
 
     @ApiModelProperty(value = "座机电话长度")
-    private Short phoneLength;
+    private Integer phoneLength;
 
     @ApiModelProperty(value = "城市拼音简写")
     private String enAbbr;
