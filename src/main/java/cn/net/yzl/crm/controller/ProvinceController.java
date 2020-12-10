@@ -54,8 +54,8 @@ public class ProvinceController {
                                                            @NotBlank(message="省id不能为空")
                                                            @ApiParam(name="id",value="省id",required=true)  Integer id) {
         Optional<ProvinceTResDTO> byId = service.getById(id);
-        byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
-        return GeneralResult.success(byId.get());
+        ProvinceTResDTO resDTO = byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
+        return GeneralResult.success(resDTO);
     }
 
 
