@@ -11,8 +11,8 @@ logging:
     cn:
       net:
         yzl:
-          yzloauth:
-            mapper: debug
+          crm:
+            dao: debug
 server:
   port: 8080
 
