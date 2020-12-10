@@ -4,8 +4,8 @@ spring:
   profiles:
     active: dev
 mybatis:
-  mapper-locations: classpath:cn/net/yzl/crm/dao/*/*.xml
-  type-aliases-package: cn.net.yzl.crm.api.model
+  mapper-locations: classpath:cn/net/yzl/crm/dao/*.xml
+  type-aliases-package: cn.net.yzl.crm.model
 logging:
   level:
     cn:
