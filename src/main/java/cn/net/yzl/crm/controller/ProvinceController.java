@@ -31,10 +31,10 @@ public class ProvinceController {
 
     @ApiOperation(value="分页查询省份列表")
     @PostMapping("listPage")
-    public GeneralResult<PageInfo<ProvinceTResDTO>> listPage(@RequestBody PageDTO page) {
+    public GeneralResult<PageInfo<ProvinceT>> listPage(@RequestBody PageDTO page) {
         Map<String, Object> params = new HashMap<>();
         BeanUtil.copyProperties(page, params);
-        PageInfo<ProvinceTResDTO> result = service.findPage(params);
+        PageInfo<ProvinceT> result = service.findPage(params);
         return GeneralResult.success(result);
     }
 
@@ -50,12 +50,12 @@ public class ProvinceController {
 
     @ApiOperation(value="查询省份详情")
     @PostMapping("getById")
-    public GeneralResult<ProvinceTResDTO> getById(@RequestParam("id")
+    public GeneralResult<ProvinceT> getById(@RequestParam("id")
                                                            @NotBlank(message="省id不能为空")
                                                            @ApiParam(name="id",value="省id",required=true)  Integer id) {
-        Optional<ProvinceTResDTO> byId = service.getById(id);
-        ProvinceTResDTO resDTO = byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
-        return GeneralResult.success(resDTO);
+        Optional<ProvinceT> byId = service.getById(id);
+        ProvinceT res = byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
+        return GeneralResult.success(res);
     }
 
 

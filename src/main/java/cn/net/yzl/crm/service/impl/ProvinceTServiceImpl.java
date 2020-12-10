@@ -29,18 +29,18 @@ public class ProvinceTServiceImpl implements ProvinceTService {
     private ProvinceTMapper provinceMapper;
 
     @Override
-    public PageInfo<ProvinceTResDTO> findPage(Map<String, Object> params) {
+    public PageInfo<ProvinceT> findPage(Map<String, Object> params) {
         params.computeIfAbsent("currentPage", k -> 1);
         params.computeIfAbsent("pageSize", k -> 10);
         int currentPage = Integer.parseInt(params.get("currentPage").toString());
         int pageSize = Integer.parseInt(params.get("pageSize").toString());
         PageHelper.startPage(currentPage,pageSize );
-        List<ProvinceTResDTO> provinceList = provinceMapper.selectList(params);
+        List<ProvinceT> provinceList = provinceMapper.selectList(params);
         return  new PageInfo<>(provinceList);
     }
 
     @Override
-    public Optional<ProvinceTResDTO> getById(Integer id) {
+    public Optional<ProvinceT> getById(Integer id) {
         return Optional.ofNullable(provinceMapper.selectById(id));
     }
 

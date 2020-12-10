@@ -10,9 +10,9 @@ import java.util.Optional;
 
 
 public interface ProvinceTService {
-    PageInfo<ProvinceTResDTO> findPage(Map<String,Object> params);//int page, int pageSize
+    PageInfo<ProvinceT> findPage(Map<String,Object> params);//int page, int pageSize
 
-    Optional<ProvinceTResDTO> getById(Integer id);
+    Optional<ProvinceT> getById(Integer id);
 
     Integer insert(ProvinceT province);
 }

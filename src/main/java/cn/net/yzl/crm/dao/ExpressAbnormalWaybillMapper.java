@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.dao;
 
+import cn.net.yzl.crm.model.CustomerCrowdGroup;
 import cn.net.yzl.crm.model.ExpressAbnormalWaybill;
 
 public interface ExpressAbnormalWaybillMapper {
