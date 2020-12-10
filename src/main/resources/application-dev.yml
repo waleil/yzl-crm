@@ -5,6 +5,9 @@ spring:
         server-addr: 192.168.32.33:8848,192.168.32.34:8848,192.168.32.35:8848  #.169:8848
         username: nacos
         password: nacos
+  data:
+      mongodb:
+        uri: mongodb://yzl:yzl123@192.168.32.138:27017,192.168.32.139:27017,192.168.32.140:27017/yzl?slaveOk=true&replicaSet=set0&write=1&readPreference=secondaryPreferred&connectTimeoutMS=300000
   datasource:
     yzlverify:
       username: yzl_crm
