@@ -13,10 +13,6 @@ logging:
         yzl:
           yzloauth:
             mapper: debug
-token:
-  expire:
-    seconds: 7200
-  jwtSecret: yzlzuohaozhongyao
 server:
   port: 8080
 
