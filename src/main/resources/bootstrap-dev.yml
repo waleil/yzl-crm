@@ -13,3 +13,17 @@ spring:
         namespace: 104717f2-83ce-4b0a-901d-c785cc4f4bf6
         file-extension: yaml
         prefix: yzl-crm-dev
+
+#连接超时时间
+fdfs:
+  connect-timeout: 600
+  #读取超时时间
+  so-timeout: 1500
+  #缩略图的宽高
+  thumb-image:
+    height: 150
+    width: 150
+  #tracker服务配置地址列表,替换成自己服务的IP地址,支持多个
+  tracker-list: 192.168.32.127:22122,192.168.32.128:22122,192.168.32.129:22122
+  pool:
+    jmx-enabled: false
