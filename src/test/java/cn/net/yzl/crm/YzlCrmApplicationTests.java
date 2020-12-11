@@ -18,13 +18,13 @@ class YzlCrmApplicationTests {
     void contextLoads() {
         //service.testTrani();
         CityDemo c = new CityDemo();
-        c.setName("name2");
+       // c.setName("name2");
         service.saveObj2(c);
     }
     //@Test
     void mongoUpdateById() {
         CityDemo c = new CityDemo();
-        c.setName("name33");
+      //  c.setName("name33");
     }
 
     @Test
@@ -36,7 +36,7 @@ class YzlCrmApplicationTests {
    // @Test
     void mongoSAVE() {
         CityDemo c = new CityDemo();
-        c.setName("1111");
+     //   c.setName("1111");
         service.save(c);
     }
 
