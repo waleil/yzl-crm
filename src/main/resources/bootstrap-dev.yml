@@ -13,6 +13,3 @@ spring:
         namespace: 104717f2-83ce-4b0a-901d-c785cc4f4bf6
         file-extension: yaml
         prefix: yzl-crm-dev
-#  data:
-#    mongodb:
-#      uri: mongodb://yzl:yzl123@192.168.32.138:27017,192.168.32.139:27017,192.168.32.140:27017/yzl?slaveOk=true&replicaSet=set0&write=1&readPreference=secondaryPreferred&connectTimeoutMS=300000
