@@ -64,7 +64,7 @@ public class DataSourceConfig {
     public SqlSessionFactory sessionFactory(@Qualifier("dynamicDb") DataSource dynamicDataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setMapperLocations(
-                new PathMatchingResourcePatternResolver().getResources("classpath*:cn/net/yzl/crm/dao/*/*.xml"));
+                new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*.xml"));
                 //new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*Mapper.xml"));
         bean.setDataSource(dynamicDataSource);
         return bean.getObject();
