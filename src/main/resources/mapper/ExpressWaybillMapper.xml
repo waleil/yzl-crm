@@ -3,7 +3,7 @@
 <mapper namespace="cn.net.yzl.crm.dao.ExpressWaybillMapper" >
   <resultMap id="BaseResultMap" type="cn.net.yzl.crm.model.ExpressWaybill" >
 
-    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="INTEGER" />
     <result column="mail_id" property="mailId" jdbcType="VARCHAR" />
     <result column="order_id" property="orderId" jdbcType="VARCHAR" />
     <result column="express_company_id" property="expressCompanyId" jdbcType="VARCHAR" />
@@ -22,18 +22,18 @@
     select 
     <include refid="Base_Column_List" />
     from express_waybill
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from express_waybill
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.net.yzl.crm.model.ExpressWaybill" >
-    insert into express_waybill (r_id, id, mail_id, 
+    insert into express_waybill (id, mail_id,
       order_id, express_company_id, delivery_time, 
       receiving_time, create_time, create_code, 
       update_time, update_code)
-    values (#{rId,jdbcType=INTEGER}, #{id,jdbcType=VARCHAR}, #{mailId,jdbcType=VARCHAR}, 
+    values ( #{id,jdbcType=INTEGER}, #{mailId,jdbcType=VARCHAR},
       #{orderId,jdbcType=VARCHAR}, #{expressCompanyId,jdbcType=VARCHAR}, #{deliveryTime,jdbcType=TIMESTAMP}, 
       #{receivingTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createCode,jdbcType=VARCHAR}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateCode,jdbcType=VARCHAR})
@@ -76,7 +76,7 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
 
       <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="mailId != null" >
         #{mailId,jdbcType=VARCHAR},
@@ -111,7 +111,7 @@
     update express_waybill
     <set >
       <if test="id != null" >
-        id = #{id,jdbcType=VARCHAR},
+        id = #{id,jdbcType=INTEGER},
       </if>
       <if test="mailId != null" >
         mail_id = #{mailId,jdbcType=VARCHAR},
@@ -141,7 +141,7 @@
         update_code = #{updateCode,jdbcType=VARCHAR},
       </if>
     </set>
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.net.yzl.crm.model.ExpressWaybill" >
     update express_waybill
@@ -155,6 +155,6 @@
       create_code = #{createCode,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_code = #{updateCode,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

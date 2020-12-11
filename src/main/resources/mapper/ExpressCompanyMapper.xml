@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.net.yzl.crm.dao.ExpressCompanyMapper" >
   <resultMap id="BaseResultMap" type="cn.net.yzl.crm.model.ExpressCompany" >
-    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="INTEGER" />
     <result column="serial_no" property="serialNo" jdbcType="INTEGER" />
     <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
@@ -19,7 +19,7 @@
     <result column="update_code" property="updateCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    r_id, id, serial_no, code, name, outlets, outlets_addr, contacts, contact_number,
+    id, serial_no, code, name, outlets, outlets_addr, contacts, contact_number,
     cooperation_start_time, collection_payment, status, create_time, create_code, update_time, 
     update_code
   </sql>
@@ -27,12 +27,12 @@
     select 
     <include refid="Base_Column_List" />
     from express_company
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </select>
 
   <delete id="deleteById" parameterType="java.lang.Integer" >
     delete from express_company
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
 
   <insert id="insert" parameterType="cn.net.yzl.crm.model.ExpressCompany" >
@@ -86,7 +86,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
-        #{id,jdbcType=VARCHAR},
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="serialNo != null" >
         #{serialNo,jdbcType=INTEGER},
@@ -179,7 +179,7 @@
         update_code = #{updateCode,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
   </update>
 
 </mapper>

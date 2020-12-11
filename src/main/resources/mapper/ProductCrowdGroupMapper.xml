@@ -2,8 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.net.yzl.crm.dao.ProductCrowdGroupMapper" >
   <resultMap id="BaseResultMap" type="cn.net.yzl.crm.model.ProductCrowdGroup" >
-    <id column="r_id" property="rId" jdbcType="INTEGER" />
-    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="description" property="description" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="TINYINT" />
@@ -16,26 +15,26 @@
     <result column="update_code" property="updateCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    r_id, id, name, description, status, effective_date, expiration_date, is_del, create_time, 
+    id, name, description, status, effective_date, expiration_date, is_del, create_time,
     create_code, update_time, update_code
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
     from product_crowd_group
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from product_crowd_group
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.net.yzl.crm.model.ProductCrowdGroup" >
-    insert into product_crowd_group (r_id, id, name, 
+    insert into product_crowd_group ( id, name,
       description, status, effective_date, 
       expiration_date, is_del, create_time, 
       create_code, update_time, update_code
       )
-    values (#{rId,jdbcType=INTEGER}, #{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+    values ( #{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
       #{description,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, #{effectiveDate,jdbcType=TIMESTAMP}, 
       #{expirationDate,jdbcType=TIMESTAMP}, #{isDel,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createCode,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateCode,jdbcType=VARCHAR}
@@ -44,9 +43,7 @@
   <insert id="insertSelective" parameterType="cn.net.yzl.crm.model.ProductCrowdGroup" >
     insert into product_crowd_group
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="rId != null" >
-        r_id,
-      </if>
+
       <if test="id != null" >
         id,
       </if>
@@ -82,8 +79,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="rId != null" >
-        #{rId,jdbcType=INTEGER},
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
       </if>
       <if test="id != null" >
         #{id,jdbcType=VARCHAR},
@@ -124,7 +121,7 @@
     update product_crowd_group
     <set >
       <if test="id != null" >
-        id = #{id,jdbcType=VARCHAR},
+        id = #{id,jdbcType=INTEGER},
       </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
@@ -157,12 +154,11 @@
         update_code = #{updateCode,jdbcType=VARCHAR},
       </if>
     </set>
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.net.yzl.crm.model.ProductCrowdGroup" >
     update product_crowd_group
-    set id = #{id,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
+    set  name = #{name,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       status = #{status,jdbcType=TINYINT},
       effective_date = #{effectiveDate,jdbcType=TIMESTAMP},
@@ -172,6 +168,6 @@
       create_code = #{createCode,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_code = #{updateCode,jdbcType=VARCHAR}
-    where r_id = #{rId,jdbcType=INTEGER}
+    where id = #{idjdbcType=INTEGER}
   </update>
 </mapper>
