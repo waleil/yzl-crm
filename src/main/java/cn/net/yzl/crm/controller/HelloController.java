@@ -3,10 +3,14 @@ package cn.net.yzl.crm.controller;
 import cn.net.yzl.crm.model.Province;
 import cn.net.yzl.crm.service.ProvinceService;
 import cn.net.yzl.crm.service.micservice.UserService;
+import cn.net.yzl.crm.utils.FastdfsUtils;
+import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author : zhangruisong
@@ -21,6 +25,9 @@ public class HelloController {
 
     @Autowired
     ProvinceService provinceService;
+
+    @Autowired
+    FastdfsUtils fastdfsUtils;
 
     @GetMapping("getUser")
     public String getUser() {
@@ -46,4 +53,19 @@ public class HelloController {
         Province province = provinceService.getProvince();
         return province == null ? "null" : "ok";
     }
+
+    @PostMapping("uploadfile")
+    public String uploadfile(@RequestParam("file") MultipartFile file) throws IOException {
+        StorePath upload = fastdfsUtils.upload(file);
+        return upload.getPath();
+
+    }
+
+//    @GetMapping("downfile")
+//    public String downfile(String path) throws IOException {
+//        InputStream download = fastdfsUtils.download(path, "");
+//
+//
+//
+//    }
 }
