@@ -6,7 +6,6 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.dto.crowdgroup.ListPageParamDTO;
 import cn.net.yzl.crm.dto.crowdgroup.UpdateInvalidateParamDTO;
 import cn.net.yzl.crm.model.CustomerCrowdGroup;
-import cn.net.yzl.crm.service.CustomerCrowdGroupService;
 import cn.net.yzl.crm.sys.BizException;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
@@ -25,8 +24,7 @@ import java.util.Optional;
 public class CustomerCrowdGroupController {
     public static final String PATH = "crowdgroup/customer";
 
-    @Autowired
-    private CustomerCrowdGroupService service;
+
 
 
 
@@ -35,7 +33,7 @@ public class CustomerCrowdGroupController {
     public GeneralResult<PageInfo<CustomerCrowdGroup>> listPage(@RequestBody ListPageParamDTO dto) {
         Map<String, Object> params = new HashMap<>();
         BeanUtil.copyProperties(dto, params);
-        PageInfo<CustomerCrowdGroup> result = service.findPage(params);
+        PageInfo<CustomerCrowdGroup> result = new PageInfo<>();
         return GeneralResult.success(result);
     }
 
@@ -53,7 +51,6 @@ public class CustomerCrowdGroupController {
     public GeneralResult<Boolean> invalidate(@RequestBody  UpdateInvalidateParamDTO dto) {
         CustomerCrowdGroup g = new CustomerCrowdGroup();
         BeanUtil.copyProperties(dto,g);
-        service.update(g);
         return GeneralResult.success(Boolean.TRUE);
     }
 
@@ -63,7 +60,7 @@ public class CustomerCrowdGroupController {
     public GeneralResult<CustomerCrowdGroup> getById(@RequestParam("id")
                                                            @NotBlank(message="顾客人群圈选id不能为空")
                                                            @ApiParam(name="id",value="顾客人群圈选id",required=true)  String id) {
-        Optional<CustomerCrowdGroup> byId = service.getById(id);
+        Optional<CustomerCrowdGroup> byId = Optional.of(new CustomerCrowdGroup());
         CustomerCrowdGroup customerCrowdGroup = byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
         return GeneralResult.success(customerCrowdGroup);
     }

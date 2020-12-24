@@ -1,20 +1,12 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.GeneralResult;
-import cn.net.yzl.common.util.UUIDGenerator;
 import cn.net.yzl.crm.dto.express.ExpressCompanyResDTO;
 import cn.net.yzl.crm.dto.express.ExpressCompanySaveDTO;
-import cn.net.yzl.crm.model.Province;
-import cn.net.yzl.crm.service.ProvinceService;
-import cn.net.yzl.crm.service.micservice.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.util.Collections;
 import java.util.List;

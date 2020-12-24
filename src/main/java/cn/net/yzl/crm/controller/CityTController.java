@@ -2,13 +2,12 @@ package cn.net.yzl.crm.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.yzl.common.entity.GeneralResult;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.dto.PageDTO;
 import cn.net.yzl.crm.dto.region.CityTSaveDTO;
 import cn.net.yzl.crm.model.CityT;
-import cn.net.yzl.crm.service.CityTService;
-import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.crm.service.ICityTService;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +16,16 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 
+@Api("测试")
 @RestController
 @RequestMapping(value = CityTController.PATH)
 public class CityTController {
     public static final String PATH = "region/city";
 
     @Autowired
-    private CityTService service;
+    private ICityTService service;
 
 
 
@@ -35,7 +34,7 @@ public class CityTController {
     public GeneralResult<PageInfo<CityT>> listPage(@RequestBody PageDTO page) {
         Map<String, Object> params = new HashMap<>();
         BeanUtil.copyProperties(page, params);
-        PageInfo<CityT> result = service.findPage(params);
+        PageInfo<CityT> result = service.selectPage(params);
         return GeneralResult.success(result);
     }
 
@@ -54,9 +53,8 @@ public class CityTController {
     public GeneralResult<CityT> getById(@RequestParam("id")
                                            @NotBlank(message="城市地区id不能为空")
                                            @ApiParam(name="id",value="城市地区id",required=true)  Integer id) {
-        Optional<CityT> byId = service.getById(id);
-        CityT cityT = byId.orElseThrow(() -> new BizException(ResponseCodeEnums.NO_DATA_CODE));
-        return GeneralResult.success(cityT);
+        CityT byId = service.selectById(id);
+        return GeneralResult.success(byId);
     }
 
 
@@ -65,7 +63,7 @@ public class CityTController {
     public GeneralResult<Boolean> save(@RequestBody CityTSaveDTO dto) {
         CityT p = new CityT();
         BeanUtil.copyProperties(dto,p,true);
-        service.insert(p);
+        service.save(p);
         return GeneralResult.success(Boolean.TRUE);
     }
 

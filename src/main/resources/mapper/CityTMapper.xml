@@ -26,10 +26,16 @@
   </sql>
 
 
-  <select id="selectList" resultMap="BaseResultMap" parameterType="java.util.Map" >
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
     <include refid="Base_Column_List" />
     from city_t
+    <include refid="querySql"/>
+  </select>
+
+  <select id="selectCount" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select count(t.*)
+    from city_t t
     <include refid="querySql"/>
   </select>
 
@@ -44,7 +50,7 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
 
-  <insert id="insert" parameterType="cn.net.yzl.crm.model.CityT">
+  <insert id="save" parameterType="cn.net.yzl.crm.model.CityT">
     insert into city_t
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

@@ -12,7 +12,5 @@ import cn.net.yzl.crm.model.Province;
 public interface ProvinceService {
     void saveProvince(Province province);
 
-
-
     Province getProvince();
 }
