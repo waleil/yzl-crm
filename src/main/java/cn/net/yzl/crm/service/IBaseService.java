@@ -1,6 +1,9 @@
 package cn.net.yzl.crm.service;
 
+import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.dao.IBaseDAO;
+import cn.net.yzl.crm.model.OrderMember;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.util.Assert;
@@ -31,14 +34,15 @@ public interface IBaseService<T,PK extends Serializable> {
        return Optional.ofNullable(list.get(0));
     }
 
-    default PageInfo<T> selectPage(Map<String, Object> params){//int page, int pageSize
+    default Page<T> selectPage(Map<String, Object> params){//int page, int pageSize
         params.putIfAbsent("currentPage", 1);
         params.putIfAbsent("pageSize", 10);
         int currentPage = Integer.parseInt(params.get("currentPage").toString());
         int pageSize = Integer.parseInt(params.get("pageSize").toString());
         PageHelper.startPage(currentPage,pageSize);
         List<T> cityList = getDao().selectAll(params);
-        return  new PageInfo<T>(cityList);
+        Page<T> page = AssemblerResultUtil.resultAssembler(cityList);
+        return  page;
     }
 
     default Long selectCount(Map<String, Object> params){
