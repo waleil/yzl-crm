@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableSwagger
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"cn.net.yzl.crm.service.*"})
+@EnableFeignClients(basePackages = {"cn.net.yzl.crm.service.micservice"})
 @MapperScan("cn.net.yzl.crm.dao")
 public class YzlCrmApplication {
 
