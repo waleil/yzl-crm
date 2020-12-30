@@ -6,12 +6,14 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class CategoryTreeNode implements Serializable {
+public class DiseaseTreeNode implements Serializable {
 
     private Integer id;
 
     private String name;
 
-    private List<CategoryTreeNode> childNodes;
+    private List<DiseaseTreeNode> childNodes;
+
+    private List<ProductMainInfoBean> products;
 
 }

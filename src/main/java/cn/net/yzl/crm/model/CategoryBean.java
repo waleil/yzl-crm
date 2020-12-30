@@ -11,35 +11,35 @@ public class CategoryBean implements Serializable{
 
     private Integer id;
 
-    private String name;//分类名称
+    private String name;
 
-    private Integer pid;//父类id
+    private Integer pid;
 
-    private Integer sort;//排序
+    private Integer sort;
 
-    private Boolean displayFlag;//是否展示
+    private Boolean displayFlag;
 
-    private Boolean displayAppFlag;//是否在移动端显示
+    private Boolean displayAppFlag;
 
-    private Boolean status;//状态（是否有效）
+    private Boolean status;
 
-    private String unit;//计量单位
+    private String unit;
 
-    private String imageUrl;//分类图标的url
+    private String imageUrl;
 
-    private String keyWord;//关键词
+    private String keyWord;
 
-    private String descri;//描述
+    private String descri;
 
-    private Boolean delFlag;//是否删除
+    private Boolean delFlag;
 
-    private String createNo;//增加操作员id
+    private String createNo;
 
-    private Date createTime;//添加时间
+    private Date createTime;
 
-    private String updateNo;//最近更新操作员id
+    private String updateNo;
 
-    private Date updateTime;//最近更新时间
+    private Date updateTime;
 
     private List<AttributeBean> attributeBeans;
 

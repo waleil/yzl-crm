@@ -1,16 +1,16 @@
 package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.model.AttributeBean;
-import cn.net.yzl.crm.model.CategoryBean;
-import cn.net.yzl.crm.model.CategoryTO;
-import cn.net.yzl.crm.model.CategoryTreeNode;
+import cn.net.yzl.crm.model.*;
+import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "productMapperFeign",url = "http://api.staff.yuzhilin.net.cn/productDB")
+@FeignClient(name = "productMapperFeign",url = "http://api.staff.yuzhilin.net.cn")
+//@FeignClient("yzl-product-mapper")
 public interface ProductMapperFeign {
 
     /**
@@ -18,8 +18,8 @@ public interface ProductMapperFeign {
      * @param attributeBean
      * @return
      */
-    @PostMapping("insertAttribute")
-    public ComResponse insertProductAttribute(@RequestBody AttributeBean attributeBean);
+    @PostMapping("productApi/insertAttribute")
+    ComResponse insertProductAttribute(@RequestBody AttributeBean attributeBean);
 
 
     /**
@@ -28,8 +28,8 @@ public interface ProductMapperFeign {
      * @param pageSize
      * @return
      */
-    @GetMapping("selectPageAttribute")
-    public ComResponse selectPageAttribute(@RequestParam int pageNo,@RequestParam int pageSize);
+    @GetMapping("productApi/selectPageAttribute")
+    ComResponse selectPageAttribute(@RequestParam int pageNo,@RequestParam int pageSize);
 
 
     /**
@@ -37,112 +37,97 @@ public interface ProductMapperFeign {
      * @param id
      * @return
      */
-    @GetMapping("selectById")
-    public ComResponse selectById(@RequestParam Integer id);
+    @GetMapping("productApi/selectById")
+    ComResponse selectById(@RequestParam Integer id);
 
     /**
      * 根据二级分类id进行查询
      * @param id
      * @return
      */
-    @GetMapping("selectByclassifyIdAttribute")
-    public ComResponse selectByclassifyIdAttribute(@RequestParam Integer id);
+    @GetMapping("productApi/selectByclassifyIdAttribute")
+    ComResponse selectByclassifyIdAttribute(@RequestParam Integer id);
 
 
-    @PostMapping("updateAttribute")
-    public ComResponse updateAttribute(@RequestBody AttributeBean attributeBean);
+    @PutMapping("productApi/updateAttribute")
+    ComResponse updateAttribute(@RequestBody AttributeBean attributeBean);
+
+    @GetMapping("productApi/getCategoryById")
+    ComResponse<CategoryTO> getCategoryById(@RequestParam Integer id);
+
+    @PostMapping("productApi/insertCategory")
+    ComResponse<CategoryBean> insertCategory(@RequestBody CategoryTO CategoryTO);
 
 
+    @PutMapping("productApi/updateCategory")
+    ComResponse<CategoryBean> updateCategory(@RequestBody CategoryTO CategoryTO);
+
+    @DeleteMapping("productApi/deleteCategory")
+    ComResponse<CategoryBean> deleteCategory(@RequestParam Integer id);
+
+    @PutMapping("productApi/changeCategoryStatus")
+    ComResponse<CategoryBean> changeCategoryStatus(@RequestParam Integer flag,@RequestParam Integer id);
 
 
-    /*
-     * @description 通过id字段对category_dict表进行条件检索
-     * @author Majinbao
-     * @date 2020/12/24 16:33
-     * @param [pid]
-     * @return cn.net.yzl.common.entity.ComResponse<cn.net.yzl.product.model.CategoryBean>
-     */
-    @GetMapping("getCategoryByid")
-    public ComResponse<CategoryTO> getCategoryByid(@RequestParam Integer id);
+    @PutMapping("productApi/changeCategoryAppStatus")
+    ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam Integer flag,@RequestParam Integer id);
 
-    /*
-     * @description 通过接收请求的json参数对category_dict表进行插入操作
-     * @author Majinbao
-     * @date 2020/12/24 16:53
-     * @param [categoryBean]
-     * @return cn.net.yzl.common.entity.ComResponse<cn.net.yzl.product.model.CategoryBean>
-     */
-    @PostMapping("insertCategory")
-    public ComResponse<CategoryBean> insertCategory(@RequestBody CategoryTO CategoryTO);
 
-    /*
-     * @description 通过接受请求的json参数对category_dict表进行修改操作
-     * @author Majinbao
-     * @date 2020/12/24 17:03
-     * @param [categoryBean]
-     * @return cn.net.yzl.common.entity.ComResponse<cn.net.yzl.product.model.CategoryBean>
-     */
-    @PutMapping("updateCategory")
-    public ComResponse<CategoryBean> updateCategory(@RequestBody CategoryTO CategoryTO);
+    @GetMapping("productApi/getCategoriesByPid")
+    ComResponse<List<CategoryTO>> getCategoriesByPid(@RequestParam Integer pid);
 
-    /*
-     * @description 通过主键对category_dict表进行逻辑删除
-     * @author Majinbao
-     * @date 2020/12/24 17:12
-     * @param [id]
-     * @return cn.net.yzl.common.entity.ComResponse<cn.net.yzl.product.model.CategoryBean>
-     */
-    @DeleteMapping("deleteCategory")
-    public ComResponse<CategoryBean> deleteCategory(@RequestParam Integer id);
 
-    /*
-     * @description 启用/禁用显示
-     * @author Majinbao
-     * @date 2020/12/24 17:26
-     * @param [flag, id]
-     * @return cn.net.yzl.common.entity.ComResponse<cn.net.yzl.product.model.CategoryBean>
-     */
-    @PutMapping("changeCategoryStatus")
-    public ComResponse<CategoryBean> changeCategoryStatus(@RequestParam Integer flag,@RequestParam Integer id);
+    @PutMapping("productApi/transferCategories")
+    ComResponse<CategoryBean> transferCategories(@RequestParam Integer sourceId,@RequestParam Integer targetId);
 
-    /*
-     * @description 启用/禁用移动端显示
-     * @author Majinbao
-     * @date 2020/12/24 17:29
-     * @param [flag, id]
-     * @return cn.net.yzl.common.entity.ComResponse<cn.net.yzl.product.model.CategoryBean>
-     */
-    @PutMapping("changeCategoryAppStatus")
-    public ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam Integer flag,@RequestParam Integer id);
 
-    /*
-     * @description 根据父类id获取当前父级分类下所有子类
-     * @author Majinbao
-     * @date 2020/12/25 9:45
-     * @param [pid]
-     * @return cn.net.yzl.common.entity.ComResponse<java.util.List<cn.net.yzl.product.model.CategoryTO>>
-     */
-    @GetMapping("getCategoriesByPid")
-    public ComResponse<List<CategoryTO>> getCategoriesByPid(@RequestParam Integer pid);
+    @GetMapping("productApi/getCategorySimpleTree")
+    ComResponse<List<CategoryTreeNode>> getCategorySimpleTree();
 
-    /*
-     * @description 根据源id和目标id实现分类下商品的全部转移功能
-     * @author Majinbao
-     * @date 2020/12/25 9:45
-     * @param [sourceId, targetId]
-     * @return cn.net.yzl.common.entity.ComResponse<cn.net.yzl.product.model.CategoryBean>
-     */
-    @PutMapping("transferCategories")
-    public ComResponse<CategoryBean> transferCategories(@RequestParam Integer sourceId,@RequestParam Integer targetId);
+    @ApiOperation(value = "获取所有品牌信息")
+    @GetMapping("productApi/getAllBrands")
+    ComResponse<PageInfo<BrandBeanTO>> getAllBrands(@RequestParam Integer pageNo, @RequestParam Integer pageSize);
 
-    /*
-     * @description 查询一个树状的结果集展示所有分类信息
-     * @author Majinbao
-     * @date 2020/12/25 15:47
-     * @param []
-     * @return cn.net.yzl.common.entity.ComResponse<java.util.List<cn.net.yzl.product.model.CategoryTreeNode>>
-     */
-    @GetMapping("getCategorySimpleTree")
-    public ComResponse<List<CategoryTreeNode>> getCategorySimpleTree();
+    @GetMapping("productApi/getBrandById")
+    ComResponse<BrandBean> getBrandById(@RequestParam("id") Integer id);
+
+    @GetMapping("productApi/getProductByBid")
+    ComResponse<List<BrandBean>> getProductByBid(@RequestParam("bid") Integer bid);
+
+    @PutMapping("productApi/changeBrandStatus")
+    ComResponse<Void> changeBrandStatus(@RequestParam("flag") Integer flag, @RequestParam("id") Integer id);
+
+    @PostMapping("productApi/insertBrand")
+    ComResponse<Void> insertBrand(@RequestBody BrandBean brand);
+
+    @PutMapping("productApi/updateBrand")
+    ComResponse<Void> updateBrand(@RequestBody BrandBean brandBean);
+
+    @GetMapping("productApi/getDiseaseSimpleTree")
+    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree();
+
+    @PostMapping("productApi/insertDisease")
+    ComResponse<Void> insertDisease(@RequestBody DiseaseBean diseaseBean);
+
+    @DeleteMapping("productApi/deleteRelationOfDiseaseAndProduct")
+    ComResponse<Void> deleteRelationOfDiseaseAndProduct(@RequestParam Integer did, @RequestParam String pCode);
+
+    @DeleteMapping("productApi/deleteDisease")
+    ComResponse<Void> deleteDisease(@RequestParam Integer id);
+
+    @PostMapping("productApi/insertRelationOfDiseaseAndProduct")
+    ComResponse<Void> insertRelationOfDiseaseAndProduct(@RequestBody ProductDiseaseBean productDiseaseBean);
+
+    @PostMapping("productApi/insertRelationOfProductAndImgId")
+    ComResponse<Void> insertRelationOfProductAndImgUrl(@RequestParam(value = "id",required = false) String id,
+                                                              @RequestParam(value = "imgId",required = false)Integer imgId,
+                                                              @RequestParam(value = "type",required = false)Integer type);
+
+    @PostMapping("productApi/insertImage")
+    ComResponse<Integer> insertImage(@RequestParam("url")String url,@RequestParam("type") Integer type);
+
+    @DeleteMapping("productApi/deleteRelationOfProductAndImgId")
+    ComResponse<Void> deleteRelationOfProductAndImgId(@RequestParam("id")Integer id,
+                                                             @RequestParam("type")Integer type);
 
 }

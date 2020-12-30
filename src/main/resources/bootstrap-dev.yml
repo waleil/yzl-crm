@@ -6,6 +6,9 @@ spring:
         username: servergateway
         password: servergateway
         namespace: 71088b30-7c81-48cd-9f1e-481977d6157d
+#        username: ehr
+#        password: ehr
+#        namespace: 1668ab9a-def9-4a51-9c04-6bbbdf40b162
       config:
         server-addr: 192.168.32.33:8848,192.168.32.34:8848,192.168.32.35:8848
         username: crm
