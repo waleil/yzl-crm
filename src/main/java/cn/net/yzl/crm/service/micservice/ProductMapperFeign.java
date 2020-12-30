@@ -29,7 +29,7 @@ public interface ProductMapperFeign {
      * @return
      */
     @GetMapping("productApi/selectPageAttribute")
-    ComResponse selectPageAttribute(@RequestParam int pageNo,@RequestParam int pageSize);
+    ComResponse selectPageAttribute(@RequestParam(value = "pageNo") int pageNo,@RequestParam(value = "pageSize") int pageSize);
 
 
     /**
@@ -38,7 +38,7 @@ public interface ProductMapperFeign {
      * @return
      */
     @GetMapping("productApi/selectById")
-    ComResponse selectById(@RequestParam Integer id);
+    ComResponse selectById(@RequestParam(value = "id") Integer id);
 
     /**
      * 根据二级分类id进行查询
@@ -46,14 +46,14 @@ public interface ProductMapperFeign {
      * @return
      */
     @GetMapping("productApi/selectByclassifyIdAttribute")
-    ComResponse selectByclassifyIdAttribute(@RequestParam Integer id);
+    ComResponse selectByclassifyIdAttribute(@RequestParam(value = "id") Integer id);
 
 
     @PutMapping("productApi/updateAttribute")
     ComResponse updateAttribute(@RequestBody AttributeBean attributeBean);
 
     @GetMapping("productApi/getCategoryById")
-    ComResponse<CategoryTO> getCategoryById(@RequestParam Integer id);
+    ComResponse<CategoryTO> getCategoryById(@RequestParam(value = "id") Integer id);
 
     @PostMapping("productApi/insertCategory")
     ComResponse<CategoryBean> insertCategory(@RequestBody CategoryTO CategoryTO);
@@ -110,7 +110,7 @@ public interface ProductMapperFeign {
     ComResponse<Void> insertDisease(@RequestBody DiseaseBean diseaseBean);
 
     @DeleteMapping("productApi/deleteRelationOfDiseaseAndProduct")
-    ComResponse<Void> deleteRelationOfDiseaseAndProduct(@RequestParam Integer did, @RequestParam String pCode);
+    ComResponse<Void> deleteRelationOfDiseaseAndProduct(@RequestParam(value = "did") Integer did, @RequestParam(value = "pCode") String pCode);
 
     @DeleteMapping("productApi/deleteDisease")
     ComResponse<Void> deleteDisease(@RequestParam Integer id);
@@ -127,7 +127,7 @@ public interface ProductMapperFeign {
     ComResponse<Integer> insertImage(@RequestParam("url")String url,@RequestParam("type") Integer type);
 
     @DeleteMapping("productApi/deleteRelationOfProductAndImgId")
-    ComResponse<Void> deleteRelationOfProductAndImgId(@RequestParam("id")Integer id,
+    ComResponse<Void> deleteRelationOfProductAndImgId(@RequestParam(value = "id")Integer id,
                                                              @RequestParam("type")Integer type);
 
 }
