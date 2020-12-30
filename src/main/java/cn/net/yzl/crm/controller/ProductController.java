@@ -68,7 +68,7 @@ public class ProductController {
 
     @ApiOperation(value = "修改商品属性")
     @PostMapping("updateAttribute")
-    public ComResponse updateAttribute(@RequestBody AttributeBean attributeBean) {
+    public ComResponse updateAttribute(@NotNull(message = "数据不能为空！")@RequestBody AttributeBean attributeBean) {
         return productMapperFeign.updateAttribute(attributeBean);
     }
 
@@ -79,43 +79,43 @@ public class ProductController {
     }
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
-    public ComResponse<CategoryBean> insertCategory(@RequestBody CategoryTO CategoryTO) {
+    public ComResponse<CategoryBean> insertCategory(@RequestBody @NotNull(message = "数据不能为空！") CategoryTO CategoryTO) {
         return productMapperFeign.insertCategory(CategoryTO);
     }
 
     @ApiOperation(value = "修改分类信息")
     @PostMapping("updateCategory")
-    public ComResponse<CategoryBean> updateCategory(@RequestBody CategoryTO CategoryTO) {
+    public ComResponse<CategoryBean> updateCategory(@NotNull(message = "数据不能为空！") @RequestBody CategoryTO CategoryTO) {
         return productMapperFeign.updateCategory(CategoryTO);
     }
 
     @ApiOperation(value = "删除分类信息")
     @GetMapping("deleteCategory")
-    public ComResponse<CategoryBean> deleteCategory(@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
+    public ComResponse<CategoryBean> deleteCategory(@NotNull(message = "数据不能为空！") @RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
         return productMapperFeign.deleteCategory(id);
     }
 
     @ApiOperation(value = "修改分类展示状态")
     @GetMapping( "changeCategoryStatus")
-    public ComResponse<CategoryBean> changeCategoryStatus(@RequestParam("flag") @ApiParam("是否展示，0为不展示，1为展示") Integer flag,@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
+    public ComResponse<CategoryBean> changeCategoryStatus(@NotNull(message = "数据不能为空！") @RequestParam("flag") @ApiParam("是否展示，0为不展示，1为展示") Integer flag,@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
         return productMapperFeign.changeCategoryStatus(flag,id);
     }
 
     @ApiOperation(value = "修改分类移动端展示状态")
     @GetMapping("changeCategoryAppStatus")
-    public ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam("flag") @ApiParam("是否展示，0为不展示，1为展示") Integer flag,@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
+    public ComResponse<CategoryBean> changeCategoryAppStatus(@NotNull(message = "数据不能为空！") @RequestParam("flag") @ApiParam("是否展示，0为不展示，1为展示") Integer flag,@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
         return productMapperFeign.changeCategoryAppStatus(flag,id);
     }
 
     @ApiOperation(value = "通过pid查询分类列表")
     @GetMapping("getCategoriesByPid")
-    public ComResponse<List<CategoryTO>> getCategoriesByPid(@RequestParam("pid") Integer pid) {
+    public ComResponse<List<CategoryTO>> getCategoriesByPid(@NotNull(message = "数据不能为空！") @RequestParam("pid") Integer pid) {
         return productMapperFeign.getCategoriesByPid(pid);
     }
 
     @ApiOperation(value = "将一个分类下的商品全部转移到另一个分类下")
     @GetMapping("transferCategories")
-    public ComResponse<CategoryBean> transferCategories(@RequestParam("sourceId") @ApiParam("源id") Integer sourceId,@RequestParam("targetId") @ApiParam("目标id") Integer targetId) {
+    public ComResponse<CategoryBean> transferCategories(@NotNull(message = "数据不能为空！") @RequestParam("sourceId") @ApiParam("源id") Integer sourceId,@NotNull(message = "数据不能为空！") @RequestParam("targetId") @ApiParam("目标id") Integer targetId) {
         return productMapperFeign.transferCategories(sourceId,targetId);
     }
 
@@ -127,37 +127,37 @@ public class ProductController {
 
     @ApiOperation(value = "查询全部品牌")
     @GetMapping("getAllBrands")
-    public ComResponse<PageInfo<BrandBeanTO>> getAllBrands(@RequestParam("pageNo") Integer pageNo,@RequestParam("pageSize") Integer pageSize) {
+    public ComResponse<PageInfo<BrandBeanTO>> getAllBrands(@NotNull(message = "数据不能为空！") @RequestParam("pageNo") Integer pageNo,@NotNull(message = "数据不能为空！") @RequestParam("pageSize") Integer pageSize) {
         return productMapperFeign.getAllBrands(pageNo, pageSize);
     }
 
     @ApiOperation(value = "通过id精确查询品牌")
     @GetMapping("getBrandById")
-    public ComResponse<BrandBean> getBrandById(@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
+    public ComResponse<BrandBean> getBrandById(@NotNull(message = "数据不能为空！") @RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
         return productMapperFeign.getBrandById(id);
     }
 
     @ApiOperation(value = "根据id查询该品牌下的所有商品")
     @GetMapping("getProductByBid")
-    public ComResponse<List<BrandBean>> getProductByBid(@RequestParam("bid") Integer bid) {
+    public ComResponse<List<BrandBean>> getProductByBid(@NotNull(message = "数据不能为空！") @RequestParam("bid") Integer bid) {
         return productMapperFeign.getProductByBid(bid);
     }
 
     @ApiOperation(value = "修改品牌状态")
     @GetMapping("changeBrandStatus")
-    public ComResponse<Void> changeBrandStatus(@RequestParam("flag") @ApiParam("是否启用（0禁用，1启用）") Integer flag, @RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
+    public ComResponse<Void> changeBrandStatus(@NotNull(message = "数据不能为空！") @RequestParam("flag") @ApiParam("是否启用（0禁用，1启用）") Integer flag, @RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
         return productMapperFeign.changeBrandStatus(flag, id);
     }
 
     @ApiOperation(value = "新增品牌")
     @PostMapping("insertBrand")
-    public ComResponse<Void> insertBrand(@RequestBody BrandBean brand) {
+    public ComResponse<Void> insertBrand(@NotNull(message = "数据不能为空！") @RequestBody BrandBean brand) {
         return productMapperFeign.insertBrand(brand);
     }
 
     @ApiOperation(value = "修改品牌")
     @PostMapping("updateBrand")
-    public ComResponse<Void> updateBrand(@RequestBody BrandBean brandBean) {
+    public ComResponse<Void> updateBrand(@NotNull(message = "数据不能为空！") @RequestBody BrandBean brandBean) {
         return productMapperFeign.updateBrand(brandBean);
     }
 
@@ -169,43 +169,43 @@ public class ProductController {
 
     @ApiOperation(value = "新增病症")
     @PostMapping("insertDisease")
-    public ComResponse<Void> insertDisease(@RequestBody DiseaseBean diseaseBean) {
+    public ComResponse<Void> insertDisease(@NotNull(message = "数据不能为空！") @RequestBody DiseaseBean diseaseBean) {
         return productMapperFeign.insertDisease(diseaseBean);
     }
 
     @ApiOperation(value = "删除产品和病症的关系")
     @GetMapping("deleteRelationOfDiseaseAndProduct")
-    public ComResponse<Void> deleteRelationOfDiseaseAndProduct(@RequestParam("did") @ApiParam("病症id") Integer did,@RequestParam("pCode") @ApiParam("产品列表") String pCode) {
+    public ComResponse<Void> deleteRelationOfDiseaseAndProduct(@NotNull(message = "数据不能为空！") @RequestParam("did") @ApiParam("病症id") Integer did,@NotNull(message = "数据不能为空！") @RequestParam("pCode") @NotNull(message = "数据不能为空！")@ApiParam("产品列表") String pCode) {
         return productMapperFeign.deleteRelationOfDiseaseAndProduct(did, pCode);
     }
 
     @ApiOperation(value = "删除病症")
     @GetMapping("deleteDisease")
-    public ComResponse<Void> deleteDisease(@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
+    public ComResponse<Void> deleteDisease(@RequestParam("id") @NotNull(message = "id不能为空！") @NotNull(message = "数据不能为空！")Integer id) {
         return productMapperFeign.deleteDisease(id);
     }
 
     @ApiOperation(value = "新增病症与产品的关系")
     @PostMapping("insertRelationOfDiseaseAndProduct")
-    public ComResponse<Void> insertRelationOfDiseaseAndProduct(@RequestBody ProductDiseaseBean productDiseaseBean) {
+    public ComResponse<Void> insertRelationOfDiseaseAndProduct(@RequestBody @NotNull(message = "数据不能为空！") ProductDiseaseBean productDiseaseBean) {
         return productMapperFeign.insertRelationOfDiseaseAndProduct(productDiseaseBean);
     }
 
     @ApiOperation(value = "新增产品和图片的关系")
     @PostMapping("insertRelationOfProductAndImgUrl")
-    public ComResponse<Void> insertRelationOfProductAndImgUrl(@RequestParam(value = "id") @ApiParam("当type=0时此处为产品编码，type=1时此处为套餐id") String id, @RequestParam(value = "imgId",required = false) Integer imgId, @RequestParam(value = "type",required = false) @ApiParam("0为产品，1为套餐") Integer type) {
+    public ComResponse<Void> insertRelationOfProductAndImgUrl(@NotNull(message = "数据不能为空！") @RequestParam(value = "id") @ApiParam("当type=0时此处为产品编码，type=1时此处为套餐id") String id, @NotNull(message = "数据不能为空！") @RequestParam(value = "imgId",required = false) Integer imgId, @NotNull(message = "数据不能为空！") @RequestParam(value = "type",required = false) @ApiParam("0为产品，1为套餐") Integer type) {
         return productMapperFeign.insertRelationOfProductAndImgUrl(id, imgId, type);
     }
 
     @ApiOperation(value = "向逻辑图片库插入一条图片")
     @PostMapping("insertImage")
-    public ComResponse<Integer> insertImage(@RequestParam("url") String url,@RequestParam("type") @ApiParam("1为图片，0为视频") Integer type) {
+    public ComResponse<Integer> insertImage(@NotNull(message = "数据不能为空！") @RequestParam("url") String url,@NotNull(message = "数据不能为空！") @RequestParam("type") @ApiParam("1为图片，0为视频") Integer type) {
         return productMapperFeign.insertImage(url, type);
     }
 
     @ApiOperation(value = "删除产品和图片的关系")
     @GetMapping("deleteRelationOfProductAndImgId")
-    public ComResponse<Void> deleteRelationOfProductAndImgId(@RequestParam("id") @NotNull(message = "id不能为空！") Integer id,@RequestParam("type") Integer type) {
+    public ComResponse<Void> deleteRelationOfProductAndImgId(@NotNull(message = "数据不能为空！") @RequestParam("id") @NotNull(message = "id不能为空！") Integer id,@NotNull(message = "数据不能为空！") @RequestParam("type") Integer type) {
         return productMapperFeign.deleteRelationOfProductAndImgId(id, type);
     }
 }
