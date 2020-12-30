@@ -1,6 +1,6 @@
 package cn.net.yzl.crm.sys;
 
-import cn.net.yzl.common.entity.GeneralResult;
+import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,9 +24,9 @@ public class GlobalExceptionHandler {
      * 处理自定义异常
      */
     @ExceptionHandler(BizException.class)
-    public GeneralResult handleRRException(BizException e) {
+    public ComResponse handleRRException(BizException e) {
         log.error(e.getMessage(), e);
-        return GeneralResult.errorWithMessage(e.getCode(), e.getMessage());
+        return ComResponse.fail(e.getCode(), e.getMessage());
     }
 
     /**
@@ -34,18 +34,18 @@ public class GlobalExceptionHandler {
      * （Bean 校验异常）
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public GeneralResult handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ComResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        return GeneralResult.errorWithMessage(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),e.getBindingResult().getFieldError().getDefaultMessage());
+        return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
     /**
      * ValidationException
      */
     @ExceptionHandler(ValidationException.class)
-    public GeneralResult handleValidationException(ValidationException e) {
+    public ComResponse handleValidationException(ValidationException e) {
         log.error(e.getMessage(), e);
-        return GeneralResult.errorWithMessage(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),e.getCause().getMessage());
+        return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),e.getCause().getMessage());
     }
 
     /**
@@ -53,9 +53,9 @@ public class GlobalExceptionHandler {
      * （方法参数校验异常）如实体类中的@Size注解配置和数据库中该字段的长度不统一等问题
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public GeneralResult handleConstraintViolationException(ConstraintViolationException e) {
+    public ComResponse handleConstraintViolationException(ConstraintViolationException e) {
         log.error(e.getMessage(), e);
-        return GeneralResult.errorWithMessage(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),e.getMessage());
+        return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),e.getMessage());
     }
 
 
@@ -67,9 +67,9 @@ public class GlobalExceptionHandler {
      * @return cn.net.yzl.common.entity.GeneralResult
      **/
     @ExceptionHandler(Exception.class)
-    public GeneralResult handleException(Exception e) {
+    public ComResponse handleException(Exception e) {
         log.error(e.getMessage(), e);
-        return GeneralResult.errorWithMessage(ResponseCodeEnums.ERROR.getCode(),"内部错误");
+        return ComResponse.fail(ResponseCodeEnums.ERROR.getCode(),"内部错误");
     }
 
 
