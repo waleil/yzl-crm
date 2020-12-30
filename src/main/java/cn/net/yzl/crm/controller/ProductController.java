@@ -1,16 +1,23 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.model.*;
 import cn.net.yzl.crm.service.micservice.ProductMapperFeign;
+import cn.net.yzl.crm.utils.FastdfsUtils;
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.github.tobato.fastdfs.domain.fdfs.StorePath;
+import io.swagger.annotations.*;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.List;
 
 @Api(value = "商品controller",tags = {"商品访问接口"})
@@ -20,7 +27,8 @@ public class ProductController {
 
     @Autowired
     private ProductMapperFeign productMapperFeign;
-
+    @Autowired
+    private FastdfsUtils fastdfsUtils;
     /**
      * 添加商品属性信息
      * @param attributeBean
@@ -150,15 +158,85 @@ public class ProductController {
     }
 
     @ApiOperation(value = "新增品牌")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "品牌LOGO", required = true, dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "name", value = "品牌名称", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "descri", value = "品牌故事", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "sort", value = "排序", required = false, dataType = "Integer") })
     @PostMapping("insertBrand")
-    public ComResponse<Void> insertBrand(@RequestBody BrandBean brand) {
-        return productMapperFeign.insertBrand(brand);
+    public ComResponse insertBrand(MultipartFile file, HttpServletRequest request,
+                                  String name, String descri, int sort) {
+        try {
+            BrandBean brand = new BrandBean();
+            if(file!=null){
+                long size = file.getSize() / 1024; //kb
+                if (size > 50) { //判断图片大小 单位Kb
+                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片过大,保证在50Kb下");
+                }
+                String fileName = file.getOriginalFilename();
+                if(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")){
+                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png格式文件");
+                }
+                StorePath storePath = fastdfsUtils.upload(file);
+                String filePath = storePath.getFullPath();
+                brand.setBrandUrl(filePath);
+            }
+            String userId = request.getHeader("userId");
+            brand.setCreateNo(userId);
+            brand.setName(name);
+            brand.setDescri(descri);
+            brand.setSort(sort);
+            return productMapperFeign.insertBrand(brand);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ComResponse.fail(0,"添加失败");
+        }
     }
 
     @ApiOperation(value = "修改品牌")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "品牌LOGO", required = true, dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "name", value = "品牌名称", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "descri", value = "品牌故事", required = false, dataType = "String"),
+            @ApiImplicitParam(name = "brandId", value = "品牌编号", required = false, dataType = "Integer"),
+            @ApiImplicitParam(name = "sort", value = "排序", required = false, dataType = "Integer") })
     @PostMapping("updateBrand")
-    public ComResponse<Void> updateBrand(@RequestBody BrandBean brandBean) {
-        return productMapperFeign.updateBrand(brandBean);
+    public ComResponse<Void> updateBrand(MultipartFile file, HttpServletRequest request,
+                                         String name, String descri, int sort,int brandId) {
+        try {
+            if(brandId<=0){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"参数错误!");
+            }
+            BrandBean brand = productMapperFeign.getBrandById(brandId).getData();
+            if(brand==null){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"品牌不存在!");
+            }
+            if(file!=null){
+                long size = file.getSize() / 1024; //kb
+                if (size > 50) { //判断图片大小 单位Kb
+                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片过大,保证在50Kb下");
+                }
+                String fileName = file.getOriginalFilename();
+                if(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")){
+                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png格式文件");
+                }
+                if(StringUtils.isNotEmpty(brand.getBrandUrl())){
+                    fastdfsUtils.delete(brand.getBrandUrl());
+                }
+                StorePath storePath = fastdfsUtils.upload(file);
+                String filePath = storePath.getFullPath();
+                brand.setBrandUrl(filePath);
+            }
+            String userId = request.getHeader("userId");
+            brand.setCreateNo(userId);
+            brand.setName(name);
+            brand.setDescri(descri);
+            brand.setSort(sort);
+            return productMapperFeign.updateBrand(brand);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ComResponse.fail(0,"添加失败");
+        }
     }
 
     @ApiOperation(value = "获取病症信息的简单树结构，用于病症管理页面初始化")

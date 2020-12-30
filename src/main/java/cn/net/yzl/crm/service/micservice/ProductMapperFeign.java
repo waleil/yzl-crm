@@ -98,7 +98,7 @@ public interface ProductMapperFeign {
     ComResponse<Void> changeBrandStatus(@RequestParam("flag") Integer flag, @RequestParam("id") Integer id);
 
     @PostMapping("productApi/insertBrand")
-    ComResponse<Void> insertBrand(@RequestBody BrandBean brand);
+    ComResponse insertBrand(@RequestBody BrandBean brand);
 
     @PutMapping("productApi/updateBrand")
     ComResponse<Void> updateBrand(@RequestBody BrandBean brandBean);
