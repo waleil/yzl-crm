@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+//过滤用
 public class ProductMainInfoBean implements Serializable {
 
     private Integer id;
