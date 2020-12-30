@@ -3,3 +3,5 @@ spring:
     name: yzl-crm
   profiles:
     active: dev
+server:
+  port: 8081
