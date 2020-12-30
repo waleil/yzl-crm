@@ -29,7 +29,7 @@ public interface ProductMapperFeign {
      * @return
      */
     @GetMapping("productApi/selectPageAttribute")
-    ComResponse selectPageAttribute(@RequestParam int pageNo,@RequestParam int pageSize);
+    ComResponse selectPageAttribute(@RequestParam("pageNo") int pageNo,@RequestParam("pageSize") int pageSize);
 
 
     /**
@@ -38,7 +38,7 @@ public interface ProductMapperFeign {
      * @return
      */
     @GetMapping("productApi/selectById")
-    ComResponse selectById(@RequestParam Integer id);
+    ComResponse selectById(@RequestParam("id") Integer id);
 
     /**
      * 根据二级分类id进行查询
@@ -46,14 +46,14 @@ public interface ProductMapperFeign {
      * @return
      */
     @GetMapping("productApi/selectByclassifyIdAttribute")
-    ComResponse selectByclassifyIdAttribute(@RequestParam Integer id);
+    ComResponse selectByclassifyIdAttribute(@RequestParam("id") Integer id);
 
 
     @PutMapping("productApi/updateAttribute")
     ComResponse updateAttribute(@RequestBody AttributeBean attributeBean);
 
     @GetMapping("productApi/getCategoryById")
-    ComResponse<CategoryTO> getCategoryById(@RequestParam Integer id);
+    ComResponse<CategoryTO> getCategoryById(@RequestParam("id") Integer id);
 
     @PostMapping("productApi/insertCategory")
     ComResponse<CategoryBean> insertCategory(@RequestBody CategoryTO CategoryTO);
@@ -63,22 +63,22 @@ public interface ProductMapperFeign {
     ComResponse<CategoryBean> updateCategory(@RequestBody CategoryTO CategoryTO);
 
     @DeleteMapping("productApi/deleteCategory")
-    ComResponse<CategoryBean> deleteCategory(@RequestParam Integer id);
+    ComResponse<CategoryBean> deleteCategory(@RequestParam("id") Integer id);
 
     @PutMapping("productApi/changeCategoryStatus")
-    ComResponse<CategoryBean> changeCategoryStatus(@RequestParam Integer flag,@RequestParam Integer id);
+    ComResponse<CategoryBean> changeCategoryStatus(@RequestParam("flag") Integer flag,@RequestParam("id") Integer id);
 
 
     @PutMapping("productApi/changeCategoryAppStatus")
-    ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam Integer flag,@RequestParam Integer id);
+    ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam("flag") Integer flag,@RequestParam("id") Integer id);
 
 
     @GetMapping("productApi/getCategoriesByPid")
-    ComResponse<List<CategoryTO>> getCategoriesByPid(@RequestParam Integer pid);
+    ComResponse<List<CategoryTO>> getCategoriesByPid(@RequestParam("pid") Integer pid);
 
 
     @PutMapping("productApi/transferCategories")
-    ComResponse<CategoryBean> transferCategories(@RequestParam Integer sourceId,@RequestParam Integer targetId);
+    ComResponse<CategoryBean> transferCategories(@RequestParam("sourceId") Integer sourceId,@RequestParam("targetId") Integer targetId);
 
 
     @GetMapping("productApi/getCategorySimpleTree")
@@ -86,7 +86,7 @@ public interface ProductMapperFeign {
 
     @ApiOperation(value = "获取所有品牌信息")
     @GetMapping("productApi/getAllBrands")
-    ComResponse<PageInfo<BrandBeanTO>> getAllBrands(@RequestParam Integer pageNo, @RequestParam Integer pageSize);
+    ComResponse<PageInfo<BrandBeanTO>> getAllBrands(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize);
 
     @GetMapping("productApi/getBrandById")
     ComResponse<BrandBean> getBrandById(@RequestParam("id") Integer id);
@@ -113,7 +113,7 @@ public interface ProductMapperFeign {
     ComResponse<Void> deleteRelationOfDiseaseAndProduct(@RequestParam Integer did, @RequestParam String pCode);
 
     @DeleteMapping("productApi/deleteDisease")
-    ComResponse<Void> deleteDisease(@RequestParam Integer id);
+    ComResponse<Void> deleteDisease(@RequestParam("id") Integer id);
 
     @PostMapping("productApi/insertRelationOfDiseaseAndProduct")
     ComResponse<Void> insertRelationOfDiseaseAndProduct(@RequestBody ProductDiseaseBean productDiseaseBean);
