@@ -68,7 +68,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
         if (StringUtils.isBlank(token)) {
             log.error("token为空");
-            returnJson(response, ComResponse.fail(ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE));
+            returnJson(response, ComResponse.fail(ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getCode(),ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getMessage()));
             return false;
         }
 
