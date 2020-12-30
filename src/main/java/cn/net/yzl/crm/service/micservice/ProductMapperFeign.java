@@ -110,7 +110,7 @@ public interface ProductMapperFeign {
     ComResponse<Void> insertDisease(@RequestBody DiseaseBean diseaseBean);
 
     @DeleteMapping("productApi/deleteRelationOfDiseaseAndProduct")
-    ComResponse<Void> deleteRelationOfDiseaseAndProduct(@RequestParam Integer did, @RequestParam("pCode") String pCode);
+    ComResponse<Void> deleteRelationOfDiseaseAndProduct(@RequestParam("did") Integer did, @RequestParam("pCode") String pCode);
 
     @DeleteMapping("productApi/deleteDisease")
     ComResponse<Void> deleteDisease(@RequestParam("id") Integer id);
