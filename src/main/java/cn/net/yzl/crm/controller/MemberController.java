@@ -8,6 +8,7 @@ import cn.net.yzl.crm.dto.order.ListParamsDTO;
 import cn.net.yzl.crm.model.Member;
 import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
+import cn.net.yzl.crm.service.micservice.MemberFien;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,23 +29,53 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    @ApiOperation(value="分页查询顾客列表")
-    @PostMapping("listPage")
+    @Autowired
+    MemberFien memberFien;
+
+    @ApiOperation(value = "分页查询顾客列表")
+    @PostMapping("v1/listPage")
     public GeneralResult<Page<Member>> listPage(@RequestBody MemberSerchDTO dto) {
         GeneralResult<Page<Member>> result = memberService.listPage(dto);
         return result;
     }
 
-    @ApiOperation(value="顾客列表查询病症分类")
-    @GetMapping("productClassi")
-    public GeneralResult<List<Map<Integer,Object>>> productClassi() {
+    @ApiOperation(value = "顾客列表查询病症分类")
+    @GetMapping("v1/productClassi")
+    public GeneralResult<List<Map<Integer, Object>>> productClassi() {
         List<Map<Integer, Object>> maps = memberService.productClassiService("0");
         return GeneralResult.success(maps);
     }
-    @ApiOperation(value="顾客列表查询病症分类")
-    @GetMapping("specific")
-    public GeneralResult<List<Map<Integer,Object>>> specific(@RequestParam("pid") String pid) {
+
+    @ApiOperation(value = "顾客列表查询病症分类")
+    @GetMapping("v1/specific")
+    public GeneralResult<List<Map<Integer, Object>>> specific(@RequestParam("pid") String pid) {
         List<Map<Integer, Object>> maps = memberService.productClassiService(pid);
         return GeneralResult.success(maps);
+    }
+
+    @ApiOperation(value = "保存顾客信息")
+    @PostMapping("v1/save")
+    public GeneralResult<Boolean> save(@RequestBody Member dto) {
+        memberFien.save(dto);
+        return GeneralResult.success();
+    }
+
+    @ApiOperation(value = "修改顾客信息")
+    @PostMapping("v1/updateByMemberCart")
+    public GeneralResult<Boolean> updateByMemberCart(@RequestBody Member dto) {
+        memberFien.updateByMemberCart(dto);
+        return GeneralResult.success();
+    }
+
+    @ApiOperation(value = "获取顾客信息")
+    @GetMapping("v1/getMember")
+    public GeneralResult<Member> getMember(@RequestParam("memberCard") String memberCard) {
+        return memberFien.getMember(memberCard);
+    }
+
+    @ApiOperation(value = "获取顾客级别")
+    @GetMapping("v1/getMemberGrad")
+    public GeneralResult getMemberGrad() {
+        return memberFien.getMemberGrad();
     }
 }

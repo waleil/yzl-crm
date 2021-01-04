@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static cn.net.yzl.common.util.HttpUtil.sendGetRequest;
 
 /**
  * @author : zhangruisong
@@ -59,6 +63,25 @@ public class HelloController {
         return upload.getPath();
 
     }
+
+    @GetMapping("testUrl")
+    public String testUrl() {
+        Map<String, String> map = new HashMap<>();
+        map.put("userNo", "12");
+        map.put("gateway", "true");
+
+        Map<String, String> p = new HashMap<>();
+        p.put("id", "1");
+
+
+        System.out.println("123");
+
+        String result = sendGetRequest("http://192.168.32.94:8080/product/selectById", p, map);
+        return result;
+    }
+
+
+
 
 //    @GetMapping("downfile")
 //    public String downfile(String path) throws IOException {
