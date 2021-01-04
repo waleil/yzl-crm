@@ -3,18 +3,16 @@ package cn.net.yzl.crm.service;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.model.BrandBean;
 import cn.net.yzl.crm.model.BrandBeanTO;
-import com.github.pagehelper.PageInfo;
+import cn.net.yzl.product.model.vo.bread.BrandVO;
 
 public interface BrandService {
-    ComResponse<PageInfo<BrandBeanTO>> getAllBrands(Integer pageNo, Integer pageSize);
+    ComResponse getAllBrands(Integer pageNo, Integer pageSize, String keyword);
 
     ComResponse getBrandById(Integer id);
 
-    ComResponse getProductByBid(Integer bid);
-
     ComResponse<Void> changeBrandStatus(Integer flag, Integer id);
 
-    ComResponse insertBrand(BrandBean brand);
+    ComResponse insertBrand(BrandVO brand);
 
-    ComResponse<Void> updateBrand(BrandBean brand);
+    ComResponse<Void> updateBrand(BrandVO brand);
 }

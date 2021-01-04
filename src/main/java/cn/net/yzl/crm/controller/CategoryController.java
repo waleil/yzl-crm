@@ -6,6 +6,7 @@ import cn.net.yzl.crm.model.CategoryBean;
 import cn.net.yzl.crm.model.CategoryTO;
 import cn.net.yzl.crm.model.CategoryTreeNode;
 import cn.net.yzl.crm.service.CategoryService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/product/category")
+@Api(tags = "商品分类管理", description = "包含：增删改查，树化查询")
 public class CategoryController {
 
     @Autowired

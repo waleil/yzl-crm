@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableSwagger
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = {"cn.net.yzl.crm.service.micservice"})
+@EnableFeignClients(basePackages = {"cn.net.yzl.crm.service.micservice","cn.net.yzl.crm.client"})
 @MapperScan("cn.net.yzl.crm.dao")
 public class YzlCrmApplication {
 

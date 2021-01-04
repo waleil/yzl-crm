@@ -5,6 +5,7 @@ import cn.net.yzl.crm.model.DiseaseBean;
 import cn.net.yzl.crm.model.DiseaseTreeNode;
 import cn.net.yzl.crm.model.ProductDiseaseBean;
 import cn.net.yzl.crm.service.DiseaseService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/product/disease")
+@Api(tags = "病症管理", description = "包含：增删改查")
 public class DiseaseController {
 
     @Autowired

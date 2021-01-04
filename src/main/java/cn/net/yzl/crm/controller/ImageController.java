@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/product/image")
+@Api(tags = "图片管理", description = "包含：图片上传")
 public class ImageController {
 
     @Autowired
