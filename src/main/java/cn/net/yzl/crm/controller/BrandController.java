@@ -6,7 +6,7 @@ import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.model.BrandBean;
 import cn.net.yzl.crm.service.BrandService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.product.model.vo.bread.BrandVO;
+import cn.net.yzl.product.model.vo.brand.BrandVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;

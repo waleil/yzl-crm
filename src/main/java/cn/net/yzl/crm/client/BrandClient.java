@@ -2,7 +2,7 @@ package cn.net.yzl.crm.client;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.model.BrandBean;
-import cn.net.yzl.product.model.vo.bread.BrandVO;
+import cn.net.yzl.product.model.vo.brand.BrandVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
