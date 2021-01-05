@@ -1,0 +1,18 @@
+package cn.net.yzl.crm.service;
+
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.crm.model.BrandBean;
+import cn.net.yzl.crm.model.BrandBeanTO;
+import cn.net.yzl.product.model.vo.bread.BrandVO;
+
+public interface BrandService {
+    ComResponse getAllBrands(Integer pageNo, Integer pageSize, String keyword);
+
+    ComResponse getBrandById(Integer id);
+
+    ComResponse<Void> changeBrandStatus(Integer flag, Integer id);
+
+    ComResponse insertBrand(BrandVO brand);
+
+    ComResponse<Void> updateBrand(BrandVO brand);
+}

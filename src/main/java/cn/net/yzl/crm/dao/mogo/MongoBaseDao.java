@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -237,5 +238,12 @@ public abstract class MongoBaseDao<T> {
         } catch (Exception var6) {
             return null;
         }
+    }
+    /***
+     * mongo 批量插入
+     */
+    public List<T> bathSave(List<T> list) {
+        Collection<T> ts = mongoTemplate.insertAll(list);
+        return ts.stream().collect(Collectors.toList());
     }
 }
