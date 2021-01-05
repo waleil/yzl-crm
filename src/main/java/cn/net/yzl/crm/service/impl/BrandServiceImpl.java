@@ -45,4 +45,9 @@ public class BrandServiceImpl implements BrandService {
         ComResponse comResponse = brandClient.editBrand(brand);
         return comResponse;
     }
+
+    @Override
+    public void deleteBrandById(Integer id) {
+        brandClient.deleteById(id);
+    }
 }

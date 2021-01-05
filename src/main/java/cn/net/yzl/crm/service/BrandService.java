@@ -15,4 +15,6 @@ public interface BrandService {
     ComResponse insertBrand(BrandVO brand);
 
     ComResponse<Void> updateBrand(BrandVO brand);
+
+    void deleteBrandById(Integer id);
 }

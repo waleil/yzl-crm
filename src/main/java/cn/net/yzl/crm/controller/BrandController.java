@@ -2,24 +2,19 @@ package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.model.BrandBean;
-import cn.net.yzl.crm.model.ProductBean;
 import cn.net.yzl.crm.service.BrandService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.vo.bread.BrandVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.yaml.snakeyaml.events.Event;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author majinbao
@@ -35,6 +30,9 @@ public class BrandController {
 
     @Autowired
     private FastdfsUtils fastdfsUtils;
+
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
 
     @Autowired
     private BrandService brandService;
@@ -63,14 +61,16 @@ public class BrandController {
         if (comResponse.getData() == null) {
             return ComResponse.nodata();
         }
-        return comResponse;
+        BrandBean brandBean = (BrandBean)comResponse.getData();
+        brandBean.setBrandUrl(fastDFSConfig.getUrl()+brandBean.getBrandUrl());
+        return ComResponse.success(brandBean);
     }
 
     @ApiOperation(value = "修改品牌状态")
     @GetMapping("changeStatus")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "flag",paramType="query",dataType = "Integer",required = true),
-            @ApiImplicitParam(name = "id",paramType="query",dataType = "Integer",required = true)
+            @ApiImplicitParam(name = "flag",paramType="query",dataType = "Integer",required = true,value = "是否启用（1：启用，0：禁用）"),
+            @ApiImplicitParam(name = "id",paramType="query",dataType = "Integer",required = true,value = "id")
     })
     public ComResponse<Void> changeBrandStatus(@RequestParam("flag") Integer flag,
                                                @RequestParam("id") Integer id) {
@@ -115,6 +115,17 @@ public class BrandController {
             e.printStackTrace();
             return ComResponse.fail(0,"添加失败");
         }
+    }
+    
+    @ApiOperation("通过id删除品牌")
+    @ApiImplicitParam(name = "id", value = "id",paramType = "query",required = true)
+    @GetMapping("delete")
+    public ComResponse delete(@RequestParam("id") Integer id){
+        if(id == null){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getMessage());
+        }
+        brandService.deleteBrandById(id);
+        return null;
     }
 
     @ApiOperation(value = "修改品牌")
