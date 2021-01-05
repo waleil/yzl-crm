@@ -196,11 +196,12 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+
             <!-- 1、设置jar的入口类 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -217,25 +218,6 @@
                 </configuration>
             </plugin>
 
-
-            <!--2、把附属的jar打到jar内部的lib目录中 -->
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-dependency-plugin</artifactId>-->
-            <!--                <version>2.10</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>copy-dependencies</id>-->
-            <!--                        <phase>package</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>copy-dependencies</goal>-->
-            <!--                        </goals>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
-
-
-            <!-- 3、打包过程忽略Junit测试 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -244,6 +226,10 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+
+
+
+
         </plugins>
 
         <!--  配置打包 -->

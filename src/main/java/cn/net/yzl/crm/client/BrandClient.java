@@ -2,14 +2,11 @@ package cn.net.yzl.crm.client;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.model.BrandBean;
-import cn.net.yzl.crm.model.BrandBeanTO;
-import cn.net.yzl.product.model.vo.bread.BrandVO;
-import com.github.pagehelper.PageInfo;
+import cn.net.yzl.product.model.vo.brand.BrandVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @FeignClient(name = "brandClient",url = "http://api.staff.yuzhilin.net.cn/productServer/brand")
 public interface BrandClient {
@@ -27,4 +24,6 @@ public interface BrandClient {
     @PostMapping("/v1/edit")
     ComResponse editBrand(@RequestBody BrandVO brand);
 
+    @DeleteMapping("/v1/deleteById")
+    void deleteById(Integer id);
 }

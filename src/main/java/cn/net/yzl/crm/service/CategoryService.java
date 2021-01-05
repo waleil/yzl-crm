@@ -2,17 +2,17 @@ package cn.net.yzl.crm.service;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.model.CategoryBean;
-import cn.net.yzl.crm.model.CategoryTO;
-import cn.net.yzl.crm.model.CategoryTreeNode;
+import cn.net.yzl.product.model.db.Category;
+import cn.net.yzl.product.model.vo.category.CategoryVO;
 
 import java.util.List;
 
 public interface CategoryService {
     ComResponse getCategoryById(Integer id);
 
-    ComResponse<CategoryBean> insertCategory(CategoryTO categoryTO);
+    ComResponse<CategoryBean> insertCategory(CategoryVO categoryVO);
 
-    ComResponse<CategoryBean> updateCategory(CategoryTO categoryTO);
+    ComResponse<CategoryBean> updateCategory(CategoryVO categoryVO);
 
     ComResponse<CategoryBean> deleteCategory(Integer id);
 
@@ -24,5 +24,5 @@ public interface CategoryService {
 
     ComResponse<CategoryBean> transferCategories(Integer sourceId, Integer targetId);
 
-    ComResponse<List<CategoryTreeNode>> getCategorySimpleTree();
+    ComResponse<List<Category>> selectAll();
 }
