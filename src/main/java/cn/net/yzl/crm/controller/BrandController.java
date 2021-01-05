@@ -46,8 +46,8 @@ public class BrandController {
             @ApiImplicitParam(name = "pageNo", paramType="query",value = "页码", dataType = "int",defaultValue = "1"),
             @ApiImplicitParam(name = "pageSize",paramType="query", value = "每页显示记录数", dataType = "int",defaultValue = "15")
     })
-    public ComResponse getAllBrands(@RequestParam(required = false,defaultValue = "1") Integer pageNo,
-                                    @RequestParam(required = false,defaultValue = "15") Integer pageSize,
+    public ComResponse getAllBrands(@RequestParam(required = false,defaultValue = "1",value = "pageNo") Integer pageNo,
+                                    @RequestParam(required = false,defaultValue = "15",value = "pageSize") Integer pageSize,
                                     String keyword) {
         if (pageSize>50) {
             pageSize=50;

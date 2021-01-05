@@ -62,7 +62,7 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="产品营销话术质检列表",httpMethod = "GET")
     @GetMapping("/queryProductMarketingQualityList")
-    ComResponse<Page<ProductMarketingQuality>> queryProductMarketingQualityList(@RequestParam Integer current, @RequestParam Integer size){
+    ComResponse<Page<ProductMarketingQuality>> queryProductMarketingQualityList(@RequestParam("current") Integer current, @RequestParam("size") Integer size){
        return qualityInspectionApi.queryProductMarketingQualityList( current, size);
     }
 
@@ -146,7 +146,7 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="员工话术质检列表",httpMethod = "GET")
     @GetMapping("/queryStaffTalkQualityList")
-    public ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestParam Integer current, @RequestParam Integer size){
+    public ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestParam("current") Integer current, @RequestParam("size") Integer size){
         return qualityInspectionApi.queryStaffTalkQualityList(current,size);
     }
 
@@ -160,7 +160,7 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="查看员工话术质检",httpMethod = "GET")
     @GetMapping("/queryStaffTalkQualityByCode")
-    public ComResponse<StaffTalkQuality> queryStaffTalkQualityByCode(@RequestParam String staffTalkCode){
+    public ComResponse<StaffTalkQuality> queryStaffTalkQualityByCode(@RequestParam("staffTalkCode") String staffTalkCode){
         return qualityInspectionApi.queryStaffTalkQualityByCode(staffTalkCode);
     }
 
@@ -188,7 +188,7 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="使用某个员工话术质检",httpMethod = "POST")
     @PostMapping("/updateStaffTalkQualityUsing")
-    public ComResponse<Boolean> updateStaffTalkQualityUsing(@RequestParam String staffTalkCode){
+    public ComResponse<Boolean> updateStaffTalkQualityUsing(@RequestParam("staffTalkCode") String staffTalkCode){
         return qualityInspectionApi.updateStaffTalkQualityUsing(staffTalkCode);
     }
 
@@ -201,7 +201,7 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="停用某个员工话术质检",httpMethod = "POST")
     @PostMapping("/updateStaffTalkQualityDisabled")
-    public ComResponse<Boolean> updateStaffTalkQualityDisabled(@RequestParam String staffTalkCode){
+    public ComResponse<Boolean> updateStaffTalkQualityDisabled(@RequestParam("staffTalkCode") String staffTalkCode){
         return qualityInspectionApi.updateStaffTalkQualityDisabled(staffTalkCode);
     }
 }

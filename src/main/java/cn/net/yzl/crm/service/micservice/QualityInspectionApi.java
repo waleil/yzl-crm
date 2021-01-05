@@ -53,7 +53,7 @@ public interface QualityInspectionApi {
      * @return
      */
     @GetMapping("queryProductMarketingQualityList")
-    ComResponse<Page<ProductMarketingQuality>>  queryProductMarketingQualityList(@RequestParam Integer current, @RequestParam Integer size);
+    ComResponse<Page<ProductMarketingQuality>>  queryProductMarketingQualityList(@RequestParam("current") Integer current, @RequestParam("size") Integer size);
 
     /**
      * author: liufaguan
@@ -117,7 +117,7 @@ public interface QualityInspectionApi {
      * @return
      */
     @GetMapping("/queryStaffTalkQualityList")
-    ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestParam Integer current, @RequestParam Integer size);
+    ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestParam("current") Integer current, @RequestParam("size") Integer size);
 
     /**
      * author: liufaguan
@@ -128,7 +128,7 @@ public interface QualityInspectionApi {
      * @return
      */
     @GetMapping("/queryStaffTalkQualityByCode")
-    ComResponse<StaffTalkQuality> queryStaffTalkQualityByCode(@RequestParam String staffTalkCode);
+    ComResponse<StaffTalkQuality> queryStaffTalkQualityByCode(@RequestParam("staffTalkCode") String staffTalkCode);
 
 
     /**
@@ -151,7 +151,7 @@ public interface QualityInspectionApi {
      * @return
      */
     @PostMapping("/updateProductMarketingQualityUsing")
-    ComResponse<Boolean> updateStaffTalkQualityUsing(@RequestParam String staffTalkCode);
+    ComResponse<Boolean> updateStaffTalkQualityUsing(@RequestParam("staffTalkCode") String staffTalkCode);
 
     /**
      * author: liufaguan
@@ -161,5 +161,5 @@ public interface QualityInspectionApi {
      * @return
      */
     @PostMapping("/updateProductMarketingQualityDisabled")
-    ComResponse<Boolean> updateStaffTalkQualityDisabled(@RequestParam String staffTalkCode);
+    ComResponse<Boolean> updateStaffTalkQualityDisabled(@RequestParam("staffTalkCode") String staffTalkCode);
 }
