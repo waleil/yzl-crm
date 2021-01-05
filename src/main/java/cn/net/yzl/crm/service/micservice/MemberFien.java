@@ -9,23 +9,31 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 顾客服务接口
  */
-@FeignClient("yzl-crm-customer-server")
+@FeignClient(name = "crmCustomer",url = "http://api.staff.yuzhilin.net.cn/crmCustomer")
+//    @FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
-    @RequestMapping(method = RequestMethod.POST, value = "v1/getMemberListByPage")
+
+    @RequestMapping(method = RequestMethod.POST, value = "/member/v1/getMemberListByPage")
     GeneralResult<Page<Member>> listPage(@RequestBody MemberSerchDTO dto);
 
-    @PostMapping("v1/save")
+    @ApiOperation("保存会员信息")
+    @PostMapping("/member/v1/save")
     GeneralResult<Boolean> save(@RequestBody Member dto);
 
-    @PostMapping("v1/updateByMemberCart")
+    @ApiOperation("修改会员信息")
+    @PostMapping("/member/v1/updateByMemberCart")
     GeneralResult<Boolean> updateByMemberCart(@RequestBody Member dto);
 
-    @GetMapping("v1/getMember")
+    @ApiOperation("根据卡号获取会员信息")
+    @GetMapping("/member/v1/getMember")
     GeneralResult<Member> getMember(@RequestParam("memberCard") String  memberCard);
 
-    @GetMapping("v1/getMemberGrad")
-    GeneralResult<MemberGrade> getMemberGrad();
+    @ApiOperation("获取会员等级")
+    @GetMapping("/member/v1/getMemberGrad")
+    GeneralResult<List<MemberGrade>> getMemberGrad();
 }

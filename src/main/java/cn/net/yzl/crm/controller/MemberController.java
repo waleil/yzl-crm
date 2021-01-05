@@ -7,6 +7,7 @@ import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.dto.order.ListParamsDTO;
 import cn.net.yzl.crm.model.Media;
 import cn.net.yzl.crm.model.Member;
+import cn.net.yzl.crm.model.MemberGrade;
 import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaFien;
@@ -80,13 +81,15 @@ public class MemberController {
     @ApiOperation(value = "获取顾客级别")
     @GetMapping("v1/getMemberGrad")
     public GeneralResult getMemberGrad() {
-        return memberFien.getMemberGrad();
+        GeneralResult<List<MemberGrade>> result=  memberFien.getMemberGrad();
+        return result;
     }
 
     @ApiOperation(value = "获取媒体列表")
     @GetMapping("v1/getMediaList")
-    public GeneralResult<Media> getMediaList() {
-        return coopCompanyMediaFien.getMediaList();
+    public GeneralResult<List<Media>> getMediaList() {
+        GeneralResult<List<Media>> result= coopCompanyMediaFien.getMediaList();
+        return result;
     }
 
     @ApiOperation(value = "根据媒体id获取广告列表列表")
