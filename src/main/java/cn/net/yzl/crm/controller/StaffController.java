@@ -5,12 +5,14 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.dto.ehr.EhrRobedQueryDto;
+import cn.net.yzl.crm.dto.ehr.StaffScheduleDetailDto;
 import cn.net.yzl.crm.dto.ehr.StaffScheduleInfoDto;
 import cn.net.yzl.crm.dto.ehr.StaffScheduleQueryDto;
 import cn.net.yzl.crm.service.micservice.StaffClient;
 import cn.net.yzl.crm.sys.BizException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,23 @@ public class StaffController {
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
         ComResponse comResponse = staffService.robedClass(queryDto);
+        return comResponse;
+    }
+
+
+    /**
+     * 排班-根据员工工号和时间获取排班详情
+     * @return
+     */
+    @ApiOperation(value="根据员工工号和时间获取排班详情",httpMethod = "get")
+    @GetMapping("/schedule/getDetailByStaffNoAndTime")
+    public ComResponse<StaffScheduleDetailDto> getDetailByStaffNoAndTime(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
+                                                                         @ApiParam(name="time",value ="时间(yyyy-mm)") @RequestParam("time")String time){
+        log.info("......StaffController.getDetailByStaffNoAndTime()开始,请求参数,staffNo={},time={}......",staffNo,time);
+        if (StringUtils.isAnyBlank(staffNo,time)){
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
+        ComResponse comResponse = staffService.getDetailByStaffNoAndTime(staffNo,time);
         return comResponse;
     }
 
