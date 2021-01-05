@@ -17,3 +17,4 @@ spring:
         namespace: 104717f2-83ce-4b0a-901d-c785cc4f4bf6
         file-extension: yaml
         prefix: yzl-crm-dev
+

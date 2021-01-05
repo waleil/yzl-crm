@@ -4,10 +4,14 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.model.Member;
+import cn.net.yzl.crm.model.MemberGrade;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 顾客服务接口
+ */
 @FeignClient("yzl-crm-customer-server")
 public interface MemberFien {
     @RequestMapping(method = RequestMethod.POST, value = "v1/getMemberListByPage")
@@ -23,5 +27,5 @@ public interface MemberFien {
     GeneralResult<Member> getMember(@RequestParam("memberCard") String  memberCard);
 
     @GetMapping("v1/getMemberGrad")
-    GeneralResult getMemberGrad();
+    GeneralResult<MemberGrade> getMemberGrad();
 }
