@@ -6,6 +6,7 @@ import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.model.BrandBean;
 import cn.net.yzl.crm.service.BrandService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
+import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.*;
@@ -120,12 +121,15 @@ public class BrandController {
     @ApiOperation("通过id删除品牌")
     @ApiImplicitParam(name = "id", value = "id",paramType = "query",required = true)
     @GetMapping("delete")
-    public ComResponse delete(@RequestParam("id") Integer id){
+    public ComResponse delete(@RequestParam("id") Integer id,HttpServletRequest request){
         if(id == null){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getMessage());
         }
-        brandService.deleteBrandById(id);
-        return null;
+        BrandDelVO brandDelVO = new BrandDelVO();
+        brandDelVO.setId(id);
+        brandDelVO.setUpdateNo(request.getHeader("userId"));
+        brandService.deleteBrandById(brandDelVO);
+        return ComResponse.success();
     }
 
     @ApiOperation(value = "修改品牌")

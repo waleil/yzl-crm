@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.service;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 
 
@@ -15,5 +16,5 @@ public interface BrandService {
 
     ComResponse<Void> updateBrand(BrandVO brand);
 
-    void deleteBrandById(Integer id);
+    void deleteBrandById(BrandDelVO brandDelVO);
 }

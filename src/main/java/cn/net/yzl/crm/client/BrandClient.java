@@ -2,6 +2,7 @@ package cn.net.yzl.crm.client;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.model.BrandBean;
+import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -24,6 +25,6 @@ public interface BrandClient {
     @PostMapping("/v1/edit")
     ComResponse editBrand(@RequestBody BrandVO brand);
 
-    @DeleteMapping("/v1/deleteById")
-    void deleteById(Integer id);
+    @PostMapping("/v1/deleteById")
+    void deleteById(@RequestBody BrandDelVO brandDelVO);
 }
