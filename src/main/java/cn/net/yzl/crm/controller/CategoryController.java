@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.model.CategoryBean;
 import cn.net.yzl.crm.service.CategoryService;
+import cn.net.yzl.product.model.vo.category.CategoryDelVO;
 import cn.net.yzl.product.model.vo.category.CategorySelectTO;
 import cn.net.yzl.product.model.vo.category.CategoryTO;
 import cn.net.yzl.product.model.vo.category.CategoryVO;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,21 +39,26 @@ public class CategoryController {
     }
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
-    public ComResponse<CategoryBean> insertCategory(@RequestBody @Valid CategoryVO categoryVO) {
-        return categoryService.insertCategory(categoryVO);
+    public ComResponse<CategoryBean> insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+        categoryTO.setUpdateNo(request.getHeader("userId"));
+        return categoryService.insertCategory(categoryTO);
     }
 
     @ApiOperation(value = "修改分类信息")
     @PostMapping("updateCategory")
-    public ComResponse<CategoryBean> updateCategory(@RequestBody @Valid CategoryVO categoryVO) {
-        return categoryService.updateCategory(categoryVO);
+    public ComResponse<CategoryBean> updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+        categoryTO.setUpdateNo(request.getHeader("userId"));
+        return categoryService.updateCategory(categoryTO);
     }
 
     @ApiOperation(value = "删除分类信息")
     @GetMapping("deleteCategory")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
-    public ComResponse<CategoryBean> deleteCategory(@RequestParam("id") Integer id) {
-        return categoryService.deleteCategory(id);
+    public ComResponse<CategoryBean> deleteCategory(@RequestParam("id") Integer id,HttpServletRequest request) {
+        CategoryDelVO categoryDelVO = new CategoryDelVO();
+        categoryDelVO.setUpdateNo(request.getHeader("userId"));
+        categoryDelVO.setId(id);
+        return categoryService.deleteCategory(categoryDelVO);
     }
 
     @ApiOperation(value = "【可用】修改分类展示状态")

@@ -7,10 +7,8 @@ import cn.net.yzl.crm.client.CategoryClient;
 import cn.net.yzl.crm.model.CategoryBean;
 import cn.net.yzl.crm.service.CategoryService;
 import cn.net.yzl.product.model.db.Category;
-import cn.net.yzl.product.model.vo.category.CategoryChangeStatusVO;
-import cn.net.yzl.product.model.vo.category.CategorySelectTO;
-import cn.net.yzl.product.model.vo.category.CategoryTO;
-import cn.net.yzl.product.model.vo.category.CategoryVO;
+import cn.net.yzl.product.model.vo.category.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,18 +26,22 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse<CategoryBean> insertCategory(CategoryVO categoryVO) {
+    public ComResponse<CategoryBean> insertCategory(CategoryTO categoryTO) {
+        CategoryVO categoryVO = new CategoryVO();
+        BeanUtils.copyProperties(categoryTO, categoryVO);
         return categoryClient.insertCategory(categoryVO);
     }
 
     @Override
-    public ComResponse<CategoryBean> updateCategory(CategoryVO categoryVO) {
+    public ComResponse<CategoryBean> updateCategory(CategoryTO categoryTO) {
+        CategoryVO categoryVO = new CategoryVO();
+        BeanUtils.copyProperties(categoryTO, categoryVO);
         return categoryClient.updateCategory(categoryVO);
     }
 
     @Override
-    public ComResponse<CategoryBean> deleteCategory(Integer id) {
-        return categoryClient.deleteCategory(id);
+    public ComResponse<CategoryBean> deleteCategory(CategoryDelVO categoryDelVO) {
+        return categoryClient.deleteCategory(categoryDelVO);
     }
 
     @Override

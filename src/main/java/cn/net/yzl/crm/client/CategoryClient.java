@@ -4,10 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.model.CategoryBean;
 import cn.net.yzl.product.model.db.Category;
-import cn.net.yzl.product.model.vo.category.CategoryChangeStatusVO;
-import cn.net.yzl.product.model.vo.category.CategorySelectTO;
-import cn.net.yzl.product.model.vo.category.CategoryTO;
-import cn.net.yzl.product.model.vo.category.CategoryVO;
+import cn.net.yzl.product.model.vo.category.*;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +25,7 @@ public interface CategoryClient {
     ComResponse<CategoryBean> updateCategory(@RequestBody CategoryVO categoryVO);
 
     @PostMapping("/v1/delete")
-    ComResponse<CategoryBean> deleteCategory(@RequestParam("id") Integer id);
+    ComResponse<CategoryBean> deleteCategory(@RequestBody CategoryDelVO categoryDelVO);
 
     @PostMapping("/v1/changeStatus")
     ComResponse<CategoryBean> changeCategoryStatus(@RequestBody CategoryChangeStatusVO categoryChangeStatusVO);
@@ -43,8 +40,8 @@ public interface CategoryClient {
 
     @GetMapping("/v1/queryPageByPid")
     ComResponse<Page<CategoryTO>> queryPageByPid(@RequestParam("pid") int pid,
-                                                 @RequestParam(required = false, defaultValue = "1") Integer pageNo,
-                                                 @RequestParam(required = false, defaultValue = "15") Integer pageSize);
+                                                 @RequestParam("pageNo") Integer pageNo,
+                                                 @RequestParam("pageSize") Integer pageSize);
     @GetMapping("/v1/query4SelectOption")
     ComResponse<List<CategorySelectTO>> query4SelectOption(@RequestParam(value ="pid") Integer pid);
 }
