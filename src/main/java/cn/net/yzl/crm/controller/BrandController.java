@@ -128,8 +128,7 @@ public class BrandController {
         BrandDelVO brandDelVO = new BrandDelVO();
         brandDelVO.setId(id);
         brandDelVO.setUpdateNo(request.getHeader("userId"));
-        brandService.deleteBrandById(brandDelVO);
-        return ComResponse.success();
+        return brandService.deleteBrandById(brandDelVO);
     }
 
     @ApiOperation(value = "修改品牌")
