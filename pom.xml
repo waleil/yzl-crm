@@ -163,6 +163,12 @@
             <version>1.26.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>cn.net.yzl.crm.customer</groupId>
+            <artifactId>yzl-crm-customer-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>cn.net.yzl</groupId>-->
 <!--            <artifactId>yzl-common</artifactId>-->
