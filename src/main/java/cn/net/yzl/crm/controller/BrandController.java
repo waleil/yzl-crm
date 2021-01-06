@@ -153,7 +153,7 @@ public class BrandController {
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"品牌不存在!");
             }if(file==null){
                 if(StringUtils.isEmpty(url)){
-                    brandVO.setBrandUrl(null);
+                    brandVO.setBrandUrl("");
                 }else {
                     if (url.contains(fastDFSConfig.getUrl()+"/")){
                         brandVO.setBrandUrl(url.split(fastDFSConfig.getUrl()+"/")[1]);
@@ -176,6 +176,7 @@ public class BrandController {
                 StorePath storePath = fastdfsUtils.upload(file);
                 String filePath = storePath.getFullPath();
                 brandVO.setBrandUrl(filePath);
+
             }
             String userId = request.getHeader("userId");
             brandVO.setUpdateNo(userId);
