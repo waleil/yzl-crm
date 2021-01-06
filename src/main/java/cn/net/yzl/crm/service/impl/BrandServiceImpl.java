@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.BrandClient;
 import cn.net.yzl.crm.model.BrandBean;
 import cn.net.yzl.crm.service.BrandService;
+import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public void deleteBrandById(Integer id) {
-        brandClient.deleteById(id);
+    public void deleteBrandById(BrandDelVO brandDelVO) {
+        brandClient.deleteById(brandDelVO);
     }
 }
