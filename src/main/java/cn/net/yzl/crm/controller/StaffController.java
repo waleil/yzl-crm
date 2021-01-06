@@ -8,6 +8,8 @@ import cn.net.yzl.crm.dto.ehr.EhrRobedQueryDto;
 import cn.net.yzl.crm.dto.ehr.StaffScheduleDetailDto;
 import cn.net.yzl.crm.dto.ehr.StaffScheduleInfoDto;
 import cn.net.yzl.crm.dto.ehr.StaffScheduleQueryDto;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.StaffClient;
 import cn.net.yzl.crm.sys.BizException;
 import io.swagger.annotations.Api;
@@ -25,7 +27,11 @@ import org.springframework.web.bind.annotation.*;
 public class StaffController {
 
     @Autowired
-    private StaffClient staffService;
+    private StaffClient staffClient;
+
+    @Autowired
+    private StaffService staffService;
+
 
     /**
      * 获取员工排班信息
@@ -38,7 +44,7 @@ public class StaffController {
         if (null==staffScheduleQueryDto||staffScheduleQueryDto.getPageSize()==null||staffScheduleQueryDto.getPageNo()==null){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        ComResponse<StaffScheduleInfoDto> response = staffService.getStaffScheduleInfo(staffScheduleQueryDto);
+        ComResponse<StaffScheduleInfoDto> response = staffClient.getStaffScheduleInfo(staffScheduleQueryDto);
         return response;
     }
 
@@ -54,7 +60,7 @@ public class StaffController {
         if (null==queryDto||StringUtils.isAnyBlank(queryDto.getStaffScheduleId(),queryDto.getTime(),queryDto.getType())){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        ComResponse comResponse = staffService.robedClass(queryDto);
+        ComResponse comResponse = staffClient.robedClass(queryDto);
         return comResponse;
     }
 
@@ -71,9 +77,24 @@ public class StaffController {
         if (StringUtils.isAnyBlank(staffNo,time)){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        ComResponse comResponse = staffService.getDetailByStaffNoAndTime(staffNo,time);
+        ComResponse comResponse = staffClient.getDetailByStaffNoAndTime(staffNo,time);
         return comResponse;
     }
 
+
+    /**
+     * 员工画像  根据员工id获取员工基本信息
+     * @return
+     */
+    @ApiOperation(value="员工画像  根据员工id获取员工基本信息",httpMethod = "get")
+    @GetMapping("/getDetailsByNo")
+    public ComResponse<StaffImageBaseInfoDto> getDetailsByNo(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo){
+        log.info("......StaffController.getDetailsByNo()开始,请求参数,staffNo={}......",staffNo);
+        if (StringUtils.isAnyBlank(staffNo)){
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
+        StaffImageBaseInfoDto staffImageBaseInfoByStaffNo = staffService.getStaffImageBaseInfoByStaffNo(staffNo);
+        return ComResponse.success(staffImageBaseInfoByStaffNo);
+    }
 
 }

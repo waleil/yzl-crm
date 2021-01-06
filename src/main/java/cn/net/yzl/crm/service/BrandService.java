@@ -16,5 +16,5 @@ public interface BrandService {
 
     ComResponse<Void> updateBrand(BrandVO brand);
 
-    void deleteBrandById(BrandDelVO brandDelVO);
+    ComResponse deleteBrandById(BrandDelVO brandDelVO);
 }

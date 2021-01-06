@@ -47,7 +47,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public void deleteBrandById(BrandDelVO brandDelVO) {
-        brandClient.deleteById(brandDelVO);
+    public ComResponse deleteBrandById(BrandDelVO brandDelVO) {
+        return brandClient.deleteById(brandDelVO);
     }
 }

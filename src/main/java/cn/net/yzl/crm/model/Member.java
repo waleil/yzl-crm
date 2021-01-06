@@ -23,10 +23,10 @@ public class Member {
     @ApiModelProperty(value = "年龄")
     private Integer age;
     @ApiModelProperty(value = "性别：0代表男，1代表女")
-    private Boolean sex;
+    private int sex;
     @ApiModelProperty(value = "广告id")
     private Integer adver_code;
-    @ApiModelProperty(value = "会员级别id  1 黄金，2 铂金")
+    @ApiModelProperty(value = "顾客级别  WK 无卡，PK 普卡，TK 铜卡，YK 银卡，JK 金卡，ZS钻卡，VIP VIP，CVIP 超级VIP")
     private String m_grade_code;
     @ApiModelProperty(value = "0未发卡1已发卡未激活2已激活")
     private Short is_active;
@@ -54,15 +54,15 @@ public class Member {
     private String address;
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @ApiModelProperty(value = "会员生日")
-    private Date birthday;
+    private String birthday;
     @ApiModelProperty(value = "所属行业")
     private String job_code;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty(value = "首单下单时间")
-    private Date first_order_time;
+    private String first_order_time;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty(value = "最后一次下单时间")
-    private Date last_order_time;
+    private String last_order_time;
     @ApiModelProperty(value = "主客户会员卡号")
     private Integer master_card;
     @ApiModelProperty(value = "首单下单员工")
@@ -88,5 +88,10 @@ public class Member {
     private String intro_name;
     @ApiModelProperty(value = "介绍人类型，1员工，2顾客")
     private int intro_type;
+    @ApiModelProperty("所属区")
+    private String region_name;
+
+    @ApiModelProperty("广告名称")
+    private String adver_name;
 
 }

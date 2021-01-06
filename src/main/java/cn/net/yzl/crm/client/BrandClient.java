@@ -26,5 +26,5 @@ public interface BrandClient {
     ComResponse editBrand(@RequestBody BrandVO brand);
 
     @PostMapping("/v1/deleteById")
-    void deleteById(@RequestBody BrandDelVO brandDelVO);
+    ComResponse deleteById(@RequestBody BrandDelVO brandDelVO);
 }

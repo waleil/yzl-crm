@@ -63,7 +63,7 @@ public class BrandController {
             return ComResponse.nodata();
         }
         BrandBean brandBean = (BrandBean)comResponse.getData();
-        brandBean.setBrandUrl(fastDFSConfig.getUrl()+brandBean.getBrandUrl());
+        brandBean.setBrandUrl(StringUtils.isNotEmpty(brandBean.getBrandUrl())?fastDFSConfig.getUrl()+"/"+brandBean.getBrandUrl():null);
         return ComResponse.success(brandBean);
     }
 
@@ -84,7 +84,7 @@ public class BrandController {
 
     @ApiOperation(value = "新增品牌")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "file", paramType="query",value = "品牌LOGO", required = true, dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "file", value = "品牌LOGO", required = false, dataType = "MultipartFile"),
             @ApiImplicitParam(name = "name", paramType="query",value = "品牌名称", required = true, dataType = "String"),
             @ApiImplicitParam(name = "descri", paramType="query",value = "品牌故事", required = false, dataType = "String"),
             @ApiImplicitParam(name = "sort", paramType="query",value = "排序", required = false, dataType = "Integer") })
@@ -128,20 +128,21 @@ public class BrandController {
         BrandDelVO brandDelVO = new BrandDelVO();
         brandDelVO.setId(id);
         brandDelVO.setUpdateNo(request.getHeader("userId"));
-        brandService.deleteBrandById(brandDelVO);
-        return ComResponse.success();
+        return brandService.deleteBrandById(brandDelVO);
     }
 
     @ApiOperation(value = "修改品牌")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "file", value = "品牌LOGO", required = true, dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "file", value = "品牌LOGO", required = false, dataType = "MultipartFile"),
             @ApiImplicitParam(name = "name", value = "品牌名称",paramType="query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "descri", value = "品牌故事",paramType="query", required = false, dataType = "String"),
             @ApiImplicitParam(name = "brandId", value = "品牌编号", paramType="query",required = false, dataType = "Integer"),
-            @ApiImplicitParam(name = "sort", value = "排序",paramType="query", required = false, dataType = "Integer") })
+            @ApiImplicitParam(name = "sort", value = "排序",paramType="query", required = false, dataType = "Integer"),
+            @ApiImplicitParam(name = "url",value="url(该字段为文件为空时传入的字段，如果想删除图片则将文件和此处全部输入空值即可)",paramType = "query", required = false, dataType = "String")
+    })
     @PostMapping("update")
     public ComResponse<Void> updateBrand(MultipartFile file, HttpServletRequest request,
-                                         String name, String descri, int sort, int brandId) {
+                                         String name, String descri, int sort, int brandId,String url) {
         try {
             if(brandId<=0){
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"参数错误!");
@@ -150,8 +151,17 @@ public class BrandController {
             BrandBean brand = (BrandBean) brandService.getBrandById(brandId).getData();
             if(brand==null){
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"品牌不存在!");
-            }
-            if(file!=null){
+            }if(file==null){
+                if(StringUtils.isEmpty(url)){
+                    brandVO.setBrandUrl("");
+                }else {
+                    if (url.contains(fastDFSConfig.getUrl()+"/")){
+                        brandVO.setBrandUrl(url.split(fastDFSConfig.getUrl()+"/")[1]);
+                    }else {
+                        return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"不合法的url！");
+                    }
+                }
+            }else{
                 long size = file.getSize() / 1024; //kb
                 if (size > 50) { //判断图片大小 单位Kb
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片过大,保证在50Kb下");
@@ -166,6 +176,7 @@ public class BrandController {
                 StorePath storePath = fastdfsUtils.upload(file);
                 String filePath = storePath.getFullPath();
                 brandVO.setBrandUrl(filePath);
+
             }
             String userId = request.getHeader("userId");
             brandVO.setUpdateNo(userId);
