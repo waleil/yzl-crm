@@ -27,7 +27,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
 
-    @ApiOperation(value = "通过id精确匹配分类")
+    @ApiOperation(value = "【可用】通过id精确匹配分类")
     @GetMapping("getCategoryById")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
     public ComResponse<CategoryTO> getCategoryById(@RequestParam("id") Integer id) {
@@ -56,7 +56,7 @@ public class CategoryController {
         return categoryService.deleteCategory(id);
     }
 
-    @ApiOperation(value = "修改分类展示状态")
+    @ApiOperation(value = "【可用】修改分类展示状态")
     @GetMapping( "changeCategoryStatus")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
@@ -72,7 +72,7 @@ public class CategoryController {
         }
     }
 
-    @ApiOperation(value = "修改分类移动端展示状态")
+    @ApiOperation(value = "【可用】修改分类移动端展示状态")
     @GetMapping("changeCategoryAppStatus")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
@@ -88,7 +88,7 @@ public class CategoryController {
         }
     }
 
-    @ApiOperation(value = "通过pid查询分类列表")
+    @ApiOperation(value = "【可用】通过pid查询分类列表")
     @GetMapping("getCategoriesByPid")
     @ApiImplicitParam(name = "pid",value = "根据父类id查询该父类下所有子类，如果需要查询一级分类，则输入0",paramType = "query",required = true)
     public ComResponse<List<CategoryTO>> getCategoriesByPid( @RequestParam("pid") Integer pid) {
@@ -110,7 +110,7 @@ public class CategoryController {
         return null;
     }
 
-    @ApiOperation(value = "根据pid分页查询分类数据")
+    @ApiOperation(value = "【可用】根据pid分页查询分类数据")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true),
             @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query", required = true),
@@ -121,7 +121,7 @@ public class CategoryController {
         return categoryService.selectAll(pid,pageNo, pageSize);
     }
 
-    @ApiOperation("提供给前端下拉列表的查询接口")
+    @ApiOperation("【可用】提供给前端下拉列表的查询接口")
     @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true)
     @GetMapping("selectForOptions")
     public ComResponse<List<CategorySelectTO>> selectForOptions(@RequestParam("pid")Integer pid){
