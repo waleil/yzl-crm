@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/product/image")
+@RequestMapping("/product/v1/image")
 @Api(tags = "图片管理", description = "包含：图片上传")
 public class ImageController {
 
