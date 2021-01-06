@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.ImageService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.Image;
@@ -32,15 +33,20 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
+
     @ApiOperation("上传接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file",value = "文件",paramType = "query",required = true),
-            @ApiImplicitParam(name = "type",value = "文件类型(0:图片，1:视频)",paramType = "query", required = true)
+            @ApiImplicitParam(name = "type",value = "文件类型(0:图片，1:视频)",paramType = "query", required = true),
+            @ApiImplicitParam(name = "storeId",value = "图片库id",paramType = "query", required = true)
     })
-    @PostMapping("uploadImage")
-    public ComResponse<String> uploadImage(@RequestParam(value = "file",required = true)MultipartFile[] files,
+    @PostMapping("upload")
+    public ComResponse<String> uploadImage(@RequestParam("file")MultipartFile[] files,
                                            @RequestParam("type") Integer type,
-                                           HttpServletRequest request) throws IOException {
+                                           HttpServletRequest request,
+                                           @RequestParam("storeId") Integer storeId) throws IOException {
         String result = "";
         if (files.length == 0||files.length>15) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "文件数量为"+files.length+",需要为1-15张！");
@@ -59,7 +65,7 @@ public class ImageController {
                                 if (!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")&&!fileName.endsWith("jpeg")&&!fileName.endsWith(".gif")){
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png/jpeg格式文件");
                                 }
-                                result+=this.upload(file,request.getHeader("userId"),type)+",";
+                                result+=this.upload(file,request.getHeader("userId"),type,storeId)+",";
                             }
                         }else if(type == 1) {
                             if (size > 10<<20) {
@@ -68,7 +74,7 @@ public class ImageController {
                                 if (!fileName.endsWith(".mp4")&&!fileName.endsWith(".mpeg")&&!fileName.endsWith(".wmv")&&!fileName.endsWith(".avi")&&!fileName.endsWith(".mov")){
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传mp4/mpeg/wmv/avi/mov格式文件");
                                 }
-                                result+=this.upload(file,request.getHeader("userId"),type)+",";
+                                result+=this.upload(file,request.getHeader("userId"),type,storeId)+",";
                             }
                         }
                     }
@@ -77,7 +83,7 @@ public class ImageController {
         return ComResponse.success(result.substring(0,result.lastIndexOf(",")));
     }
 
-    private Integer upload(MultipartFile file,String userId,Integer type) throws IOException {
+    private String upload(MultipartFile file,String userId,Integer type,Integer storeId) throws IOException {
         Image image = new Image();
         StorePath storePath = fastdfsUtils.upload(file);
         String filePath = storePath.getFullPath();
@@ -87,8 +93,9 @@ public class ImageController {
         image.setCreator(userId);
         image.setUpdator(userId);
         image.setType(type);
-        ComResponse id = imageService.insert(image);
-        return (Integer) id.getData();
+        image.setImageStoreId(storeId);
+        imageService.insert(image);
+        return fastDFSConfig.getUrl()+"/"+filePath;
     }
 
 }
