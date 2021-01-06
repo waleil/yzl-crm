@@ -26,10 +26,10 @@ public class MemberSerchDTO extends PageDTO {
 
 
     @ApiModelProperty(value = "最后一次下单时间起始时间")
-    private Date lastOrderTimeStart;
+    private String lastOrderTimeStart;
 
 
     @ApiModelProperty(value = "最后一次下单时间结束时间")
-    private Date lastOrderTimeEnd;
+    private String lastOrderTimeEnd;
 
 }
