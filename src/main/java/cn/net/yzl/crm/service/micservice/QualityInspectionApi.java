@@ -3,16 +3,18 @@ package cn.net.yzl.crm.service.micservice;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.model.ProductMarketingQuality;
 import cn.net.yzl.crm.model.StaffTalkQuality;
-import cn.net.yzl.inspection.model.vo.ProductMarketingQualityVo;
-import cn.net.yzl.inspection.model.vo.StaffTalkQualityVo;
-import cn.net.yzl.inspection.model.WordQuality;
-import cn.net.yzl.inspection.model.vo.WordQualityVo;
+
+import cn.net.yzl.inspection.common.model.WordQuality;
+import cn.net.yzl.inspection.common.model.vo.ProductMarketingQualityVo;
+import cn.net.yzl.inspection.common.model.vo.StaffTalkQualityVo;
+import cn.net.yzl.inspection.common.model.vo.WordQualityVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 
 /**
@@ -32,7 +34,7 @@ public interface QualityInspectionApi {
      * @return
      */
     @PostMapping("/importStaffTalkQuality")
-    ComResponse<Integer> importStaffTalkQuality();
+    ComResponse<Integer> importStaffTalkQuality(@RequestParam("file") MultipartFile file);
 
 
     /**
@@ -88,7 +90,7 @@ public interface QualityInspectionApi {
      * @Param: pageParam
      * @return
      */
-    @PostMapping("/updateProductMarketingQualityUsing")
+    @PostMapping("/updateStaffTalkQualityUsing")
     ComResponse<Boolean> updateStaffTalkQualityUsing(@RequestParam("staffTalkCode") String staffTalkCode);
 
     /**
@@ -98,7 +100,7 @@ public interface QualityInspectionApi {
      * @Param: null
      * @return
      */
-    @PostMapping("/updateProductMarketingQualityDisabled")
+    @PostMapping("/updateStaffTalkQualityDisabled")
     ComResponse<Boolean> updateStaffTalkQualityDisabled(@RequestParam("staffTalkCode") String staffTalkCode);
 
     /**
@@ -109,7 +111,7 @@ public interface QualityInspectionApi {
      * @return
      */
     @PostMapping("importProductMarketingQuality")
-    ComResponse<Integer> importProductMarketingQuality();
+    ComResponse<Integer> importProductMarketingQuality(@RequestParam("file") MultipartFile file);
 
     /**
      * author: liufaguan
@@ -171,7 +173,7 @@ public interface QualityInspectionApi {
      * @return
      */
     @PostMapping("/importWordQuality")
-    ComResponse<Integer> importWordQuality(@RequestParam("name") String name);
+    ComResponse<Integer> importWordQuality(@RequestParam("file") MultipartFile file);
 
 
     /**
@@ -226,7 +228,7 @@ public interface QualityInspectionApi {
      * @Param: null
      * @return
      */
-    @PostMapping("/updateStaffTalkQualityDisabled")
+    @PostMapping("/updateWordQualityDisabled")
     ComResponse<Boolean> updateWordQualityDisabled(@RequestParam("wordCode") String wordCode);
 
 

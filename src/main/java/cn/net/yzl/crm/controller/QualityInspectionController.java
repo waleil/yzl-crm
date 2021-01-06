@@ -5,15 +5,17 @@ import cn.net.yzl.crm.model.ProductMarketingQuality;
 import cn.net.yzl.crm.model.StaffTalkQuality;
 import cn.net.yzl.crm.service.micservice.QualityInspectionApi;
 
-import cn.net.yzl.inspection.model.vo.ProductMarketingQualityVo;
-import cn.net.yzl.inspection.model.vo.StaffTalkQualityVo;
-import cn.net.yzl.inspection.model.WordQuality;
-import cn.net.yzl.inspection.model.vo.WordQualityVo;
+import cn.net.yzl.inspection.common.model.WordQuality;
+import cn.net.yzl.inspection.common.model.vo.ProductMarketingQualityVo;
+import cn.net.yzl.inspection.common.model.vo.StaffTalkQualityVo;
+import cn.net.yzl.inspection.common.model.vo.WordQualityVo;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @ Author     ：liufaguan
@@ -38,8 +40,8 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="员工话术质检导入",httpMethod = "POST")
     @PostMapping("/importStaffTalkQuality")
-    public ComResponse<Integer> importStaffTalkQuality(@RequestParam("name") String name){
-        return qualityInspectionApi.importStaffTalkQuality();
+    public ComResponse<Integer> importStaffTalkQuality(@RequestParam("file") MultipartFile file){
+        return qualityInspectionApi.importStaffTalkQuality(file);
     }
 
 
@@ -65,7 +67,7 @@ public class QualityInspectionController {
      * @Param: pageParam
      * @return
      */
-    @ApiOperation(value="员工话术质检列表",httpMethod = "GET")
+    @ApiOperation(value="员工话术质检列表",httpMethod = "POST")
     @PostMapping("/queryStaffTalkQualityList")
     public ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestBody StaffTalkQualityVo staffTalkQualityVo){
         return qualityInspectionApi.queryStaffTalkQualityList(staffTalkQualityVo);
@@ -135,8 +137,8 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="产品营销话术质检导入",httpMethod = "POST")
     @PostMapping("/importProductMarketingQuality")
-    ComResponse<Integer> importProductMarketingQuality(@RequestParam("name") String name){
-        return qualityInspectionApi.importProductMarketingQuality();
+    ComResponse<Integer> importProductMarketingQuality(@RequestParam("file") MultipartFile file){
+        return qualityInspectionApi.importProductMarketingQuality(file);
     }
 
     /**
@@ -160,7 +162,7 @@ public class QualityInspectionController {
      * @Param: pageParam
      * @return
      */
-    @ApiOperation(value="产品营销话术质检列表",httpMethod = "GET")
+    @ApiOperation(value="产品营销话术质检列表",httpMethod = "POST")
     @PostMapping("/queryProductMarketingQualityList")
     ComResponse<Page<ProductMarketingQuality>> queryProductMarketingQualityList(@RequestBody ProductMarketingQualityVo productMarketingQualityVo){
        return qualityInspectionApi.queryProductMarketingQualityList(productMarketingQualityVo);
@@ -217,8 +219,8 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="违禁词质检导入",httpMethod = "POST")
     @PostMapping("/importWordQuality")
-    ComResponse<Integer> importWordQuality(@RequestParam("name") String name){
-        return qualityInspectionApi.importWordQuality(name);
+    ComResponse<Integer> importWordQuality(@RequestParam("file") MultipartFile file){
+        return qualityInspectionApi.importWordQuality(file);
     }
 
 
@@ -244,7 +246,7 @@ public class QualityInspectionController {
      * @Param: pageParam
      * @return
      */
-    @ApiOperation(value="违禁词质检列表",httpMethod = "GET")
+    @ApiOperation(value="违禁词质检列表",httpMethod = "POST")
     @PostMapping("/queryWordQualityList")
     ComResponse<Page<WordQuality>> queryWordQualityList(@RequestBody WordQualityVo wordQualityVo){
         return qualityInspectionApi.queryWordQualityList(wordQualityVo);
