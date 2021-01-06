@@ -88,5 +88,10 @@ public class Member {
     private String intro_name;
     @ApiModelProperty(value = "介绍人类型，1员工，2顾客")
     private int intro_type;
+    @ApiModelProperty("所属区")
+    private String region_name;
+
+    @ApiModelProperty("广告名称")
+    private String adver_name;
 
 }

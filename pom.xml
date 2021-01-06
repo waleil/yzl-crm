@@ -97,11 +97,11 @@
             <version>1.0-RELEASE</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.3.1</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.baomidou</groupId>-->
+<!--            <artifactId>mybatis-plus-boot-starter</artifactId>-->
+<!--            <version>3.3.1</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>cn.net.yzl.product</groupId>
