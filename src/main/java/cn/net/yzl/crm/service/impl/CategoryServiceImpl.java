@@ -1,10 +1,15 @@
 package cn.net.yzl.crm.service.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.CategoryClient;
 import cn.net.yzl.crm.model.CategoryBean;
 import cn.net.yzl.crm.service.CategoryService;
 import cn.net.yzl.product.model.db.Category;
+import cn.net.yzl.product.model.vo.category.CategoryChangeStatusVO;
+import cn.net.yzl.product.model.vo.category.CategorySelectTO;
+import cn.net.yzl.product.model.vo.category.CategoryTO;
 import cn.net.yzl.product.model.vo.category.CategoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,13 +43,27 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse<CategoryBean> changeCategoryStatus(Integer flag, Integer id) {
-        return categoryClient.changeCategoryStatus(flag, id);
+    public ComResponse<CategoryBean> changeCategoryStatus(Integer flag, Integer id,String uid) {
+        CategoryChangeStatusVO categoryChangeStatusVO = new CategoryChangeStatusVO();
+        categoryChangeStatusVO.setId(id);
+        categoryChangeStatusVO.setUpdateNo(uid);
+        if (flag == null||flag>1||flag<0) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE,"参数超出取值范围！");
+        }
+        categoryChangeStatusVO.setStatus(flag == 1);
+        return categoryClient.changeCategoryStatus(categoryChangeStatusVO);
     }
 
     @Override
-    public ComResponse<CategoryBean> changeCategoryAppStatus(Integer flag, Integer id) {
-        return categoryClient.changeCategoryAppStatus(flag, id);
+    public ComResponse<CategoryBean> changeCategoryAppStatus(Integer flag, Integer id,String uid) {
+        CategoryChangeStatusVO categoryChangeStatusVO = new CategoryChangeStatusVO();
+        categoryChangeStatusVO.setId(id);
+        categoryChangeStatusVO.setUpdateNo(uid);
+        if (flag == null||flag>1||flag<0) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE,"参数超出取值范围！");
+        }
+        categoryChangeStatusVO.setStatus(flag == 1);
+        return categoryClient.changeCategoryAppStatus(categoryChangeStatusVO);
     }
 
     @Override
@@ -53,12 +72,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse<CategoryBean> transferCategories(Integer sourceId, Integer targetId) {
-        return categoryClient.transferCategories(sourceId, targetId);
+    public ComResponse<Page<CategoryTO>> selectAll(Integer pid, Integer pageNo, Integer pageSize) {
+        return categoryClient.queryPageByPid(pid, pageNo, pageSize);
     }
 
     @Override
-    public ComResponse<List<Category>> selectAll() {
-        return categoryClient.selectAll();
+    public ComResponse<List<CategorySelectTO>> selectForOptions(Integer pid) {
+        return categoryClient.query4SelectOption(pid);
     }
+
+
 }
