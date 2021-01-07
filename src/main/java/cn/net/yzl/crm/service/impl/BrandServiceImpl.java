@@ -50,4 +50,9 @@ public class BrandServiceImpl implements BrandService {
     public ComResponse deleteBrandById(BrandDelVO brandDelVO) {
         return brandClient.deleteById(brandDelVO);
     }
+
+    @Override
+    public ComResponse<Boolean> checkUnique(String name, int id) {
+        return brandClient.checkUnique(name, id);
+    }
 }

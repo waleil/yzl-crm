@@ -1,18 +1,19 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.model.CategoryBean;
-import cn.net.yzl.crm.model.CategoryTO;
 import cn.net.yzl.crm.service.CategoryService;
-import cn.net.yzl.product.model.db.Category;
-import cn.net.yzl.product.model.vo.category.CategoryVO;
+import cn.net.yzl.product.model.vo.category.CategoryDelVO;
+import cn.net.yzl.product.model.vo.category.CategorySelectTO;
+import cn.net.yzl.product.model.vo.category.CategoryTO;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,21 +38,26 @@ public class CategoryController {
     }
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
-    public ComResponse<CategoryBean> insertCategory(@RequestBody @Valid CategoryVO categoryVO) {
-        return categoryService.insertCategory(categoryVO);
+    public ComResponse<CategoryBean> insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+        categoryTO.setUpdateNo(request.getHeader("userId"));
+        return categoryService.insertCategory(categoryTO);
     }
 
     @ApiOperation(value = "修改分类信息")
     @PostMapping("updateCategory")
-    public ComResponse<CategoryBean> updateCategory(@RequestBody @Valid CategoryVO categoryVO) {
-        return categoryService.updateCategory(categoryVO);
+    public ComResponse<CategoryBean> updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+        categoryTO.setUpdateNo(request.getHeader("userId"));
+        return categoryService.updateCategory(categoryTO);
     }
 
     @ApiOperation(value = "删除分类信息")
     @GetMapping("deleteCategory")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
-    public ComResponse<CategoryBean> deleteCategory(@RequestParam("id") Integer id) {
-        return categoryService.deleteCategory(id);
+    public ComResponse<CategoryBean> deleteCategory(@RequestParam("id") Integer id,HttpServletRequest request) {
+        CategoryDelVO categoryDelVO = new CategoryDelVO();
+        categoryDelVO.setUpdateNo(request.getHeader("userId"));
+        categoryDelVO.setId(id);
+        return categoryService.deleteCategory(categoryDelVO);
     }
 
     @ApiOperation(value = "修改分类展示状态")
@@ -60,9 +66,11 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
             @ApiImplicitParam(name = "flag", value = "是否展示（1：展示，0：不展示）",required = true,paramType = "query")
     })
-    public ComResponse<CategoryBean> changeCategoryStatus(@RequestParam("flag") Integer flag,@RequestParam("id") Integer id) {
+    public ComResponse<CategoryBean> changeCategoryStatus(@RequestParam("flag") Integer flag,
+                                                          @RequestParam("id") Integer id,
+                                                          HttpServletRequest request) {
         if (flag == 1||flag==0) {
-            return categoryService.changeCategoryStatus(flag,id);
+            return categoryService.changeCategoryStatus(flag,id,request.getHeader("userId"));
         }else {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_ERROR_CODE.getMessage());
         }
@@ -74,9 +82,11 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
             @ApiImplicitParam(name = "flag", value = "是否展示（1：展示，0：不展示）",required = true,paramType = "query")
     })
-    public ComResponse<CategoryBean> changeCategoryAppStatus(@NotNull(message = "数据不能为空！") @RequestParam("flag") @ApiParam("是否展示，0为不展示，1为展示") Integer flag,@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
+    public ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam("flag") Integer flag,
+                                                             @RequestParam("id") Integer id,
+                                                             HttpServletRequest request) {
         if (flag == 1||flag==0) {
-            return categoryService.changeCategoryAppStatus(flag,id);
+            return categoryService.changeCategoryAppStatus(flag,id,request.getHeader("userId"));
         }else {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_ERROR_CODE.getMessage());
         }
@@ -100,14 +110,26 @@ public class CategoryController {
             @ApiImplicitParam(name = "sourceId", value = "源id", paramType = "query", required = true),
             @ApiImplicitParam(name = "targetId", value = "目标id",required = true,paramType = "query")
     })
-    public ComResponse<CategoryBean> transferCategories(@RequestParam("sourceId")Integer sourceId, @RequestParam("targetId") Integer targetId) {
-        return categoryService.transferCategories(sourceId,targetId);
+    public ComResponse transferCategories(@RequestParam("sourceId")Integer sourceId, @RequestParam("targetId") Integer targetId) {
+        return null;
     }
 
-    @ApiOperation(value = "查询全部品牌")
-    @GetMapping("selectAll")
-    public ComResponse<List<Category>> selectAll() {
-        return categoryService.selectAll();
+    @ApiOperation(value = "根据pid分页查询分类数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true),
+            @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query", required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页条数",paramType = "query", required = true)
+    })
+    @GetMapping("selectPage")
+    public ComResponse<Page<CategoryTO>> selectAll(@RequestParam Integer pid, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize) {
+        return categoryService.selectAll(pid,pageNo, pageSize);
+    }
+
+    @ApiOperation("提供给前端下拉列表的查询接口")
+    @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true)
+    @GetMapping("selectForOptions")
+    public ComResponse<List<CategorySelectTO>> selectForOptions(@RequestParam("pid")Integer pid){
+        return categoryService.selectForOptions(pid);
     }
 
 }

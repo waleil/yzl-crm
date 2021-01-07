@@ -17,4 +17,6 @@ public interface BrandService {
     ComResponse<Void> updateBrand(BrandVO brand);
 
     ComResponse deleteBrandById(BrandDelVO brandDelVO);
+
+    ComResponse<Boolean> checkUnique(String name, int id);
 }

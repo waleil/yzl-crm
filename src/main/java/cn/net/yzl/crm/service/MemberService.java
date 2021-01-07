@@ -2,8 +2,9 @@ package cn.net.yzl.crm.service;
 
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
-import cn.net.yzl.crm.model.Member;
+
 import cn.net.yzl.crm.model.OrderMember;
 
 import java.util.List;

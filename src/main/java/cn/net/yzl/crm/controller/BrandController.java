@@ -191,4 +191,14 @@ public class BrandController {
         }
     }
 
+    @ApiOperation("前端品牌名称blur事件查重接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name",value = "需要查重的名称",required = true,paramType = "query"),
+            @ApiImplicitParam(name = "id",value = "需要输入id，如新增操作则输入0即可",required = true,paramType = "query")
+    })
+    @GetMapping("checkUnique")
+    public ComResponse<Boolean> checkUnique(@RequestParam("name")String name,@RequestParam("type")Integer id){
+        return brandService.checkUnique(name, id);
+    }
+    
 }
