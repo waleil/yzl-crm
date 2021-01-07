@@ -2,9 +2,7 @@ package cn.net.yzl.crm.service.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.CategoryClient;
-import cn.net.yzl.crm.model.CategoryBean;
 import cn.net.yzl.crm.service.CategoryService;
 import cn.net.yzl.product.model.db.Category;
 import cn.net.yzl.product.model.vo.category.*;
@@ -26,26 +24,26 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse<CategoryBean> insertCategory(CategoryTO categoryTO) {
+    public ComResponse<Category> insertCategory(CategoryTO categoryTO) {
         CategoryVO categoryVO = new CategoryVO();
         BeanUtils.copyProperties(categoryTO, categoryVO);
         return categoryClient.insertCategory(categoryVO);
     }
 
     @Override
-    public ComResponse<CategoryBean> updateCategory(CategoryTO categoryTO) {
+    public ComResponse<Category> updateCategory(CategoryTO categoryTO) {
         CategoryVO categoryVO = new CategoryVO();
         BeanUtils.copyProperties(categoryTO, categoryVO);
         return categoryClient.updateCategory(categoryVO);
     }
 
     @Override
-    public ComResponse<CategoryBean> deleteCategory(CategoryDelVO categoryDelVO) {
+    public ComResponse<Category> deleteCategory(CategoryDelVO categoryDelVO) {
         return categoryClient.deleteCategory(categoryDelVO);
     }
 
     @Override
-    public ComResponse<CategoryBean> changeCategoryStatus(Boolean flag, Integer id,String uid) {
+    public ComResponse<Category> changeCategoryStatus(Boolean flag, Integer id,String uid) {
         CategoryChangeStatusVO categoryChangeStatusVO = new CategoryChangeStatusVO();
         categoryChangeStatusVO.setId(id);
         categoryChangeStatusVO.setUpdateNo(uid);
@@ -54,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse<CategoryBean> changeCategoryAppStatus(Boolean flag, Integer id,String uid) {
+    public ComResponse<Category> changeCategoryAppStatus(Boolean flag, Integer id,String uid) {
         CategoryChangeStatusVO categoryChangeStatusVO = new CategoryChangeStatusVO();
         categoryChangeStatusVO.setId(id);
         categoryChangeStatusVO.setUpdateNo(uid);

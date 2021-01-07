@@ -1,7 +1,7 @@
 package cn.net.yzl.crm.client;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.model.AttributeBean;
+import cn.net.yzl.product.model.db.AttributeBean;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

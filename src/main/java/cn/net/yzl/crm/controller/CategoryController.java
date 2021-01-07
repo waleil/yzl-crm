@@ -2,9 +2,8 @@ package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.model.CategoryBean;
 import cn.net.yzl.crm.service.CategoryService;
+import cn.net.yzl.product.model.db.Category;
 import cn.net.yzl.product.model.vo.category.CategoryDelVO;
 import cn.net.yzl.product.model.vo.category.CategorySelectTO;
 import cn.net.yzl.product.model.vo.category.CategoryTO;
@@ -38,14 +37,14 @@ public class CategoryController {
     }
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
-    public ComResponse<CategoryBean> insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+    public ComResponse<Category> insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
         categoryTO.setUpdateNo(request.getHeader("userId"));
         return categoryService.insertCategory(categoryTO);
     }
 
     @ApiOperation(value = "修改分类信息")
     @PostMapping("updateCategory")
-    public ComResponse<CategoryBean> updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+    public ComResponse<Category> updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
         categoryTO.setUpdateNo(request.getHeader("userId"));
         return categoryService.updateCategory(categoryTO);
     }
@@ -53,7 +52,7 @@ public class CategoryController {
     @ApiOperation(value = "删除分类信息")
     @GetMapping("deleteCategory")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
-    public ComResponse<CategoryBean> deleteCategory(@RequestParam("id") Integer id,HttpServletRequest request) {
+    public ComResponse<Category> deleteCategory(@RequestParam("id") Integer id, HttpServletRequest request) {
         CategoryDelVO categoryDelVO = new CategoryDelVO();
         categoryDelVO.setUpdateNo(request.getHeader("userId"));
         categoryDelVO.setId(id);
@@ -66,7 +65,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
             @ApiImplicitParam(name = "flag", value = "是否展示（true：展示，false：不展示）",required = true,paramType = "query")
     })
-    public ComResponse<CategoryBean> changeCategoryStatus(@RequestParam("flag") Boolean flag,
+    public ComResponse<Category> changeCategoryStatus(@RequestParam("flag") Boolean flag,
                                                           @RequestParam("id") Integer id,
                                                           HttpServletRequest request) {
             return categoryService.changeCategoryStatus(flag,id,request.getHeader("userId"));
@@ -78,7 +77,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
             @ApiImplicitParam(name = "flag", value = "是否展示（true：展示，false：不展示）",required = true,paramType = "query")
     })
-    public ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam("flag") Boolean flag,
+    public ComResponse<Category> changeCategoryAppStatus(@RequestParam("flag") Boolean flag,
                                                              @RequestParam("id") Integer id,
                                                              HttpServletRequest request) {
             return categoryService.changeCategoryAppStatus(flag,id,request.getHeader("userId"));

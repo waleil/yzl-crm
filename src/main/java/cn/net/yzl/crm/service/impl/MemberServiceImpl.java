@@ -3,12 +3,11 @@ package cn.net.yzl.crm.service.impl;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.dao.OrderMemberMapper;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
-import cn.net.yzl.crm.model.DiseaseBean;
 import cn.net.yzl.crm.service.MemberService;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.ProductFien;
+import cn.net.yzl.product.model.db.DiseaseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

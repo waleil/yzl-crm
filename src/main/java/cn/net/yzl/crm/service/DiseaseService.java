@@ -1,9 +1,9 @@
 package cn.net.yzl.crm.service;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.model.DiseaseBean;
-import cn.net.yzl.crm.model.DiseaseTreeNode;
-import cn.net.yzl.crm.model.ProductDiseaseBean;
+import cn.net.yzl.product.model.db.DiseaseBean;
+import cn.net.yzl.product.model.db.ProductDiseaseBean;
+import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 
 import java.util.List;
 

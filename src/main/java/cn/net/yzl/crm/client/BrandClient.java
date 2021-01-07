@@ -1,7 +1,7 @@
 package cn.net.yzl.crm.client;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.model.BrandBean;
+import cn.net.yzl.product.model.db.BrandBean;
 import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 import io.swagger.annotations.ApiOperation;

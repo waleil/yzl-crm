@@ -2,10 +2,8 @@ package cn.net.yzl.crm.client;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.model.CategoryBean;
 import cn.net.yzl.product.model.db.Category;
 import cn.net.yzl.product.model.vo.category.*;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,21 +16,21 @@ public interface CategoryClient {
     ComResponse<CategoryTO> getCategoryById(@RequestParam("id") Integer id);
 
     @PostMapping("/v1/insert")
-    ComResponse<CategoryBean> insertCategory(@RequestBody CategoryVO categoryVO);
+    ComResponse<Category> insertCategory(@RequestBody CategoryVO categoryVO);
 
 
     @PostMapping("/v1/update")
-    ComResponse<CategoryBean> updateCategory(@RequestBody CategoryVO categoryVO);
+    ComResponse<Category> updateCategory(@RequestBody CategoryVO categoryVO);
 
     @PostMapping("/v1/delete")
-    ComResponse<CategoryBean> deleteCategory(@RequestBody CategoryDelVO categoryDelVO);
+    ComResponse<Category> deleteCategory(@RequestBody CategoryDelVO categoryDelVO);
 
     @PostMapping("/v1/changeStatus")
-    ComResponse<CategoryBean> changeCategoryStatus(@RequestBody CategoryChangeStatusVO categoryChangeStatusVO);
+    ComResponse<Category> changeCategoryStatus(@RequestBody CategoryChangeStatusVO categoryChangeStatusVO);
 
 
     @PostMapping("/v1/changeAppStatus")
-    ComResponse<CategoryBean> changeCategoryAppStatus(@RequestBody CategoryChangeStatusVO categoryChangeStatusVO);
+    ComResponse<Category> changeCategoryAppStatus(@RequestBody CategoryChangeStatusVO categoryChangeStatusVO);
 
 
     @GetMapping("/v1/getByPid")

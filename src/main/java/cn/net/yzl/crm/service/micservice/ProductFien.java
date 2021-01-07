@@ -1,9 +1,8 @@
 package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.GeneralResult;
-import cn.net.yzl.crm.model.DiseaseBean;
+import cn.net.yzl.product.model.db.DiseaseBean;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
