@@ -24,8 +24,8 @@ public interface OrderSettingClient {
      * @param enableFlag 0通用 1启用
      * @return
      */
-    @GetMapping("v1/findAllNonCheckSettings")
-    public ComResponse<List<OrderCheckSettingDTO>> findAllNonCheckSettings(Integer enableFlag);
+    @RequestMapping(path="v1/findAllNonCheckSettings",method = RequestMethod.GET)
+    public ComResponse<List<OrderCheckSettingDTO>> findAllNonCheckSettings(@RequestParam("enableFlag") Integer enableFlag);
 
 
     /**
@@ -57,10 +57,10 @@ public interface OrderSettingClient {
      * @param settingType 配置类型
      * @return
      */
-    @RequestMapping(path="v1/selectSettingedProducts",method = RequestMethod.POST)
+    @RequestMapping(path="v1/selectSettingedProducts",method = RequestMethod.GET)
     public ComResponse<Page<OrderCheckSettingProduct>> selectSettingedProducts(@RequestParam(required = false,defaultValue = "1",value = "pageNo")Integer pageNo,
                                                                                @RequestParam(required = false,defaultValue = "15",value = "pageSize")  Integer pageSize,
-                                                                               @NotBlank(message="免审类型不能为空")   Integer settingType) ;
+                                                                               @RequestParam   Integer settingType) ;
 
 
 
