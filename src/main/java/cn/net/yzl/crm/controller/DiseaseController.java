@@ -32,11 +32,11 @@ public class DiseaseController {
 
     @ApiOperation("【未完成商品关联】查询树形结构，包含商品信息")
     @GetMapping("v1/queryTreeNode")
-    public ComResponse queryTreeNode() {
+    public ComResponse<List<DiseaseTreeNode>> queryTreeNode() {
         return diseaseService.getDiseaseSimpleTree();
     }
 
-    @ApiOperation("新增病症")
+    @ApiOperation("【返回id】新增病症")
     @PostMapping("v1/insert")
     public ComResponse insertDisease(@RequestBody @Valid DiseaseVo diseaseVo,HttpServletRequest request) {
         String userId = request.getHeader("userId");
