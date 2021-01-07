@@ -5,6 +5,7 @@
     <contextName>logback</contextName>
     <springProperty scope="context" name="application.name" source="spring.application.name"/>
     <property name="LOG_HOME" value="/opt/logs/${application.name}"/>
+    <property scope="context" name="SYS_MONITOR_LOG_FILE_NAME" value="request" />
     <property name="PATTERN" value="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%c{12}:%L] %msg%n"/>
 
     <!-- %m输出的信息,%p日志级别,%t线程名,%d日期,%c类的全名,%i索引【从数字0开始递增】,,, -->
@@ -45,7 +46,26 @@
     <appender name="async_log" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="file"/>
     </appender>
-
+    <!--请求日志-->
+    <appender name="requestLogAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${SYS_LOG_HOME}/${SYS_MONITOR_LOG_FILE_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${SYS_LOG_HOME}/${SYS_MONITOR_LOG_FILE_NAME}.%d{yyyy-MM-dd_HH}.log</fileNamePattern>
+            <maxHistory>20</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="requestLogAsyncAppender" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>2048</queueSize>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="requestLogAppender"/>
+    </appender>
+    <logger name="requestLogger" level="INFO" additivity="false">
+        <appender-ref ref="requestLogAsyncAppender" />
+    </logger>
 
     <springProfile name="test,dev">
         <root level="debug">

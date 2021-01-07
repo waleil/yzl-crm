@@ -1,16 +1,21 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.crm.client.DiseaseClient;
 import cn.net.yzl.crm.model.DiseaseBean;
 import cn.net.yzl.crm.model.DiseaseTreeNode;
 import cn.net.yzl.crm.model.ProductDiseaseBean;
 import cn.net.yzl.crm.service.DiseaseService;
+import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
+import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
+import cn.net.yzl.product.model.vo.disease.DiseaseVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -20,36 +25,35 @@ import java.util.List;
 public class DiseaseController {
 
     @Autowired
-    private DiseaseService diseaseService;
+    private DiseaseClient diseaseService;
+    @ApiOperation("新增病症")
+    @PostMapping("v1/insert")
+    public ComResponse insertDisease(@RequestBody @Valid DiseaseVo diseaseVo) {
+        return diseaseService.insertDisease(diseaseVo);
+    }
+    @ApiOperation("删除病症")
+    @PostMapping("v1/deleteById")
+    public ComResponse deleteDisease(@RequestBody @Valid DiseaseDelVo delVo) {
+        return diseaseService.deleteDisease(delVo);
+    }
 
-    @ApiOperation(value = "获取病症信息的简单树结构，用于病症管理页面初始化")
-    @GetMapping("getDiseaseSimpleTree")
-    public ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree() {
+    @ApiOperation("查询树形结构，包含商品信息")
+    @GetMapping("v1/queryTreeNode")
+    public ComResponse queryTreeNode(){
         return diseaseService.getDiseaseSimpleTree();
     }
-
-    @ApiOperation(value = "新增病症")
-    @PostMapping("insertDisease")
-    public ComResponse<Void> insertDisease(@NotNull(message = "数据不能为空！") @RequestBody DiseaseBean diseaseBean) {
-        return diseaseService.insertDisease(diseaseBean);
+    /**
+     * @author lichanghong
+     * @description 查询病症，主要针对下拉列表
+     * @date: 2021/1/6 2:08 下午
+     * @param pid:
+     * @return: ComResponse<List<DiseaseDTO>>
+     */
+    @ApiOperation("下拉列表根据父级编号查询")
+    @GetMapping("v1/queryByPID")
+    public ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam(value = "pid",defaultValue = "0",required = false) Integer pid){
+        return diseaseService.queryByPID(pid);
     }
 
-    @ApiOperation(value = "删除产品和病症的关系")
-    @GetMapping("deleteRelationOfDiseaseAndProduct")
-    public ComResponse<Void> deleteRelationOfDiseaseAndProduct(@NotNull(message = "数据不能为空！") @RequestParam("did") @ApiParam("病症id") Integer did, @NotNull(message = "数据不能为空！") @RequestParam("pCode") @ApiParam("产品编号") String pCode) {
-        return diseaseService.deleteRelationOfDiseaseAndProduct(did, pCode);
-    }
-
-    @ApiOperation(value = "删除病症")
-    @GetMapping("deleteDisease")
-    public ComResponse<Void> deleteDisease(@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
-        return diseaseService.deleteDisease(id);
-    }
-
-    @ApiOperation(value = "新增病症与产品的关系")
-    @PostMapping("insertRelationOfDiseaseAndProduct")
-    public ComResponse<Void> insertRelationOfDiseaseAndProduct(@RequestBody @NotNull(message = "数据不能为空！") @ApiParam("病症与产品之间的关系映射") ProductDiseaseBean productDiseaseBean) {
-        return diseaseService.insertRelationOfDiseaseAndProduct(productDiseaseBean);
-    }
 
 }
