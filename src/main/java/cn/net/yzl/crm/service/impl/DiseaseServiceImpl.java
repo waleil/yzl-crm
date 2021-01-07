@@ -36,12 +36,12 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     @Override
-    public ComResponse<Void> insertRelationOfDiseaseAndProduct(ProductDiseaseBean productDiseaseBean) {
-        return null;
+    public ComResponse<List<DiseaseDTO>> queryByPid(Integer pid) {
+        return client.queryByPID(pid);
     }
 
     @Override
-    public List<DiseaseDTO> queryByPid(Integer pid) {
-        return null;
+    public ComResponse selectAllDiseases() {
+        return client.selectAllDiseases();
     }
 }

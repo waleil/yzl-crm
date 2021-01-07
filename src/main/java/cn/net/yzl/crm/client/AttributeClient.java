@@ -5,7 +5,7 @@ import cn.net.yzl.product.model.db.AttributeBean;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "attributeClient",url = "http://api.staff.yuzhilin.net.cn/productServer/productServer/attribute")
+@FeignClient(name = "attributeClient",url = "${api.gateway.url}/productServer/attribute")
 public interface AttributeClient {
 
     @PostMapping("/v1/insert")

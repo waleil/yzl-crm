@@ -55,6 +55,7 @@ public class DiseaseController {
         if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取用户id，请检查您的登录状态");
         }
+        //新建删除实体
         DiseaseDelVo delVo = new DiseaseDelVo();
         delVo.setUpdateNo(request.getHeader("userId"));
         delVo.setId(id);
@@ -65,14 +66,13 @@ public class DiseaseController {
     @GetMapping("v1/queryByPid")
     @ApiImplicitParam(name = "pid",value = "父类id,默认为0（查询一级病症）")
     public ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam(value = "pid",defaultValue = "0",required = false) Integer pid){
-        List<DiseaseDTO> list = diseaseService.queryByPid(pid);
-        return ComResponse.success(list);
+        return diseaseService.queryByPid(pid);
     }
 
     @ApiOperation("查询所有病症")
     @GetMapping("v1/selectAll")
     public ComResponse selectAllDiseases(){
-        return null;
+        return diseaseService.selectAllDiseases();
     }
 
 }

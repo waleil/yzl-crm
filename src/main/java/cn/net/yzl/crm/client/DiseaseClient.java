@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@FeignClient(name = "diseaseClient",url = "http://api.staff.yuzhilin.net.cn/productServer/productServer/disease")
+@FeignClient(name = "diseaseClient",url = "${api.gateway.url}/productServer/disease")
 public interface DiseaseClient {
 
     @GetMapping("/v1/queryTreeNode")
@@ -27,9 +27,6 @@ public interface DiseaseClient {
 
     @GetMapping("v1/selectAll")
     ComResponse selectAllDiseases();
-
-    @GetMapping("v1/selectByPid")
-    ComResponse getDiseaseByPid(@RequestParam("pid") Integer pid);
 
     @GetMapping("v1/queryByPID")
     ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid);

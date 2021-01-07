@@ -18,5 +18,7 @@ public interface DiseaseService {
 
     ComResponse<Void> deleteDisease(DiseaseDelVo id);
 
-    List<DiseaseDTO> queryByPid(Integer pid);
+    ComResponse<List<DiseaseDTO>> queryByPid(Integer pid);
+
+    ComResponse selectAllDiseases();
 }
