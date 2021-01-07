@@ -22,7 +22,7 @@ public interface DiseaseClient {
     @PostMapping("/v1/insert")
     ComResponse<Void> insertDisease(@RequestBody DiseaseVo diseaseVo);
 
-    @DeleteMapping("/v1/deleteById")
+    @PostMapping("/v1/deleteById")
     ComResponse<Void> deleteDisease(@RequestBody  DiseaseDelVo diseaseDelVo);
 
     @GetMapping("v1/selectAll")
