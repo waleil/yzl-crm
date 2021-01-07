@@ -58,8 +58,8 @@ public interface OrderSettingClient {
      * @return
      */
     @RequestMapping(path="v1/selectSettingedProducts",method = RequestMethod.POST)
-    public ComResponse<Page<OrderCheckSettingProduct>> selectSettingedProducts(@RequestParam(required = false,defaultValue = "1")Integer pageNo,
-                                                                               @RequestParam(required = false,defaultValue = "15")  Integer pageSize,
+    public ComResponse<Page<OrderCheckSettingProduct>> selectSettingedProducts(@RequestParam(required = false,defaultValue = "1",value = "pageNo")Integer pageNo,
+                                                                               @RequestParam(required = false,defaultValue = "15",value = "pageSize")  Integer pageSize,
                                                                                @NotBlank(message="免审类型不能为空")   Integer settingType) ;
 
 
