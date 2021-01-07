@@ -64,9 +64,13 @@ public class DiseaseController {
 
     @ApiOperation("根据父级编号查询病症")
     @GetMapping("v1/queryByPid")
-    @ApiImplicitParam(name = "pid",value = "父类id,默认为0（查询一级病症）")
+    @ApiImplicitParam(name = "pid",value = "父类id,默认为0（查询一级病症）",paramType = "query")
     public ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam(value = "pid",defaultValue = "0",required = false) Integer pid){
-        return diseaseService.queryByPid(pid);
+        ComResponse<List<DiseaseDTO>> listComResponse = diseaseService.queryByPid(pid);
+        if (listComResponse.getData().size() == 0){
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE,"当前父类下无子类病症");
+        }
+        return listComResponse;
     }
 
     @ApiOperation("查询所有病症")
