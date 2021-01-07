@@ -115,11 +115,11 @@ public class ImageController {
         if(StringUtils.isEmpty(name)){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"相册名称不能为空！");
         }
-        if (sort!=0 && sort != 1){
+        if (type>1 || type <0){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"非法的相册类型！");
         }
         String userId;
-        if(StringUtils.isNotEmpty(userId=request.getHeader("userId"))){
+        if(StringUtils.isEmpty(userId=request.getHeader("userId"))){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员编号，请检查登录状态！");
         }
         ImageStore is = new ImageStore();
