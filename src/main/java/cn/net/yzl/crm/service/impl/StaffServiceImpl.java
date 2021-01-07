@@ -22,7 +22,7 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public StaffImageBaseInfoDto getStaffImageBaseInfoByStaffNo(String staffNo) {
-        ComResponse<StaffImageBaseInfoDto> ehrBaseInfoResponse = staffClient.getDetailsByNo("yzl-ehr",staffNo);
+        ComResponse<StaffImageBaseInfoDto> ehrBaseInfoResponse = staffClient.getDetailsByNo(staffNo);
         if (ehrBaseInfoResponse==null||ehrBaseInfoResponse.getCode()!=200){
             log.info(".......StaffServiceImpl.getStaffImageBaseInfoByStaffNo()调用ehr获取员工详情接口错误.....");
             throw new BizException(ResponseCodeEnums.API_ERROR_CODE);
