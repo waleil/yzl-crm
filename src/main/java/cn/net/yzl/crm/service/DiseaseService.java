@@ -14,7 +14,7 @@ public interface DiseaseService {
 
     ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree();
 
-    ComResponse<Void> insertDisease(DiseaseVo diseaseBean);
+    ComResponse<Integer> insertDisease(DiseaseVo diseaseBean);
 
     ComResponse<Void> deleteDisease(DiseaseDelVo id);
 
