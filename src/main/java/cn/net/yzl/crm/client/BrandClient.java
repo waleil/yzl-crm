@@ -29,5 +29,5 @@ public interface BrandClient {
     ComResponse deleteById(@RequestBody BrandDelVO brandDelVO);
 
     @GetMapping("/v1/checkUnique")
-    ComResponse<Boolean> checkUnique(@RequestParam("name") String name, @RequestParam("type") int type);
+    ComResponse<Boolean> checkUnique(@RequestParam("name") String name, @RequestParam("id") int id);
 }

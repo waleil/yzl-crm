@@ -18,5 +18,5 @@ public interface BrandService {
 
     ComResponse deleteBrandById(BrandDelVO brandDelVO);
 
-    ComResponse<Boolean> checkUnique(String name, int type);
+    ComResponse<Boolean> checkUnique(String name, int id);
 }

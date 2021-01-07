@@ -52,7 +52,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public ComResponse<Boolean> checkUnique(String name, int type) {
-        return brandClient.checkUnique(name, type);
+    public ComResponse<Boolean> checkUnique(String name, int id) {
+        return brandClient.checkUnique(name, id);
     }
 }
