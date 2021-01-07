@@ -37,14 +37,14 @@ public class CategoryController {
     }
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
-    public ComResponse<Category> insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+    public ComResponse insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
         categoryTO.setUpdateNo(request.getHeader("userId"));
         return categoryService.insertCategory(categoryTO);
     }
 
     @ApiOperation(value = "修改分类信息")
     @PostMapping("updateCategory")
-    public ComResponse<Category> updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+    public ComResponse updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
         categoryTO.setUpdateNo(request.getHeader("userId"));
         return categoryService.updateCategory(categoryTO);
     }
@@ -52,7 +52,7 @@ public class CategoryController {
     @ApiOperation(value = "删除分类信息")
     @GetMapping("deleteCategory")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
-    public ComResponse<Category> deleteCategory(@RequestParam("id") Integer id, HttpServletRequest request) {
+    public ComResponse deleteCategory(@RequestParam("id") Integer id, HttpServletRequest request) {
         CategoryDelVO categoryDelVO = new CategoryDelVO();
         categoryDelVO.setUpdateNo(request.getHeader("userId"));
         categoryDelVO.setId(id);
@@ -65,7 +65,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
             @ApiImplicitParam(name = "flag", value = "是否展示（true：展示，false：不展示）",required = true,paramType = "query")
     })
-    public ComResponse<Category> changeCategoryStatus(@RequestParam("flag") Boolean flag,
+    public ComResponse changeCategoryStatus(@RequestParam("flag") Boolean flag,
                                                           @RequestParam("id") Integer id,
                                                           HttpServletRequest request) {
             return categoryService.changeCategoryStatus(flag,id,request.getHeader("userId"));
@@ -77,7 +77,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
             @ApiImplicitParam(name = "flag", value = "是否展示（true：展示，false：不展示）",required = true,paramType = "query")
     })
-    public ComResponse<Category> changeCategoryAppStatus(@RequestParam("flag") Boolean flag,
+    public ComResponse changeCategoryAppStatus(@RequestParam("flag") Boolean flag,
                                                              @RequestParam("id") Integer id,
                                                              HttpServletRequest request) {
             return categoryService.changeCategoryAppStatus(flag,id,request.getHeader("userId"));
