@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "crmCustomer",url = "http://api.staff.yuzhilin.net.cn/crmCustomer")
+@FeignClient(name = "crmCustomer",url = "${api.gateway.url}/crmCustomer")
 //    @FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 

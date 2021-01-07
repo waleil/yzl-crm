@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 @Service
-@FeignClient(name = "orderSettingClient",url = "http://api.staff.yuzhilin.net.cn/orderService/orderCheckSetting")
+@FeignClient(name = "orderSettingClient",url = "${api.gateway.url}/orderService/orderCheckSetting")
 public interface OrderSettingClient {
 
     /**

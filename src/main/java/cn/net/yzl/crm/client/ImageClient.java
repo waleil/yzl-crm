@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-@FeignClient(name = "imageClient",url = "http://api.staff.yuzhilin.net.cn/productServer/image")
+@FeignClient(name = "imageClient",url = "${api.gateway.url}/productServer/image")
 public interface ImageClient {
 
     @PostMapping("/v1/insert")

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "categoryClient",url = "http://api.staff.yuzhilin.net.cn/productServer/category")
+@FeignClient(name = "categoryClient",url = "${api.gateway.url}/productServer/category")
 public interface CategoryClient {
 
     @GetMapping("/v1/getById")

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Dmc接口
  */
-@FeignClient(value = "marketBaseDB",url = "http://api.staff.yuzhilin.net.cn/marketBaseDB")
+@FeignClient(value = "marketBaseDB",url = "${api.gateway.url}/marketBaseDB")
 public interface CoopCompanyMediaFien {
     @GetMapping(value="/db/v1/coopCompanyMedia/getMedia")
     GeneralResult<List<Media>> getMediaList();

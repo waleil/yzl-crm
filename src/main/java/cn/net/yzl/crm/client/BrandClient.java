@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 
-@FeignClient(name = "brandClient",url = "http://api.staff.yuzhilin.net.cn/productServer/brand")
+@FeignClient(name = "brandClient",url = "${api.gateway.url}/productServer/brand")
 public interface BrandClient {
 
     @ApiOperation(value = "获取所有品牌信息")
