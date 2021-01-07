@@ -60,7 +60,7 @@ public interface OrderSettingClient {
     @RequestMapping(path="v1/selectSettingedProducts",method = RequestMethod.GET)
     public ComResponse<Page<OrderCheckSettingProduct>> selectSettingedProducts(@RequestParam(required = false,defaultValue = "1",value = "pageNo")Integer pageNo,
                                                                                @RequestParam(required = false,defaultValue = "15",value = "pageSize")  Integer pageSize,
-                                                                               @RequestParam   Integer settingType) ;
+                                                                               @RequestParam (required = false,value = "settingType")  Integer settingType) ;
 
 
 
