@@ -5,6 +5,7 @@ import cn.net.yzl.crm.model.ProductMarketingQuality;
 import cn.net.yzl.crm.model.StaffTalkQuality;
 
 import cn.net.yzl.inspection.common.model.WordQuality;
+import cn.net.yzl.inspection.common.model.vo.CallDurationQualityVo;
 import cn.net.yzl.inspection.common.model.vo.ProductMarketingQualityVo;
 import cn.net.yzl.inspection.common.model.vo.StaffTalkQualityVo;
 import cn.net.yzl.inspection.common.model.vo.WordQualityVo;
@@ -12,6 +13,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 
 
 /**
@@ -228,5 +231,13 @@ public interface QualityInspectionApi {
     @PostMapping("/updateWordQualityDisabled")
     ComResponse<Boolean> updateWordQualityDisabled(@RequestParam("wordCode") String wordCode);
 
-
+    /**
+     * author: liufaguan
+     * description: 新增通话时长质检设置
+     * create time: 2021/1/4 10:55
+     * @Param: callDurationQualityVos
+     * @return
+     */
+    @PostMapping("/saveCallDurationCallDuration")
+    ComResponse<Boolean> saveCallDurationCallDuration(@RequestBody ArrayList<CallDurationQualityVo> callDurationQualityVos);
 }

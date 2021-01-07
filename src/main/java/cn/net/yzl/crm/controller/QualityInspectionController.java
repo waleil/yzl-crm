@@ -6,6 +6,7 @@ import cn.net.yzl.crm.model.StaffTalkQuality;
 import cn.net.yzl.crm.service.micservice.QualityInspectionApi;
 
 import cn.net.yzl.inspection.common.model.WordQuality;
+import cn.net.yzl.inspection.common.model.vo.CallDurationQualityVo;
 import cn.net.yzl.inspection.common.model.vo.ProductMarketingQualityVo;
 import cn.net.yzl.inspection.common.model.vo.StaffTalkQualityVo;
 import cn.net.yzl.inspection.common.model.vo.WordQualityVo;
@@ -16,6 +17,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 
 /**
  * @ Author     ：liufaguan
@@ -293,5 +296,16 @@ public class QualityInspectionController {
         return qualityInspectionApi.updateWordQualityDisabled(wordCode);
     }
 
+    /**
+     * author: liufaguan
+     * description: 新增通话时长质检设置
+     * create time: 2021/1/4 10:55
+     * @Param: callDurationQualityVos
+     * @return
+     */
+    @PostMapping("/saveCallDurationCallDuration")
+    ComResponse<Boolean> saveCallDurationCallDuration(@RequestBody ArrayList<CallDurationQualityVo> callDurationQualityVos){
+        return qualityInspectionApi.saveCallDurationCallDuration(callDurationQualityVos);
+    }
 
 }
