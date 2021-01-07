@@ -39,8 +39,8 @@ public class QualityInspectionController {
      * @return
      */
     @ApiOperation(value="员工话术质检导入",httpMethod = "POST")
-    @PostMapping("/importStaffTalkQuality")
-    public ComResponse<Integer> importStaffTalkQuality(@RequestParam("file") MultipartFile file){
+    @PostMapping(value = "/importStaffTalkQuality",headers = "content-type=multipart/form-data")
+    public ComResponse<Integer> importStaffTalkQuality(MultipartFile file){
         return qualityInspectionApi.importStaffTalkQuality(file);
     }
 
@@ -136,8 +136,8 @@ public class QualityInspectionController {
      * @return
      */
     @ApiOperation(value="产品营销话术质检导入",httpMethod = "POST")
-    @PostMapping("/importProductMarketingQuality")
-    ComResponse<Integer> importProductMarketingQuality(@RequestParam("file") MultipartFile file){
+    @PostMapping(value = "/importProductMarketingQuality",headers = "content-type=multipart/form-data")
+    ComResponse<Integer> importProductMarketingQuality(MultipartFile file){
         return qualityInspectionApi.importProductMarketingQuality(file);
     }
 
@@ -218,8 +218,8 @@ public class QualityInspectionController {
      * @return
      */
     @ApiOperation(value="违禁词质检导入",httpMethod = "POST")
-    @PostMapping("/importWordQuality")
-    ComResponse<Integer> importWordQuality(@RequestParam("file") MultipartFile file){
+    @PostMapping(value = "/importWordQuality",headers = "content-type=multipart/form-data")
+    ComResponse<Integer> importWordQuality(MultipartFile file){
         return qualityInspectionApi.importWordQuality(file);
     }
 

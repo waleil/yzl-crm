@@ -10,10 +10,7 @@ import cn.net.yzl.inspection.common.model.vo.StaffTalkQualityVo;
 import cn.net.yzl.inspection.common.model.vo.WordQualityVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -33,8 +30,8 @@ public interface QualityInspectionApi {
      * @Param: null
      * @return
      */
-    @PostMapping("/importStaffTalkQuality")
-    ComResponse<Integer> importStaffTalkQuality(@RequestParam("file") MultipartFile file);
+    @PostMapping(value = "/importStaffTalkQuality",headers = "content-type=multipart/form-data")
+    ComResponse<Integer> importStaffTalkQuality(MultipartFile file);
 
 
     /**
@@ -110,8 +107,8 @@ public interface QualityInspectionApi {
      * @Param: null
      * @return
      */
-    @PostMapping("importProductMarketingQuality")
-    ComResponse<Integer> importProductMarketingQuality(@RequestParam("file") MultipartFile file);
+    @PostMapping(value = "/importProductMarketingQuality",headers = "content-type=multipart/form-data")
+    ComResponse<Integer> importProductMarketingQuality(MultipartFile file);
 
     /**
      * author: liufaguan
@@ -172,8 +169,8 @@ public interface QualityInspectionApi {
      * @Param: null
      * @return
      */
-    @PostMapping("/importWordQuality")
-    ComResponse<Integer> importWordQuality(@RequestParam("file") MultipartFile file);
+    @PostMapping(value = "/importWordQuality",headers = "content-type=multipart/form-data")
+    ComResponse<Integer> importWordQuality(MultipartFile file);
 
 
     /**
