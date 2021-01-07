@@ -21,9 +21,9 @@ public interface CategoryService {
 
     ComResponse<CategoryBean> deleteCategory(CategoryDelVO categoryDelVO);
 
-    ComResponse<CategoryBean> changeCategoryStatus(Integer flag, Integer id,String uid);
+    ComResponse<CategoryBean> changeCategoryStatus(Boolean flag, Integer id,String uid);
 
-    ComResponse<CategoryBean> changeCategoryAppStatus(Integer flag, Integer id,String uid);
+    ComResponse<CategoryBean> changeCategoryAppStatus(Boolean flag, Integer id,String uid);
 
     ComResponse getCategoriesByPid(Integer pid);
 

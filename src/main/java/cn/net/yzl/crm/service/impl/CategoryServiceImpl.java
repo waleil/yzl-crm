@@ -45,26 +45,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse<CategoryBean> changeCategoryStatus(Integer flag, Integer id,String uid) {
+    public ComResponse<CategoryBean> changeCategoryStatus(Boolean flag, Integer id,String uid) {
         CategoryChangeStatusVO categoryChangeStatusVO = new CategoryChangeStatusVO();
         categoryChangeStatusVO.setId(id);
         categoryChangeStatusVO.setUpdateNo(uid);
-        if (flag == null||flag>1||flag<0) {
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE,"参数超出取值范围！");
-        }
-        categoryChangeStatusVO.setStatus(flag == 1);
+        categoryChangeStatusVO.setStatus(flag);
         return categoryClient.changeCategoryStatus(categoryChangeStatusVO);
     }
 
     @Override
-    public ComResponse<CategoryBean> changeCategoryAppStatus(Integer flag, Integer id,String uid) {
+    public ComResponse<CategoryBean> changeCategoryAppStatus(Boolean flag, Integer id,String uid) {
         CategoryChangeStatusVO categoryChangeStatusVO = new CategoryChangeStatusVO();
         categoryChangeStatusVO.setId(id);
         categoryChangeStatusVO.setUpdateNo(uid);
-        if (flag == null||flag>1||flag<0) {
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE,"参数超出取值范围！");
-        }
-        categoryChangeStatusVO.setStatus(flag == 1);
+        categoryChangeStatusVO.setStatus(flag);
         return categoryClient.changeCategoryAppStatus(categoryChangeStatusVO);
     }
 

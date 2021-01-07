@@ -64,32 +64,24 @@ public class CategoryController {
     @GetMapping( "changeCategoryStatus")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
-            @ApiImplicitParam(name = "flag", value = "是否展示（1：展示，0：不展示）",required = true,paramType = "query")
+            @ApiImplicitParam(name = "flag", value = "是否展示（true：展示，false：不展示）",required = true,paramType = "query")
     })
-    public ComResponse<CategoryBean> changeCategoryStatus(@RequestParam("flag") Integer flag,
+    public ComResponse<CategoryBean> changeCategoryStatus(@RequestParam("flag") Boolean flag,
                                                           @RequestParam("id") Integer id,
                                                           HttpServletRequest request) {
-        if (flag == 1||flag==0) {
             return categoryService.changeCategoryStatus(flag,id,request.getHeader("userId"));
-        }else {
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_ERROR_CODE.getMessage());
-        }
     }
 
     @ApiOperation(value = "修改分类移动端展示状态")
     @GetMapping("changeCategoryAppStatus")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
-            @ApiImplicitParam(name = "flag", value = "是否展示（1：展示，0：不展示）",required = true,paramType = "query")
+            @ApiImplicitParam(name = "flag", value = "是否展示（true：展示，false：不展示）",required = true,paramType = "query")
     })
-    public ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam("flag") Integer flag,
+    public ComResponse<CategoryBean> changeCategoryAppStatus(@RequestParam("flag") Boolean flag,
                                                              @RequestParam("id") Integer id,
                                                              HttpServletRequest request) {
-        if (flag == 1||flag==0) {
             return categoryService.changeCategoryAppStatus(flag,id,request.getHeader("userId"));
-        }else {
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_ERROR_CODE.getMessage());
-        }
     }
 
     @ApiOperation(value = "通过pid查询分类列表")
