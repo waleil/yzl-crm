@@ -54,6 +54,10 @@ public class ImageController {
                                                   HttpServletRequest request,
                                                   @RequestParam("storeId") Integer storeId) throws IOException {
         List<ImageDTO> list = new ArrayList<>();
+        String userId = request.getHeader("userId");
+        if (StringUtils.isEmpty(userId)){
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名！请检查您的登录状态！");
+        }
         if (files.length == 0||files.length>15) {//开始判断
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "文件数量为"+files.length+",需要为1-15张！");
         }else {
