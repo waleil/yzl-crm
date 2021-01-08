@@ -31,5 +31,5 @@ public interface ImageClient {
     ComResponse selectTypeById(@RequestParam("id") Integer id );
 
     @GetMapping("v1/selectStores")
-    ComResponse<List<ImageStoreDTO>> selectStores(@RequestParam Integer type);
+    ComResponse<List<ImageStoreDTO>> selectStores(@RequestParam("type") Integer type);
 }
