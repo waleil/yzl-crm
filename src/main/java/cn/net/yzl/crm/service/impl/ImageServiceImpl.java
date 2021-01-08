@@ -6,12 +6,12 @@ import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.ImageService;
 import cn.net.yzl.product.model.db.Image;
 import cn.net.yzl.product.model.db.ImageStore;
-import cn.net.yzl.product.model.vo.ImageDTO;
+import cn.net.yzl.product.model.vo.image.ImageDTO;
+import cn.net.yzl.product.model.vo.imageStore.ImageStoreDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -36,15 +36,16 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ComResponse<List<ImageDTO>> selectByStoreId(Integer storeId) {
         List<ImageDTO> list = imageClient.selectByStoreId(storeId).getData();
-        list = list.stream().map(imageDTO -> {
-            imageDTO.setUrl(fastDFSConfig.getUrl()+"/"+imageDTO.getUrl());
-            return imageDTO;
-        }).collect(Collectors.toList());
-        return ComResponse.success(list);
+        return ComResponse.success(list).setMessage(fastDFSConfig.getUrl());
     }
 
     @Override
     public ComResponse selectTypeById(Integer storeId) {
         return imageClient.selectTypeById(storeId);
+    }
+
+    @Override
+    public ComResponse<List<ImageStoreDTO>> selectStores(Integer type) {
+        return imageClient.selectStores(type);
     }
 }

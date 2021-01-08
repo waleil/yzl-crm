@@ -7,7 +7,8 @@ import cn.net.yzl.crm.service.ImageService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.Image;
 import cn.net.yzl.product.model.db.ImageStore;
-import cn.net.yzl.product.model.vo.ImageDTO;
+import cn.net.yzl.product.model.vo.image.ImageDTO;
+import cn.net.yzl.product.model.vo.imageStore.ImageStoreDTO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -23,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/product/v1/image")
@@ -51,41 +51,44 @@ public class ImageController {
                                            HttpServletRequest request,
                                            @RequestParam("storeId") Integer storeId) throws IOException {
         String result = "";//定义url集
-        if (files.length == 0||files.length>15) {
+        if (files.length == 0||files.length>15) {//开始判断
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "文件数量为"+files.length+",需要为1-15张！");
         }else {
-            for (MultipartFile file : files) {
-                if (file.isEmpty()){
+            for (MultipartFile file : files) {//循环
+                if (file.isEmpty()){//非空
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"存在空文件！");
                 }else {
-                    long size = file.getSize();
-
+                    long size = file.getSize();//以Byte为单位
                         String fileName = file.getOriginalFilename();
-                        if (type == 0){
-                            if (size > 2<<20) {
+                        if (type == 0){//图片
+                            if (size > 2<<20) {//大小，最大2M
                                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片大小超过2M限制！");
                             } else {
+                                //判断后缀
                                 if (!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")&&!fileName.endsWith("jpeg")&&!fileName.endsWith(".gif")){
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png/jpeg格式文件");
                                 }
-                                if(imageService.selectTypeById(storeId).getData()!=0){
+                                if(imageService.selectTypeById(storeId).getData()!=0){//图片库和类型是否匹配
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"无法将图片上传至视频库！");
                                 }
+                                //全部通过后上传
                                 result+=this.upload(file,request.getHeader("userId"),type,storeId)+",";
                             }
-                        }else if(type == 1) {
-                            if (size > 10<<20) {
+                        }else if(type == 1) {//视频
+                            if (size > 10<<20) {//最大10M
                                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"视频大小超过10M限制！");
                             }else {
+                                //判断格式
                                 if (!fileName.endsWith(".mp4")&&!fileName.endsWith(".mpeg")&&!fileName.endsWith(".wmv")&&!fileName.endsWith(".avi")&&!fileName.endsWith(".mov")){
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传mp4/mpeg/wmv/avi/mov格式文件");
                                 }
-                                if(imageService.selectTypeById(storeId).getData()!=1){
+                                if(imageService.selectTypeById(storeId).getData()!=1){//类型与库是否匹配
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"无法将视频上传至图片库！");
                                 }
-                                if (files.length>1){
+                                if (files.length>1){//视频只能单独上传
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"视频只能单独上传!");
                                 }
+                                //全部判断通过后开始上传
                                 result+=this.upload(file,request.getHeader("userId"),type,storeId)+",";
                             }
                         }else {
@@ -149,6 +152,14 @@ public class ImageController {
     @ApiImplicitParam(name = "storeId",value = "图片库id",paramType = "query",required = true)
     public ComResponse<List<ImageDTO>> selectByStoreId(@RequestParam("storeId") Integer storeId){
         return imageService.selectByStoreId(storeId);
+    }
+
+
+    @GetMapping("selectStores")
+    @ApiOperation("获取所有图片库列表")
+    @ApiImplicitParam(name = "type",value = "库类型（0：图片库，1：视频库）",paramType = "query", required = true)
+    public ComResponse<List<ImageStoreDTO>> selectStores(@RequestParam("type") Integer type){
+        return imageService.selectStores(type);
     }
 
 }
