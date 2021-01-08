@@ -2,10 +2,13 @@ package cn.net.yzl.crm.service.micservice;
 
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -37,7 +40,7 @@ public interface StaffClient {
     ComResponse<List<EhrPostDto>> getPostListByDepartId(@RequestParam("departId")Integer departId);
 
     @PostMapping("/staff/getListByParams")
-    ComResponse<EhrStaffDto> getStaffListByPage(StaffQueryDto query);
+    ComResponse<Page<EhrStaff>> getStaffListByPage(StaffQueryDto query);
 
     @GetMapping("/depart/getListByStaffNo")
     ComResponse<List<EhrDepartDto>> getListByStaffNo(@RequestParam("staffNo") String staffNo);
