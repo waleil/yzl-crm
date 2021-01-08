@@ -7,6 +7,7 @@ import cn.net.yzl.crm.service.ImageService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.Image;
 import cn.net.yzl.product.model.db.ImageStore;
+import cn.net.yzl.product.model.vo.ImageDTO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -21,6 +22,7 @@ import javax.persistence.PostLoad;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,7 +41,7 @@ public class ImageController {
 
     @ApiOperation("上传接口")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "file",value = "文件",paramType = "query",required = true),
+            @ApiImplicitParam(name = "file", value = "需要上传的图片或视频", required = true, dataType = "MultipartFile"),
             @ApiImplicitParam(name = "type",value = "文件类型(0:图片，1:视频)",paramType = "query", required = true),
             @ApiImplicitParam(name = "storeId",value = "图片库id",paramType = "query", required = true)
     })
@@ -48,7 +50,7 @@ public class ImageController {
                                            @RequestParam("type") Integer type,
                                            HttpServletRequest request,
                                            @RequestParam("storeId") Integer storeId) throws IOException {
-        String result = "";
+        String result = "";//定义url集
         if (files.length == 0||files.length>15) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "文件数量为"+files.length+",需要为1-15张！");
         }else {
@@ -66,6 +68,9 @@ public class ImageController {
                                 if (!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")&&!fileName.endsWith("jpeg")&&!fileName.endsWith(".gif")){
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png/jpeg格式文件");
                                 }
+                                if(imageService.selectTypeById(storeId).getData()!=0){
+                                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"无法将图片上传至视频库！");
+                                }
                                 result+=this.upload(file,request.getHeader("userId"),type,storeId)+",";
                             }
                         }else if(type == 1) {
@@ -75,8 +80,16 @@ public class ImageController {
                                 if (!fileName.endsWith(".mp4")&&!fileName.endsWith(".mpeg")&&!fileName.endsWith(".wmv")&&!fileName.endsWith(".avi")&&!fileName.endsWith(".mov")){
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传mp4/mpeg/wmv/avi/mov格式文件");
                                 }
+                                if(imageService.selectTypeById(storeId).getData()!=1){
+                                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"无法将视频上传至图片库！");
+                                }
+                                if (files.length>1){
+                                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"视频只能单独上传!");
+                                }
                                 result+=this.upload(file,request.getHeader("userId"),type,storeId)+",";
                             }
+                        }else {
+                            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件类型不合法！");
                         }
                     }
                 }
@@ -134,7 +147,7 @@ public class ImageController {
     @GetMapping("selectByStoreId")
     @ApiOperation("通过相册id查询图片库该相册下所有图片")
     @ApiImplicitParam(name = "storeId",value = "图片库id",paramType = "query",required = true)
-    public ComResponse<Map<Integer,String>> selectByStoreId(@RequestParam("storeId") Integer storeId){
+    public ComResponse<List<ImageDTO>> selectByStoreId(@RequestParam("storeId") Integer storeId){
         return imageService.selectByStoreId(storeId);
     }
 
