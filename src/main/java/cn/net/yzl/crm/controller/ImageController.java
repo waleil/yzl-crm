@@ -39,6 +39,9 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
+
     @ApiOperation("上传接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "需要上传的图片或视频", required = true, dataType = "MultipartFile"),
@@ -105,7 +108,7 @@ public class ImageController {
                     }
                 }
             }
-        return ComResponse.success(list);
+        return ComResponse.success(list).setMessage(fastDFSConfig.getUrl()+"/");
     }
 
     private ImageDTO upload(MultipartFile file,String userId,Integer type,Integer storeId) throws IOException {
