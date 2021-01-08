@@ -21,7 +21,7 @@ public interface ProductClient {
      ComResponse<List<ProductStatusCountDTO>> queryCountByStatus();
 
     @GetMapping(value = "v1/queryPageProduct")
-     ComResponse<Page<ProductListDTO>> queryListProduct(@RequestParam ProductSelectVO vo);
+     ComResponse<Page<ProductListDTO>> queryListProduct(@RequestParam("vo") ProductSelectVO vo);
 
     @PostMapping(value = "v1/edit")
      ComResponse<Void> editProduct(@RequestBody  ProductVO vo);
