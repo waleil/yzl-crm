@@ -1,10 +1,14 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.model.ProductMarketingQuality;
 import cn.net.yzl.crm.model.StaffTalkQuality;
 import cn.net.yzl.crm.service.micservice.QualityInspectionApi;
 
+import cn.net.yzl.crm.utils.GetParamsValue;
+import cn.net.yzl.crm.utils.ValidateUtils;
+import cn.net.yzl.inspection.common.model.CallDurationQuality;
 import cn.net.yzl.inspection.common.model.WordQuality;
 import cn.net.yzl.inspection.common.model.vo.CallDurationQualityVo;
 import cn.net.yzl.inspection.common.model.vo.ProductMarketingQualityVo;
@@ -19,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @ Author     ：liufaguan
@@ -38,8 +44,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 员工话术质检导入
      * create time: 2020/12/25 15:54
-     * @Param: null
-     * @return
+     * @Param: file
+     * @return ComResponse<Integer>
      */
     @ApiOperation(value="员工话术质检导入",httpMethod = "POST")
     @PostMapping(value = "/importStaffTalkQuality",headers = "content-type=multipart/form-data")
@@ -52,8 +58,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 新增员工话术质检
      * create time: 2020/12/28 10:41
-     * @Param: staffTalkQuality
-     * @return
+     * @Param: staffTalkQualityVo
+     * @return ComResponse<Integer>
      */
     @ApiOperation(value="新增员工话术质检",httpMethod = "POST")
     @PostMapping("/saveStaffTalkQuality")
@@ -67,8 +73,8 @@ public class QualityInspectionController {
      * description: 员工话术质检列表
      * create time: 2020/12/28 17:03
      * @Param: staffTalkQuality
-     * @Param: pageParam
-     * @return
+     * @Param: staffTalkQualityVo
+     * @return ComResponse<Page<StaffTalkQuality>>
      */
     @ApiOperation(value="员工话术质检列表",httpMethod = "POST")
     @PostMapping("/queryStaffTalkQualityList")
@@ -81,8 +87,8 @@ public class QualityInspectionController {
      * description: 查看员工话术质检
      * create time: 2020/12/28 17:03
      * @Param: staffTalkQuality
-     * @Param: pageParam
-     * @return
+     * @Param: staffTalkCode
+     * @return ComResponse<StaffTalkQuality>
      */
     @ApiOperation(value="查看员工话术质检",httpMethod = "GET")
     @GetMapping("/queryStaffTalkQualityByCode")
@@ -95,8 +101,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 更新员工话术质检
      * create time: 2020/12/28 21:54
-     * @Param: null
-     * @return
+     * @Param: staffTalkQualityVo
+     * @return ComResponse<Integer>
      */
     @ApiOperation(value="更新员工话术质检",httpMethod = "POST")
     @PostMapping("/updateStaffTalkQualityByCode")
@@ -109,8 +115,8 @@ public class QualityInspectionController {
      * description: 使用某个员工话术质检
      * create time: 2020/12/28 17:03
      * @Param: staffTalkQuality
-     * @Param: pageParam
-     * @return
+     * @Param: staffTalkCode
+     * @return ComResponse<Boolean>
      */
     @ApiOperation(value="使用某个员工话术质检",httpMethod = "POST")
     @PostMapping("/updateStaffTalkQualityUsing")
@@ -122,8 +128,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 停用某个员工话术
      * create time: 2020/12/29 15:41
-     * @Param: null
-     * @return
+     * @Param: staffTalkCode
+     * @return ComResponse<Boolean>
      */
     @ApiOperation(value="停用某个员工话术质检",httpMethod = "POST")
     @PostMapping("/updateStaffTalkQualityDisabled")
@@ -135,8 +141,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 产品营销话术质检导入
      * create time: 2020/12/25 15:54
-     * @Param: null
-     * @return
+     * @Param: file
+     * @return ComResponse<Integer>
      */
     @ApiOperation(value="产品营销话术质检导入",httpMethod = "POST")
     @PostMapping(value = "/importProductMarketingQuality",headers = "content-type=multipart/form-data")
@@ -148,8 +154,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 新增产品营销话术质检
      * create time: 2020/12/28 10:41
-     * @Param: staffTalkQuality
-     * @return
+     * @Param: productMarketingQualityVo
+     * @return ComResponse<Boolean>
      */
     @ApiOperation(value="新增产品营销话术质检",httpMethod = "POST")
     @PostMapping("/saveProductMarketingQuality")
@@ -162,8 +168,8 @@ public class QualityInspectionController {
      * description: 产品营销话术质检列表
      * create time: 2020/12/28 17:03
      * @Param: staffTalkQuality
-     * @Param: pageParam
-     * @return
+     * @Param: productMarketingQualityVo
+     * @return ComResponse<Page<ProductMarketingQuality>>
      */
     @ApiOperation(value="产品营销话术质检列表",httpMethod = "POST")
     @PostMapping("/queryProductMarketingQualityList")
@@ -177,8 +183,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 更新产品营销话术质检
      * create time: 2020/12/28 21:54
-     * @Param: null
-     * @return
+     * @Param: productMarketingQualityVo
+     * @return ComResponse<Integer>
      */
     @ApiOperation(value="更新产品营销话术质检",httpMethod = "POST")
     @PostMapping("/updateProductMarketingQualityByCode")
@@ -191,8 +197,8 @@ public class QualityInspectionController {
      * description: 使用某个产品营销话术质检
      * create time: 2020/12/28 17:03
      * @Param: staffTalkQuality
-     * @Param: pageParam
-     * @return
+     * @Param: productMarketingCode
+     * @return ComResponse<Boolean>
      */
     @ApiOperation(value="使用某个产品营销话术质检",httpMethod = "POST")
     @PostMapping("/updateProductMarketingQualityUsing")
@@ -204,8 +210,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 停用某个产品营销话术质检
      * create time: 2020/12/29 15:41
-     * @Param: null
-     * @return
+     * @Param: productMarketingCode
+     * @return ComResponse<Boolean>
      */
     @ApiOperation(value="停用某个产品营销话术质检",httpMethod = "POST")
     @PostMapping("/updateProductMarketingQualityDisabled")
@@ -217,8 +223,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 违禁词质检导入
      * create time: 2020/12/25 15:54
-     * @Param: null
-     * @return
+     * @Param: file
+     * @return ComResponse<Integer>
      */
     @ApiOperation(value="违禁词质检导入",httpMethod = "POST")
     @PostMapping(value = "/importWordQuality",headers = "content-type=multipart/form-data")
@@ -232,7 +238,7 @@ public class QualityInspectionController {
      * description: 新增违禁词质检
      * create time: 2020/12/28 10:41
      * @Param: staffTalkQuality
-     * @return
+     * @return ComResponse<Boolean>
      */
     @ApiOperation(value="新增违禁词质检",httpMethod = "POST")
     @PostMapping("/saveWordQuality")
@@ -246,8 +252,8 @@ public class QualityInspectionController {
      * description: 违禁词质检列表
      * create time: 2020/12/28 17:03
      * @Param: staffTalkQuality
-     * @Param: pageParam
-     * @return
+     * @Param: wordQualityVo
+     * @return ComResponse<Page<WordQuality>>
      */
     @ApiOperation(value="违禁词质检列表",httpMethod = "POST")
     @PostMapping("/queryWordQualityList")
@@ -260,8 +266,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 更新违禁词质检
      * create time: 2020/12/28 21:54
-     * @Param: null
-     * @return
+     * @Param: wordQualityVo
+     * @return ComResponse<Integer>
      */
     @ApiOperation(value="更新违禁词质检",httpMethod = "POST")
     @PostMapping("/updateWordQualityByCode")
@@ -274,8 +280,8 @@ public class QualityInspectionController {
      * description: 使用某个违禁词质检
      * create time: 2020/12/28 17:03
      * @Param: staffTalkQuality
-     * @Param: pageParam
-     * @return
+     * @Param: wordCode
+     * @return ComResponse<Boolean>
      */
     @ApiOperation(value="使用某个违禁词质检",httpMethod = "POST")
     @PostMapping("/updateWordQualityUsing")
@@ -287,8 +293,8 @@ public class QualityInspectionController {
      * author: liufaguan
      * description: 停用违禁词质检
      * create time: 2020/12/29 15:41
-     * @Param: null
-     * @return
+     * @Param: wordCode
+     * @return ComResponse<Boolean>
      */
     @ApiOperation(value="停用违禁词质检",httpMethod = "POST")
     @PostMapping("/updateWordQualityDisabled")
@@ -301,11 +307,26 @@ public class QualityInspectionController {
      * description: 新增通话时长质检设置
      * create time: 2021/1/4 10:55
      * @Param: callDurationQualityVos
-     * @return
+     * @return ComResponse<Boolean>
      */
-    @PostMapping("/saveCallDurationCallDuration")
-    ComResponse<Boolean> saveCallDurationCallDuration(@RequestBody ArrayList<CallDurationQualityVo> callDurationQualityVos){
-        return qualityInspectionApi.saveCallDurationCallDuration(callDurationQualityVos);
+    @ApiOperation(value="新增通话时长质检设置",httpMethod = "POST")
+    @PostMapping("/saveCallDuration")
+    ComResponse<Boolean> saveCallDuration(@RequestBody ArrayList<CallDurationQualityVo> callDurationQualityVos){
+        System.out.println(callDurationQualityVos.toString());
+        return qualityInspectionApi.saveCallDuration(callDurationQualityVos);
+    }
+
+    /**
+     * author: liufaguan
+     * description: 查询通话时长质检设置
+     * create time: 2021/1/7 19:50
+     * @Param: null
+     * @return ComResponse<List<CallDurationQuality>>
+     */
+    @ApiOperation(value="查询通话时长质检设置",httpMethod = "POST")
+    @GetMapping("/queryCallDurations")
+    ComResponse<List<CallDurationQuality>> queryCallDurations(){
+        return qualityInspectionApi.queryCallDurations();
     }
 
 }
