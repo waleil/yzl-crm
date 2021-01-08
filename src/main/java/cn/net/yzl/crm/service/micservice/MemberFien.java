@@ -13,8 +13,8 @@ import java.util.List;
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "crmCustomer",url = "http://api.staff.yuzhilin.net.cn/crmCustomer")
-//    @FeignClient(value = "yzl-crm-customer-api")
+//@FeignClient(name = "crmCustomer",url = "http://api.staff.yuzhilin.net.cn/crmCustomer")
+    @FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
     @RequestMapping(method = RequestMethod.POST, value = "/member/v1/getMemberListByPage")

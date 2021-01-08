@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.ImageService;
@@ -8,7 +9,9 @@ import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.Image;
 import cn.net.yzl.product.model.db.ImageStore;
 import cn.net.yzl.product.model.vo.image.ImageDTO;
+import cn.net.yzl.product.model.vo.image.ImageVO;
 import cn.net.yzl.product.model.vo.imageStore.ImageStoreDTO;
+import cn.net.yzl.product.model.vo.imageStore.ImageStoreVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -19,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.PostLoad;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,9 +39,6 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    @Autowired
-    private FastDFSConfig fastDFSConfig;
-
     @ApiOperation("上传接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "需要上传的图片或视频", required = true, dataType = "MultipartFile"),
@@ -46,11 +46,11 @@ public class ImageController {
             @ApiImplicitParam(name = "storeId",value = "图片库id",paramType = "query", required = true)
     })
     @PostMapping("upload")
-    public ComResponse<String> uploadImage(@RequestParam("file")MultipartFile[] files,
-                                           @RequestParam("type") Integer type,
-                                           HttpServletRequest request,
-                                           @RequestParam("storeId") Integer storeId) throws IOException {
-        String result = "";//定义url集
+    public ComResponse<List<ImageDTO>> uploadImage(@RequestParam("file")MultipartFile[] files,
+                                                  @RequestParam("type") Integer type,
+                                                  HttpServletRequest request,
+                                                  @RequestParam("storeId") Integer storeId) throws IOException {
+        List<ImageDTO> list = new ArrayList<>();
         if (files.length == 0||files.length>15) {//开始判断
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "文件数量为"+files.length+",需要为1-15张！");
         }else {
@@ -68,11 +68,15 @@ public class ImageController {
                                 if (!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")&&!fileName.endsWith("jpeg")&&!fileName.endsWith(".gif")){
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png/jpeg格式文件");
                                 }
-                                if(imageService.selectTypeById(storeId).getData()!=0){//图片库和类型是否匹配
+                                Integer i = imageService.selectTypeById(storeId).getData();
+                                if(i == null){
+                                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"目标库不存在！");
+                                }
+                                if(i != 0){//图片库和类型是否匹配
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"无法将图片上传至视频库！");
                                 }
                                 //全部通过后上传
-                                result+=this.upload(file,request.getHeader("userId"),type,storeId)+",";
+                                list.add(this.upload(file,request.getHeader("userId"),type,storeId));
                             }
                         }else if(type == 1) {//视频
                             if (size > 10<<20) {//最大10M
@@ -82,14 +86,18 @@ public class ImageController {
                                 if (!fileName.endsWith(".mp4")&&!fileName.endsWith(".mpeg")&&!fileName.endsWith(".wmv")&&!fileName.endsWith(".avi")&&!fileName.endsWith(".mov")){
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传mp4/mpeg/wmv/avi/mov格式文件");
                                 }
-                                if(imageService.selectTypeById(storeId).getData()!=1){//类型与库是否匹配
+                                Integer i = imageService.selectTypeById(storeId).getData();
+                                if(i == null){
+                                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"目标库不存在！");
+                                }
+                                if(i != 1){//类型与库是否匹配
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"无法将视频上传至图片库！");
                                 }
                                 if (files.length>1){//视频只能单独上传
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"视频只能单独上传!");
                                 }
                                 //全部判断通过后开始上传
-                                result+=this.upload(file,request.getHeader("userId"),type,storeId)+",";
+                                list.add(this.upload(file,request.getHeader("userId"),type,storeId));
                             }
                         }else {
                             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件类型不合法！");
@@ -97,22 +105,23 @@ public class ImageController {
                     }
                 }
             }
-        return ComResponse.success(result.substring(0,result.lastIndexOf(",")));
+        return ComResponse.success(list);
     }
 
-    private String upload(MultipartFile file,String userId,Integer type,Integer storeId) throws IOException {
-        Image image = new Image();
+    private ImageDTO upload(MultipartFile file,String userId,Integer type,Integer storeId) throws IOException {
+        ImageVO image = new ImageVO();
         StorePath storePath = fastdfsUtils.upload(file);
         String filePath = storePath.getFullPath();
         image.setUrl(filePath);
         image.setCreateTime(new Date());
-        image.setUpdateTime(new Date());
         image.setCreator(userId);
-        image.setUpdator(userId);
         image.setType(type);
         image.setImageStoreId(storeId);
-        imageService.insert(image);
-        return fastDFSConfig.getUrl()+"/"+filePath;
+        Integer id = (Integer) imageService.insert(image).getData();
+        ImageDTO dto = new ImageDTO();
+        dto.setId(id);
+        dto.setUrl(filePath);
+        return dto;
     }
 
     @PostMapping("creaeteAlbum")
@@ -138,8 +147,9 @@ public class ImageController {
         if(StringUtils.isEmpty(userId=request.getHeader("userId"))){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员编号，请检查登录状态！");
         }
-        ImageStore is = new ImageStore();
+        ImageStoreVO is = new ImageStoreVO();
         is.setSort(sort);
+        is.setName(name);
         is.setType(type);
         is.setDescri(descri);
         is.setCreateNo(userId);
@@ -149,17 +159,44 @@ public class ImageController {
 
     @GetMapping("selectByStoreId")
     @ApiOperation("通过相册id查询图片库该相册下所有图片")
-    @ApiImplicitParam(name = "storeId",value = "图片库id",paramType = "query",required = true)
-    public ComResponse<List<ImageDTO>> selectByStoreId(@RequestParam("storeId") Integer storeId){
-        return imageService.selectByStoreId(storeId);
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "storeId",value = "图片库id",paramType = "query",required = true),
+            @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query", required = true),
+            @ApiImplicitParam(name = "pageSize",value = "每页条数",paramType = "query", required = true)
+    })
+    public ComResponse<Page<ImageDTO>> selectByStoreId(@RequestParam("storeId") Integer storeId
+            , @RequestParam("pageNo") Integer pageNo
+            , @RequestParam("pageSize") Integer pageSize){
+        return imageService.selectByStoreId(storeId,pageNo,pageSize);
     }
 
 
     @GetMapping("selectStores")
-    @ApiOperation("获取所有图片库列表")
+    @ApiOperation("根据分类获取所有图片库列表")
     @ApiImplicitParam(name = "type",value = "库类型（0：图片库，1：视频库）",paramType = "query", required = true)
     public ComResponse<List<ImageStoreDTO>> selectStores(@RequestParam("type") Integer type){
         return imageService.selectStores(type);
     }
+
+    @ApiOperation("删除图片")
+    @GetMapping("v1/deleteById")
+    public ComResponse deleteById(@RequestParam("id") Integer id,HttpServletRequest request){
+        String userId = request.getHeader("userId");
+        if (StringUtils.isEmpty(userId)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名，请检查您的登录状态！");
+        }
+        return imageService.deleteById(id,userId);
+    }
+
+    @ApiOperation("删除图片库")
+    @GetMapping("v1/deleteStoreById")
+    public ComResponse deleteStoreById(@RequestParam("id") Integer id,HttpServletRequest request) {
+        String userId = request.getHeader("userId");
+        if (StringUtils.isEmpty(userId)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名，请检查您的登录状态！");
+        }
+        return imageService.deleteStoreById(id,userId);
+    }
+
 
 }
