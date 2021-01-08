@@ -3,9 +3,7 @@ package cn.net.yzl.crm.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.customer.model.MemberGrad;
-import cn.net.yzl.crm.customer.model.MemberPhone;
+import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.dto.order.ListParamsDTO;
 import cn.net.yzl.crm.model.Media;
@@ -45,7 +43,7 @@ public class MemberController {
     @ApiOperation(value = "分页查询顾客列表")
     @PostMapping("v1/listPage")
     public GeneralResult<Page<Member>> listPage(@RequestBody MemberSerchDTO dto) {
-        GeneralResult<Page<Member>> result =  memberFien.listPage(dto);
+        GeneralResult<Page<Member>> result = memberFien.listPage(dto);
         return result;
     }
 
@@ -86,14 +84,14 @@ public class MemberController {
     @ApiOperation(value = "获取顾客级别")
     @GetMapping("v1/getMemberGrad")
     public GeneralResult getMemberGrad() {
-        GeneralResult<List<MemberGrad>> result=  memberFien.getMemberGrad();
+        GeneralResult<List<MemberGrad>> result = memberFien.getMemberGrad();
         return result;
     }
 
     @ApiOperation(value = "获取媒体列表")
     @GetMapping("v1/getMediaList")
     public GeneralResult<List<Media>> getMediaList() {
-        GeneralResult<List<Media>> result= coopCompanyMediaFien.getMediaList();
+        GeneralResult<List<Media>> result = coopCompanyMediaFien.getMediaList();
         return result;
     }
 
@@ -128,6 +126,7 @@ public class MemberController {
             @ApiParam(name = "phone", value = "手机号", required = true)
                     String phone) {
         GeneralResult<Member> result = memberFien.getMemberByPhone(phone);
+        if (result == null) return GeneralResult.errorWithMessage(101, "远程服务器无响应");
         return GeneralResult.success(result);
     }
 
@@ -147,4 +146,56 @@ public class MemberController {
         memberFien.setMemberToVip(member_card);
         return GeneralResult.success();
     }
+
+    /**
+     * 获取顾客购买商品
+     *
+     * @param member_card
+     * @return
+     */
+    @ApiOperation("获取顾客购买商品")
+    @GetMapping("v1/getMemberProductEffectList")
+    public GeneralResult getMemberProductEffectList(
+            @RequestParam("member_card")
+            @NotBlank(message = "member_card不能为空")
+            @ApiParam(name = "member_card", value = "会员卡号", required = true)
+                    String member_card) {
+        GeneralResult<List<MemberProductEffect>> result = memberFien.getMemberProductEffectList(member_card);
+        return result;
+    }
+
+    /**
+     * 获取顾客咨询商品
+     *
+     * @param member_card
+     * @return
+     */
+    @ApiOperation("获取顾客咨询商品")
+    @GetMapping("v1/getProductConsultationList")
+    public GeneralResult getProductConsultationList(
+            @RequestParam("member_card")
+            @NotBlank(message = "member_card不能为空")
+            @ApiParam(name = "member_card", value = "会员卡号", required = true)
+                    String member_card) {
+        GeneralResult<List<ProductConsultation>> result  = memberFien.getProductConsultationList(member_card);
+        return result;
+    }
+
+    /**
+     * 获取顾客病症
+     *
+     * @param member_card
+     * @return
+     */
+    @ApiOperation("获取顾客病症")
+    @GetMapping("v1/getMemberDisease")
+    public GeneralResult getMemberDisease(
+            @RequestParam("member_card")
+            @NotBlank(message = "member_card不能为空")
+            @ApiParam(name = "member_card", value = "会员卡号", required = true)
+                    String member_card) {
+        GeneralResult<List<MemberDisease>> result = memberFien.getMemberDisease(member_card);
+        return result;
+    }
+
 }

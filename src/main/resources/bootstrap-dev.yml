@@ -9,7 +9,7 @@ spring:
 #        username: apigateway
 #        password: apigateway
 #        namespace: a97dae2d-5fcd-4dc3-bfa1-5f7b9b1dfd5a
-#        register-enabled: false
+        register-enabled: false
 #              username: ehr
 #        password: ehr
 #        namespace: 1668ab9a-def9-4a51-9c04-6bbbdf40b162

@@ -2,9 +2,7 @@ package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.customer.model.MemberGrad;
-import cn.net.yzl.crm.customer.model.MemberPhone;
+import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,7 +13,7 @@ import java.util.List;
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "crmCustomer",url = "${api.gateway.url}/crmCustomer")
+@FeignClient(name = "crmCustomer",url = "http://api.staff.yuzhilin.net.cn/crmCustomer")
 //    @FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
@@ -49,4 +47,16 @@ public interface MemberFien {
     @ApiOperation("设置顾客为会员")
     @GetMapping("/member/v1/setMemberToVip")
     void   setMemberToVip(String member_card);
+
+    @ApiOperation("获取顾客购买商品")
+    @GetMapping("/member/v1/getMemberProductEffectList")
+    GeneralResult<List<MemberProductEffect>> getMemberProductEffectList(String member_card);
+
+    @ApiOperation("获取顾客咨询商品")
+    @GetMapping("/member/v1/getProductConsultationList")
+    GeneralResult<List<ProductConsultation>>  getProductConsultationList(String member_card);
+
+    @ApiOperation("获取顾客病症")
+    @GetMapping("/member/v1/getMemberDisease")
+    GeneralResult<List<MemberDisease>> getMemberDisease(String member_card);
 }
