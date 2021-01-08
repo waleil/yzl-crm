@@ -6,21 +6,22 @@ import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.ImageService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.Image;
+import cn.net.yzl.product.model.db.ImageStore;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.PostLoad;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/product/v1/image")
@@ -96,6 +97,45 @@ public class ImageController {
         image.setImageStoreId(storeId);
         imageService.insert(image);
         return fastDFSConfig.getUrl()+"/"+filePath;
+    }
+
+    @PostMapping("creaeteAlbum")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "name",value = "相册名称",paramType = "query",required = true),
+            @ApiImplicitParam(name = "descri",value = "相册描述",paramType = "query"),
+            @ApiImplicitParam(name = "sort",value = "排序",paramType = "query"),
+            @ApiImplicitParam(name = "type",value = "相册类型（0：图片库，1：视频库）",paramType = "query",required = true)
+    })
+    @ApiOperation("创建图片库相册")
+    public ComResponse createAlbum(String name,
+                                   @RequestParam(required = false) String descri,
+                                   @RequestParam(required = false) Integer sort,
+                                   Byte type,
+                                   HttpServletRequest request){
+        if(StringUtils.isEmpty(name)){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"相册名称不能为空！");
+        }
+        if (type>1 || type <0){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"非法的相册类型！");
+        }
+        String userId;
+        if(StringUtils.isEmpty(userId=request.getHeader("userId"))){
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员编号，请检查登录状态！");
+        }
+        ImageStore is = new ImageStore();
+        is.setSort(sort);
+        is.setType(type);
+        is.setDescri(descri);
+        is.setCreateNo(userId);
+        return imageService.createAlbum(is);
+    }
+
+
+    @GetMapping("selectByStoreId")
+    @ApiOperation("通过相册id查询图片库该相册下所有图片")
+    @ApiImplicitParam(name = "storeId",value = "图片库id",paramType = "query",required = true)
+    public ComResponse<Map<Integer,String>> selectByStoreId(@RequestParam("storeId") Integer storeId){
+        return imageService.selectByStoreId(storeId);
     }
 
 }

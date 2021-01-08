@@ -32,11 +32,11 @@ public class DiseaseController {
 
     @ApiOperation("【未完成商品关联】查询树形结构，包含商品信息")
     @GetMapping("v1/queryTreeNode")
-    public ComResponse queryTreeNode() {
+    public ComResponse<List<DiseaseTreeNode>> queryTreeNode() {
         return diseaseService.getDiseaseSimpleTree();
     }
 
-    @ApiOperation("新增病症")
+    @ApiOperation("【返回id】新增病症")
     @PostMapping("v1/insert")
     public ComResponse insertDisease(@RequestBody @Valid DiseaseVo diseaseVo,HttpServletRequest request) {
         String userId = request.getHeader("userId");
@@ -64,9 +64,13 @@ public class DiseaseController {
 
     @ApiOperation("根据父级编号查询病症")
     @GetMapping("v1/queryByPid")
-    @ApiImplicitParam(name = "pid",value = "父类id,默认为0（查询一级病症）")
+    @ApiImplicitParam(name = "pid",value = "父类id,默认为0（查询一级病症）",paramType = "query")
     public ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam(value = "pid",defaultValue = "0",required = false) Integer pid){
-        return diseaseService.queryByPid(pid);
+        ComResponse<List<DiseaseDTO>> listComResponse = diseaseService.queryByPid(pid);
+        if (listComResponse.getData().size() == 0){
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE,"当前父类下无子类病症");
+        }
+        return listComResponse;
     }
 
     @ApiOperation("查询所有病症")

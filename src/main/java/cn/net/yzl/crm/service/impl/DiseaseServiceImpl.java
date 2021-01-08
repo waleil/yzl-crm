@@ -26,7 +26,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     @Override
-    public ComResponse<Void> insertDisease(DiseaseVo diseaseBean) {
+    public ComResponse<Integer> insertDisease(DiseaseVo diseaseBean) {
         return client.insertDisease(diseaseBean);
     }
 

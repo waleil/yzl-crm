@@ -5,15 +5,14 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingDTO;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingProduct;
 import cn.net.yzl.order.model.vo.order.UpdateOrderCheckSettingDTO;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 @Service
 @FeignClient(name = "orderSettingClient",url = "${api.gateway.url}/orderService/orderCheckSetting")
@@ -24,8 +23,8 @@ public interface OrderSettingClient {
      * @param enableFlag 0通用 1启用
      * @return
      */
-    @GetMapping("v1/findAllNonCheckSettings")
-    public ComResponse<List<OrderCheckSettingDTO>> findAllNonCheckSettings(Integer enableFlag);
+    @RequestMapping(path="v1/findAllNonCheckSettings",method = RequestMethod.GET)
+    public ComResponse<List<OrderCheckSettingDTO>> findAllNonCheckSettings(@RequestParam("enableFlag") Integer enableFlag);
 
 
     /**
@@ -57,10 +56,10 @@ public interface OrderSettingClient {
      * @param settingType 配置类型
      * @return
      */
-    @RequestMapping(path="v1/selectSettingedProducts",method = RequestMethod.POST)
+    @RequestMapping(path="v1/selectSettingedProducts",method = RequestMethod.GET)
     public ComResponse<Page<OrderCheckSettingProduct>> selectSettingedProducts(@RequestParam(required = false,defaultValue = "1",value = "pageNo")Integer pageNo,
                                                                                @RequestParam(required = false,defaultValue = "15",value = "pageSize")  Integer pageSize,
-                                                                               @NotBlank(message="免审类型不能为空")   Integer settingType) ;
+                                                                               @RequestParam (required = false,value = "settingType")  Integer settingType) ;
 
 
 

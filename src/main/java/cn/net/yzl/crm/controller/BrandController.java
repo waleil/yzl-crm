@@ -89,8 +89,8 @@ public class BrandController {
             @ApiImplicitParam(name = "descri", paramType="query",value = "品牌故事", required = false, dataType = "String"),
             @ApiImplicitParam(name = "sort", paramType="query",value = "排序", required = false, dataType = "Integer") })
     @PostMapping("insert")
-    public ComResponse insertBrand(MultipartFile file, HttpServletRequest request,
-                                   String name, String descri, int sort) {
+    public ComResponse insertBrand(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request,
+                                   String name, @RequestParam(value = "descri",required = false) String descri,@RequestParam(value = "sort",required = false,defaultValue = "0") Integer sort) {
         try {
             BrandVO brandVO = new BrandVO();
             if(file!=null){
@@ -142,7 +142,7 @@ public class BrandController {
     })
     @PostMapping("update")
     public ComResponse<Void> updateBrand(MultipartFile file, HttpServletRequest request,
-                                         String name, String descri, int sort, int brandId,String url) {
+                                         String name, String descri, @RequestParam(defaultValue = "0")Integer sort, Integer brandId,String url) {
         try {
             if(brandId<=0){
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"参数错误!");
