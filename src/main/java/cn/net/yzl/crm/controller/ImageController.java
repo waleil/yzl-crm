@@ -132,15 +132,12 @@ public class ImageController {
             @ApiImplicitParam(name = "type",value = "相册类型（0：图片库，1：视频库）",paramType = "query",required = true)
     })
     @ApiOperation("创建图片库相册")
-    public ComResponse createAlbum(String name,
-                                   @RequestParam(required = false) String descri,
-                                   @RequestParam(required = false) Integer sort,
-                                   Byte type,
+    public ComResponse createAlbum(@RequestBody ImageStoreVO vo,
                                    HttpServletRequest request){
-        if(StringUtils.isEmpty(name)){
+        if(StringUtils.isEmpty(vo.getName())){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"相册名称不能为空！");
         }
-        if (type>1 || type <0){
+        if (vo.getType()>1 || vo.getType() <0){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"非法的相册类型！");
         }
         String userId;
@@ -148,10 +145,9 @@ public class ImageController {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员编号，请检查登录状态！");
         }
         ImageStoreVO is = new ImageStoreVO();
-        is.setSort(sort);
-        is.setName(name);
-        is.setType(type);
-        is.setDescri(descri);
+        is.setName(vo.getName());
+        is.setType(vo.getType());
+        is.setDescri(vo.getDescri());
         is.setCreateNo(userId);
         return imageService.createAlbum(is);
     }
