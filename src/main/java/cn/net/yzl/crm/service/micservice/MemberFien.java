@@ -13,8 +13,8 @@ import java.util.List;
 /**
  * 顾客服务接口
  */
-//@FeignClient(name = "crmCustomer",url = "http://api.staff.yuzhilin.net.cn/crmCustomer")
-    @FeignClient(value = "yzl-crm-customer-api")
+@FeignClient(name = "crmCustomer",url = "http://api.staff.yuzhilin.net.cn/crmCustomer")
+//@FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
     @RequestMapping(method = RequestMethod.POST, value = "/member/v1/getMemberListByPage")
@@ -59,4 +59,42 @@ public interface MemberFien {
     @ApiOperation("获取顾客病症")
     @GetMapping("/member/v1/getMemberDisease")
     GeneralResult<List<MemberDisease>> getMemberDisease(String member_card);
+
+    @ApiOperation("新增收货地址")
+    @GetMapping("/member/v1/addReveiverAddress")
+    GeneralResult addReveiverAddress(@RequestBody ReveiverAddress reveiverAddress);
+
+
+    @ApiOperation("修改收货地址")
+    @GetMapping("/member/v1/updateReveiverAddress")
+    GeneralResult updateReveiverAddress(@RequestBody ReveiverAddress reveiverAddress);
+
+    @ApiOperation("获取收获地址")
+    @GetMapping("/member/v1/getReveiverAddress")
+    GeneralResult<List<ReveiverAddress>> getReveiverAddress(String member_card);
+
+    @ApiOperation("获取购买能力")
+    @GetMapping("/member/v1/getMemberOrderStat")
+    GeneralResult<MemberOrderStat> getMemberOrderStat(String member_card);
+
+
+    @ApiOperation("新增购买能力")
+    @GetMapping("/member/v1/addMemberOrderStat")
+    GeneralResult addMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
+
+    @ApiOperation("修改购买能力")
+    @GetMapping("/member/v1/updateMemberOrderStat")
+    GeneralResult updateMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
+
+    @ApiOperation("添加顾客行为偏好")
+    @GetMapping("/member/v1/addMemberAction")
+    GeneralResult addMemberAction(@RequestBody MemberAction memberAction);
+
+    @ApiOperation("修改顾客行为偏好")
+    @GetMapping("/member/v1/updateMemberAction")
+    GeneralResult updateMemberAction(@RequestBody MemberAction memberAction);
+
+    @ApiOperation("获取顾客行为偏好")
+    @GetMapping("/member/v1/getMemberAction")
+    GeneralResult<MemberAction> getMemberAction(String member_card);
 }
