@@ -81,11 +81,16 @@ public class ProductController {
      */
     @PostMapping(value = "v1/edit")
     @ApiOperation("编辑商品")
-    public ComResponse<Void> editProduct(@RequestBody @Valid ProductVO vo) {
+    public ComResponse<Void> editProduct(@RequestBody @Valid ProductVO vo,HttpServletRequest request) {
         String str=checkParams(vo);
         if(StringUtils.isNotBlank(str)){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), str);
         }
+        String userId;
+        if(StringUtils.isBlank(userId = request.getHeader("userId"))){
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员身份失败，尝试重新登陆！");
+        }
+        vo.setUpdateNo(userId);
         return productService.editProduct(vo);
     }
 
@@ -116,12 +121,12 @@ public class ProductController {
         if (vo.getSalePriceD() == null) {
             return "市场价价格不能为空";
         }
-        if(vo.getUpdateTime()==null){
-            return "最后修改时间不能为空!";
-        }
-        if(vo.getUpdateNo()==null){
-            return "编辑员工编码不能为空!";
-        }
+//        if(vo.getUpdateTime()==null){
+//            return "最后修改时间不能为空!";
+//        }
+//        if(vo.getUpdateNo()==null){
+//            return "编辑员工编码不能为空!";
+//        }
         return null;
     }
 
