@@ -1,12 +1,14 @@
-package cn.net.yzl.crm.service.impl;
+package cn.net.yzl.crm.service.product.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.client.ProductClient;
-import cn.net.yzl.crm.service.ProductService;
+import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.service.product.ProductService;
+import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductUpdateStatusVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,5 +33,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ComResponse editProduct(ProductVO vo) {
         return productClient.editProduct(vo);
+    }
+
+    @Override
+    public ComResponse updateStatusByProductCode(ProductUpdateStatusVO vo) {
+        return productClient.updateStatusByProductCode(vo);
+    }
+
+    @Override
+    public ComResponse<ProductAtlasDTO> queryProductListAtlas(String productName, Integer id) {
+        return productClient.queryProductListAtlas(productName,id);
     }
 }

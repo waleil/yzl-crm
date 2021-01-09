@@ -1,9 +1,9 @@
 package cn.net.yzl.crm.controller;
 
 
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
+
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.constant.EhrParamEnum;
@@ -139,9 +139,9 @@ public class StaffController {
      */
     @ApiOperation(value="根据条件分页查询员工列表",httpMethod = "post")
     @PostMapping("/getStaffListByPage")
-    public ComResponse<EhrStaffDto> getStaffListByPage(@RequestBody StaffQueryDto query){
+    public ComResponse<Page<EhrStaff>> getStaffListByPage(@RequestBody StaffQueryDto query){
         log.info("......StaffController.getStaffListByPage()开始, 请求参数:{}......",JsonUtil.toJsonStr(query));
-        ComResponse<EhrStaffDto> response = staffClient.getStaffListByPage(query);
+        ComResponse<Page<EhrStaff>> response = staffClient.getStaffListByPage(query);
         return response;
     }
 

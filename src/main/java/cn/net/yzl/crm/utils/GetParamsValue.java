@@ -41,46 +41,51 @@ public class GetParamsValue {
         }
     }
 
-    public static Map<String,String> getOrderDetailMap() {
+    public static Map<String,String> getStaffTalkMap() {
         Map<String,String> map = new HashMap<>();
-        map.put("odTicketInfoCode","门票编号");
-        map.put("odTicketName","门票名称");
-        map.put("odScenicCode","门票景区编号");
-        map.put("odScenic","门票景区名称");
-        map.put("odCategoryCode","门票票种编号");
-        map.put("ticketAmount","门票实付金额");
-        map.put("odSalesMethodsCode","门票售出方式编号");
-        map.put("odSalesMethods","门票售出方式");
+        map.put("staffTalkCode","编号");
+        map.put("qualityDepartmentCode","质检中心编号");
+        map.put("qualityDepartmentName","质检中心名称");
+        map.put("qualityName","质检名称");
+        map.put("keyword","质检关键词");
+        map.put("punishDescription","处罚说明");
         return map;
     }
 
-    public static Map<String,String> getOrderMap() {
+    public static Map<String,String> getProductMarketingMap() {
+        StringBuffer staffTalk = new StringBuffer("productCode,productName," +
+                "marketingContent,keyword,punishDescription" );
         Map<String,String> map = new HashMap<>();
-        map.put("toScenicCode","景区编号");
-        map.put("toScenic","景区名称");
-        map.put("toSalesMethodsCode","售出方式编号");
-        map.put("toSalesMethods","售出方式");
-        map.put("toCreateUserCode","售票员编号");
-        map.put("toCreateUser","售票员名称");
-        map.put("toOrderTypeCode","订单类型编号");
-        map.put("toValidTime","游玩开始日期");
-        map.put("toTicketWindow","售票窗口");
-        map.put("toOrderType","订单类型");
-        map.put("toQuantity","商品数量");
-        map.put("amount","实付金额");
-        map.put("toPayMethodCode","支付方式编号");
-        map.put("toPayMethod","支付方式名称");
-        map.put("toTicketWindowCode","窗口编号");
-        map.put("toTicketWindowLocation","窗口位置");
-        map.put("timeSlot","游玩时段");
-        map.put("orderAmount","订单总金额");
+        map.put("productMarketingCode","编号");
+        map.put("productCode","商品编号");
+        map.put("productName","商品名称");
+        map.put("marketingContent","营销准则");
+        map.put("keyword","质检关键词");
+        map.put("punishDescription","处罚说明");
         return map;
     }
+
+    public static Map<String,String> getWordQualityMap() {
+        StringBuffer staffTalk = new StringBuffer("qualityDepartmentCode,qualityDepartmentName," +
+                "prohibitedLevel,keyword,punishDescription" );
+        Map<String,String> map = new HashMap<>();
+        map.put("wordCode","编号");
+        map.put("qualityDepartmentCode","质检中心编号");
+        map.put("qualityDepartmentName","质检中心");
+        map.put("prohibitedLevel","违禁级别");
+        map.put("keyword","质检关键词");
+        map.put("punishDescription","处罚说明");
+        return map;
+    }
+
+
+
+
 
 
     public static void main(String[] args) {
         Map<String,Object> notNullValidate = new HashMap<>();
         notNullValidate.put("msg", "缺少必填参数或参数值为null:" + "toCreateUserCode toQuantity".trim());
-        System.out.println(changeAllFieldResult(notNullValidate,getOrderMap()).toString());
+        System.out.println(changeAllFieldResult(notNullValidate,getStaffTalkMap()).toString());
     }
 }

@@ -1,4 +1,4 @@
-package cn.net.yzl.crm.service;
+package cn.net.yzl.crm.service.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.product.model.db.ProductDiseaseBean;
