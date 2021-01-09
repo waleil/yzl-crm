@@ -5,10 +5,13 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.crm.client.OrderSettingClient;
 import cn.net.yzl.crm.client.ProductClient;
+import cn.net.yzl.crm.service.ProductService;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingDTO;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingProduct;
 import cn.net.yzl.order.model.vo.order.UpdateOrderCheckSettingDTO;
 import cn.net.yzl.product.model.db.ProductMainInfoBean;
+import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
+import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,7 +34,7 @@ public class OrderCheckSettingController {
     private OrderSettingClient orderFein;
 
     @Autowired
-    private ProductClient productClient;
+    private ProductService productService;
 
 
     @ApiOperation(value = "查询全部免审配置")
@@ -77,19 +80,15 @@ public class OrderCheckSettingController {
     }
     @ApiOperation(value = "查询所有商品")
     @GetMapping("v1/selectAllProducts")
-    public ComResponse<Page<ProductMainInfoBean>> selectAllProducts(@RequestParam(required = false, defaultValue = "1") Integer pageNo,
-                                                                    @RequestParam(required = false, defaultValue = "15") Integer pageSize,
-                                                                    @RequestParam(required = false) Integer Status,
-                                                                    @RequestParam(required = false)  String prdoductNos) {
-        //todo  调用商品服务，查询商品列表 需要修改
-        ComResponse<List<ProductMainInfoBean>> data = productClient.getMainInfoByIds(prdoductNos, Status);
-        Page<ProductMainInfoBean> result = new Page<>();
-        result.setItems(data.getData());
-        PageParam pageParam = new PageParam();
-        pageParam.setPageNo(1);
-        pageParam.setPageSize(15);
-
-        result.setPageParam(pageParam);
-        return ComResponse.success(result);
+    public ComResponse<Page<ProductListDTO>> selectAllProducts(@RequestParam(required = false, defaultValue = "1") Integer pageNo,
+                                                               @RequestParam(required = false, defaultValue = "15") Integer pageSize,
+                                                               @RequestParam(required = false) Integer Status,
+                                                               @RequestParam(required = false)  String prdoductNos) {
+        ProductSelectVO productSelectVO = new ProductSelectVO();
+        productSelectVO.setKeyword(prdoductNos);
+        productSelectVO.setPageNo(pageNo);
+        productSelectVO.setPageSize(pageSize);
+        productSelectVO.setStatus(Status);
+        return  productService.queryListProduct(productSelectVO);
     }
 }
