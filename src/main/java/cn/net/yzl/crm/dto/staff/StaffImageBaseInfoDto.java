@@ -126,6 +126,8 @@ public class StaffImageBaseInfoDto {
     private String major;
     @ApiModelProperty("资质证照")
     private String staffQuaName;
+    @ApiModelProperty("户口地址")
+    private String registeredAddress;
     @ApiModelProperty("培训状态(0:未完成,1:已完成)")
     private Integer trainingStatus;
     @ApiModelProperty("商品优势")
