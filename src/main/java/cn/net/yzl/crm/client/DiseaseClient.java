@@ -5,6 +5,7 @@ import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,5 +28,8 @@ public interface DiseaseClient {
 
     @GetMapping("v1/queryByPID")
     ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid);
+
+    @GetMapping("v1/changeName")
+    ComResponse changeName(@RequestParam("id") Integer id, @RequestParam("name") String name,@RequestParam("userId") String userId);
 
 }

@@ -9,10 +9,7 @@ import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -77,6 +74,20 @@ public class DiseaseController {
     @GetMapping("v1/selectAll")
     public ComResponse selectAllDiseases(){
         return diseaseService.selectAllDiseases();
+    }
+
+    @ApiOperation("修改病症名称")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true),
+            @ApiImplicitParam(name = "name",value = "名称",paramType = "query", required = true)
+    })
+    @GetMapping("v1/changeName")
+    public ComResponse changeName(@RequestParam("id") Integer id, @RequestParam("name") String name,HttpServletRequest request){
+        String userId = request.getHeader("userId");
+        if (StringUtils.isEmpty(userId)){
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取身份信息，请检查您的登录状态！");
+        }
+        return diseaseService.changeName(id,name,userId);
     }
 
 }

@@ -44,4 +44,9 @@ public class DiseaseServiceImpl implements DiseaseService {
     public ComResponse selectAllDiseases() {
         return client.selectAllDiseases();
     }
+
+    @Override
+    public ComResponse changeName(Integer id, String name, String userId) {
+        return client.changeName(id, name, userId);
+    }
 }

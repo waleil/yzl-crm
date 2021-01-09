@@ -21,4 +21,6 @@ public interface DiseaseService {
     ComResponse<List<DiseaseDTO>> queryByPid(Integer pid);
 
     ComResponse selectAllDiseases();
+
+    ComResponse changeName(Integer id, String name, String userId);
 }
