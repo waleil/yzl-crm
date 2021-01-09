@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ComResponse<ProductAtlasDTO> queryProductListAtlas(String productName, Integer id) {
+    public ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(String productName, Integer id) {
         return productClient.queryProductListAtlas(productName,id);
     }
 

@@ -48,9 +48,6 @@ public class BrandController {
     public ComResponse getAllBrands(@RequestParam(required = false,defaultValue = "1",value = "pageNo") Integer pageNo,
                                     @RequestParam(required = false,defaultValue = "15",value = "pageSize") Integer pageSize,
                                     String keyword) {
-        if (pageSize>50) {
-            pageSize=50;
-        }
         return brandService.getAllBrands(pageNo, pageSize,keyword);
     }
 

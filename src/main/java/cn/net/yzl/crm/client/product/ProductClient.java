@@ -33,7 +33,7 @@ public interface ProductClient {
     ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusVO vo);
 
     @GetMapping("queryProductListAtlas")
-    ComResponse<ProductAtlasDTO> queryProductListAtlas(@RequestParam("productName") String productName, @RequestParam("id") Integer id);
+    ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(@RequestParam("productName") String productName, @RequestParam("id") Integer id);
 
     @PostMapping(value = "updateTime")
     ComResponse updateTimeByProductCode(@RequestBody ProductUpdateTimeRequestVO vo);
