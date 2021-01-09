@@ -22,16 +22,16 @@ public class CallnfoCriteriaTO implements Serializable {
     @ApiModelProperty(value = "通话结束时间")
     private String endTime;
 
-    @ApiModelProperty(value = "顾客会员号")
-    private String memberCard;
+//    @ApiModelProperty(value = "顾客会员号")
+//    private String memberCard;
 
     @ApiModelProperty(value = "员工号")
     private String staffNo;
 
-    @ApiModelProperty(value = "当前页")
+    @ApiModelProperty(value = "当前页",required = true)
     private int pageNo;
 
-    @ApiModelProperty(value = "每页显示条数")
+    @ApiModelProperty(value = "每页显示条数",required = true)
     private int pageSize;
 
     @ApiModelProperty(value = "分页查询开始位置")
