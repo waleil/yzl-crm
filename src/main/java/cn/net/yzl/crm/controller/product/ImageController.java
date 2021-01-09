@@ -153,7 +153,6 @@ public class ImageController {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员编号，请检查登录状态！");
         }
         ImageStoreVO is = new ImageStoreVO();
-        is.setSort(sort);
         is.setName(name);
         is.setType(type);
         is.setDescri(descri);
