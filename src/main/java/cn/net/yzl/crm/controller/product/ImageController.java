@@ -1,13 +1,11 @@
-package cn.net.yzl.crm.controller;
+package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
-import cn.net.yzl.crm.service.ImageService;
+import cn.net.yzl.crm.service.product.ImageService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.product.model.db.Image;
-import cn.net.yzl.product.model.db.ImageStore;
 import cn.net.yzl.product.model.vo.image.ImageDTO;
 import cn.net.yzl.product.model.vo.image.ImageVO;
 import cn.net.yzl.product.model.vo.imageStore.ImageStoreDTO;

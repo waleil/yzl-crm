@@ -1,8 +1,8 @@
-package cn.net.yzl.crm.service.impl;
+package cn.net.yzl.crm.service.product.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.client.BrandClient;
-import cn.net.yzl.crm.service.BrandService;
+import cn.net.yzl.crm.client.product.BrandClient;
+import cn.net.yzl.crm.service.product.BrandService;
 import cn.net.yzl.product.model.db.BrandBean;
 import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;

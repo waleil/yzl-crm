@@ -1,7 +1,7 @@
-package cn.net.yzl.crm.service.impl;
+package cn.net.yzl.crm.service.product.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.service.AttributeService;
+import cn.net.yzl.crm.service.product.AttributeService;
 import cn.net.yzl.product.model.db.AttributeBean;
 import org.springframework.stereotype.Service;
 
