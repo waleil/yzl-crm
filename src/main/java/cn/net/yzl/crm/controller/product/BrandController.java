@@ -1,9 +1,9 @@
-package cn.net.yzl.crm.controller;
+package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
-import cn.net.yzl.crm.service.BrandService;
+import cn.net.yzl.crm.service.product.BrandService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.BrandBean;
 import cn.net.yzl.product.model.vo.brand.BrandDelVO;
@@ -48,9 +48,6 @@ public class BrandController {
     public ComResponse getAllBrands(@RequestParam(required = false,defaultValue = "1",value = "pageNo") Integer pageNo,
                                     @RequestParam(required = false,defaultValue = "15",value = "pageSize") Integer pageSize,
                                     String keyword) {
-        if (pageSize>50) {
-            pageSize=50;
-        }
         return brandService.getAllBrands(pageNo, pageSize,keyword);
     }
 

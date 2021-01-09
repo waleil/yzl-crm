@@ -1,10 +1,10 @@
-package cn.net.yzl.crm.service.impl;
+package cn.net.yzl.crm.service.product.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.client.ImageClient;
+import cn.net.yzl.crm.client.product.ImageClient;
 import cn.net.yzl.crm.config.FastDFSConfig;
-import cn.net.yzl.crm.service.ImageService;
+import cn.net.yzl.crm.service.product.ImageService;
 import cn.net.yzl.product.model.vo.image.ImageDTO;
 import cn.net.yzl.product.model.vo.image.ImageVO;
 import cn.net.yzl.product.model.vo.imageStore.ImageStoreDTO;

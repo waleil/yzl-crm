@@ -1,8 +1,8 @@
-package cn.net.yzl.crm.controller;
+package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.service.AttributeService;
+import cn.net.yzl.crm.service.product.AttributeService;
 import cn.net.yzl.product.model.db.AttributeBean;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

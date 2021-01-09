@@ -2,14 +2,11 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.crm.client.OrderSettingClient;
-import cn.net.yzl.crm.client.ProductClient;
-import cn.net.yzl.crm.service.ProductService;
+import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingDTO;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingProduct;
 import cn.net.yzl.order.model.vo.order.UpdateOrderCheckSettingDTO;
-import cn.net.yzl.product.model.db.ProductMainInfoBean;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
 import io.swagger.annotations.Api;

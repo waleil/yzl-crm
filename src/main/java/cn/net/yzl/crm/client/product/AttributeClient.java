@@ -1,28 +1,28 @@
-package cn.net.yzl.crm.client;
+package cn.net.yzl.crm.client.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.product.model.db.AttributeBean;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "attributeClient",url = "${api.gateway.url}/productServer/attribute")
+@FeignClient(name = "attributeClient",url = "${api.gateway.url}/productServer/attribute/v1")
 public interface AttributeClient {
 
-    @PostMapping("/v1/insert")
+    @PostMapping("insert")
     ComResponse insertProductAttribute(@RequestBody AttributeBean attributeBean);
 
-    @GetMapping("/v1/selectPage")
+    @GetMapping("selectPage")
     ComResponse selectPageAttribute(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize);
 
 
-    @GetMapping("/v1/selectById")
+    @GetMapping("selectById")
     ComResponse selectById(@RequestParam("id") Integer id);
 
-    @GetMapping("/v1/selectByCid")
+    @GetMapping("selectByCid")
     ComResponse selectByclassifyIdAttribute(@RequestParam("id") Integer id);
 
 
-    @PutMapping("/v1/update")
+    @PutMapping("update")
     ComResponse updateAttribute(@RequestBody AttributeBean attributeBean);
 
 }
