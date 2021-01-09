@@ -5,10 +5,10 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
-import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductUpdateStatusVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductVO;
+import cn.net.yzl.product.model.vo.product.vo.*;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +31,10 @@ public interface ProductClient {
 
     @PostMapping(value = "updateStatus")
     ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusVO vo);
+
     @GetMapping("queryProductListAtlas")
     ComResponse<ProductAtlasDTO> queryProductListAtlas(@RequestParam("productName") String productName, @RequestParam("id") Integer id);
+
+    @PostMapping(value = "updateTime")
+    ComResponse updateTimeByProductCode(@RequestBody ProductUpdateTimeRequestVO vo);
 }

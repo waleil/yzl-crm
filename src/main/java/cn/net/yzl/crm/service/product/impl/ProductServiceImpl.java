@@ -9,6 +9,7 @@ import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductUpdateStatusVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductUpdateTimeRequestVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,4 +45,10 @@ public class ProductServiceImpl implements ProductService {
     public ComResponse<ProductAtlasDTO> queryProductListAtlas(String productName, Integer id) {
         return productClient.queryProductListAtlas(productName,id);
     }
+
+    @Override
+    public ComResponse updateTimeByProductCode(ProductUpdateTimeRequestVO vo) {
+        return productClient.updateTimeByProductCode(vo);
+    }
+
 }

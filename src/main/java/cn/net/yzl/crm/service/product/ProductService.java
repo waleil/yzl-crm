@@ -7,6 +7,7 @@ import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductUpdateStatusVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductUpdateTimeRequestVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductVO;
 
 import java.util.List;
@@ -45,4 +46,6 @@ public interface ProductService {
      * @return
      */
     ComResponse<ProductAtlasDTO> queryProductListAtlas(String productName, Integer id);
+
+    ComResponse updateTimeByProductCode(ProductUpdateTimeRequestVO vo);
 }
