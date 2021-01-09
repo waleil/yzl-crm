@@ -8,9 +8,12 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.ehr.*;
+import cn.net.yzl.crm.dto.staff.CallnfoCriteriaTO;
+import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.StaffClient;
+import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.sys.BizException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +36,10 @@ public class StaffController {
 
     @Autowired
     private StaffService staffService;
+
+
+    @Autowired
+    private WorkOrderClient workOrderClient;
 
     /**
      * 获取员工排班信息
@@ -95,6 +102,22 @@ public class StaffController {
         }
         StaffImageBaseInfoDto staffImageBaseInfoByStaffNo = staffService.getStaffImageBaseInfoByStaffNo(staffNo);
         return ComResponse.success(staffImageBaseInfoByStaffNo);
+    }
+
+
+    /**
+     * 员工画像  根据条件获取员工通话记录
+     * @return
+     */
+    @ApiOperation(value="员工画像  根据条件获取员工通话记录",httpMethod = "post")
+    @PostMapping("/getCallRecordByStaffNo")
+    public ComResponse<Page<StaffCallRecord>> getCallRecordByStaffNo(@RequestBody CallnfoCriteriaTO callnfoCriteriaTO){
+        log.info("......StaffController.getDetailsByNo()开始,请求参数,staffNo={}......",JsonUtil.toJsonStr(callnfoCriteriaTO));
+        if (callnfoCriteriaTO==null||callnfoCriteriaTO.getPageSize()==0||callnfoCriteriaTO.getPageNo()==0){
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
+        ComResponse<Page<StaffCallRecord>> response = workOrderClient.getCallRecordByStaffNo(callnfoCriteriaTO);
+        return response;
     }
 
     /**
