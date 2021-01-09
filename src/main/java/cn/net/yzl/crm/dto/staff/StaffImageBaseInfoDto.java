@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * 员工画像基本信息实体类
  */
@@ -120,4 +122,10 @@ public class StaffImageBaseInfoDto {
     private Integer workplaceCode;
     @ApiModelProperty("工作地点")
     private String workplaceCodeStr;
+    @ApiModelProperty("商品优势")
+    private List<String> productAdvanced;
+    @ApiModelProperty("病症优势")
+    private List<String> diseaseAdvanced;
+    @ApiModelProperty("培训商品历史")
+    private List<String> trainProductHistory;
 }
