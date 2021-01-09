@@ -1,13 +1,11 @@
-package cn.net.yzl.crm.controller;
+package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
-import cn.net.yzl.crm.service.ImageService;
+import cn.net.yzl.crm.service.product.ImageService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.product.model.db.Image;
-import cn.net.yzl.product.model.db.ImageStore;
 import cn.net.yzl.product.model.vo.image.ImageDTO;
 import cn.net.yzl.product.model.vo.image.ImageVO;
 import cn.net.yzl.product.model.vo.imageStore.ImageStoreDTO;
@@ -39,6 +37,9 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
+
     @ApiOperation("上传接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "需要上传的图片或视频", required = true, dataType = "MultipartFile"),
@@ -51,6 +52,10 @@ public class ImageController {
                                                   HttpServletRequest request,
                                                   @RequestParam("storeId") Integer storeId) throws IOException {
         List<ImageDTO> list = new ArrayList<>();
+        String userId = request.getHeader("userId");
+        if (StringUtils.isEmpty(userId)){
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名！请检查您的登录状态！");
+        }
         if (files.length == 0||files.length>15) {//开始判断
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "文件数量为"+files.length+",需要为1-15张！");
         }else {
@@ -105,7 +110,7 @@ public class ImageController {
                     }
                 }
             }
-        return ComResponse.success(list);
+        return ComResponse.success(list).setMessage(fastDFSConfig.getUrl()+"/");
     }
 
     private ImageDTO upload(MultipartFile file,String userId,Integer type,Integer storeId) throws IOException {

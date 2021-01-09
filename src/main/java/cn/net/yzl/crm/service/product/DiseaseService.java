@@ -1,4 +1,4 @@
-package cn.net.yzl.crm.service;
+package cn.net.yzl.crm.service.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.product.model.db.ProductDiseaseBean;
@@ -21,4 +21,6 @@ public interface DiseaseService {
     ComResponse<List<DiseaseDTO>> queryByPid(Integer pid);
 
     ComResponse selectAllDiseases();
+
+    ComResponse changeName(Integer id, String name, String userId);
 }

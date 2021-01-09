@@ -1,4 +1,4 @@
-package cn.net.yzl.crm.client;
+package cn.net.yzl.crm.client.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
@@ -9,37 +9,37 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "categoryClient",url = "${api.gateway.url}/productServer/category")
+@FeignClient(name = "categoryClient",url = "${api.gateway.url}/productServer/category/v1")
 public interface CategoryClient {
 
-    @GetMapping("/v1/getById")
+    @GetMapping("getById")
     ComResponse<CategoryTO> getCategoryById(@RequestParam("id") Integer id);
 
-    @PostMapping("/v1/insert")
+    @PostMapping("insert")
     ComResponse<Category> insertCategory(@RequestBody CategoryVO categoryVO);
 
 
-    @PostMapping("/v1/update")
+    @PostMapping("update")
     ComResponse<Category> updateCategory(@RequestBody CategoryVO categoryVO);
 
-    @PostMapping("/v1/delete")
+    @PostMapping("delete")
     ComResponse<Category> deleteCategory(@RequestBody CategoryDelVO categoryDelVO);
 
-    @PostMapping("/v1/changeStatus")
+    @PostMapping("changeStatus")
     ComResponse<Category> changeCategoryStatus(@RequestBody CategoryChangeStatusVO categoryChangeStatusVO);
 
 
-    @PostMapping("/v1/changeAppStatus")
+    @PostMapping("changeAppStatus")
     ComResponse<Category> changeCategoryAppStatus(@RequestBody CategoryChangeStatusVO categoryChangeStatusVO);
 
 
-    @GetMapping("/v1/getByPid")
+    @GetMapping("getByPid")
     ComResponse<List<CategoryTO>> getCategoriesByPid(@RequestParam("pid") Integer pid);
 
-    @GetMapping("/v1/queryPageByPid")
+    @GetMapping("queryPageByPid")
     ComResponse<Page<CategoryTO>> queryPageByPid(@RequestParam("pid") int pid,
                                                  @RequestParam("pageNo") Integer pageNo,
                                                  @RequestParam("pageSize") Integer pageSize);
-    @GetMapping("/v1/query4SelectOption")
+    @GetMapping("query4SelectOption")
     ComResponse<List<CategorySelectTO>> query4SelectOption(@RequestParam(value ="pid") Integer pid);
 }

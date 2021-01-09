@@ -1,31 +1,35 @@
-package cn.net.yzl.crm.client;
+package cn.net.yzl.crm.client.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "diseaseClient",url = "${api.gateway.url}/productServer/disease")
+@FeignClient(name = "diseaseClient",url = "${api.gateway.url}/productServer/disease/v1")
 public interface DiseaseClient {
 
-    @GetMapping("/v1/queryTreeNode")
+    @GetMapping("queryTreeNode")
     ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree();
 
-    @PostMapping("/v1/insert")
+    @PostMapping("insert")
     ComResponse<Integer> insertDisease(@RequestBody DiseaseVo diseaseVo);
 
-    @PostMapping("/v1/deleteById")
+    @PostMapping("deleteById")
     ComResponse<Void> deleteDisease(@RequestBody  DiseaseDelVo diseaseDelVo);
 
-    @GetMapping("v1/selectAll")
+    @GetMapping("selectAll")
     ComResponse selectAllDiseases();
 
-    @GetMapping("v1/queryByPID")
+    @GetMapping("queryByPID")
     ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid);
+
+    @GetMapping("changeName")
+    ComResponse changeName(@RequestParam("id") Integer id, @RequestParam("name") String name,@RequestParam("userId") String userId);
 
 }
