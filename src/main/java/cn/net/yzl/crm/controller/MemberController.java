@@ -227,11 +227,11 @@ public class MemberController {
         return result;
     }
 
-    @ApiOperation("保存顾客收货地址")
+    @ApiOperation("保存顾客购买能力")
     @PostMapping("/v1/saveMemberOrderStat")
     public GeneralResult saveMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat) {
         if (memberOrderStat == null) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        if (StringUtil.isNullOrEmpty(memberOrderStat.getMember_card())) {
+        if (memberOrderStat.getId()==0) {
             memberFien.addMemberOrderStat(memberOrderStat);
         } else {
             memberFien.updateMemberOrderStat(memberOrderStat);
@@ -239,7 +239,7 @@ public class MemberController {
         return GeneralResult.success();
     }
 
-    @ApiOperation("保存顾客购买能力")
+    @ApiOperation("获取顾客购买能力")
     @PostMapping("/v1/getMemberOrderStat")
     public GeneralResult getMemberOrderStat(
             @RequestParam("member_card")
