@@ -17,20 +17,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.Valid;
 import java.util.List;
 
-@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/product")
+@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/product/v1")
 public interface ProductClient {
 
-    @GetMapping(value = "v1/queryCountByStatus")
+    @GetMapping(value = "queryCountByStatus")
     ComResponse<List<ProductStatusCountDTO>> queryCountByStatus();
 
-    @GetMapping(value = "v1/queryPageProduct")
+    @GetMapping(value = "queryPageProduct")
     ComResponse<Page<ProductListDTO>> queryListProduct(@RequestParam("vo") ProductSelectVO vo);
 
-    @PostMapping(value = "v1/edit")
+    @PostMapping(value = "edit")
     ComResponse<Void> editProduct(@RequestBody ProductVO vo);
 
-    @PostMapping(value = "v1/updateStatus")
+    @PostMapping(value = "updateStatus")
     ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusVO vo);
-    @GetMapping("v1/queryProductListAtlas")
+    @GetMapping("queryProductListAtlas")
     ComResponse<ProductAtlasDTO> queryProductListAtlas(@RequestParam("productName") String productName, @RequestParam("id") Integer id);
 }

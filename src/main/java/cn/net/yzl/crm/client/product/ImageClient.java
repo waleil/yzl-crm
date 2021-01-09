@@ -18,25 +18,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 
-@FeignClient(name = "imageClient",url = "${api.gateway.url}/productServer/image")
+@FeignClient(name = "imageClient",url = "${api.gateway.url}/productServer/image/v1")
 public interface ImageClient {
 
-    @PostMapping("/v1/insert")
+    @PostMapping("insert")
     ComResponse insert(@RequestBody ImageVO img);
 
-    @PostMapping("/v1/createAlbum")
+    @PostMapping("createAlbum")
     ComResponse createAlbum(@RequestBody ImageStoreVO is);
 
-    @GetMapping("/v1/selectByStoreId")
+    @GetMapping("selectByStoreId")
     ComResponse<Page<ImageDTO>>  selectByStoreId(@RequestParam("id") Integer id, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize);
 
-    @GetMapping("/v1/selectTypeById")
+    @GetMapping("selectTypeById")
     ComResponse selectTypeById(@RequestParam("id") Integer id );
 
-    @GetMapping("/v1/selectStores")
+    @GetMapping("selectStores")
     ComResponse<List<ImageStoreDTO>> selectStores(@RequestParam("type") Integer type);
 
-    @GetMapping("/v1/deleteById")
+    @GetMapping("deleteById")
     ComResponse deleteById(@RequestParam("id") Integer id,@RequestParam("userId") String userId);
 
     @GetMapping("v1/deleteStoreById")

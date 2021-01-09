@@ -9,25 +9,25 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 
-@FeignClient(name = "brandClient",url = "${api.gateway.url}/productServer/brand")
+@FeignClient(name = "brandClient",url = "${api.gateway.url}/productServer/brand/v1")
 public interface BrandClient {
 
     @ApiOperation(value = "获取所有品牌信息")
-    @GetMapping("/v1/getPage")
+    @GetMapping("getPage")
     ComResponse getAllBrands(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize, @RequestParam("keyWord") String keyword);
 
-    @GetMapping("/v1/selectById")
+    @GetMapping("selectById")
     ComResponse<BrandBean> getBrandById(@RequestParam("id") Integer id);
 
-    @PutMapping("/v1/changeStatus")
+    @PutMapping("changeStatus")
     ComResponse changeBrandStatus(@RequestParam("flag") Integer flag, @RequestParam("id") Integer id);
 
-    @PostMapping("/v1/edit")
+    @PostMapping("edit")
     ComResponse editBrand(@RequestBody BrandVO brand);
 
-    @PostMapping("/v1/deleteById")
+    @PostMapping("deleteById")
     ComResponse deleteById(@RequestBody BrandDelVO brandDelVO);
 
-    @GetMapping("/v1/checkUnique")
+    @GetMapping("checkUnique")
     ComResponse<Boolean> checkUnique(@RequestParam("name") String name, @RequestParam("id") int id);
 }
