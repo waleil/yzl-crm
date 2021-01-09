@@ -1,9 +1,9 @@
-package cn.net.yzl.crm.service.impl;
+package cn.net.yzl.crm.service.product.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.client.ProductClient;
-import cn.net.yzl.crm.service.ProductService;
+import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;

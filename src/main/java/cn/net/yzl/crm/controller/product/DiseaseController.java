@@ -1,10 +1,8 @@
-package cn.net.yzl.crm.controller;
+package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.service.DiseaseService;
-import cn.net.yzl.product.model.db.DiseaseBean;
-import cn.net.yzl.product.model.db.ProductDiseaseBean;
+import cn.net.yzl.crm.service.product.DiseaseService;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController

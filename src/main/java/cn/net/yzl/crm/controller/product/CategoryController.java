@@ -1,9 +1,8 @@
-package cn.net.yzl.crm.controller;
+package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.service.CategoryService;
-import cn.net.yzl.product.model.db.Category;
+import cn.net.yzl.crm.service.product.CategoryService;
 import cn.net.yzl.product.model.vo.category.CategoryDelVO;
 import cn.net.yzl.product.model.vo.category.CategorySelectTO;
 import cn.net.yzl.product.model.vo.category.CategoryTO;

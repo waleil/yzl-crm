@@ -1,9 +1,9 @@
-package cn.net.yzl.crm.service.impl;
+package cn.net.yzl.crm.service.product.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.client.CategoryClient;
-import cn.net.yzl.crm.service.CategoryService;
+import cn.net.yzl.crm.client.product.CategoryClient;
+import cn.net.yzl.crm.service.product.CategoryService;
 import cn.net.yzl.product.model.db.Category;
 import cn.net.yzl.product.model.vo.category.*;
 import org.springframework.beans.BeanUtils;
