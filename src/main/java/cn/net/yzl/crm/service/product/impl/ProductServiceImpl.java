@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
@@ -49,6 +50,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ComResponse updateTimeByProductCode(ProductUpdateTimeRequestVO vo) {
         return productClient.updateTimeByProductCode(vo);
+    }
+
+    @Override
+    public ComResponse<ProductDetailVO> queryProductDetail(String productCode) {
+        return productClient.queryProductDetail(productCode);
     }
 
 }

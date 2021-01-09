@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.*;
@@ -160,6 +161,13 @@ public class ProductController {
         }
         vo.setUpdateNo(userId);
         return productService.updateTimeByProductCode(vo);
+
+    }
+
+    @GetMapping(value = "v1/queryDetail")
+    @ApiOperation("查询商品详情")
+    public ComResponse<ProductDetailVO> queryProductDetail(@RequestParam("productCode") String productCode) {
+        return productService.queryProductDetail(productCode);
     }
 
 }

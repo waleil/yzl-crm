@@ -3,12 +3,12 @@ package cn.net.yzl.crm.client.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,4 +37,8 @@ public interface ProductClient {
 
     @PostMapping(value = "updateTime")
     ComResponse updateTimeByProductCode(@RequestBody ProductUpdateTimeRequestVO vo);
+
+    @GetMapping(value = "queryProductDetail")
+    @ApiOperation("查询商品详情")
+    ComResponse<ProductDetailVO> queryProductDetail(@RequestParam("productCode") String productCode);
 }

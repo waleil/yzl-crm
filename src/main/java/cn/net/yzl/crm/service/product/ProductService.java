@@ -3,6 +3,7 @@ package cn.net.yzl.crm.service.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
@@ -48,4 +49,6 @@ public interface ProductService {
     ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(String productName, Integer id);
 
     ComResponse updateTimeByProductCode(ProductUpdateTimeRequestVO vo);
+
+    ComResponse<ProductDetailVO> queryProductDetail(String productCode);
 }
