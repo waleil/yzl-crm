@@ -148,7 +148,7 @@ public class ProductController {
 
     @PostMapping(value = "v1/updateTime")
     @ApiOperation("修改商品售卖时间")
-    ComResponse updateTimeByProductCode(@RequestBody @Valid ProductUpdateTimeRequestVO vo, HttpServletRequest request, BindingResult result) {
+    ComResponse updateTimeByProductCode(@RequestBody @Valid ProductUpdateTimeVO vo, HttpServletRequest request, BindingResult result) {
         if (result.hasErrors()) {
             StringBuilder sb = new StringBuilder();
             for (ObjectError error : result.getAllErrors()) {

@@ -36,7 +36,7 @@ public interface ProductClient {
     ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(@RequestParam("productName") String productName, @RequestParam("id") Integer id);
 
     @PostMapping(value = "updateTime")
-    ComResponse updateTimeByProductCode(@RequestBody ProductUpdateTimeRequestVO vo);
+    ComResponse updateTimeByProductCode(@RequestBody ProductUpdateTimeVO vo);
 
     @GetMapping(value = "queryProductDetail")
     @ApiOperation("查询商品详情")
