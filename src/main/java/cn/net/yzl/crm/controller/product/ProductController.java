@@ -139,11 +139,12 @@ public class ProductController {
     @ApiOperation("查询商品图谱,两个参数至少填入一个")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "productName", value = "商品名称",  dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "id", value = "病症id", dataType = "Int", paramType = "query")
+            @ApiImplicitParam(name = "id", value = "病症id", dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pid", value = "病症pid", dataType = "Int", paramType = "query"),
     })
     @GetMapping("v1/queryProductListAtlas")
-    public ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(@RequestParam(value = "productName",required = false) String productName, @RequestParam(value = "id",required = false) Integer id){
-        return productService.queryProductListAtlas(productName,id);
+    public ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(@RequestParam(value = "productName",required = false) String productName, @RequestParam(value = "id",required = false) Integer id, @RequestParam(value = "pid",required = false) Integer pid){
+        return productService.queryProductListAtlas(productName,id,pid);
     }
 
     @PostMapping(value = "v1/updateTime")

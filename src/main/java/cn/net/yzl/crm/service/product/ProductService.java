@@ -43,7 +43,7 @@ public interface ProductService {
      * @param id 病症id
      * @return
      */
-    ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(String productName, Integer id);
+    ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(String productName, Integer id,Integer pid);
 
     ComResponse updateTimeByProductCode(ProductUpdateTimeVO vo);
 
