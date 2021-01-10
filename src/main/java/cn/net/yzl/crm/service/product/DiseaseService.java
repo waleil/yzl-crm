@@ -1,11 +1,13 @@
 package cn.net.yzl.crm.service.product;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.product.model.db.ProductDiseaseBean;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
+import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -23,4 +25,6 @@ public interface DiseaseService {
     ComResponse selectAllDiseases();
 
     ComResponse changeName(Integer id, String name, String userId);
+
+    ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(int pageNo, int pageSize);
 }

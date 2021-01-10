@@ -1,12 +1,14 @@
 package cn.net.yzl.crm.service.product.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.DiseaseClient;
 import cn.net.yzl.crm.service.product.DiseaseService;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
+import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +48,10 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public ComResponse changeName(Integer id, String name, String userId) {
         return client.changeName(id, name, userId);
+    }
+
+    @Override
+    public ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(int pageNo, int pageSize) {
+        return client.queryDiseaseTreePage(pageNo,pageSize);
     }
 }

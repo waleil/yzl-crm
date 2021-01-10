@@ -4,10 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.service.product.ProductService;
-import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
-import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
+import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +49,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ComResponse<ProductDetailVO> queryProductDetail(String productCode) {
         return productClient.queryProductDetail(productCode);
+    }
+
+    @Override
+    public ComResponse<ProductPortraitDTO> queryProductPortrait(String productCode) {
+        return productClient.queryProductPortrait(productCode);
+    }
+
+    @Override
+    public ComResponse<List<ProductDiseaseDTO>> queryDiseaseByProductCode(String productCode) {
+        return productClient.queryDiseaseByProductCode(productCode);
     }
 
 }

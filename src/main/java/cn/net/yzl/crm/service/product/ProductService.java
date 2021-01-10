@@ -2,11 +2,9 @@ package cn.net.yzl.crm.service.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
-import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
+import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -46,6 +44,28 @@ public interface ProductService {
     ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(String productName, Integer id);
 
     ComResponse updateTimeByProductCode(ProductUpdateTimeVO vo);
-
+    /**
+     * @Author: lichanghong
+     * @Description: 查询商品详情信息
+     * @Date: 2021/1/9 13:00 下午
+     * @param productCode
+     * @Return:
+     */
     ComResponse<ProductDetailVO> queryProductDetail(String productCode);
+    /**
+     * @Author: lichanghong
+     * @Description: 查询商品画像
+     * @Date: 2021/1/10 12:29 下午
+     * @param productCode 商品编号
+     * @Return:
+     */
+    ComResponse<ProductPortraitDTO> queryProductPortrait( String productCode);
+    /**
+     * @Author: lichanghong
+     * @Description: 根据商品编号查询病症
+     * @Date: 2021/1/10 4:03 下午
+     * @param productCode
+     * @Return:
+     */
+    ComResponse<List<ProductDiseaseDTO>> queryDiseaseByProductCode(String productCode);
 }

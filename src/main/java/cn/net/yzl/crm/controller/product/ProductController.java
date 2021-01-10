@@ -4,10 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.service.product.ProductService;
-import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
-import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
+import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import io.swagger.annotations.*;
@@ -173,5 +170,22 @@ public class ProductController {
     public ComResponse<ProductDetailVO> queryProductDetail(@RequestParam("productCode") String productCode) {
         return productService.queryProductDetail(productCode);
     }
+    @GetMapping(value = "v1/queryProductPortrait")
+    @ApiOperation("查询商品画像")
+    public ComResponse<ProductPortraitDTO> queryProductPortrait(@RequestParam("productCode") String productCode) {
+        return productService.queryProductPortrait(productCode);
+    }
 
+    /**
+     * @param productCode
+     * @Author: lichanghong
+     * @Description: 根据商品编号查询病症
+     * @Date: 2021/1/10 4:03 下午
+     * @Return: java.util.List<cn.net.yzl.product.model.vo.product.dto.ProductDiseaseDTO>
+     */
+    @GetMapping(value = "v1/queryDiseaseByProductCode")
+    @ApiOperation("根据商品编号查询病症")
+    public ComResponse<List<ProductDiseaseDTO>> queryDiseaseByProductCode(@RequestParam("productCode") String productCode) {
+        return productService.queryDiseaseByProductCode(productCode);
+    }
 }
