@@ -106,7 +106,7 @@ public class ProductController {
      */
     @PostMapping(value = "v1/updateStatus")
     @ApiOperation("修改商品上下架状态")
-    ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusRequestVO vo,HttpServletRequest request) {
+    ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusVO vo,HttpServletRequest request) {
         String userId = request.getHeader("userId");
         if (StringUtils.isBlank(userId)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户信息，请检查您的登录状态！");
