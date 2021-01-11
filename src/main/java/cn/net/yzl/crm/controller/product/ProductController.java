@@ -5,11 +5,9 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.service.product.DiseaseService;
 import cn.net.yzl.crm.service.product.ProductService;
-import cn.net.yzl.product.model.db.DiseaseBean;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -20,10 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Api(tags = "商品服务")
 @RestController
@@ -135,6 +132,18 @@ public class ProductController {
      * @Return: java.lang.String
      */
     public String checkParams(ProductVO vo) {
+        List<ProductImageVO> images = vo.getImages();
+
+        int[] count = {0};
+        images.forEach(image ->{
+            if (image.getMainFlag()==1){
+                count[0]++;
+            }
+        });
+        if (count[0] > 1){
+            return "只能存在一张主图，当前设置了"+count[0]+"张！";
+        }
+        
         if (vo.getCostPriceD() == null) {
             return "市场价价格不能为空";
         }

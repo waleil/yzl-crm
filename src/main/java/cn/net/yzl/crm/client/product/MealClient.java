@@ -2,18 +2,13 @@ package cn.net.yzl.crm.client.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.product.model.db.Meal;
 import cn.net.yzl.product.model.vo.product.dto.MealDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.*;
-import com.alibaba.nacos.common.utils.CollectionUtils;
-import com.alibaba.nacos.common.utils.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,12 +31,12 @@ public interface MealClient {
      */
     @GetMapping(value = "v1/queryCountByStatus")
     @ApiOperation("按照上下架状态查询商品套餐数量")
-    public ComResponse<List<ProductStatusCountDTO>> queryCountByStatus();
+    ComResponse<List<ProductStatusCountDTO>> queryCountByStatus();
 
 
     @GetMapping(value = "v1/queryPageProductMeal")
     @ApiOperation("分页查询商品套餐列表")
-    public ComResponse<Page<ProductMealListDTO>> queryListProductMeal(@RequestBody ProductMealSelectVO vo);
+    ComResponse<Page<ProductMealListDTO>> queryListProductMeal(@RequestParam ProductMealSelectVO vo);
     /**
      * @Description:
      * @Author: dongjunmei
@@ -52,7 +47,7 @@ public interface MealClient {
     @PostMapping(value = "v1/updateStatus")
     @ApiOperation("修改套餐上下架状态")
 
-    public ComResponse updateStatusByMealCode(@RequestBody @Valid ProductMealUpdateStatusVO vo);
+    ComResponse updateStatusByMealCode(@RequestBody @Valid ProductMealUpdateStatusVO vo);
 
     /**
      * @Description:
@@ -63,7 +58,7 @@ public interface MealClient {
      **/
     @PostMapping(value = "v1/edit")
     @ApiOperation("编辑套餐")
-    public ComResponse<Void> editProductMeal(@RequestBody @Valid MealVO vo);
+    ComResponse<Void> editProductMeal(@RequestBody @Valid MealVO vo);
 
 
 
@@ -76,7 +71,7 @@ public interface MealClient {
      **/
     @PostMapping(value = "v1/queryMealDetail")
     @ApiOperation("查询商品详情")
-    public ComResponse<ProductMealDetailVO> queryMealDetail(@RequestBody Meal meal);
+    ComResponse<ProductMealDetailVO> queryMealDetail(@RequestBody Meal meal);
 
     /**
      * @Description:
@@ -91,6 +86,6 @@ public interface MealClient {
 
     @GetMapping(value = "v1/queryProductMealPortray")
     @ApiOperation("查询商品套餐画像")
-    public ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") Integer mealNo);
+    ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") Integer mealNo);
 
 }
