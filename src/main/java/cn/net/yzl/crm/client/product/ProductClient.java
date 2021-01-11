@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "productClient", url = "localhost:2077/product")
+@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/product/v1")
 public interface ProductClient {
 
     @GetMapping(value = "v1/queryCountByStatus")
