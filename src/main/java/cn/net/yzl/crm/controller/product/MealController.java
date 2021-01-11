@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("productMeal")
-@Api("套餐服务")
+@Api(tags = "套餐服务")
 public class MealController {
 
     @Autowired
