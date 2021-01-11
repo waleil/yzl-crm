@@ -3,10 +3,13 @@ package cn.net.yzl.crm.controller.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.service.product.DiseaseService;
 import cn.net.yzl.crm.service.product.ProductService;
+import cn.net.yzl.product.model.db.DiseaseBean;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -17,8 +20,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "商品服务")
 @RestController
@@ -27,6 +32,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private DiseaseService diseaseService;
 
     /**
      * @param
@@ -82,14 +90,17 @@ public class ProductController {
     @PostMapping(value = "v1/edit")
     @ApiOperation("编辑商品")
     public ComResponse<Void> editProduct(@RequestBody @Valid ProductVO vo,HttpServletRequest request) {
+        //参数校验
         String str=checkParams(vo);
         if(StringUtils.isNotBlank(str)){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), str);
         }
+        //获取操作人id
         String userId;
         if(StringUtils.isBlank(userId = request.getHeader("userId"))){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员身份失败，尝试重新登陆！");
         }
+        //获取修改时间和操作人
         vo.setUpdateTime(new Date());
         vo.setUpdateNo(userId);
         return productService.editProduct(vo);

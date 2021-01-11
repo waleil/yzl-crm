@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.DiseaseClient;
 import cn.net.yzl.crm.service.product.DiseaseService;
+import cn.net.yzl.product.model.db.DiseaseBean;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
@@ -41,7 +42,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     @Override
-    public ComResponse selectAllDiseases() {
+    public ComResponse<List<DiseaseBean>> selectAllDiseases() {
         return client.selectAllDiseases();
     }
 
