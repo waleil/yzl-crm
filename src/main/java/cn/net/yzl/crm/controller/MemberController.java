@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.dto.order.ListParamsDTO;
@@ -13,7 +14,9 @@ import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.sys.BizException;
 import com.github.pagehelper.PageInfo;
+import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -177,7 +180,7 @@ public class MemberController {
             @NotBlank(message = "member_card不能为空")
             @ApiParam(name = "member_card", value = "会员卡号", required = true)
                     String member_card) {
-        GeneralResult<List<ProductConsultation>> result  = memberFien.getProductConsultationList(member_card);
+        GeneralResult<List<ProductConsultation>> result = memberFien.getProductConsultationList(member_card);
         return result;
     }
 
@@ -195,6 +198,82 @@ public class MemberController {
             @ApiParam(name = "member_card", value = "会员卡号", required = true)
                     String member_card) {
         GeneralResult<List<MemberDisease>> result = memberFien.getMemberDisease(member_card);
+        return result;
+    }
+
+    @ApiOperation("保存收货地址")
+    @PostMapping("/v1/saveReveiverAddress")
+    public GeneralResult saveReveiverAddress(@RequestBody ReveiverAddress reveiverAddress) {
+        if (reveiverAddress == null) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        if (StringUtil.isNullOrEmpty(reveiverAddress.getMember_card())) {
+            // todo 获取code码
+            memberFien.addReveiverAddress(reveiverAddress);
+        } else {
+            memberFien.updateReveiverAddress(reveiverAddress);
+        }
+
+        return GeneralResult.success();
+    }
+
+    @ApiOperation("获取收货地址")
+    @GetMapping("/v1/getReveiverAddress")
+    public GeneralResult getReveiverAddress(
+            @RequestParam("member_card")
+            @NotBlank(message = "member_card不能为空")
+            @ApiParam(name = "member_card", value = "会员卡号", required = true)
+                    String member_card
+    ) {
+        GeneralResult<List<ReveiverAddress>> result = memberFien.getReveiverAddress(member_card);
+        return result;
+    }
+
+    @ApiOperation("保存顾客购买能力")
+    @PostMapping("/v1/saveMemberOrderStat")
+    public GeneralResult saveMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat) {
+        if (memberOrderStat == null) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        if (memberOrderStat.getId()==0) {
+            memberFien.addMemberOrderStat(memberOrderStat);
+        } else {
+            memberFien.updateMemberOrderStat(memberOrderStat);
+        }
+        return GeneralResult.success();
+    }
+
+    @ApiOperation("获取顾客购买能力")
+    @PostMapping("/v1/getMemberOrderStat")
+    public GeneralResult getMemberOrderStat(
+            @RequestParam("member_card")
+            @NotBlank(message = "member_card不能为空")
+            @ApiParam(name = "member_card", value = "会员卡号", required = true)
+                    String member_card
+    ) {
+        GeneralResult<MemberOrderStat> result = memberFien.getMemberOrderStat(member_card);
+        return result;
+    }
+
+    @ApiOperation("保存顾客行为偏好")
+    @PostMapping("/v1/saveMemberAction")
+    public GeneralResult saveMemberAction(@RequestBody MemberAction memberAction) {
+        if (memberAction == null || StringUtil.isNullOrEmpty(memberAction.getMember_card()))
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        GeneralResult<MemberAction> result = memberFien.getMemberAction(memberAction.getMember_card());
+        if (result.getData() == null) {
+            memberFien.addMemberAction(memberAction);
+        } else {
+            memberFien.updateMemberAction(memberAction);
+        }
+        return GeneralResult.success();
+    }
+
+    @ApiOperation("获取顾客行为偏好")
+    @PostMapping("/v1/getMemberAction")
+    public GeneralResult getMemberAction(
+            @RequestParam("member_card")
+            @NotBlank(message = "member_card不能为空")
+            @ApiParam(name = "member_card", value = "会员卡号", required = true)
+                    String member_card
+    ) {
+        GeneralResult<MemberAction> result = memberFien.getMemberAction(member_card);
         return result;
     }
 

@@ -1,12 +1,14 @@
 package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.service.product.DiseaseService;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
+import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,4 +89,14 @@ public class DiseaseController {
         return diseaseService.changeName(id,name,userId);
     }
 
+    @ApiOperation(value = "根据病症查询商品信息", notes = "根据病症查询商品信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", paramType="query",value = "页码", dataType = "int",defaultValue = "1"),
+            @ApiImplicitParam(name = "pageSize",paramType="query", value = "每页显示记录数", dataType = "int",defaultValue = "15")
+    })
+    @GetMapping("v1/queryDiseasePage")
+    public ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(@RequestParam(required = false,defaultValue = "1")Integer pageNo,
+                                                                      @RequestParam(required = false,defaultValue = "10")  Integer pageSize){
+        return diseaseService.queryDiseaseTreePage(pageNo,pageSize);
+    }
 }
