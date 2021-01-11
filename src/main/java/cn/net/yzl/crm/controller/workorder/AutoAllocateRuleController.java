@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -29,7 +30,7 @@ public class AutoAllocateRuleController {
 
     @PostMapping("/v1/list")
     @ApiOperation(value = "查询智能派单规则列表")
-    @ApiImplicitParam(name = "allocateRuleBean", value = "只需要输入name,ruleType", required = true, dataType = "AutoAllocateRuleBean")
+    @ApiImplicitParam(name = "criteriaTO", value = "查询参数，可以都为空", required = false, dataType = "AutoAllocateRuleCriteriaTO")
     public ComResponse<List<AutoAllocateRuleBean>> list(@RequestBody AutoAllocateRuleCriteriaTO criteriaTO) {
         ComResponse<List<AutoAllocateRuleBean>> result = autoAllocateRuleClient.list(criteriaTO);
         return result;
@@ -69,6 +70,11 @@ public class AutoAllocateRuleController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_ERROR_CODE.getMessage());
         }
     }
+
+//    public ComResponse<Void> add(@RequestBody Map<String, Object> map){
+//        return null;
+//    }
+
 
 
 
