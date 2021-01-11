@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/product/v1")
+@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/product")
 public interface ProductClient {
 
     @GetMapping(value = "v1/queryCountByStatus")
     ComResponse<List<ProductStatusCountDTO>> queryCountByStatus();
 
-    @GetMapping(value = "/v1/queryPageProduct")
+    @GetMapping(value = "v1/queryPageProduct")
     ComResponse<Page<ProductListDTO>> queryListProduct(@SpringQueryMap ProductSelectVO vo);
 
     @PostMapping(value = "v1/edit")
