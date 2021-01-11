@@ -3,14 +3,10 @@ package cn.net.yzl.crm.service.product.impl;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.product.ProductService;
-import cn.net.yzl.product.model.vo.product.dto.ProductAtlasDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
-import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductUpdateStatusVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductUpdateTimeRequestVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductVO;
+import cn.net.yzl.product.model.vo.product.dto.*;
+import cn.net.yzl.product.model.vo.product.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +17,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductClient productClient;
+
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
     @Override
     public ComResponse<List<ProductStatusCountDTO>> queryCountByStatus() {
         return productClient.queryCountByStatus();
@@ -42,13 +41,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(String productName, Integer id) {
-        return productClient.queryProductListAtlas(productName,id);
+    public ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(String productName, Integer id,Integer pid) {
+        return productClient.queryProductListAtlas(productName,id,pid);
     }
 
     @Override
-    public ComResponse updateTimeByProductCode(ProductUpdateTimeRequestVO vo) {
+    public ComResponse updateTimeByProductCode(ProductUpdateTimeVO vo) {
         return productClient.updateTimeByProductCode(vo);
+    }
+
+    @Override
+    public ComResponse<ProductDetailVO> queryProductDetail(String productCode) {
+        return productClient.queryProductDetail(productCode).setMessage(fastDFSConfig.getUrl());
+    }
+
+    @Override
+    public ComResponse<ProductPortraitDTO> queryProductPortrait(String productCode) {
+        return productClient.queryProductPortrait(productCode);
+    }
+
+    @Override
+    public ComResponse<List<ProductDiseaseDTO>> queryDiseaseByProductCode(String productCode) {
+        return productClient.queryDiseaseByProductCode(productCode);
     }
 
 }
