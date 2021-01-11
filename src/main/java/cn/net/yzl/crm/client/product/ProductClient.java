@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +16,8 @@ public interface ProductClient {
     @GetMapping(value = "v1/queryCountByStatus")
     ComResponse<List<ProductStatusCountDTO>> queryCountByStatus();
 
-    @PostMapping(value = "/v1/queryPageProduct")
-    ComResponse<Page<ProductListDTO>> queryListProduct(@RequestBody ProductSelectVO vo);
+    @GetMapping(value = "/v1/queryPageProduct")
+    ComResponse<Page<ProductListDTO>> queryListProduct(@SpringQueryMap ProductSelectVO vo);
 
     @PostMapping(value = "v1/edit")
     ComResponse<Void> editProduct(@RequestBody ProductVO vo);
