@@ -9,6 +9,7 @@ import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -103,7 +104,7 @@ public class ProductController {
      */
     @PostMapping(value = "v1/updateStatus")
     @ApiOperation("修改商品上下架状态")
-    ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusVO vo,HttpServletRequest request) {
+    ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusRequestVO vo,HttpServletRequest request) {
         String userId = request.getHeader("userId");
         if (StringUtils.isBlank(userId)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户信息，请检查您的登录状态！");
@@ -146,7 +147,7 @@ public class ProductController {
 
     @PostMapping(value = "v1/updateTime")
     @ApiOperation("修改商品售卖时间")
-    ComResponse updateTimeByProductCode(@RequestBody @Valid ProductUpdateTimeVO vo, HttpServletRequest request, BindingResult result) {
+    ComResponse updateTimeByProductCode(@RequestBody @Valid ProductUpdateTimeRequestVO vo, HttpServletRequest request, BindingResult result) {
         if (result.hasErrors()) {
             StringBuilder sb = new StringBuilder();
             for (ObjectError error : result.getAllErrors()) {
@@ -154,15 +155,17 @@ public class ProductController {
             }
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), sb.toString());
         }
+        ProductUpdateTimeVO params = new ProductUpdateTimeVO();
         if (CollectionUtils.isEmpty(vo.getProductCodeList())) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), "商品code不能为空");
         }
+        BeanUtils.copyProperties(vo, params);
         String userId = request.getHeader("userId");
         if(StringUtils.isEmpty(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员工编号，请检查您的登录状态！");
         }
-        vo.setUpdateNo(userId);
-        return productService.updateTimeByProductCode(vo);
+        params.setUpdateNo(userId);
+        return productService.updateTimeByProductCode(params);
 
     }
 

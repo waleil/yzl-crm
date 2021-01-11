@@ -3,6 +3,7 @@ package cn.net.yzl.crm.service.product.impl;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
@@ -16,6 +17,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductClient productClient;
+
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
     @Override
     public ComResponse<List<ProductStatusCountDTO>> queryCountByStatus() {
         return productClient.queryCountByStatus();
@@ -48,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ComResponse<ProductDetailVO> queryProductDetail(String productCode) {
-        return productClient.queryProductDetail(productCode);
+        return productClient.queryProductDetail(productCode).setMessage(fastDFSConfig.getUrl());
     }
 
     @Override
