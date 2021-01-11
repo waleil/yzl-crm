@@ -36,7 +36,7 @@ public interface MealClient {
 
     @GetMapping(value = "v1/queryPageProductMeal")
     @ApiOperation("分页查询商品套餐列表")
-    ComResponse<Page<ProductMealListDTO>> queryListProductMeal(@RequestParam ProductMealSelectVO vo);
+    ComResponse<Page<ProductMealListDTO>> queryListProductMeal(@RequestParam("vo") ProductMealSelectVO vo);
     /**
      * @Description:
      * @Author: dongjunmei
