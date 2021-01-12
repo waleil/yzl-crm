@@ -75,11 +75,27 @@ public class MealController {
     @PostMapping(value = "v1/updateStatus")
     @ApiOperation("修改套餐上下架状态")
 
-    public ComResponse updateStatusByMealCode(@RequestBody @Valid ProductMealUpdateStatusVO vo) {
+    public ComResponse updateStatusByMealCode(@RequestBody @Valid ProductMealUpdateStatusRequestVO vo,HttpServletRequest request) {
+
+        String userId;
+
+        if(StringUtils.isEmpty(userId = request.getHeader("userId"))){
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验用户身份失败，请您重新登陆！");
+        }
+
+        ProductMealUpdateStatusVO condition = new ProductMealUpdateStatusVO();
+
+        condition.setUpdateNo(userId);
+
         if (CollectionUtils.isEmpty(vo.getMealNoList())) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), "套餐code不能为空");
         }
-        return mealClient.updateStatusByMealCode(vo);
+
+        condition.setMealNoList(vo.getMealNoList());
+
+        condition.setStatus(vo.getStatus());
+
+        return mealClient.updateStatusByMealCode(condition);
     }
 
     /**
