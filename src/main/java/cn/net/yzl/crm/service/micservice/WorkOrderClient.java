@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.staff.CallnfoCriteriaTO;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,4 +18,12 @@ public interface WorkOrderClient {
      */
     @PostMapping("/callinfo/v2/list")
     ComResponse<Page<StaffCallRecord>> getCallRecordByStaffNo(CallnfoCriteriaTO callnfoCriteriaTO);
+
+    /**
+     * 获取通话记录
+     * @param callInfoDTO
+     * @return
+     */
+    @PostMapping("/callinfo/v2/list")
+    ComResponse<Page<StaffCallRecord>> getCallRecord(CallInfoDTO callInfoDTO);
 }
