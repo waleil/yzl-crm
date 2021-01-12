@@ -9,6 +9,7 @@ import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @FeignClient(name = "mealClient",url = "${api.gateway.url}/productServer/productMeal")
+//@FeignClient("yzl-product-server")
 public interface MealClient {
 
 
@@ -36,7 +38,7 @@ public interface MealClient {
 
     @GetMapping(value = "v1/queryPageProductMeal")
     @ApiOperation("分页查询商品套餐列表")
-    ComResponse<Page<ProductMealListDTO>> queryListProductMeal(@RequestParam("vo") ProductMealSelectVO vo);
+    ComResponse<Page<ProductMealListDTO>> queryListProductMeal(@SpringQueryMap ProductMealSelectVO vo);
     /**
      * @Description:
      * @Author: dongjunmei
