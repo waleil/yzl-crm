@@ -1,12 +1,16 @@
 package cn.net.yzl.crm.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
+import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.order.ListParamsDTO;
+import cn.net.yzl.crm.dto.staff.CallnfoCriteriaTO;
+import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.model.Media;
 //import cn.net.yzl.crm.model.Member;
 //import cn.net.yzl.crm.model.MemberGrade;
@@ -14,6 +18,7 @@ import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.sys.BizException;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
@@ -42,6 +47,9 @@ public class MemberController {
     MemberFien memberFien;
     @Autowired
     CoopCompanyMediaFien coopCompanyMediaFien;
+
+    @Autowired
+    WorkOrderClient workOrderClient;
 
     @ApiOperation(value = "分页查询顾客列表")
     @PostMapping("v1/listPage")
@@ -231,7 +239,7 @@ public class MemberController {
     @PostMapping("/v1/saveMemberOrderStat")
     public GeneralResult saveMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat) {
         if (memberOrderStat == null) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        if (memberOrderStat.getId()==0) {
+        if (memberOrderStat.getId() == 0) {
             memberFien.addMemberOrderStat(memberOrderStat);
         } else {
             memberFien.updateMemberOrderStat(memberOrderStat);
@@ -240,7 +248,7 @@ public class MemberController {
     }
 
     @ApiOperation("获取顾客购买能力")
-    @PostMapping("/v1/getMemberOrderStat")
+    @GetMapping("/v1/getMemberOrderStat")
     public GeneralResult getMemberOrderStat(
             @RequestParam("member_card")
             @NotBlank(message = "member_card不能为空")
@@ -266,7 +274,7 @@ public class MemberController {
     }
 
     @ApiOperation("获取顾客行为偏好")
-    @PostMapping("/v1/getMemberAction")
+    @GetMapping("/v1/getMemberAction")
     public GeneralResult getMemberAction(
             @RequestParam("member_card")
             @NotBlank(message = "member_card不能为空")
@@ -275,6 +283,16 @@ public class MemberController {
     ) {
         GeneralResult<MemberAction> result = memberFien.getMemberAction(member_card);
         return result;
+    }
+
+    @ApiOperation("获取沟通记录")
+    @PostMapping("/v1/getCallRecard")
+    public ComResponse<Page<StaffCallRecord>> getCallRecard(@RequestBody CallInfoDTO callInfoDTO) {
+        if (callInfoDTO == null || callInfoDTO.getPageSize() == 0 || callInfoDTO.getPageNo() == 0) {
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
+        ComResponse<Page<StaffCallRecord>> response = workOrderClient.getCallRecord(callInfoDTO);
+        return response;
     }
 
 }
