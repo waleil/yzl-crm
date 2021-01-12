@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.product.MealClient;
+import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.model.MealRequestVO;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.vo.product.dto.MealDTO;
@@ -40,6 +41,9 @@ public class MealController {
 
     @Autowired
     private FastdfsUtils fastdfsUtils;
+    
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
 
 
     /**
@@ -181,7 +185,7 @@ public class MealController {
     @GetMapping(value = "v1/queryProductMealPortray")
     @ApiOperation("查询商品套餐画像")
     public ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") String mealNo) {
-        return mealClient.queryProductMealPortray(mealNo);
+        return mealClient.queryProductMealPortray(mealNo).setMessage(fastDFSConfig.getUrl());
     }
     
 
