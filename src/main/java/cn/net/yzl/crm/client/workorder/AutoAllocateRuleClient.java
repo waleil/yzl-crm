@@ -2,12 +2,14 @@ package cn.net.yzl.crm.client.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingDTO;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingProduct;
 import cn.net.yzl.order.model.vo.order.UpdateOrderCheckSettingDTO;
 import cn.net.yzl.workorder.model.db.AutoAllocateRuleBean;
 import cn.net.yzl.workorder.model.vo.AutoAllocateRuleCriteriaTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Service
 @FeignClient(name = "autoAllocateRuleClient",url = "${api.gateway.url}/workorderServer/autoAllocateRule")
+//@FeignClient(name = "autoAllocateRuleClient",url = "localhost:4602/autoAllocateRule")
 public interface AutoAllocateRuleClient {
 
     /**
@@ -23,8 +26,8 @@ public interface AutoAllocateRuleClient {
      * @Author: xuwei
      * @Date: 2021/1/9 4:04 下午
      */
-    @PostMapping(path="/v1/list")
-    ComResponse<List<AutoAllocateRuleBean>> list(AutoAllocateRuleCriteriaTO criteriaTO);
+    @GetMapping(value = "/v1/list")
+    ComResponse<List<AutoAllocateRuleBean>> list(@SpringQueryMap AutoAllocateRuleCriteriaTO criteriaTO);
 
     /**
      * 功能描述: 根据ID修改规则状态
@@ -41,5 +44,15 @@ public interface AutoAllocateRuleClient {
      */
     @GetMapping(path="/v1/deleteById")
     ComResponse<Void> deleteById(@RequestParam(name = "id", required = true) Integer id);
+
+    /**
+     * 功能描述: 新增派单规则
+     * @Param: [id]
+     * @Return: cn.net.yzl.common.entity.ComResponse<java.lang.Void>
+     * @Author: xuwei
+     * @Date: 2021/1/11 10:20 下午
+     */
+    @PostMapping(path="/v1/add")
+    ComResponse<Void> add(AutoAllocateRuleBean allocateRuleBean);
 
 }
