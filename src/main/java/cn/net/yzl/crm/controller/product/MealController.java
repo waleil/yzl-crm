@@ -3,23 +3,30 @@ package cn.net.yzl.crm.controller.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.product.MealClient;
-import cn.net.yzl.crm.service.product.MealService;
-import cn.net.yzl.product.model.db.Meal;
+import cn.net.yzl.crm.model.MealRequestVO;
+import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.vo.product.dto.MealDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.alibaba.nacos.common.utils.StringUtils;
+import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -29,6 +36,10 @@ public class MealController {
 
     @Autowired
     private MealClient mealClient;
+
+
+    @Autowired
+    private FastdfsUtils fastdfsUtils;
 
 
     /**
@@ -76,8 +87,64 @@ public class MealController {
      **/
     @PostMapping(value = "v1/edit")
     @ApiOperation("编辑套餐")
-    public ComResponse<Void> editProductMeal(@RequestBody @Valid MealVO vo) {
-        return mealClient.editProductMeal(vo);
+    public ComResponse<Void> editProductMeal(@Valid MealRequestVO vo,MultipartFile file, HttpServletRequest request) throws IOException {
+
+        MealVO mealVO = new MealVO();
+
+        BeanUtils.copyProperties(vo, mealVO);
+
+        String no = vo.getMealNo();
+
+        mealVO.setMealProducts(new ArrayList<>(vo.getMealProducts().size()));
+
+        mealVO.setUpdateTime(new Date());
+
+        if(StringUtils.isEmpty(no)){
+            mealVO.setMealNo(null);
+            vo.getMealProducts().forEach(mealProductVO -> {
+                MealProductVO mpvo = new MealProductVO();
+                BeanUtils.copyProperties(mealProductVO, mpvo);
+                mpvo.setCreateTime(new Date());
+                mealVO.getMealProducts().add(mpvo);
+            });
+        }else{
+            vo.getMealProducts().forEach(mealProductVO -> {
+                MealProductVO mpvo = new MealProductVO();
+                BeanUtils.copyProperties(mealProductVO, mpvo);
+                mpvo.setUpdateTime(new Date());
+                mealVO.getMealProducts().add(mpvo);
+            });
+        }
+
+        if(StringUtils.isEmpty(vo.getUrl())&&file==null){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片为空!");
+        }
+
+            if(file!=null){
+            long size = file.getSize() / 1024; //kb
+            if (size > 50) { //判断图片大小 单位Kb
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片过大,保证在50Kb下");
+            }
+            String fileName = file.getOriginalFilename();
+            if(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png格式文件");
+            }
+            StorePath storePath = fastdfsUtils.upload(file);
+            String filePath = storePath.getFullPath();
+            mealVO.setImageUrl(filePath);
+        }
+
+        String userId = request.getHeader("userId");
+
+        if(StringUtils.isEmpty(userId)){
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员失败,请重新登录!");
+        }
+
+        mealVO.setUpdateNo(userId);
+
+        System.out.println(JsonUtil.toJsonStr(mealVO));
+
+        return mealClient.editProductMeal(mealVO);
     }
 
 
