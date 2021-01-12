@@ -89,6 +89,6 @@ public interface MealClient {
 
     @GetMapping(value = "v1/queryProductMealPortray")
     @ApiOperation("查询商品套餐画像")
-    ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") Integer mealNo);
+    ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") String mealNo);
 
 }
