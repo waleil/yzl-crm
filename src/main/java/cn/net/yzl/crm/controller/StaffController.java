@@ -1,19 +1,17 @@
 package cn.net.yzl.crm.controller;
 
-
-
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.ehr.*;
-import cn.net.yzl.crm.dto.staff.CallnfoCriteriaTO;
-import cn.net.yzl.crm.dto.staff.StaffCallRecord;
-import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.dto.staff.*;
 import cn.net.yzl.crm.service.StaffService;
-import cn.net.yzl.crm.service.micservice.StaffClient;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
+import cn.net.yzl.crm.staff.dto.CustomerDto;
+import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.crm.sys.BizException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,7 +30,7 @@ import java.util.List;
 public class StaffController {
 
     @Autowired
-    private StaffClient staffClient;
+    private EhrStaffClient ehrStaffClient;
 
     @Autowired
     private StaffService staffService;
@@ -52,7 +50,7 @@ public class StaffController {
         if (null==staffScheduleQueryDto||staffScheduleQueryDto.getPageSize()==null||staffScheduleQueryDto.getPageNo()==null){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        ComResponse<StaffScheduleInfoDto> response = staffClient.getStaffScheduleInfo(staffScheduleQueryDto);
+        ComResponse<StaffScheduleInfoDto> response = ehrStaffClient.getStaffScheduleInfo(staffScheduleQueryDto);
         return response;
     }
 
@@ -68,7 +66,7 @@ public class StaffController {
         if (null==queryDto||StringUtils.isAnyBlank(queryDto.getStaffScheduleId(),queryDto.getTime(),queryDto.getType())){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        ComResponse comResponse = staffClient.robedClass(queryDto);
+        ComResponse comResponse = ehrStaffClient.robedClass(queryDto);
         return comResponse;
     }
 
@@ -85,7 +83,7 @@ public class StaffController {
         if (StringUtils.isAnyBlank(staffNo,time)){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        ComResponse comResponse = staffClient.getDetailByStaffNoAndTime(staffNo,time);
+        ComResponse comResponse = ehrStaffClient.getDetailByStaffNoAndTime(staffNo,time);
         return comResponse;
     }
 
@@ -112,12 +110,65 @@ public class StaffController {
     @ApiOperation(value="员工画像  根据条件获取员工通话记录",httpMethod = "post")
     @PostMapping("/getCallRecordByStaffNo")
     public ComResponse<Page<StaffCallRecord>> getCallRecordByStaffNo(@RequestBody CallnfoCriteriaTO callnfoCriteriaTO){
-        log.info("......StaffController.getDetailsByNo()开始,请求参数,staffNo={}......",JsonUtil.toJsonStr(callnfoCriteriaTO));
+        log.info("......StaffController.getCallRecordByStaffNo()开始,请求参数,staffNo={}......",JsonUtil.toJsonStr(callnfoCriteriaTO));
         if (callnfoCriteriaTO==null||callnfoCriteriaTO.getPageSize()==0||callnfoCriteriaTO.getPageNo()==0){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
         ComResponse<Page<StaffCallRecord>> response = workOrderClient.getCallRecordByStaffNo(callnfoCriteriaTO);
         return response;
+    }
+
+    /**
+     * 员工画像  获取员工商品旅程
+     * @return
+     */
+    @ApiOperation(value="员工画像  获取员工商品旅程",httpMethod = "post")
+    @PostMapping("/getStaffProductTravel")
+    public ComResponse<Page<StaffProdcutTravelDto>> getStaffProductTravel(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") Integer staffNo,
+                                                                          @ApiParam(name = "pageNo",value ="起始页") @RequestParam("pageNo") Integer pageNo,
+                                                                          @ApiParam(name = "pageSize",value ="每页多少条") @RequestParam("pageSize") Integer pageSize){
+        log.info("......StaffController.getStaffProductTravel()开始,请求参数,staffNo={},pageNo={},pageSize={}......",staffNo,pageNo,pageSize);
+        if(null==staffNo||null==pageNo||null == pageSize){
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
+        Page<StaffProdcutTravelDto> page = staffService.getStaffProductTravel(staffNo,pageNo,pageSize);
+        return ComResponse.success(page);
+    }
+
+
+    /**
+     * 员工画像  获取员工顾客列表
+     * @return
+     */
+    @ApiOperation(value="员工画像  获取员工顾客列表",httpMethod = "post")
+    @PostMapping("/getCustomerListByStaffNo")
+    public ComResponse<Page<CustomerDto>> getCustomerListByStaffNo(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") Integer staffNo,
+                                                                   @ApiParam(name = "pageNo",value ="起始页") @RequestParam("pageNo") Integer pageNo,
+                                                                   @ApiParam(name = "pageSize",value ="每页多少条") @RequestParam("pageSize") Integer pageSize){
+        log.info("......StaffController.getCustomerListByStaffNo()开始,请求参数,staffNo={},pageNo={},pageSize={}......",staffNo,pageNo,pageSize);
+        if(null==staffNo||null==pageNo||null == pageSize){
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
+        Page<CustomerDto> page = staffService.getCustomerListByStaffNo(staffNo, pageNo, pageSize);
+        return ComResponse.success(page);
+    }
+
+
+    /**
+     * 员工画像  获取员工订单列表
+     * @return
+     */
+    @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "post")
+    @PostMapping("/getStaffOrderList")
+    public ComResponse<Page<OrderDto>> getStaffOrderList(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
+                                                                   @ApiParam(name = "timeType",value ="时间类型 1昨日 2近七天 3近15天  4近一个月") @RequestParam("timeType") Integer timeType,
+                                                                   @ApiParam(name = "status",value ="状态 0.话务待审核 1.话务未通过 2. 物流部待审核 3.物流部审核未通过  4..物流已审核 5.已退 6.部分退 7.订单已取消 8.订单已完成 9.拒收'") @RequestParam("status") Integer status){
+        log.info("......StaffController.getStaffOrderList()开始,请求参数,staffNo={},timeType={},status={}......",staffNo,timeType,status);
+        if (StringUtils.isBlank(staffNo)){
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
+        Page<OrderDto> page = staffService.getStaffOrderList(staffNo);
+        return ComResponse.success(page);
     }
 
     /**
@@ -128,7 +179,7 @@ public class StaffController {
     @GetMapping("/getAllStuffStatus")
     public ComResponse<List<StaffStatusDto>> getAllStuffStatus(){
         log.info("......StaffController.getAllStuffStatus()开始,......");
-        ComResponse<List<StaffStatusDto>> response = staffClient.getAllStuffStatus( EhrParamEnum.EHR_DICT_STAFF_STATUS);
+        ComResponse<List<StaffStatusDto>> response = ehrStaffClient.getAllStuffStatus( EhrParamEnum.EHR_DICT_STAFF_STATUS);
         return response;
     }
 
@@ -140,7 +191,7 @@ public class StaffController {
     @GetMapping("/getPostLevelListByDepartId")
     public ComResponse<EhrPostLevelDto> getPostLevelListByPostId(@ApiParam(name = "postId") @RequestParam("postId") Integer postId){
         log.info("......StaffController.getPostLevelListByPostId()开始,请求参数: postId={}......",postId);
-        ComResponse<EhrPostLevelDto> response = staffClient.getPostLevelListByPostId(postId);
+        ComResponse<EhrPostLevelDto> response = ehrStaffClient.getPostLevelListByPostId(postId);
         return response;
     }
 
@@ -152,7 +203,7 @@ public class StaffController {
     @GetMapping("/getPostListByDepartId")
     public ComResponse<List<EhrPostDto>> getPostListByDepartId(@ApiParam(name = "departId")@RequestParam("departId") Integer departId){
         log.info("......StaffController.getPostListByDepartId()开始,......");
-        ComResponse<List<EhrPostDto>> response = staffClient.getPostListByDepartId(departId);
+        ComResponse<List<EhrPostDto>> response = ehrStaffClient.getPostListByDepartId(departId);
         return response;
     }
 
@@ -164,7 +215,7 @@ public class StaffController {
     @PostMapping("/getStaffListByPage")
     public ComResponse<Page<EhrStaff>> getStaffListByPage(@RequestBody StaffQueryDto query){
         log.info("......StaffController.getStaffListByPage()开始, 请求参数:{}......",JsonUtil.toJsonStr(query));
-        ComResponse<Page<EhrStaff>> response = staffClient.getStaffListByPage(query);
+        ComResponse<Page<EhrStaff>> response = ehrStaffClient.getStaffListByPage(query);
         return response;
     }
 
@@ -177,7 +228,7 @@ public class StaffController {
     @GetMapping("/getListByStaffNo")
     public ComResponse<List<EhrDepartDto>> getListByStaffNo(@ApiParam(name = "staffNo")@RequestParam("staffNo") String staffNo){
         log.info("......StaffController.getListByStaffNo(), 请求参数:{}......",staffNo);
-        ComResponse<List<EhrDepartDto>> response = staffClient.getListByStaffNo(staffNo);
+        ComResponse<List<EhrDepartDto>> response = ehrStaffClient.getListByStaffNo(staffNo);
         return response;
     }
 

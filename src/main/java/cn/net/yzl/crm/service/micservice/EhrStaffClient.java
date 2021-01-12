@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient(name = "ehr-staff-api",url = "${api.gateway.url}/staffDB")
-public interface StaffClient {
+public interface EhrStaffClient {
 
 //    @GetMapping("getAllTypesByGroup")
 //    String  getAllTypesByGroup();
