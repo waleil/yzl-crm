@@ -248,7 +248,7 @@ public class MemberController {
     }
 
     @ApiOperation("获取顾客购买能力")
-    @PostMapping("/v1/getMemberOrderStat")
+    @GetMapping("/v1/getMemberOrderStat")
     public GeneralResult getMemberOrderStat(
             @RequestParam("member_card")
             @NotBlank(message = "member_card不能为空")
@@ -274,7 +274,7 @@ public class MemberController {
     }
 
     @ApiOperation("获取顾客行为偏好")
-    @PostMapping("/v1/getMemberAction")
+    @GetMapping("/v1/getMemberAction")
     public GeneralResult getMemberAction(
             @RequestParam("member_card")
             @NotBlank(message = "member_card不能为空")
