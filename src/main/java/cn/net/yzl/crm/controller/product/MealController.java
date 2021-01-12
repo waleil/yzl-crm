@@ -82,21 +82,21 @@ public class MealController {
 
 
 
-    /**
-     * @Description:
-     * @Author: dongjunmei
-     * @Date: 2021-01-09 13:00
-     * @param:
-     * @return: cn.net.yzl.common.entity.ComResponse
-     **/
-    @PostMapping(value = "v1/queryMealDetail")
-    @ApiOperation("查询商品详情")
-    public ComResponse<ProductMealDetailVO> queryMealDetail(@RequestBody Meal meal) {
-        if(meal.getMealNo()!=null){
-            return mealClient.queryMealDetail(meal);
-        }
-        return null;
-    }
+//    /**
+//     * @Description:
+//     * @Author: dongjunmei
+//     * @Date: 2021-01-09 13:00
+//     * @param:
+//     * @return: cn.net.yzl.common.entity.ComResponse
+//     **/
+//    @PostMapping(value = "v1/queryMealDetail")
+//    @ApiOperation("查询商品详情")
+//    public ComResponse<ProductMealDetailVO> queryMealDetail(@RequestBody Meal meal) {
+//        if(meal.getMealNo()!=null){
+//            return mealClient.queryMealDetail(meal);
+//        }
+//        return null;
+//    }
 
     /**
      * @Description:
