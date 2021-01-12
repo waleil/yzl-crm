@@ -57,44 +57,44 @@ public interface MemberFien {
     GeneralResult<List<ProductConsultation>>  getProductConsultationList(@RequestParam("member_card") String member_card);
 
     @ApiOperation("获取顾客病症")
-    @GetMapping("/member/v1/getMemberDisease")
+    @GetMapping("/v1/getMemberDisease")
     GeneralResult<List<MemberDisease>> getMemberDisease(@RequestParam("member_card") String member_card);
 
     @ApiOperation("新增收货地址")
-    @GetMapping("/member/v1/addReveiverAddress")
+    @GetMapping("/v1/addReveiverAddress")
     GeneralResult addReveiverAddress(@RequestBody ReveiverAddress reveiverAddress);
 
 
     @ApiOperation("修改收货地址")
-    @GetMapping("/member/v1/updateReveiverAddress")
+    @GetMapping("/v1/updateReveiverAddress")
     GeneralResult updateReveiverAddress(@RequestBody ReveiverAddress reveiverAddress);
 
     @ApiOperation("获取收获地址")
-    @GetMapping("/member/v1/getReveiverAddress")
+    @GetMapping("/v1/getReveiverAddress")
     GeneralResult<List<ReveiverAddress>> getReveiverAddress(@RequestParam("member_card") String member_card);
 
     @ApiOperation("获取购买能力")
-    @GetMapping("/member/v1/getMemberOrderStat")
+    @GetMapping("/v1/getMemberOrderStat")
     GeneralResult<MemberOrderStat> getMemberOrderStat(@RequestParam("member_card") String member_card);
 
 
     @ApiOperation("新增购买能力")
-    @GetMapping("/member/v1/addMemberOrderStat")
+    @GetMapping("/v1/addMemberOrderStat")
     GeneralResult addMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
 
     @ApiOperation("修改购买能力")
-    @GetMapping("/member/v1/updateMemberOrderStat")
+    @GetMapping("/v1/updateMemberOrderStat")
     GeneralResult updateMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
 
     @ApiOperation("添加顾客行为偏好")
-    @GetMapping("/member/v1/addMemberAction")
+    @GetMapping("/v1/addMemberAction")
     GeneralResult addMemberAction(@RequestBody MemberAction memberAction);
 
     @ApiOperation("修改顾客行为偏好")
-    @GetMapping("/member/v1/updateMemberAction")
+    @GetMapping("/v1/updateMemberAction")
     GeneralResult updateMemberAction(@RequestBody MemberAction memberAction);
 
     @ApiOperation("获取顾客行为偏好")
-    @GetMapping("/member/v1/getMemberAction")
+    @GetMapping("/v1/getMemberAction")
     GeneralResult<MemberAction> getMemberAction(@RequestParam("member_card") String member_card);
 }
