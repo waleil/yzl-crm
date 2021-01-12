@@ -99,14 +99,12 @@ public interface MemberFien {
     @ApiOperation("获取顾客行为偏好")
     @GetMapping("/v1/getMemberAction")
     GeneralResult<MemberAction> getMemberAction(@RequestParam("member_card") String member_card);
-    @GetMapping("/member/v1/getMemberAction")
-    GeneralResult<MemberAction> getMemberAction(String member_card);
 
     @ApiOperation("根据一批顾客群组id获取群组信息,用英文逗号分隔")
-    @GetMapping("/member/v1/getCrowdGroupList")
+    @GetMapping("/v1/getCrowdGroupList")
     public ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds) ;
 
     @ApiOperation("分页获取群组列表")
-    @PostMapping("/member/v1/getCrowdGroupByPage")
+    @PostMapping("/v1/getCrowdGroupByPage")
     public ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
 }
