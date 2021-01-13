@@ -5,7 +5,9 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.workorder.AutoAllocateRuleClient;
+import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
+import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.workorder.model.db.AutoAllocateConfigBean;
 import cn.net.yzl.workorder.model.db.AutoAllocateRuleBean;
@@ -40,9 +42,11 @@ public class AutoAllocateRuleController {
     @Autowired
     private MemberFien memberClient;
 
+    @Autowired
+    private CrmStaffClient staffClient;
+
     @GetMapping(value = "/v1/list")
     @ApiOperation(value = "查询智能派单规则列表")
-    @ApiImplicitParam(name = "criteriaTO", value = "查询参数，可以都为空", required = false, dataType = "AutoAllocateRuleCriteriaTO")
     public ComResponse<List<AutoAllocateRuleBean>> list(AutoAllocateRuleCriteriaTO criteriaTO) {
         ComResponse<List<AutoAllocateRuleBean>> result = autoAllocateRuleClient.list(criteriaTO);
         return result;
@@ -83,10 +87,21 @@ public class AutoAllocateRuleController {
         }
     }
 
-    @RequestMapping(value="/v1/listMemberCrowd",method=RequestMethod.GET)
-    public ComResponse<Page<CrowdGroup>> listMemberCrowd(){
-        return ComResponse.success();
+    @ApiOperation("获取顾客群组列表")
+    @PostMapping("/v1/listMemberCrowdGroup")
+    public ComResponse listMemberCrowdGroup(@RequestBody CrowdGroupDTO crowdGroupDTO){
+        return memberClient.getCrowdGroupByPage(crowdGroupDTO);
     }
+
+    @ApiOperation("获取员工群组列表")
+    @PostMapping("/v1/listStaffCrowdGroup")
+    public ComResponse listStaffCrowdGroup(@RequestBody CrowdGroupDTO crowdGroupDTO){
+//        return staffClient.
+        // TODO: 2021/1/12
+        //获取员工群列表
+        return  ComResponse.success();
+    }
+
 //    @RequestMapping(value="/v1/add",method=RequestMethod.POST)
 //    public ComResponse<Void> add(@RequestBody AutoAllocateConfigVO autoAllocateConfigVO) throws Exception {
 //        String name=autoAllocateConfigVO.getRuleName();
