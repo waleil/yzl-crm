@@ -4,7 +4,6 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +51,5 @@ public interface ProductClient {
      * @return
      */
     @PostMapping(value = "v1/productReduce")
-    public ComResponse productReduce(@RequestBody @Valid OrderProductVO orderProductVO);
+    ComResponse productReduce(@RequestBody @Valid OrderProductVO orderProductVO);
 }
