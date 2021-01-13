@@ -203,7 +203,7 @@ public class ImageController {
     }
 
 
-    @PostMapping("upload")
+    @PostMapping("uploadWithOutStore")
     @ApiOperation("图片上传接口（不通过图片库）")
     @ApiImplicitParam(name = "file", value = "需要上传的图片", required = true, dataType = "MultipartFile")
     public ComResponse upload(MultipartFile file, HttpServletRequest request) throws IOException {
@@ -233,8 +233,5 @@ public class ImageController {
         return ComResponse.success(path);
 
     }
-
-
-
 
 }
