@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -16,8 +18,30 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class MongoBaseDao<T> {
+	/** 泛型参数类型 */
+	protected  Class<T> entityClass;
 
-    /**
+	@SuppressWarnings("unchecked")
+	public MongoBaseDao() {
+		super();
+		// 返回该类表示的实体的直接超类的Type（类，接口，原始类型或void）。
+		Type type = this.getClass().getGenericSuperclass();
+		// 如果该类的实例是泛型参数类型
+		if (type instanceof ParameterizedType) {
+			ParameterizedType paramType = (ParameterizedType) type;
+			// 返回一个Type对象数组，该数组表示此类型的实际类型参数。
+			Type[] args = paramType.getActualTypeArguments();
+			this.entityClass = (Class<T>) args[0];
+		}
+		// 如果没有获取到泛型参数类型(出现这种情况，主要是子类继承父类的时候，没有指定泛型参数类型)
+		if (this.entityClass == null) {
+			this.entityClass = this.getEntityClass();
+		}
+		log.debug("当前对象的泛型参数类型：{}", this.entityClass);
+	}
+
+
+	/**
      * 反射获取泛型类型
      */
     protected abstract Class<T> getEntityClass();
