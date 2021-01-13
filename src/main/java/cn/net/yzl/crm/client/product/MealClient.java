@@ -56,11 +56,12 @@ public interface MealClient {
      * @Author: dongjunmei
      * @Date: 2021-01-09 11:30
      * @param :
+     * @param vo
      * @return: cn.net.yzl.common.entity.ComResponse<java.lang.Void>
      **/
     @PostMapping(value = "v1/edit")
     @ApiOperation("编辑套餐")
-    ComResponse<Void> editProductMeal(@RequestBody @Valid MealVO vo);
+    ComResponse<Void> editProductMeal(@RequestBody MealVO vo);
 
 
 
@@ -88,6 +89,6 @@ public interface MealClient {
 
     @GetMapping(value = "v1/queryProductMealPortray")
     @ApiOperation("查询商品套餐画像")
-    ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") Integer mealNo);
+    ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") String mealNo);
 
 }

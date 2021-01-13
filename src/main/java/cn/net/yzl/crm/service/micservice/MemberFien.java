@@ -3,6 +3,7 @@ package cn.net.yzl.crm.service.micservice;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
@@ -112,5 +113,12 @@ public interface MemberFien {
     @GetMapping("/v1/getMemberCrowdGroup")
     ComResponse getMemberCrowdGroup(String crowdId);
 
+    @ApiOperation("根据一批顾客群组id获取群组信息,用英文逗号分隔")
+    @GetMapping("/v1/getCrowdGroupList")
+    public ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds) ;
+
+    @ApiOperation("分页获取群组列表")
+    @PostMapping("/v1/getCrowdGroupByPage")
+    public ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
 
 }

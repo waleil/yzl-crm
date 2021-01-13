@@ -133,7 +133,7 @@ public class BrandController {
             @ApiImplicitParam(name = "file", value = "品牌LOGO", required = false, dataType = "MultipartFile"),
             @ApiImplicitParam(name = "name", value = "品牌名称",paramType="query", required = true, dataType = "String"),
             @ApiImplicitParam(name = "descri", value = "品牌故事",paramType="query", required = false, dataType = "String"),
-            @ApiImplicitParam(name = "brandId", value = "品牌编号", paramType="query",required = false, dataType = "Integer"),
+            @ApiImplicitParam(name = "brandId", value = "品牌编号", paramType="query",required = false, dataType = "Integer",readOnly = true),
             @ApiImplicitParam(name = "sort", value = "排序",paramType="query", required = false, dataType = "Integer"),
             @ApiImplicitParam(name = "url",value="url(该字段为文件为空时传入的字段，如果想删除图片则将文件和此处全部输入空值即可)",paramType = "query", required = false, dataType = "String")
     })
