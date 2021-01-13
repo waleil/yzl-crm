@@ -107,7 +107,7 @@ public class MealController {
      **/
     @PostMapping(value = "v1/edit")
     @ApiOperation("编辑套餐")
-    public ComResponse<Void> editProductMeal(@Valid MealRequestVO vo,MultipartFile file, HttpServletRequest request) throws IOException {
+    public ComResponse<Void> editProductMeal(@Valid @RequestBody MealRequestVO vo, HttpServletRequest request) throws IOException {
 
         MealVO mealVO = new MealVO();
 
@@ -134,24 +134,6 @@ public class MealController {
                 mpvo.setUpdateTime(new Date());
                 mealVO.getMealProducts().add(mpvo);
             });
-        }
-
-        if(StringUtils.isEmpty(vo.getUrl())&&file==null){
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片为空!");
-        }
-
-            if(file!=null){
-            long size = file.getSize() / 1024; //kb
-            if (size > 50) { //判断图片大小 单位Kb
-                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片过大,保证在50Kb下");
-            }
-            String fileName = file.getOriginalFilename();
-            if(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")){
-                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png格式文件");
-            }
-            StorePath storePath = fastdfsUtils.upload(file);
-            String filePath = storePath.getFullPath();
-            mealVO.setImageUrl(filePath);
         }
 
         String userId = request.getHeader("userId");
