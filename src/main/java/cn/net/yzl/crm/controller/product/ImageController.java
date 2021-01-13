@@ -203,6 +203,38 @@ public class ImageController {
     }
 
 
+    @PostMapping("upload")
+    @ApiOperation("图片上传接口（不通过图片库）")
+    @ApiImplicitParam(name = "file", value = "需要上传的图片", required = true, dataType = "MultipartFile")
+    public ComResponse upload(MultipartFile file, HttpServletRequest request) throws IOException {
+
+        String userId = request.getHeader("userId");
+
+        if(com.alibaba.nacos.common.utils.StringUtils.isEmpty(userId)){
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"获取登录状态失败，请尝试重新登陆！");
+        }
+
+        if(null == file||file.getSize()==0){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件为空，请检查！");
+        }
+        long size = file.getSize();
+        if(size > 50<<10){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件过大，上传文件的最大限制为50KB！");
+        }
+        String fileName = file.getOriginalFilename();
+        if(com.alibaba.nacos.common.utils.StringUtils.isEmpty(fileName)||(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png"))&&!fileName.endsWith(".jpeg")&&!fileName.endsWith(".gif")){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"请上传正确的图片文件！");
+        }
+
+        StorePath upload = fastdfsUtils.upload(file);
+
+        String path = upload.getFullPath();
+
+        return ComResponse.success(path);
+
+    }
+
+
 
 
 }
