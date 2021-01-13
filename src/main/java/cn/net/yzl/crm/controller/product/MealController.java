@@ -131,6 +131,14 @@ public class MealController {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员失败,请重新登录!");
         }
 
+        String url = vo.getUrl();
+
+        if (StringUtils.isEmpty(url)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"尚未选择上传的图片，请选择！");
+        }
+
+        mealVO.setImageUrl(url);
+
         mealVO.setUpdateNo(userId);
 
         System.out.println(JsonUtil.toJsonStr(mealVO));
