@@ -40,9 +40,6 @@ public class MealController {
 
 
     @Autowired
-    private FastdfsUtils fastdfsUtils;
-    
-    @Autowired
     private FastDFSConfig fastDFSConfig;
 
 
@@ -113,29 +110,21 @@ public class MealController {
 
         BeanUtils.copyProperties(vo, mealVO);
 
-        String no = vo.getMealNo();
-
         mealVO.setMealProducts(new ArrayList<>(vo.getMealProducts().size()));
 
         mealVO.setUpdateTime(new Date());
 
-        if(StringUtils.isEmpty(no)){
-            mealVO.setMealNo(null);
-            vo.getMealProducts().forEach(mealProductVO -> {
-                MealProductVO mpvo = new MealProductVO();
-                BeanUtils.copyProperties(mealProductVO, mpvo);
-                mpvo.setCreateTime(new Date());
-                mealVO.getMealProducts().add(mpvo);
-            });
-        }else{
-            vo.getMealProducts().forEach(mealProductVO -> {
-                MealProductVO mpvo = new MealProductVO();
-                BeanUtils.copyProperties(mealProductVO, mpvo);
-                mpvo.setUpdateTime(new Date());
-                mealVO.getMealProducts().add(mpvo);
-            });
-        }
 
+        if(StringUtils.isEmpty(vo.getMealNo())){
+            mealVO.setMealNo(null);
+        }
+        vo.getMealProducts().forEach(mealProductVO -> {
+                MealProductVO mpvo = new MealProductVO();
+                BeanUtils.copyProperties(mealProductVO, mpvo);
+                mpvo.setCreateTime(mealVO.getMealNo()==null?null:new Date());
+                mpvo.setUpdateTime(mealVO.getMealNo()==null?null:new Date());
+                mealVO.getMealProducts().add(mpvo);
+            });
         String userId = request.getHeader("userId");
 
         if(StringUtils.isEmpty(userId)){

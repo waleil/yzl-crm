@@ -87,6 +87,9 @@ public class ProductController {
     @PostMapping(value = "v1/edit")
     @ApiOperation("编辑商品")
     public ComResponse<Void> editProduct(@RequestBody @Valid ProductVO vo,HttpServletRequest request) {
+        if(StringUtils.isBlank(vo.getProductCode())){
+            vo.setProductCode(null);
+        }
         //参数校验
         String str=checkParams(vo);
         if(StringUtils.isNotBlank(str)){
