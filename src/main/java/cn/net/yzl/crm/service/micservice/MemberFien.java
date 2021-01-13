@@ -1,8 +1,10 @@
 package cn.net.yzl.crm.service.micservice;
 
+import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.model.*;
+import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -97,4 +99,18 @@ public interface MemberFien {
     @ApiOperation("获取顾客行为偏好")
     @GetMapping("/v1/getMemberAction")
     GeneralResult<MemberAction> getMemberAction(@RequestParam("member_card") String member_card);
+
+    @ApiOperation("新增顾客圈选")
+    @PostMapping("/v1/addCrowdGroup")
+    ComResponse  addCrowdGroup(member_crowd_group memberCrowdGroup);
+
+    @ApiOperation("修改顾客圈选")
+    @PostMapping("/v1/updateCrowdGroup")
+    ComResponse updateCrowdGroup(member_crowd_group memberCrowdGroup);
+
+    @ApiOperation("根据圈选id获取圈选信息")
+    @GetMapping("/v1/getMemberCrowdGroup")
+    ComResponse getMemberCrowdGroup(String crowdId);
+
+
 }
