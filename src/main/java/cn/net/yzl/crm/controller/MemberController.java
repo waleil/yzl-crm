@@ -6,6 +6,7 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.customer.model.*;
+import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.order.ListParamsDTO;
@@ -23,6 +24,7 @@ import cn.net.yzl.crm.sys.BizException;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Api(tags = "顾客管理")
 @Slf4j
@@ -293,6 +296,32 @@ public class MemberController {
         }
         ComResponse<Page<StaffCallRecord>> response = workOrderClient.getCallRecord(callInfoDTO);
         return response;
+    }
+
+    @ApiOperation("保存顾客圈选")
+    @PostMapping("/v1/saveMemberCrowdGroup")
+    public ComResponse saveMemberCrowdGroup(@RequestBody member_crowd_group memberCrowdGroup){
+        if(memberCrowdGroup==null) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        if(StringUtil.isNullOrEmpty(memberCrowdGroup.getCrowd_id())){
+            String crowd_id = UUID.randomUUID().toString().replaceAll("-","");
+            memberCrowdGroup.setCrowd_id(crowd_id);
+            return  memberFien.addCrowdGroup(memberCrowdGroup);
+        }
+        else{
+            return memberFien.updateCrowdGroup(memberCrowdGroup);
+        }
+    }
+
+    @ApiOperation("根据圈选id获取圈选信息")
+    @GetMapping("/v1/getMemberCrowdGroup")
+    public ComResponse getMemberCrowdGroup(
+            @RequestParam("crowdId")
+            @NotBlank(message = "crowdId不能为空")
+            @ApiParam(name = "crowdId", value = "圈选id", required = true)
+                    String crowdId
+    ){
+        if(StringUtil.isNullOrEmpty(crowdId)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        return memberFien.getMemberCrowdGroup(crowdId);
     }
 
 }
