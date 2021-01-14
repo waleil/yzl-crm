@@ -4,16 +4,28 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
-import cn.net.yzl.crm.customer.model.*;
+import cn.net.yzl.crm.customer.model.CrowdGroup;
+import cn.net.yzl.crm.customer.model.Member;
+import cn.net.yzl.crm.customer.model.MemberAction;
+import cn.net.yzl.crm.customer.model.MemberDisease;
+import cn.net.yzl.crm.customer.model.MemberGrad;
+import cn.net.yzl.crm.customer.model.MemberOrderStat;
+import cn.net.yzl.crm.customer.model.MemberPhone;
+import cn.net.yzl.crm.customer.model.MemberProductEffect;
+import cn.net.yzl.crm.customer.model.ProductConsultation;
+import cn.net.yzl.crm.customer.model.ReveiverAddress;
 import cn.net.yzl.crm.customer.mongomodel.crowd_member_action;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
-import jdk.nashorn.internal.objects.annotations.Getter;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 顾客服务接口

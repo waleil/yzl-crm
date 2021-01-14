@@ -2,17 +2,23 @@ package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.workorder.WorkOrderHotlineClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderRuleClient;
+import cn.net.yzl.crm.dto.workorder.UpdateMoreAdjustDTO;
 import cn.net.yzl.crm.dto.workorder.UpdateRecyclingDTO;
+import cn.net.yzl.crm.dto.workorder.UpdateSingleAdjustDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderHotlineBean;
+import cn.net.yzl.workorder.model.db.WorkOrderHotlineFlowBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleBean;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,17 +44,30 @@ public class WorkOrderHotlineController {
      */
     @ApiOperation(value = "热线工单：回收")
     @PostMapping("v1/updateRecycling")
-    public ComResponse<Void> updateRecycling(@RequestBody UpdateRecyclingDTO updateRecyclingDTO){
-        if(StringUtils.isEmpty(updateRecyclingDTO.getCode())){
-            return ComResponse.fail(ComResponse.ERROR_STATUS,"工单标识校验错误");
-        }
-        if(StringUtils.isEmpty(updateRecyclingDTO.getStaffNo())){
-            return ComResponse.fail(ComResponse.ERROR_STATUS,"员工编号校验错误");
-        }
-        if(StringUtils.isEmpty(updateRecyclingDTO.getOperator())){
-            return ComResponse.fail(ComResponse.ERROR_STATUS,"操作人校验错误");
-        }
+    public ComResponse<Void> updateRecycling(@Validated  @RequestBody UpdateRecyclingDTO updateRecyclingDTO){
        return workOrderHotlineClient.updateRecycling(updateRecyclingDTO);
+    }
+
+    /**
+     * 热线工单：单数据调整
+     * @param
+     * @return
+     */
+    @PostMapping("v1/updateSingleAdjust")
+    @ApiOperation(value = "热线工单：单数据调整", notes = "热线工单：单数据调整")
+    public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO){
+        return workOrderHotlineClient.updateSingleAdjust(updateSingleAdjustDTO);
+    }
+
+    /**
+     * 热线工单：多数据调整
+     * @param
+     * @return
+     */
+    @PostMapping("v1/updateMoreAdjust")
+    @ApiOperation(value = "热线工单：多数据调整", notes = "热线工单：多数据调整")
+    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
+        return workOrderHotlineClient.updateMoreAdjust(updateMoreAdjustDTO);
     }
 
 }
