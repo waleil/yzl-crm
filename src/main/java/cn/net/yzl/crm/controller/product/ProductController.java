@@ -204,7 +204,14 @@ public class ProductController {
         if (StringUtils.isBlank(productCode)) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"目标商品编号不能为空！");
         }
-        return productService.queryProductDetail(productCode);
+        ComResponse<ProductDetailVO> productDetailVOComResponse = productService.queryProductDetail(productCode);
+
+        if (productDetailVOComResponse.getData()==null){
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
+        }
+
+
+        return productDetailVOComResponse;
     }
     @GetMapping(value = "v1/queryProductPortrait")
     @ApiOperation("查询商品画像")

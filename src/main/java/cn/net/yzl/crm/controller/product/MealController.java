@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -226,6 +227,12 @@ public class MealController {
         }
 
         ProductMealUpdateTimeVO updateVO = new ProductMealUpdateTimeVO();
+
+        BeanUtils.copyProperties(vo, updateVO);
+
+        updateVO.setUpdateNo(userId);
+
+        updateVO.setUpdateTime(new Date());
 
         return mealClient.updateTimeByMealCode(updateVO);
     }
