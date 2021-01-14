@@ -321,7 +321,7 @@ public class MemberController {
     ) {
         if (StringUtil.isNullOrEmpty(crowdId)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         ComResponse<member_crowd_group> result= memberFien.getMemberCrowdGroup(crowdId);
-        if(result.getData()==null || result.getData().isDel()) return ComResponse.success("未获取到数据");
+        if(result.getData()==null || result.getData().isDel()) return ComResponse.success(ResponseCodeEnums.NO_DATA_CODE);
         return result;
     }
 
