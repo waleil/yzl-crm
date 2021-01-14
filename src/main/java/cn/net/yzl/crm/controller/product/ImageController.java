@@ -60,7 +60,7 @@ public class ImageController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "文件数量为"+files.length+",需要为1-15张！");
         }else {
             for (MultipartFile file : files) {//循环
-                if (file.isBlank()){//非空
+                if (file.isEmpty()){//非空
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"存在空文件！");
                 }else {
                     long size = file.getSize();//以Byte为单位
