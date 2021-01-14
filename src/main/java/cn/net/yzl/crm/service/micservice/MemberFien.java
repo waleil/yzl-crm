@@ -117,15 +117,15 @@ public interface MemberFien {
 
     @ApiOperation("根据一批顾客群组id获取群组信息,用英文逗号分隔")
     @GetMapping("/v1/getCrowdGroupList")
-    public ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds) ;
+    ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds);
 
     @ApiOperation("分页获取群组列表")
     @PostMapping("/v1/getCrowdGroupByPage")
-    public ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
+    ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
 
     @ApiOperation("获取顾客行为偏好字典数据")
     @GetMapping("/v1/getMemberActions")
-    public ComResponse<crowd_member_action> getMemberActions();
+    ComResponse<List<crowd_member_action>> getMemberActions();
 
     @ApiOperation("删除顾客圈选")
     @GetMapping("/v1/delMemberCrowdGroup")
