@@ -7,28 +7,25 @@ import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.model.MealRequestVO;
-import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.vo.product.dto.MealDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
 import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.alibaba.nacos.common.utils.StringUtils;
-import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("productMeal")
@@ -76,7 +73,7 @@ public class MealController {
 
         String userId;
 
-        if(StringUtils.isEmpty(userId = request.getHeader("userId"))){
+        if(StringUtils.isBlank(userId = request.getHeader("userId"))){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验用户身份失败，请您重新登陆！");
         }
 
@@ -86,6 +83,18 @@ public class MealController {
 
         if (CollectionUtils.isEmpty(vo.getMealNoList())) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), "套餐code不能为空");
+        }
+
+        AtomicBoolean isWrong = new AtomicBoolean(false);
+
+        vo.getMealNoList().forEach(m ->{
+            if(StringUtils.isBlank(m)){
+                isWrong.set(true);
+            }
+        });
+
+        if (isWrong.get()) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"商品编号存在空值！");
         }
 
         condition.setMealNoList(vo.getMealNoList());
@@ -110,24 +119,58 @@ public class MealController {
 
         BeanUtils.copyProperties(vo, mealVO);
 
-        mealVO.setMealProducts(new ArrayList<>(vo.getMealProducts().size()));
+        List<cn.net.yzl.crm.model.MealProductVO> mealProducts = vo.getMealProducts();
+        mealVO.setMealProducts(new ArrayList<>(mealProducts.size()));
 
         mealVO.setUpdateTime(new Date());
 
 
-        if(StringUtils.isEmpty(vo.getMealNo())){
+        if(StringUtils.isBlank(vo.getMealNo())){
             mealVO.setMealNo(null);
         }
-        vo.getMealProducts().forEach(mealProductVO -> {
+
+        if (CollectionUtils.isEmpty(mealProducts)){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), "套餐code不能为空");
+        }
+
+        AtomicBoolean idIsWrong = new AtomicBoolean(false);
+
+        AtomicBoolean countIsWrong = new AtomicBoolean(false);
+
+        AtomicBoolean giftIsWrong = new AtomicBoolean(false);
+
+        mealProducts.forEach(m ->{
+            if( null == m || StringUtils.isBlank(m.getProductCode())){
+                idIsWrong.set(true);
+            }
+            if (null == m.getMealGiftFlag() || m.getMealGiftFlag() < 0 || m.getMealGiftFlag() > 1){
+                giftIsWrong.set(true);
+            }
+            if (null == m.getProductNum() || m.getProductNum() <= 0){
+                countIsWrong.set(true);
+            }
+        });
+
+        if (idIsWrong.get()) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"商品存在空值！");
+        }
+        if (giftIsWrong.get()) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"存在商品尚未设置是否为赠品");
+        }
+        if (countIsWrong.get()){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"存在商品的数量不合法，请检查");
+        }
+
+        mealProducts.forEach(mealProductVO -> {
                 MealProductVO mpvo = new MealProductVO();
                 BeanUtils.copyProperties(mealProductVO, mpvo);
-                mpvo.setCreateTime(mealVO.getMealNo()==null?null:new Date());
+                mpvo.setCreateTime(mealVO.getMealNo()==null?new Date():null);
                 mpvo.setUpdateTime(mealVO.getMealNo()==null?null:new Date());
                 mealVO.getMealProducts().add(mpvo);
             });
         String userId = request.getHeader("userId");
 
-        if(StringUtils.isEmpty(userId)){
+        if(StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员失败,请重新登录!");
         }
 
@@ -172,14 +215,27 @@ public class MealController {
      **/
     @PostMapping(value = "v1/updateTime")
     @ApiOperation("修改套餐售卖时间")
-    ComResponse updateTimeByMealCode(@RequestBody @Valid ProductMealUpdateTimeVO vo) {
+    ComResponse updateTimeByMealCode(@RequestBody @Valid ProductMealUpdateTimeRequestVO vo,HttpServletRequest request) {
 
-        return mealClient.updateTimeByMealCode(vo);
+        String userId = request.getHeader("userId");
+
+        if (StringUtils.isBlank(userId)) {
+
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员失败,请重新登录!");
+
+        }
+
+        ProductMealUpdateTimeVO updateVO = new ProductMealUpdateTimeVO();
+
+        return mealClient.updateTimeByMealCode(updateVO);
     }
 
     @GetMapping(value = "v1/queryProductMealPortray")
     @ApiOperation("查询商品套餐画像")
     public ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") String mealNo) {
+        if (StringUtils.isBlank(mealNo)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"套餐编号不能为空！");
+        }
         return mealClient.queryProductMealPortray(mealNo).setMessage(fastDFSConfig.getUrl());
     }
     

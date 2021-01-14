@@ -5,9 +5,11 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.*;
+import cn.net.yzl.crm.customer.mongomodel.crowd_member_action;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
+import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -115,10 +117,17 @@ public interface MemberFien {
 
     @ApiOperation("根据一批顾客群组id获取群组信息,用英文逗号分隔")
     @GetMapping("/v1/getCrowdGroupList")
-    public ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds) ;
+    ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds);
 
     @ApiOperation("分页获取群组列表")
     @PostMapping("/v1/getCrowdGroupByPage")
-    public ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
+    ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
 
+    @ApiOperation("获取顾客行为偏好字典数据")
+    @GetMapping("/v1/getMemberActions")
+    ComResponse<List<crowd_member_action>> getMemberActions();
+
+    @ApiOperation("删除顾客圈选")
+    @GetMapping("/v1/delMemberCrowdGroup")
+    ComResponse delMemberCrowdGroup(@RequestParam String crowdId);
 }

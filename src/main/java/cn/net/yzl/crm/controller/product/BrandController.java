@@ -48,6 +48,15 @@ public class BrandController {
     public ComResponse getAllBrands(@RequestParam(required = false,defaultValue = "1",value = "pageNo") Integer pageNo,
                                     @RequestParam(required = false,defaultValue = "15",value = "pageSize") Integer pageSize,
                                     String keyword) {
+        if (pageNo == null || pageNo < 0) {
+            pageNo = 1;
+        }
+        if (pageSize <= 0){
+            pageSize = 10;
+        }
+        if(StringUtils.isBlank(keyword)){
+            keyword = null;
+        }
         return brandService.getAllBrands(pageNo, pageSize,keyword);
     }
 
@@ -72,6 +81,9 @@ public class BrandController {
     })
     public ComResponse<Void> changeBrandStatus(@RequestParam("flag") Integer flag,
                                                @RequestParam("id") Integer id) {
+        if(id == null||id < 1){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"不合法的id类型！");
+        }
         if (flag == 1||flag==0) {
             return brandService.changeBrandStatus(flag,id);
         }else {
@@ -104,6 +116,9 @@ public class BrandController {
                 brandVO.setBrandUrl(filePath);
             }
             String userId = request.getHeader("userId");
+            if (StringUtils.isBlank(userId)) {
+                return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录状态，请尝试重新登陆！");
+            }
             brandVO.setUpdateNo(userId);
             brandVO.setName(name);
             brandVO.setDescri(descri);
@@ -124,7 +139,11 @@ public class BrandController {
         }
         BrandDelVO brandDelVO = new BrandDelVO();
         brandDelVO.setId(id);
-        brandDelVO.setUpdateNo(request.getHeader("userId"));
+        String userId = request.getHeader("userId");
+        if (StringUtils.isBlank(userId)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"获取用户登录信息失败，请尝试重新登陆！");
+        }
+        brandDelVO.setUpdateNo(userId);
         return brandService.deleteBrandById(brandDelVO);
     }
 
@@ -140,6 +159,14 @@ public class BrandController {
     @PostMapping("update")
     public ComResponse<Void> updateBrand(MultipartFile file, HttpServletRequest request,
                                          String name, String descri, @RequestParam(defaultValue = "0")Integer sort, Integer brandId,String url) {
+        String userId = request.getHeader("userId");
+        if (StringUtils.isBlank(userId)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆！");
+        }
+        if (StringUtils.isBlank(name)){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"品牌名称不能为空！");
+        }
+
         try {
             if(brandId<=0){
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"参数错误!");
@@ -149,7 +176,7 @@ public class BrandController {
             if(brand==null){
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"品牌不存在!");
             }if(file==null){
-                if(StringUtils.isEmpty(url)){
+                if(StringUtils.isBlank(url)){
                     brandVO.setBrandUrl("");
                 }else {
                     if (url.contains(fastDFSConfig.getUrl()+"/")){
@@ -175,7 +202,6 @@ public class BrandController {
                 brandVO.setBrandUrl(filePath);
 
             }
-            String userId = request.getHeader("userId");
             brandVO.setUpdateNo(userId);
             brandVO.setName(name);
             brandVO.setDescri(descri);
@@ -195,6 +221,12 @@ public class BrandController {
     })
     @GetMapping("checkUnique")
     public ComResponse<Boolean> checkUnique(@RequestParam("name")String name,@RequestParam("id")Integer id){
+        if (id == null || id < 1) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"不合法的id格式！");
+        }
+        if (StringUtils.isBlank(name)){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"需要校验的名称不能为空！");
+        }
         return brandService.checkUnique(name, id);
     }
     

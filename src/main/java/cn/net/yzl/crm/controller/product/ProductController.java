@@ -165,6 +165,12 @@ public class ProductController {
     })
     @GetMapping("v1/queryProductListAtlas")
     public ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(@RequestParam(value = "productName",required = false) String productName, @RequestParam(value = "id",required = false) Integer id, @RequestParam(value = "pid",required = false) Integer pid){
+        if (StringUtils.isBlank(productName)&&(pid == null || id == null)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"商品编号和商品id+pid组必须添加至少一项！");
+        }
+        if (id < 1 || pid < 0){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"非法的id/pid参数！");
+        }
         return productService.queryProductListAtlas(productName,id,pid);
     }
 
@@ -184,7 +190,7 @@ public class ProductController {
         }
         BeanUtils.copyProperties(vo, params);
         String userId = request.getHeader("userId");
-        if(StringUtils.isEmpty(userId)){
+        if(StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员工编号，请检查您的登录状态！");
         }
         params.setUpdateNo(userId);
@@ -195,11 +201,17 @@ public class ProductController {
     @GetMapping(value = "v1/queryDetail")
     @ApiOperation("查询商品详情")
     public ComResponse<ProductDetailVO> queryProductDetail(@RequestParam("productCode") String productCode) {
+        if (StringUtils.isBlank(productCode)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"目标商品编号不能为空！");
+        }
         return productService.queryProductDetail(productCode);
     }
     @GetMapping(value = "v1/queryProductPortrait")
     @ApiOperation("查询商品画像")
     public ComResponse<ProductPortraitDTO> queryProductPortrait(@RequestParam("productCode") String productCode) {
+        if (StringUtils.isBlank(productCode)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"目标商品编号不能为空！");
+        }
         return productService.queryProductPortrait(productCode);
     }
 
@@ -213,6 +225,9 @@ public class ProductController {
     @GetMapping(value = "v1/queryDiseaseByProductCode")
     @ApiOperation("根据商品编号查询病症")
     public ComResponse<List<ProductDiseaseDTO>> queryDiseaseByProductCode(@RequestParam("productCode") String productCode) {
+        if (StringUtils.isBlank(productCode)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"目标商品编号不能为空！");
+        }
         return productService.queryDiseaseByProductCode(productCode);
     }
 }

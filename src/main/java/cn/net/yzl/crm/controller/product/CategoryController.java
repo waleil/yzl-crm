@@ -2,11 +2,13 @@ package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.service.product.CategoryService;
 import cn.net.yzl.product.model.vo.category.CategoryDelVO;
 import cn.net.yzl.product.model.vo.category.CategorySelectTO;
 import cn.net.yzl.product.model.vo.category.CategoryTO;
 import io.swagger.annotations.*;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +30,9 @@ public class CategoryController {
     @GetMapping("getCategoryById")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
     public ComResponse<CategoryTO> getCategoryById(@RequestParam("id") Integer id) {
+        if(id == null || id < 1){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"不合法的id类型！");
+        }
         ComResponse comResponse = categoryService.getCategoryById(id);
         if (comResponse.getData() == null) {
             return ComResponse.nodata();
@@ -37,14 +42,22 @@ public class CategoryController {
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
     public ComResponse insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
-        categoryTO.setUpdateNo(request.getHeader("userId"));
+        String userId = request.getHeader("userId");
+        if (StringUtils.isBlank(userId)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
+        }
+        categoryTO.setUpdateNo(userId);
         return categoryService.insertCategory(categoryTO);
     }
 
     @ApiOperation(value = "修改分类信息")
     @PostMapping("updateCategory")
     public ComResponse updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
-        categoryTO.setUpdateNo(request.getHeader("userId"));
+        String userId = request.getHeader("userId");
+        if (StringUtils.isBlank(userId)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
+        }
+        categoryTO.setUpdateNo(userId);
         return categoryService.updateCategory(categoryTO);
     }
 
@@ -67,7 +80,17 @@ public class CategoryController {
     public ComResponse changeCategoryStatus(@RequestParam("flag") Boolean flag,
                                                           @RequestParam("id") Integer id,
                                                           HttpServletRequest request) {
-            return categoryService.changeCategoryStatus(flag,id,request.getHeader("userId"));
+            if (flag == null) {
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"请正确输入上下架信息！");
+            }
+            if(id == null || id < 1){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
+            }
+            String userId = request.getHeader("userId");
+            if(StringUtils.isBlank(userId)){
+                return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
+            }
+            return categoryService.changeCategoryStatus(flag,id,userId);
     }
 
     @ApiOperation(value = "修改分类移动端展示状态")
@@ -79,6 +102,8 @@ public class CategoryController {
     public ComResponse changeCategoryAppStatus(@RequestParam("flag") Boolean flag,
                                                              @RequestParam("id") Integer id,
                                                              HttpServletRequest request) {
+
+
             return categoryService.changeCategoryAppStatus(flag,id,request.getHeader("userId"));
     }
 
@@ -112,6 +137,15 @@ public class CategoryController {
     })
     @GetMapping("selectPage")
     public ComResponse<Page<CategoryTO>> selectAll(@RequestParam Integer pid, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize) {
+        if (pid == null || pid < 0) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
+        }
+        if (pageNo == null || pageNo < 0) {
+            pageNo = 1;
+        }
+        if (pageSize <= 0){
+            pageSize = 10;
+        }
         return categoryService.selectAll(pid,pageNo, pageSize);
     }
 
@@ -119,7 +153,10 @@ public class CategoryController {
     @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true)
     @GetMapping("selectForOptions")
     public ComResponse<List<CategorySelectTO>> selectForOptions(@RequestParam("pid")Integer pid){
+        if (pid == null || pid < 0) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
+        }
         return categoryService.selectForOptions(pid);
     }
 
-}
+ }

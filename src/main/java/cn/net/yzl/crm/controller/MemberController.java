@@ -43,8 +43,8 @@ import java.util.UUID;
 @RequestMapping(value = MemberController.PATH)
 public class MemberController {
     public static final String PATH = "member";
-    @Autowired
-    private MemberService memberService;
+//    @Autowired
+//    private MemberService memberService;
 
     @Autowired
     MemberFien memberFien;
@@ -300,14 +300,13 @@ public class MemberController {
 
     @ApiOperation("保存顾客圈选")
     @PostMapping("/v1/saveMemberCrowdGroup")
-    public ComResponse saveMemberCrowdGroup(@RequestBody member_crowd_group memberCrowdGroup){
-        if(memberCrowdGroup==null) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        if(StringUtil.isNullOrEmpty(memberCrowdGroup.getCrowd_id())){
-            String crowd_id = UUID.randomUUID().toString().replaceAll("-","");
+    public ComResponse saveMemberCrowdGroup(@RequestBody member_crowd_group memberCrowdGroup) {
+        if (memberCrowdGroup == null) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        if (StringUtil.isNullOrEmpty(memberCrowdGroup.getCrowd_id())) {
+            String crowd_id = UUID.randomUUID().toString().replaceAll("-", "");
             memberCrowdGroup.setCrowd_id(crowd_id);
-            return  memberFien.addCrowdGroup(memberCrowdGroup);
-        }
-        else{
+            return memberFien.addCrowdGroup(memberCrowdGroup);
+        } else {
             return memberFien.updateCrowdGroup(memberCrowdGroup);
         }
     }
@@ -319,9 +318,27 @@ public class MemberController {
             @NotBlank(message = "crowdId不能为空")
             @ApiParam(name = "crowdId", value = "圈选id", required = true)
                     String crowdId
-    ){
-        if(StringUtil.isNullOrEmpty(crowdId)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        return memberFien.getMemberCrowdGroup(crowdId);
+    ) {
+        if (StringUtil.isNullOrEmpty(crowdId)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        ComResponse<member_crowd_group> result= memberFien.getMemberCrowdGroup(crowdId);
+        if(result.getData()==null || result.getData().isDel()) throw new BizException(ResponseCodeEnums.NO_DATA);
+        return result;
     }
 
+    @ApiOperation("获取顾客行为偏好字典数据")
+    @GetMapping("/v1/getMemberActions")
+    public ComResponse getMemberActions() {
+        return ComResponse.success(memberFien.getMemberActions());
+    }
+
+    @ApiOperation("删除顾客圈选")
+    @GetMapping("/v1/delMemberCrowdGroup")
+    public ComResponse delMemberCrowdGroup(
+            @RequestParam("crowdId")
+            @NotBlank(message = "crowdId不能为空")
+            @ApiParam(name = "crowdId", value = "圈选id", required = true)
+                    String crowdId
+    ) {
+        return memberFien.delMemberCrowdGroup(crowdId);
+    }
 }
