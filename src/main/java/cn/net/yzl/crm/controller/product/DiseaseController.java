@@ -52,7 +52,9 @@ public class DiseaseController {
         if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取用户id，请检查您的登录状态");
         }
-        //新建删除实体
+        if(id == null || id < 1){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
+        }        //新建删除实体
         DiseaseDelVo delVo = new DiseaseDelVo();
         delVo.setUpdateNo(request.getHeader("userId"));
         delVo.setId(id);
@@ -65,7 +67,10 @@ public class DiseaseController {
     public ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam(value = "pid",defaultValue = "0",required = false) Integer pid){
         ComResponse<List<DiseaseDTO>> listComResponse = diseaseService.queryByPid(pid);
         if (listComResponse.getData().size() == 0){
-            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE,"当前父类下无子类病症");
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),"当前父类下无子类病症");
+        }
+        if(pid < 0){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"请输入正确的pid信息！");
         }
         return listComResponse;
     }
@@ -84,8 +89,11 @@ public class DiseaseController {
     @GetMapping("v1/changeName")
     public ComResponse changeName(@RequestParam("id") Integer id, @RequestParam("name") String name,HttpServletRequest request){
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)){
+        if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取身份信息，请检查您的登录状态！");
+        }
+        if(id == null || id < 0){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id格式！");
         }
         return diseaseService.changeName(id,name,userId);
     }
@@ -98,6 +106,12 @@ public class DiseaseController {
     @GetMapping("v1/queryDiseasePage")
     public ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(@RequestParam(required = false,defaultValue = "1")Integer pageNo,
                                                                       @RequestParam(required = false,defaultValue = "10")  Integer pageSize){
+        if (pageNo == null || pageNo <= 0) {
+            pageNo = 1;
+        }
+        if (pageSize <= 0){
+            pageSize = 10;
+        }
         return diseaseService.queryDiseaseTreePage(pageNo,pageSize);
     }
 }

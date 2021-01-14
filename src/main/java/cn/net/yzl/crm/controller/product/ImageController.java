@@ -53,14 +53,14 @@ public class ImageController {
                                                   @RequestParam("storeId") Integer storeId) throws IOException {
         List<ImageDTO> list = new ArrayList<>();
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)){
+        if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名！请检查您的登录状态！");
         }
         if (files.length == 0||files.length>15) {//开始判断
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "文件数量为"+files.length+",需要为1-15张！");
         }else {
             for (MultipartFile file : files) {//循环
-                if (file.isEmpty()){//非空
+                if (file.isBlank()){//非空
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"存在空文件！");
                 }else {
                     long size = file.getSize();//以Byte为单位
@@ -142,14 +142,14 @@ public class ImageController {
                                    @RequestParam(required = false) Integer sort,
                                    Byte type,
                                    HttpServletRequest request){
-        if(StringUtils.isEmpty(name)){
+        if(StringUtils.isBlank(name)){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"相册名称不能为空！");
         }
         if (type>1 || type <0){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"非法的相册类型！");
         }
         String userId;
-        if(StringUtils.isEmpty(userId=request.getHeader("userId"))){
+        if(StringUtils.isBlank(userId=request.getHeader("userId"))){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员编号，请检查登录状态！");
         }
         ImageStoreVO is = new ImageStoreVO();
@@ -186,7 +186,7 @@ public class ImageController {
     @GetMapping("v1/deleteById")
     public ComResponse deleteById(@RequestParam("id") Integer id,HttpServletRequest request){
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
+        if (StringUtils.isBlank(userId)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名，请检查您的登录状态！");
         }
         return imageService.deleteById(id,userId);
@@ -196,7 +196,7 @@ public class ImageController {
     @GetMapping("v1/deleteStoreById")
     public ComResponse deleteStoreById(@RequestParam("id") Integer id,HttpServletRequest request) {
         String userId = request.getHeader("userId");
-        if (StringUtils.isEmpty(userId)) {
+        if (StringUtils.isBlank(userId)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名，请检查您的登录状态！");
         }
         return imageService.deleteStoreById(id,userId);
@@ -210,7 +210,7 @@ public class ImageController {
 
         String userId = request.getHeader("userId");
 
-        if(com.alibaba.nacos.common.utils.StringUtils.isEmpty(userId)){
+        if(StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"获取登录状态失败，请尝试重新登陆！");
         }
 
@@ -222,7 +222,7 @@ public class ImageController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件过大，上传文件的最大限制为50KB！");
         }
         String fileName = file.getOriginalFilename();
-        if(com.alibaba.nacos.common.utils.StringUtils.isEmpty(fileName)||(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png"))&&!fileName.endsWith(".jpeg")&&!fileName.endsWith(".gif")){
+        if(com.alibaba.nacos.common.utils.StringUtils.isBlank(fileName)||(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png"))&&!fileName.endsWith(".jpeg")&&!fileName.endsWith(".gif")){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"请上传正确的图片文件！");
         }
 
