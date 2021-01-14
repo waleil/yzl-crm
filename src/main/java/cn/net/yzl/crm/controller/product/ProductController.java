@@ -10,6 +10,7 @@ import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,7 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Api(tags = "商品服务")
 @RestController
@@ -152,6 +154,9 @@ public class ProductController {
         }
         if (vo.getSalePriceD() == null) {
             return "市场价价格不能为空";
+        }
+        if (CollectionUtils.isEmpty(vo.getImages())||vo.getImages().size()>5){
+            return "商品图片数量不正确，应为1-5张，当前为"+vo.getImages()==null?"0":vo.getImages().size()+"张";
         }
         return null;
     }
