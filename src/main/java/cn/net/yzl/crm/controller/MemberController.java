@@ -43,8 +43,8 @@ import java.util.UUID;
 @RequestMapping(value = MemberController.PATH)
 public class MemberController {
     public static final String PATH = "member";
-    @Autowired
-    private MemberService memberService;
+//    @Autowired
+//    private MemberService memberService;
 
     @Autowired
     MemberFien memberFien;
