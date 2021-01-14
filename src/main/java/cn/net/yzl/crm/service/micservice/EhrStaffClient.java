@@ -90,4 +90,16 @@ public interface EhrStaffClient {
      */
     @GetMapping("/depart/getListByStaffNo")
     ComResponse<List<EhrDepartDto>> getListByStaffNo(@RequestParam("staffNo") String staffNo);
+
+    /**
+     * 根据业务属性和岗位id-获取对应岗位级别列表
+     */
+    @GetMapping(value = "/businessPost/getBusinessPostList")
+    ComResponse<List<BusinessPostDto>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode,@RequestParam("postId") Integer postId);
+
+    /**
+     * 根据业务属性获取岗位列表
+     */
+    @GetMapping(value = "/businessPost/getPostByBussinessAttrCode")
+    ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode);
 }
