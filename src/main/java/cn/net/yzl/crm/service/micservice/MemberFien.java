@@ -105,15 +105,15 @@ public interface MemberFien {
 
     @ApiOperation("新增顾客圈选")
     @PostMapping("/v1/addCrowdGroup")
-    ComResponse  addCrowdGroup(member_crowd_group memberCrowdGroup);
+    ComResponse  addCrowdGroup(@RequestBody member_crowd_group memberCrowdGroup);
 
     @ApiOperation("修改顾客圈选")
     @PostMapping("/v1/updateCrowdGroup")
-    ComResponse updateCrowdGroup(member_crowd_group memberCrowdGroup);
+    ComResponse updateCrowdGroup(@RequestBody member_crowd_group memberCrowdGroup);
 
     @ApiOperation("根据圈选id获取圈选信息")
     @GetMapping("/v1/getMemberCrowdGroup")
-    ComResponse getMemberCrowdGroup(String crowdId);
+    ComResponse getMemberCrowdGroup(@RequestParam("crowdId") String crowdId);
 
     @ApiOperation("根据一批顾客群组id获取群组信息,用英文逗号分隔")
     @GetMapping("/v1/getCrowdGroupList")
@@ -129,5 +129,5 @@ public interface MemberFien {
 
     @ApiOperation("删除顾客圈选")
     @GetMapping("/v1/delMemberCrowdGroup")
-    ComResponse delMemberCrowdGroup(@RequestParam String crowdId);
+    ComResponse delMemberCrowdGroup(@RequestParam("crowdId") String crowdId);
 }
