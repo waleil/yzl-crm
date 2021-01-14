@@ -124,7 +124,7 @@ public interface MemberFien {
     public ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
 
     @ApiOperation("获取顾客行为偏好字典数据")
-    @PostMapping("/v1/getMemberActions")
+    @GetMapping("/v1/getMemberActions")
     public ComResponse<crowd_member_action> getMemberActions();
 
     @ApiOperation("删除顾客圈选")
