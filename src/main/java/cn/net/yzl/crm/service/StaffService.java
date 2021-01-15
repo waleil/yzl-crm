@@ -1,10 +1,11 @@
 package cn.net.yzl.crm.service;
 
+import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.dto.staff.OrderDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
+import cn.net.yzl.order.model.vo.order.OderListResDTO;
 
 /**
  * 员工业务层业务层
@@ -32,7 +33,7 @@ public interface StaffService {
      * @param staffNo
      * @return
      */
-    Page<OrderDto> getStaffOrderList(String staffNo, Integer timeType, Integer status, Integer pageNo, Integer pageSize);
+    ComResponse<Page<OderListResDTO>> getStaffOrderList(String staffNo, Integer timeType, Integer status, Integer pageNo, Integer pageSize);
 
     /**
      * 根据员工编号员工顾客列表

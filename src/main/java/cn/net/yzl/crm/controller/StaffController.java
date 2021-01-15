@@ -4,7 +4,6 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
-import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.*;
@@ -14,6 +13,7 @@ import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.order.model.vo.order.OderListResDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -161,7 +161,7 @@ public class StaffController {
      */
     @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "POST")
     @PostMapping("/getStaffOrderList")
-    public ComResponse<Page<OrderDto>> getStaffOrderList(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
+    public ComResponse<Page<OderListResDTO>> getStaffOrderList(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                    @ApiParam(name = "timeType",value ="时间类型 1昨日 2近七天 3近15天  4近一个月") @RequestParam("timeType") Integer timeType,
                                                                    @ApiParam(name = "status",value ="状态 0.话务待审核 1.话务未通过 2. 物流部待审核 3.物流部审核未通过  4..物流已审核 5.已退 6.部分退 7.订单已取消 8.订单已完成 9.拒收'") @RequestParam("status") Integer status,
                                                                    @ApiParam(name = "pageNo",value ="当前页") @RequestParam("pageNo") Integer pageNo,
@@ -170,8 +170,8 @@ public class StaffController {
         if (StringUtils.isBlank(staffNo)){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        Page<OrderDto> page = staffService.getStaffOrderList(staffNo,timeType,status,pageNo,pageSize);
-        return ComResponse.success(page);
+        ComResponse<Page<OderListResDTO>> response = staffService.getStaffOrderList(staffNo,timeType,status,pageNo,pageSize);
+        return response;
     }
 
     /**

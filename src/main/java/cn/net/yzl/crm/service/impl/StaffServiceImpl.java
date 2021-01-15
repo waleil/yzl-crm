@@ -1,11 +1,11 @@
 package cn.net.yzl.crm.service.impl;
 
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
-import cn.net.yzl.crm.dto.staff.OrderDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
@@ -13,14 +13,13 @@ import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.crm.sys.BizException;
-import cn.net.yzl.order.model.vo.order.OrderListReqDTO;
+import cn.net.yzl.order.model.vo.order.OderListReqDTO;
+import cn.net.yzl.order.model.vo.order.OderListResDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -84,18 +83,28 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public Page<OrderDto> getStaffOrderList(String staffNo, Integer timeType, Integer status, Integer pageNo, Integer pageSize) {
-        OrderListReqDTO reqDTO = new OrderListReqDTO();
+    public ComResponse<Page<OderListResDTO>> getStaffOrderList(String staffNo, Integer timeType, Integer status, Integer pageNo, Integer pageSize) {
+        OderListReqDTO reqDTO = new OderListReqDTO();
         reqDTO.setPageNo(pageNo);
         reqDTO.setPageSize(pageSize);
-        reqDTO.setCreateCode(staffNo);
-//        switch (timeType){
-//            case 1:
-//                reqDTO.setStartTime(Timestamp.from(LocalDateTimeUtil.beginOfDay(LocalDateTime.now()).toInstant(ZoneId.systemDefault())));
-//                break;
-//        }
-//        reqDTO.setStartTime();
-//        orderSearchClient.selectOrderList(OrderListReqDTO)
-        return null;
+        reqDTO.setStaffCode(staffNo);
+        switch (timeType){
+            case 1:
+                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now()), DatePattern.NORM_DATETIME_FORMATTER));
+                break;
+            case 2:
+                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(7)), DatePattern.NORM_DATETIME_FORMATTER));
+                break;
+            case 3:
+                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(15)), DatePattern.NORM_DATETIME_FORMATTER));
+                break;
+            case 4:
+                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(30)), DatePattern.NORM_DATETIME_FORMATTER));
+                break;
+            default:
+                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now()), DatePattern.NORM_DATETIME_FORMATTER));
+        }
+        ComResponse<Page<OderListResDTO>> response = orderSearchClient.selectOrderList(reqDTO);
+        return response;
     }
 }
