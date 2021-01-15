@@ -3,6 +3,9 @@ package cn.net.yzl.crm.controller.workorder;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.workorder.WorkOrderHotlineClient;
+import cn.net.yzl.crm.dto.ehr.EhrStaff;
+import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
+import cn.net.yzl.crm.service.workorder.WorkOrderHotlineService;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
 import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -29,6 +33,9 @@ public class WorkOrderHotlineController {
 
     @Autowired
     private WorkOrderHotlineClient workOrderHotlineClient;
+
+    @Autowired
+    private WorkOrderHotlineService workOrderHotlineService;
 
     /**work_order_hotline_flow
      *  热线工单：回收
@@ -68,7 +75,7 @@ public class WorkOrderHotlineController {
      * @param
      * @return
      */
-    @GetMapping("v1/findWorkOrderHotlinePageList")
+    @PostMapping("v1/findWorkOrderHotlinePageList")
     @ApiOperation(value = "热线工单：查询热线工单列表", notes = "热线工单：查询热线工单列表")
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO){
         return workOrderHotlineClient.findWorkOrderHotlinePageList(findWorkOrderHotlinePageListDTO);
@@ -79,9 +86,20 @@ public class WorkOrderHotlineController {
      * @param
      * @return
      */
-    @GetMapping("v1/findMyWorkOrderHotlinePageList")
+    @PostMapping("v1/findMyWorkOrderHotlinePageList")
     @ApiOperation(value = "热线工单：我的热线工单列表", notes = "热线工单：我的热线工单列表")
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@Validated @RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
         return workOrderHotlineClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+    }
+
+    /**
+     * 热线工单：热线工单管理（可分配员工）
+     * @param
+     * @return
+     */
+    @PostMapping("v1/getDistributionStaff")
+    @ApiOperation(value = "热线工单：热线工单管理（可分配员工）", notes = "热线工单：热线工单管理（可分配员工）")
+    public ComResponse<Page<EhrStaff>> getDistributionStaff(@Validated @RequestBody GetDistributionStaffDTO getDistributionStaffDTO){
+        return workOrderHotlineService.getDistributionStaff(getDistributionStaffDTO);
     }
 }

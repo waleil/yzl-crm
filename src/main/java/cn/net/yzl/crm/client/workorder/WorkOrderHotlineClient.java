@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *  工单规则配置相关功能
  */
 @Service
-@FeignClient(name = "WorkOrderHotline",url = "${api.gateway.url}/workorderServer/hotline")
-//@FeignClient(name = "WorkOrderHotline",url = "127.0.0.1:4602/hotline")
+//@FeignClient(name = "WorkOrderHotline",url = "${api.gateway.url}/workorderServer/hotline")
+@FeignClient(name = "WorkOrderHotline",url = "127.0.0.1:4602/hotline")
 public interface WorkOrderHotlineClient {
 
     /**
@@ -54,16 +54,16 @@ public interface WorkOrderHotlineClient {
      * @param findWorkOrderHotlinePageListDTO
      * @return
      */
-    @RequestMapping(value = "v1/findWorkOrderHotlinePageList",method = RequestMethod.GET)
-    ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@SpringQueryMap FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
+    @RequestMapping(value = "v1/findWorkOrderHotlinePageList",method = RequestMethod.POST)
+    ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
 
     /**
      * 热线工单：我的热线工单列表
      * @param
      * @return
      */
-    @RequestMapping(value = "v1/findMyWorkOrderHotlinePageList",method = RequestMethod.GET)
-    ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@SpringQueryMap MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO);
+    @RequestMapping(value = "v1/findMyWorkOrderHotlinePageList",method = RequestMethod.POST)
+    ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO);
 
 
 
