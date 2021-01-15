@@ -10,7 +10,6 @@ import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -21,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Api(tags = "商品服务")
 @RestController
@@ -31,9 +28,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-
-    @Autowired
-    private DiseaseService diseaseService;
 
     /**
      * @param
@@ -173,8 +167,10 @@ public class ProductController {
         if (StringUtils.isBlank(productName)&&(pid == null || id == null)) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"商品编号和商品id+pid组必须添加至少一项！");
         }
-        if (id < 1 || pid < 0){
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"非法的id/pid参数！");
+        if (null != id&& null != pid){
+            if (id < 1 || pid < 0){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"非法的id/pid参数！");
+            }
         }
         return productService.queryProductListAtlas(productName,id,pid);
     }
