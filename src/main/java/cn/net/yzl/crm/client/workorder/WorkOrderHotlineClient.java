@@ -3,8 +3,8 @@ package cn.net.yzl.crm.client.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.workorder.model.db.WorkOrderHotlineBean;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
+import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
 import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
@@ -56,4 +56,15 @@ public interface WorkOrderHotlineClient {
      */
     @RequestMapping(value = "v1/findWorkOrderHotlinePageList",method = RequestMethod.GET)
     ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@SpringQueryMap FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
+
+    /**
+     * 热线工单：我的热线工单列表
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "v1/findMyWorkOrderHotlinePageList",method = RequestMethod.GET)
+    ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@SpringQueryMap MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO);
+
+
+
 }
