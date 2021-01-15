@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
+import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.*;
@@ -162,12 +163,14 @@ public class StaffController {
     @PostMapping("/getStaffOrderList")
     public ComResponse<Page<OrderDto>> getStaffOrderList(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                    @ApiParam(name = "timeType",value ="时间类型 1昨日 2近七天 3近15天  4近一个月") @RequestParam("timeType") Integer timeType,
-                                                                   @ApiParam(name = "status",value ="状态 0.话务待审核 1.话务未通过 2. 物流部待审核 3.物流部审核未通过  4..物流已审核 5.已退 6.部分退 7.订单已取消 8.订单已完成 9.拒收'") @RequestParam("status") Integer status){
+                                                                   @ApiParam(name = "status",value ="状态 0.话务待审核 1.话务未通过 2. 物流部待审核 3.物流部审核未通过  4..物流已审核 5.已退 6.部分退 7.订单已取消 8.订单已完成 9.拒收'") @RequestParam("status") Integer status,
+                                                                   @ApiParam(name = "pageNo",value ="当前页") @RequestParam("pageNo") Integer pageNo,
+                                                                   @ApiParam(name = "pageSize",value ="每页数量") @RequestParam("pageSize") Integer pageSize){
         log.info("......StaffController.getStaffOrderList()开始,请求参数,staffNo={},timeType={},status={}......",staffNo,timeType,status);
         if (StringUtils.isBlank(staffNo)){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        Page<OrderDto> page = staffService.getStaffOrderList(staffNo);
+        Page<OrderDto> page = staffService.getStaffOrderList(staffNo,timeType,status,pageNo,pageSize);
         return ComResponse.success(page);
     }
 

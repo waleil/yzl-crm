@@ -32,7 +32,7 @@ public interface StaffService {
      * @param staffNo
      * @return
      */
-    Page<OrderDto> getStaffOrderList(String staffNo);
+    Page<OrderDto> getStaffOrderList(String staffNo, Integer timeType, Integer status, Integer pageNo, Integer pageSize);
 
     /**
      * 根据员工编号员工顾客列表
@@ -40,4 +40,5 @@ public interface StaffService {
      * @return
      */
     Page<CustomerDto> getCustomerListByStaffNo(Integer staffNo, Integer pageNo, Integer pageSize);
+
 }

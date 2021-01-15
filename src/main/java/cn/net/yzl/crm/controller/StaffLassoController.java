@@ -2,18 +2,11 @@ package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.ehr.StaffStatusDto;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.crm.staff.dto.ActionDto;
-import cn.net.yzl.crm.staff.dto.IndicatorDto;
-import cn.net.yzl.crm.staff.dto.lasso.ActivityDto;
-import cn.net.yzl.crm.staff.dto.lasso.MediaDto;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupDTO;
-import cn.net.yzl.crm.staff.dto.lasso.TrainProductDto;
-import cn.net.yzl.product.model.vo.product.dto.ProductDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -44,42 +37,42 @@ public class StaffLassoController {
         return response;
     }
 
-    // 活动
-    @ApiOperation(value = "获取活动",httpMethod = "GET")
-    @GetMapping("v1/getActivity")
-    public ComResponse<List<ActivityDto>> getActivity() {
-        // todo 调用dmc
-
-        return ComResponse.success();
-    }
-    // 媒介
-    @ApiOperation(value = "获取媒体",httpMethod = "GET")
-    @GetMapping("v1/getMediaDto")
-    public ComResponse<List<MediaDto>> getMediaDto() {
-        //todo  调用dmc
-        return ComResponse.success();
-    }
-    // 培训过的商品
-    @ApiOperation(value = "获取培训过的商品",httpMethod = "GET")
-    @GetMapping("v1/getTrainProduct")
-    public ComResponse<List<ProductDTO>> getTrainProduct() {
-        //todo  调用ehr
-        return ComResponse.success();
-    }
-    //获取指标库
-    @ApiOperation(value = "获取指标库",httpMethod = "GET")
-    @GetMapping("v1/getIndicator")
-    public ComResponse<List<IndicatorDto>> getIndicator() {
-        //todo  调用bi
-        return ComResponse.success();
-    }
-    //获取员工行为
-    @ApiOperation(value = "获取员工行为",httpMethod = "GET")
-    @GetMapping("v1/getActionDto")
-    public ComResponse<List<ActionDto>> getActionDto() {
-        //todo
-        return ComResponse.success();
-    }
+//    // 活动
+//    @ApiOperation(value = "获取活动",httpMethod = "GET")
+//    @GetMapping("v1/getActivity")
+//    public ComResponse<List<ActivityDto>> getActivity() {
+//        // todo 调用dmc
+//
+//        return ComResponse.success();
+//    }
+//    // 媒介
+//    @ApiOperation(value = "获取媒体",httpMethod = "GET")
+//    @GetMapping("v1/getMediaDto")
+//    public ComResponse<List<MediaDto>> getMediaDto() {
+//        //todo  调用dmc
+//        return ComResponse.success();
+//    }
+//    // 培训过的商品
+//    @ApiOperation(value = "获取培训过的商品",httpMethod = "GET")
+//    @GetMapping("v1/getTrainProduct")
+//    public ComResponse<List<ProductDTO>> getTrainProduct() {
+//        //todo  调用ehr
+//        return ComResponse.success();
+//    }
+//    //获取指标库
+//    @ApiOperation(value = "获取指标库",httpMethod = "GET")
+//    @GetMapping("v1/getIndicator")
+//    public ComResponse<List<IndicatorDto>> getIndicator() {
+//        //todo  调用bi
+//        return ComResponse.success();
+//    }
+//    //获取员工行为
+//    @ApiOperation(value = "获取员工行为",httpMethod = "GET")
+//    @GetMapping("v1/getActionDto")
+//    public ComResponse<List<ActionDto>> getActionDto() {
+//        //todo
+//        return ComResponse.success();
+//    }
 
     // 员工圈选 保存
     @ApiOperation(value = "保存员工全选组",httpMethod = "POST")
