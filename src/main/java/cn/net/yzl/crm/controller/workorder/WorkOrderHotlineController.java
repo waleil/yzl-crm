@@ -1,14 +1,19 @@
 package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.workorder.WorkOrderHotlineClient;
-import cn.net.yzl.crm.dto.workorder.UpdateMoreAdjustDTO;
-import cn.net.yzl.crm.dto.workorder.UpdateRecyclingDTO;
-import cn.net.yzl.crm.dto.workorder.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
+import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
+import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
+import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
+import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,4 +63,25 @@ public class WorkOrderHotlineController {
         return workOrderHotlineClient.updateMoreAdjust(updateMoreAdjustDTO);
     }
 
+    /**
+     * 热线工单：查询热线工单列表
+     * @param
+     * @return
+     */
+    @GetMapping("v1/findWorkOrderHotlinePageList")
+    @ApiOperation(value = "热线工单：查询热线工单列表", notes = "热线工单：查询热线工单列表")
+    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO){
+        return workOrderHotlineClient.findWorkOrderHotlinePageList(findWorkOrderHotlinePageListDTO);
+    }
+
+    /**
+     * 热线工单：我的热线工单列表
+     * @param
+     * @return
+     */
+    @GetMapping("v1/findMyWorkOrderHotlinePageList")
+    @ApiOperation(value = "热线工单：我的热线工单列表", notes = "热线工单：我的热线工单列表")
+    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@Validated @RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
+        return workOrderHotlineClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+    }
 }
