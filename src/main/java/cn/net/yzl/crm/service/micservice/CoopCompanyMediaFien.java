@@ -18,6 +18,4 @@ import java.util.List;
 public interface CoopCompanyMediaFien {
     @GetMapping(value="/db/v1/coopCompanyMedia/getMedia")
     GeneralResult<List<Media>> getMediaList();
-
-
 }
