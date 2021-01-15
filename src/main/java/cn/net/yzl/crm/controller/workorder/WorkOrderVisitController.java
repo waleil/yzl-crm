@@ -2,7 +2,10 @@ package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderVisitClient;
+import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
+import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
 import cn.net.yzl.workorder.model.db.WorkOrderVisitBean;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitCriteriaTO;
 import io.swagger.annotations.Api;
@@ -22,6 +25,16 @@ public class WorkOrderVisitController {
 
     @Autowired
     private WorkOrderVisitClient workOrderVisitClient;
+
+    @Autowired
+    private ProductClient productClient;
+
+    @ApiOperation(value = "商品下拉列表（首单、最后一次购买商品）")
+    @GetMapping("v1/listProduct")
+    public ComResponse<Page<ProductListDTO>> listProduct(ProductSelectVO productSelectVO){
+        productSelectVO.setPageSize(1000);//暂时不分页
+        return productClient.queryListProduct(productSelectVO);
+    }
 
     /**
      *  分页查询回访工单
