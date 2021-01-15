@@ -8,7 +8,7 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.INewOrderService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
-import cn.net.yzl.order.model.vo.order.NewOrderExcelInDTO;
+//import cn.net.yzl.order.model.vo.order.NewOrderExcelInDTO;
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,8 +58,8 @@ public class NewOrderController {
     public ComResponse<Boolean> importNewOrderTemplet( MultipartFile file) throws Exception {
         InputStream inputStream = file.getInputStream();
         // 这里 需要指定读用哪个class去读，然后读取第一个sheet 文件流会自动关闭
-        EasyExcel.read(inputStream, NewOrderExcelInDTO.class, new NewOrderListioner(newOrderService)).sheet()
-                .headRowNumber(2).doRead();
+//        EasyExcel.read(inputStream, NewOrderExcelInDTO.class, new NewOrderListioner(newOrderService)).sheet()
+//                .headRowNumber(2).doRead();
         return ComResponse.success(true);
     }
 
