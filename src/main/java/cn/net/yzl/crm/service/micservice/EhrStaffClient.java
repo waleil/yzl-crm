@@ -102,4 +102,11 @@ public interface EhrStaffClient {
      */
     @GetMapping(value = "/businessPost/getPostByBussinessAttrCode")
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode);
+
+    /**
+     *  获取培训过的商品
+     * @return
+     */
+    @GetMapping(value = "/trainCourse/getTrainProduct")
+    ComResponse<List<String>> getTrainProduct();
 }

@@ -68,11 +68,11 @@
     </logger>
 
     <springProfile name="test,dev">
-        <root level="debug">
+        <root level="info">
             <appender-ref ref="console"/>
             <appender-ref ref="async_log"/>
         </root>
-        <logger name="cn.net.yzl" level="debug" additivity="false">
+        <logger name="cn.net.yzl" level="info" additivity="false">
             <appender-ref ref="console"/>
             <appender-ref ref="async_log"/>
         </logger>

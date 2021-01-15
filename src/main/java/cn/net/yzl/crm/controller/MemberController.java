@@ -262,31 +262,31 @@ public class MemberController {
         return result;
     }
 
-    @ApiOperation("保存顾客行为偏好")
-    @PostMapping("/v1/saveMemberAction")
-    public GeneralResult saveMemberAction(@RequestBody MemberAction memberAction) {
-        if (memberAction == null || StringUtil.isNullOrEmpty(memberAction.getMember_card()))
-            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        GeneralResult<MemberAction> result = memberFien.getMemberAction(memberAction.getMember_card());
-        if (result.getData() == null) {
-            memberFien.addMemberAction(memberAction);
-        } else {
-            memberFien.updateMemberAction(memberAction);
-        }
-        return GeneralResult.success();
-    }
-
-    @ApiOperation("获取顾客行为偏好")
-    @GetMapping("/v1/getMemberAction")
-    public GeneralResult getMemberAction(
-            @RequestParam("member_card")
-            @NotBlank(message = "member_card不能为空")
-            @ApiParam(name = "member_card", value = "会员卡号", required = true)
-                    String member_card
-    ) {
-        GeneralResult<MemberAction> result = memberFien.getMemberAction(member_card);
-        return result;
-    }
+//    @ApiOperation("保存顾客行为偏好")
+//    @PostMapping("/v1/saveMemberAction")
+//    public GeneralResult saveMemberAction(@RequestBody MemberAction memberAction) {
+//        if (memberAction == null || StringUtil.isNullOrEmpty(memberAction.getMember_card()))
+//            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+//        GeneralResult<MemberAction> result = memberFien.getMemberAction(memberAction.getMember_card());
+//        if (result.getData() == null) {
+//            memberFien.addMemberAction(memberAction);
+//        } else {
+//            memberFien.updateMemberAction(memberAction);
+//        }
+//        return GeneralResult.success();
+//    }
+//
+//    @ApiOperation("获取顾客行为偏好")
+//    @GetMapping("/v1/getMemberAction")
+//    public GeneralResult getMemberAction(
+//            @RequestParam("member_card")
+//            @NotBlank(message = "member_card不能为空")
+//            @ApiParam(name = "member_card", value = "会员卡号", required = true)
+//                    String member_card
+//    ) {
+//        GeneralResult<MemberAction> result = memberFien.getMemberAction(member_card);
+//        return result;
+//    }
 
     @ApiOperation("获取沟通记录")
     @PostMapping("/v1/getCallRecard")
@@ -321,7 +321,7 @@ public class MemberController {
     ) {
         if (StringUtil.isNullOrEmpty(crowdId)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         ComResponse<member_crowd_group> result = memberFien.getMemberCrowdGroup(crowdId);
-        if (result.getData() == null || result.getData().isDel())
+        if (result.getData() == null )
             return ComResponse.success(ResponseCodeEnums.NO_DATA_CODE);
         return result;
     }

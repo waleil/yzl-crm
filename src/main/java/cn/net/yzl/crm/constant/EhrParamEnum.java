@@ -11,4 +11,8 @@ public enum EhrParamEnum {
      * 岗位字典   在职状态
      */
     public static final  String EHR_DICT_STAFF_STATUS = "post_status";
+    /**
+     * 职场
+     */
+    public static final  String EHR_DICT_WORKPLACE_STATUS = "workplace";
 }
