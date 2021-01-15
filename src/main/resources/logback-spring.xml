@@ -4,7 +4,7 @@
     <!-- 用于指定logger上下文名称，默认为default -->
     <contextName>logback</contextName>
     <springProperty scope="context" name="application.name" source="spring.application.name"/>
-    <property name="LOG_HOME" value="/opt/logs/${application.name}"/>
+    <property name="LOG_HOME" value="/Users/xuwei/yzlworkspace/logs/${application.name}"/>
     <property scope="context" name="SYS_MONITOR_LOG_FILE_NAME" value="request" />
     <property name="PATTERN" value="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%c{12}:%L] %msg%n"/>
 
