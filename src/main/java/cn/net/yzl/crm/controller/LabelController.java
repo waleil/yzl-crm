@@ -26,6 +26,7 @@ public class LabelController {
     @GetMapping("getLabelTypes")
     public ComResponse getLabelTypes(){
         List<LabelType> labelTypeList=labelService.getLabelTypes();
+
         return new ComResponse().setData(labelTypeList).setCode(ComResponse.SUCCESS_STATUS);
     }
 
