@@ -3,6 +3,9 @@ package cn.net.yzl.crm.controller.workorder;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.workorder.WorkOrderRuleConfigClient;
+import cn.net.yzl.crm.dto.ehr.BusinessPostDto;
+import cn.net.yzl.crm.dto.ehr.PostDto;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.vo.WorkOrderRuleConfigTO;
 import io.swagger.annotations.Api;
@@ -22,6 +25,31 @@ public class WorkOrderRuleController {
     @Autowired
     private WorkOrderRuleConfigClient workOrderRuleConfigClient;
 
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
+
+    /**
+     * 根据业务属性获取岗位列表
+     */
+    @ApiOperation(value="根据业务属性获取岗位列表",httpMethod = "GET")
+    @GetMapping(value = "/getPostByBussinessAttrCode")
+    ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode){
+        return ehrStaffClient.getPostByBussinessAttrCode(bussinessAtrrCode);
+    }
+
+    /**
+     * 根据业务属性获取岗位列表
+     */
+    @ApiOperation(value="根据业务属性和岗位id获取岗位级别列表",httpMethod = "GET")
+    @GetMapping(value = "/getBusiPostListByAttr")
+    ComResponse<List<BusinessPostDto>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode, @RequestParam("postId") Integer postId){
+        if (bussinessAtrrCode!=null && postId!=null){
+            ComResponse<List<BusinessPostDto>> posts = ehrStaffClient.getBusiPostListByAttr(bussinessAtrrCode, postId);
+            return posts;
+        }else{
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"缺少必填参数或参数值为null:" + "业务属性编号热线，回访或者岗位编号");
+        }
+    }
 
     /**
      * 功能描述: 添加或修改工单规则配置
