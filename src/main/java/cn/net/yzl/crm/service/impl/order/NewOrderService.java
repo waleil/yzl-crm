@@ -273,7 +273,7 @@ public class NewOrderService implements INewOrderService {
         System.out.println(response.getData().get(0) instanceof CrowdGroup);
         response.getData().forEach(map ->{
             CustomerGroup customerGroup = new CustomerGroup();
-            customerGroup.setGroupId(map.getId()+"");
+            customerGroup.setGroupId(map.getCrowd_id());
             customerGroup.setGroupcount(map.getPerson_count());
             groups.add(customerGroup);
 

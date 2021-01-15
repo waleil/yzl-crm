@@ -320,8 +320,9 @@ public class MemberController {
                     String crowdId
     ) {
         if (StringUtil.isNullOrEmpty(crowdId)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        ComResponse<member_crowd_group> result= memberFien.getMemberCrowdGroup(crowdId);
-        if(result.getData()==null || result.getData().isDel()) return ComResponse.success(ResponseCodeEnums.NO_DATA_CODE);
+        ComResponse<member_crowd_group> result = memberFien.getMemberCrowdGroup(crowdId);
+        if (result.getData() == null || result.getData().isDel())
+            return ComResponse.success(ResponseCodeEnums.NO_DATA_CODE);
         return result;
     }
 
@@ -340,5 +341,17 @@ public class MemberController {
                     String crowdId
     ) {
         return memberFien.delMemberCrowdGroup(crowdId);
+    }
+
+    @ApiOperation("根据一批顾客群组id获取群组信息,用英文逗号分隔")
+    @GetMapping("/v1/getCrowdGroupList")
+    public ComResponse getCrowdGroupList(
+            @RequestParam("crowdIds")
+            @NotBlank(message = "crowdIds不能为空")
+            @ApiParam(name = "crowdIds", value = "圈选id", required = true)
+                    String crowdIds
+    ) {
+        if (StringUtil.isNullOrEmpty(crowdIds)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        return memberFien.getCrowdGroupList(crowdIds);
     }
 }
