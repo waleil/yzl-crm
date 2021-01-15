@@ -88,7 +88,7 @@ public class WorkOrderHotlineController {
      */
     @PostMapping("v1/findMyWorkOrderHotlinePageList")
     @ApiOperation(value = "热线工单：我的热线工单列表", notes = "热线工单：我的热线工单列表")
-    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@Validated @RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
+    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
         return workOrderHotlineClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
     }
 
