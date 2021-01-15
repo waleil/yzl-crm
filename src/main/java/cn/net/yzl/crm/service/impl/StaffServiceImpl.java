@@ -6,6 +6,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
+import cn.net.yzl.crm.dto.staff.OrderCriteriaDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
@@ -83,12 +84,12 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public ComResponse<Page<OderListResDTO>> getStaffOrderList(String staffNo, Integer timeType, Integer status, Integer pageNo, Integer pageSize) {
+    public ComResponse<Page<OderListResDTO>> getStaffOrderList(OrderCriteriaDto req) {
         OderListReqDTO reqDTO = new OderListReqDTO();
-        reqDTO.setPageNo(pageNo);
-        reqDTO.setPageSize(pageSize);
-        reqDTO.setStaffCode(staffNo);
-        switch (timeType){
+        reqDTO.setPageNo(req.getPageNo());
+        reqDTO.setPageSize(req.getPageSize());
+        reqDTO.setStaffCode(req.getStaffNo());
+        switch (req.getTimeType()){
             case 1:
                 reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now()), DatePattern.NORM_DATETIME_FORMATTER));
                 break;

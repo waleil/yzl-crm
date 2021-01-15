@@ -161,16 +161,9 @@ public class StaffController {
      */
     @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "POST")
     @PostMapping("/getStaffOrderList")
-    public ComResponse<Page<OderListResDTO>> getStaffOrderList(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam(value = "staffNo",required = false) String staffNo,
-                                                                   @ApiParam(name = "timeType",value ="时间类型 1昨日 2近七天 3近15天  4近一个月") @RequestParam(value = "timeType",required = false) Integer timeType,
-                                                                   @ApiParam(name = "status",value ="状态 0.话务待审核 1.话务未通过 2. 物流部待审核 3.物流部审核未通过  4..物流已审核 5.已退 6.部分退 7.订单已取消 8.订单已完成 9.拒收'") @RequestParam(value = "status",required = false) Integer status,
-                                                                   @ApiParam(name = "pageNo",value ="当前页") @RequestParam("pageNo") Integer pageNo,
-                                                                   @ApiParam(name = "pageSize",value ="每页数量") @RequestParam("pageSize") Integer pageSize){
-        log.info("......StaffController.getStaffOrderList()开始,请求参数,staffNo={},timeType={},status={}......",staffNo,timeType,status);
-        if (StringUtils.isBlank(staffNo)){
-            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        }
-        ComResponse<Page<OderListResDTO>> response = staffService.getStaffOrderList(staffNo,timeType,status,pageNo,pageSize);
+    public ComResponse<Page<OderListResDTO>> getStaffOrderList(OrderCriteriaDto req){
+        log.info("......StaffController.getStaffOrderList()开始,请求参数,{}......",JsonUtil.toJsonStr(req));
+        ComResponse<Page<OderListResDTO>> response = staffService.getStaffOrderList(req);
         return response;
     }
 
