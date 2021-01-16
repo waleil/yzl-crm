@@ -53,6 +53,13 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!--菜单角色权限-->
+        <dependency>
+            <groupId>cn.net.yzl</groupId>
+            <artifactId>yzl-common-pm</artifactId>
+            <version>1.0-RELEASE</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
