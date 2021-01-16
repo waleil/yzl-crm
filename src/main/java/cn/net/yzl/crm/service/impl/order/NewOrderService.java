@@ -280,28 +280,28 @@ public class NewOrderService implements INewOrderService {
 //
 //       return groups;
 //    }
-    protected List<CustomerGroup> searchGroups(List<String> groupCodes){
-        String groupsStr = groupCodes.stream().collect(Collectors.joining(","));
-        //查询顾客群组接口
-        ComResponse<List<CrowdGroup>> response = memberFien.getCrowdGroupList(groupsStr);
-        if(response.getCode().compareTo(Integer.valueOf(200))!=0){
-            throw new BizException(response.getCode(),response.getMessage());
-        }
-        if(response.getData() !=null && (groupCodes.size() != response.getData().size())){
-            throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分群组已失效");
-        }
-        List<CustomerGroup> groups = new ArrayList<>();
-        System.out.println(response.getData().get(0) instanceof CrowdGroup);
-        response.getData().forEach(map ->{
-            CustomerGroup customerGroup = new CustomerGroup();
-            customerGroup.setGroupId(map.getCrowd_id());
-            customerGroup.setGroupcount(map.getPerson_count());
-            groups.add(customerGroup);
-
-        });
-
-       return groups;
-    }
+//    protected List<CustomerGroup> searchGroups(List<String> groupCodes){
+//        String groupsStr = groupCodes.stream().collect(Collectors.joining(","));
+//        //查询顾客群组接口
+//        ComResponse<List<CrowdGroup>> response = memberFien.getCrowdGroupList(groupsStr);
+//        if(response.getCode().compareTo(Integer.valueOf(200))!=0){
+//            throw new BizException(response.getCode(),response.getMessage());
+//        }
+//        if(response.getData() !=null && (groupCodes.size() != response.getData().size())){
+//            throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分群组已失效");
+//        }
+//        List<CustomerGroup> groups = new ArrayList<>();
+//        System.out.println(response.getData().get(0) instanceof CrowdGroup);
+//        response.getData().forEach(map ->{
+//            CustomerGroup customerGroup = new CustomerGroup();
+//            customerGroup.setGroupId(map.getCrowd_id());
+//            customerGroup.setGroupcount(map.getPerson_count());
+//            groups.add(customerGroup);
+//
+//        });
+//
+//       return groups;
+//    }
 
     /**
      * 查询商品列表
