@@ -6,6 +6,7 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateHelper;
+import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
@@ -429,6 +430,13 @@ public class MemberController {
     ) {
         if (StringUtil.isNullOrEmpty(crowdIds)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         return memberFien.getCrowdGroupList(crowdIds);
+    }
+
+    @ApiOperation("分页获取圈选列表")
+    @PostMapping("/v1/getCrowdGroupByPage")
+    public ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO) {
+        if (crowdGroupDTO == null) throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE);
+        return memberFien.getCrowdGroupByPage(crowdGroupDTO);
     }
 
 

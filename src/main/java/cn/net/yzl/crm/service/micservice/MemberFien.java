@@ -122,7 +122,7 @@ public interface MemberFien {
     @GetMapping("/v1/getCrowdGroupList")
     ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds);
 
-    @ApiOperation("分页获取群组列表")
+    @ApiOperation("分页获取顾客圈选列表")
     @PostMapping("/v1/getCrowdGroupByPage")
     ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
 
