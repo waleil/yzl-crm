@@ -5,13 +5,13 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
+import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
 import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,6 +66,11 @@ public interface WorkOrderHotlineClient {
     @RequestMapping(value = "v1/findMyWorkOrderHotlinePageList",method = RequestMethod.POST)
     ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO);
 
-
-
+    /**
+     * 智能工单：我的热线工单-接收
+     * @param updateAcceptStatusReceiveDTO
+     * @return
+     */
+    @RequestMapping(value = "v1/updateAcceptStatusReceive",method = RequestMethod.POST)
+    ComResponse<Void> updateAcceptStatusReceive(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
 }

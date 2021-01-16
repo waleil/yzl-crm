@@ -26,7 +26,7 @@ public interface StaffService {
      * @param staffNo
      * @return
      */
-    Page<StaffProdcutTravelDto> getStaffProductTravel(Integer staffNo, Integer pageNo, Integer pageSize);
+    Page<StaffProdcutTravelDto> getStaffProductTravel(String staffNo, Integer pageNo, Integer pageSize);
 
 
     /**
@@ -41,6 +41,6 @@ public interface StaffService {
      * @param staffNo
      * @return
      */
-    Page<CustomerDto> getCustomerListByStaffNo(Integer staffNo, Integer pageNo, Integer pageSize);
+    Page<CustomerDto> getCustomerListByStaffNo(String staffNo, Integer pageNo, Integer pageSize);
 
 }

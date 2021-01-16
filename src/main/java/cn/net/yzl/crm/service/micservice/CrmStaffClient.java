@@ -29,7 +29,7 @@ public interface CrmStaffClient {
      * @return
      */
     @GetMapping("/staff/v1/getStaffProductTravelList")
-     ComResponse<Page<StaffProdcutTravelDto>> getStaffProductTravelList(@RequestParam("staffNo")  Integer staffNo,@RequestParam("pageNumber") Integer pageNumber, @RequestParam("pageSize")  Integer pageSize);
+     ComResponse<Page<StaffProdcutTravelDto>> getStaffProductTravelList(@RequestParam("staffNo")  String staffNo,@RequestParam("pageNumber") Integer pageNumber, @RequestParam("pageSize")  Integer pageSize);
     /**
      * 获取员工画像  顾客列表
      * @param staffNo
@@ -38,7 +38,7 @@ public interface CrmStaffClient {
      * @return
      */
     @GetMapping("/staff/v1/getCustomerList")
-    ComResponse<Page<CustomerDto>> getCustomerList(@RequestParam("staffNo")  Integer staffNo,@RequestParam("pageNumber") Integer pageNumber,@RequestParam("pageSize") Integer pageSize);
+    ComResponse<Page<CustomerDto>> getCustomerList(@RequestParam("staffNo")  String staffNo,@RequestParam("pageNumber") Integer pageNumber,@RequestParam("pageSize") Integer pageSize);
 
 
     /**
@@ -47,7 +47,7 @@ public interface CrmStaffClient {
      * @return
      */
     @GetMapping("/staff/v1/getBasicProductAdvance")
-    ComResponse<List<String>> getBasicProductAdvance(@RequestParam("staffNo")Integer staffNo);
+    ComResponse<List<String>> getBasicProductAdvance(@RequestParam("staffNo")String staffNo);
 
     /**
      * 获取员工画像  病症优势
@@ -55,7 +55,7 @@ public interface CrmStaffClient {
      * @return
      */
     @GetMapping("/staff/v1/getBasicDiseaseAdvance")
-    ComResponse<List<String>> getBasicDiseaseAdvance(@RequestParam("staffNo")Integer staffNo);
+    ComResponse<List<String>> getBasicDiseaseAdvance(@RequestParam("staffNo")String staffNo);
 
     /**
      * 保存 员工圈选接口
