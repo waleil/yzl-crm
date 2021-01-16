@@ -17,14 +17,13 @@ import cn.net.yzl.crm.model.Media;
 //import cn.net.yzl.crm.model.MemberGrade;
 import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
-import cn.net.yzl.crm.service.micservice.CoopCompanyMediaFien;
+import cn.net.yzl.crm.service.micservice.CoopCompanyMediaClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.sys.BizException;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Api(tags = "顾客管理")
@@ -49,7 +46,7 @@ public class MemberController {
     @Autowired
     MemberFien memberFien;
     @Autowired
-    CoopCompanyMediaFien coopCompanyMediaFien;
+    CoopCompanyMediaClient coopCompanyMediaClient;
 
     @Autowired
     WorkOrderClient workOrderClient;
@@ -102,12 +99,7 @@ public class MemberController {
         return result;
     }
 
-    @ApiOperation(value = "获取媒体列表")
-    @GetMapping("v1/getMediaList")
-    public GeneralResult<List<Media>> getMediaList() {
-        GeneralResult<List<Media>> result = coopCompanyMediaFien.getMediaList();
-        return result;
-    }
+
 
     @ApiOperation(value = "根据媒体id获取广告列表列表")
     @GetMapping("v1/getAdverList")
