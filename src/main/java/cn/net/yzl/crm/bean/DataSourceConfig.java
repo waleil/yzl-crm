@@ -13,10 +13,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author : zhangruisong
@@ -24,7 +26,7 @@ import java.util.Map;
  * @description:
  */
 @Configuration
-@MapperScan(basePackages = "cn.net.yzl.crm.dao", sqlSessionTemplateRef = "sqlTemplate")
+@MapperScan(basePackages = {"cn.net.yzl.crm.dao","cn.net.yzl.pm.mapper"}, sqlSessionTemplateRef = "sqlTemplate")
 public class DataSourceConfig {
 
     // 主库
@@ -63,12 +65,30 @@ public class DataSourceConfig {
     @Bean
     public SqlSessionFactory sessionFactory(@Qualifier("dynamicDb") DataSource dynamicDataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
-        bean.setMapperLocations(
-                new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*.xml"));
+        bean.setMapperLocations(resolveMapperLocations());
+        //bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*.xml"));
                 //new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/*Mapper.xml"));
         bean.setDataSource(dynamicDataSource);
         return bean.getObject();
     }
+
+    public Resource[] resolveMapperLocations() {
+        ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+        List<String> mapperLocations = new ArrayList<>();
+        mapperLocations.add("classpath*:mapper/*.xml");//crm本项目
+        mapperLocations.add("mybatis/pm/mapping/*.xml");//中台pm项目
+        List<Resource> resources = new ArrayList<>();
+        for (String mapperLocation : mapperLocations) {
+            try {
+                Resource[] mappers = resourceResolver.getResources(mapperLocation);
+                resources.addAll(Arrays.asList(mappers));
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return resources.toArray(new Resource[resources.size()]);
+    }
+
     @Bean
     public SqlSessionTemplate sqlTemplate(@Qualifier("sessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);

@@ -3,6 +3,7 @@ package cn.net.yzl.crm.config;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.UUIDGenerator;
+import cn.net.yzl.crm.utils.UserInfoUtil;
 import cn.net.yzl.logger.json.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -71,7 +72,11 @@ public class AuthInterceptor implements HandlerInterceptor {
             returnJson(response, ComResponse.fail(ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getCode(),ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getMessage()));
             return false;
         }
-
+        //获取用户信息
+        String userId = request.getHeader("userId");
+        String userName = request.getHeader("userName");
+        UserInfoUtil.setUserId(userId);
+        UserInfoUtil.setUserName(userName);
 //        var generalResult = oauthRemoteService.verifyToken(token);
 //        if (HttpStatus.OK.value() != generalResult.getCode()) {
 //            log.error("token:[{}],校验失败:[{}]", token, generalResult.getMessage());

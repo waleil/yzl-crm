@@ -20,7 +20,6 @@ import cn.net.yzl.crm.model.Media;
 //import cn.net.yzl.crm.model.MemberGrade;
 import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
-import cn.net.yzl.crm.service.micservice.CoopCompanyMediaFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.sys.BizException;
@@ -49,8 +48,6 @@ public class MemberController {
 
     @Autowired
     MemberFien memberFien;
-    @Autowired
-    CoopCompanyMediaFien coopCompanyMediaFien;
 
     @Autowired
     WorkOrderClient workOrderClient;
@@ -103,12 +100,7 @@ public class MemberController {
         return result;
     }
 
-    @ApiOperation(value = "获取媒体列表")
-    @GetMapping("v1/getMediaList")
-    public GeneralResult<List<Media>> getMediaList() {
-        GeneralResult<List<Media>> result = coopCompanyMediaFien.getMediaList();
-        return result;
-    }
+
 
     @ApiOperation(value = "根据媒体id获取广告列表列表")
     @GetMapping("v1/getAdverList")
