@@ -2,27 +2,18 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.client.order.OrderRejectionClient;
 import cn.net.yzl.crm.dto.order.OrderRejectionAddDTO;
-import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
-import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.order.OrderRejectionService;
 import cn.net.yzl.order.model.vo.order.OrderRejectionPageDTO;
-import cn.net.yzl.order.service.OrderSaleService;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author zhouchangsong
@@ -50,8 +41,6 @@ public class OrderRejectionController {
     @ApiOperation(value = "新增拒收订单")
     public ComResponse addOrderRejection(HttpServletRequest request, @Valid @RequestBody OrderRejectionAddDTO orderRejectionAddDTO) {
         String userNo = request.getHeader("userNo");
-
-
-        return orderRejectionService.addOrderRejection(orderRejectionAddDTO,userNo);
+        return orderRejectionService.addOrderRejection(orderRejectionAddDTO, userNo);
     }
 }
