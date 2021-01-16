@@ -52,7 +52,7 @@ public class CommonController {
     }
 
     @ApiOperation(value = "投放管理-所有广告")
-    @PostMapping("v1/getAllLaunchManage")
+    @GetMapping("v1/getAllLaunchManage")
     public ComResponse<List<LaunchManageDto>> getAllLaunchManage() {
         return launchManageClient.getAllLaunchManage();
     }
