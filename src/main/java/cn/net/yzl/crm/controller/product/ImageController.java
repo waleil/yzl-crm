@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.dto.image.Album;
 import cn.net.yzl.crm.service.product.ImageService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.vo.image.ImageDTO;
@@ -130,32 +131,19 @@ public class ImageController {
     }
 
     @PostMapping("creaeteAlbum")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "name",value = "相册名称",paramType = "query",required = true),
-            @ApiImplicitParam(name = "descri",value = "相册描述",paramType = "query"),
-            @ApiImplicitParam(name = "sort",value = "排序",paramType = "query"),
-            @ApiImplicitParam(name = "type",value = "相册类型（0：图片库，1：视频库）",paramType = "query",required = true)
-    })
     @ApiOperation("创建图片库相册")
-    public ComResponse createAlbum(String name,
-                                   @RequestParam(required = false) String descri,
-                                   @RequestParam(required = false) Integer sort,
-                                   Byte type,
+    public ComResponse createAlbum(@RequestBody Album album,
                                    HttpServletRequest request){
-        if(StringUtils.isBlank(name)){
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"相册名称不能为空！");
-        }
-        if (type>1 || type <0){
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"非法的相册类型！");
-        }
+
         String userId;
         if(StringUtils.isBlank(userId=request.getHeader("userId"))){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员编号，请检查登录状态！");
         }
+
         ImageStoreVO is = new ImageStoreVO();
-        is.setName(name);
-        is.setType(type);
-        is.setDescri(descri);
+        is.setName(album.getName());
+        is.setType(album.getType());
+        is.setDescri(album.getDescri());
         is.setCreateNo(userId);
         return imageService.createAlbum(is);
     }
