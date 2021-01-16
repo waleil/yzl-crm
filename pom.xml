@@ -206,7 +206,7 @@
     <repositories>
         <repository>
             <id>nexus</id>
-            <url>http://192.168.32.31/nexus/conetent/repositories/snapshots</url>
+            <url>http://192.168.32.31/nexus/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
