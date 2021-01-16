@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 @Data
 public class GetDistributionStaffDTO extends BaseDTO<GetDistributionStaffDTO> {
 
-    @ApiModelProperty(value = "用户编号")
+    @ApiModelProperty(value = "用户编号",required = true)
     @NotNull(message = "用户编号校验错误")
     private String staffNo;
 }

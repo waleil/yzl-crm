@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *  工单规则配置相关功能
  */
 @Service
-//@FeignClient(name = "WorkOrderHotline",url = "${api.gateway.url}/workorderServer/hotline")
-@FeignClient(name = "WorkOrderHotline",url = "127.0.0.1:4602/hotline")
+@FeignClient(name = "WorkOrderHotline",url = "${api.gateway.url}/workorderServer/hotline")
+//@FeignClient(name = "WorkOrderHotline",url = "127.0.0.1:4602/hotline")
 public interface WorkOrderHotlineClient {
 
     /**
