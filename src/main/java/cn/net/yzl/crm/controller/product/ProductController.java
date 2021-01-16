@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Api(tags = "商品服务")
 @RestController
@@ -29,9 +28,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-
-    @Autowired
-    private DiseaseService diseaseService;
 
     /**
      * @param
@@ -153,6 +149,9 @@ public class ProductController {
         if (vo.getSalePriceD() == null) {
             return "市场价价格不能为空";
         }
+        if (CollectionUtils.isEmpty(vo.getImages())||vo.getImages().size()>5){
+            return "商品图片数量不正确，应为1-5张，当前为"+vo.getImages()==null?"0":vo.getImages().size()+"张";
+        }
         return null;
     }
 
@@ -168,8 +167,10 @@ public class ProductController {
         if (StringUtils.isBlank(productName)&&(pid == null || id == null)) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"商品编号和商品id+pid组必须添加至少一项！");
         }
-        if (id < 1 || pid < 0){
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"非法的id/pid参数！");
+        if (null != id&& null != pid){
+            if (id < 1 || pid < 0){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"非法的id/pid参数！");
+            }
         }
         return productService.queryProductListAtlas(productName,id,pid);
     }

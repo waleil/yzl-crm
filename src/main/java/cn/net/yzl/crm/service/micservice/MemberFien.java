@@ -5,15 +5,18 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.*;
-import cn.net.yzl.crm.customer.mongomodel.crowd_member_action;
+
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
-import jdk.nashorn.internal.objects.annotations.Getter;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 顾客服务接口
@@ -91,17 +94,17 @@ public interface MemberFien {
     @GetMapping("/v1/updateMemberOrderStat")
     GeneralResult updateMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
 
-    @ApiOperation("添加顾客行为偏好")
-    @GetMapping("/v1/addMemberAction")
-    GeneralResult addMemberAction(@RequestBody MemberAction memberAction);
-
-    @ApiOperation("修改顾客行为偏好")
-    @GetMapping("/v1/updateMemberAction")
-    GeneralResult updateMemberAction(@RequestBody MemberAction memberAction);
-
-    @ApiOperation("获取顾客行为偏好")
-    @GetMapping("/v1/getMemberAction")
-    GeneralResult<MemberAction> getMemberAction(@RequestParam("member_card") String member_card);
+//    @ApiOperation("添加顾客行为偏好")
+//    @GetMapping("/v1/addMemberAction")
+//    GeneralResult addMemberAction(@RequestBody MemberAction memberAction);
+//
+//    @ApiOperation("修改顾客行为偏好")
+//    @GetMapping("/v1/updateMemberAction")
+//    GeneralResult updateMemberAction(@RequestBody MemberAction memberAction);
+//
+//    @ApiOperation("获取顾客行为偏好")
+//    @GetMapping("/v1/getMemberAction")
+//    GeneralResult<MemberAction> getMemberAction(@RequestParam("member_card") String member_card);
 
     @ApiOperation("新增顾客圈选")
     @PostMapping("/v1/addCrowdGroup")
@@ -119,13 +122,13 @@ public interface MemberFien {
     @GetMapping("/v1/getCrowdGroupList")
     ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds);
 
-    @ApiOperation("分页获取群组列表")
+    @ApiOperation("分页获取顾客圈选列表")
     @PostMapping("/v1/getCrowdGroupByPage")
     ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
 
     @ApiOperation("获取顾客行为偏好字典数据")
     @GetMapping("/v1/getMemberActions")
-    ComResponse<List<crowd_member_action>> getMemberActions();
+    ComResponse<List<MemberBaseAttr>> getMemberActions();
 
     @ApiOperation("删除顾客圈选")
     @GetMapping("/v1/delMemberCrowdGroup")

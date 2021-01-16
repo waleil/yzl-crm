@@ -32,6 +32,9 @@ public class StaffImageBaseInfoDto {
 //    private Integer degreeCode;
 //    @ApiModelProperty("学历")
 //    private String degreeCodeStr;
+    @ApiModelProperty("部门id")
+    private Integer departId;
+
     @ApiModelProperty("部门ids")
     private String departIds;
     @ApiModelProperty("部门ids对应的名称集合")

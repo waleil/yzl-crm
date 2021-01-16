@@ -39,6 +39,6 @@ public interface ImageClient {
     @GetMapping("deleteById")
     ComResponse deleteById(@RequestParam("id") Integer id,@RequestParam("userId") String userId);
 
-    @GetMapping("v1/deleteStoreById")
+    @GetMapping("deleteStoreById")
     ComResponse deleteStoreById(@RequestParam("id") Integer id,@RequestParam("userId") String userId);
 }

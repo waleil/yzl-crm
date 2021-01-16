@@ -13,6 +13,7 @@ import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.order.model.vo.order.OderListResDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,7 +44,7 @@ public class StaffController {
      * 获取员工排班信息
      * @return
      */
-    @ApiOperation(value="获取员工排班信息",httpMethod = "post")
+    @ApiOperation(value="获取员工排班信息",httpMethod = "POST")
     @PostMapping("/getStaffScheduleInfo")
    public ComResponse<StaffScheduleInfoDto> getStaffScheduleInfo(@RequestBody StaffScheduleQueryDto staffScheduleQueryDto){
         log.info("......StaffController.getStaffScheduleInfo()开始,请求参数:{}......", JsonUtil.toJsonStr(staffScheduleQueryDto));
@@ -59,7 +60,7 @@ public class StaffController {
      * 员工抢班
      * @return
      */
-    @ApiOperation(value="员工抢班",httpMethod = "post")
+    @ApiOperation(value="员工抢班",httpMethod = "POST")
     @PostMapping("/schedule/robedClass")
     public ComResponse<StaffScheduleInfoDto> robedClass(@RequestBody EhrRobedQueryDto queryDto){
         log.info("......StaffController.robedClass()开始,请求参数,{}......",JsonUtil.toJsonStr(queryDto));
@@ -75,7 +76,7 @@ public class StaffController {
      * 排班-根据员工工号和时间获取排班详情
      * @return
      */
-    @ApiOperation(value="根据员工工号和时间获取排班详情",httpMethod = "get")
+    @ApiOperation(value="根据员工工号和时间获取排班详情",httpMethod = "GET")
     @GetMapping("/schedule/getDetailByStaffNoAndTime")
     public ComResponse<StaffScheduleDetailDto> getDetailByStaffNoAndTime(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                          @ApiParam(name="time",value ="时间(yyyy-mm)") @RequestParam("time")String time){
@@ -91,7 +92,7 @@ public class StaffController {
      * 员工画像  根据员工id获取员工基本信息
      * @return
      */
-    @ApiOperation(value="员工画像  根据员工id获取员工基本信息",httpMethod = "get")
+    @ApiOperation(value="员工画像  根据员工id获取员工基本信息",httpMethod = "GET")
     @GetMapping("/getDetailsByNo")
     public ComResponse<StaffImageBaseInfoDto> getDetailsByNo(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo){
         log.info("......StaffController.getDetailsByNo()开始,请求参数,staffNo={}......",staffNo);
@@ -107,7 +108,7 @@ public class StaffController {
      * 员工画像  根据条件获取员工通话记录
      * @return
      */
-    @ApiOperation(value="员工画像  根据条件获取员工通话记录",httpMethod = "post")
+    @ApiOperation(value="员工画像  根据条件获取员工通话记录",httpMethod = "POST")
     @PostMapping("/getCallRecordByStaffNo")
     public ComResponse<Page<StaffCallRecord>> getCallRecordByStaffNo(@RequestBody CallnfoCriteriaTO callnfoCriteriaTO){
         log.info("......StaffController.getCallRecordByStaffNo()开始,请求参数,staffNo={}......",JsonUtil.toJsonStr(callnfoCriteriaTO));
@@ -122,9 +123,9 @@ public class StaffController {
      * 员工画像  获取员工商品旅程
      * @return
      */
-    @ApiOperation(value="员工画像  获取员工商品旅程",httpMethod = "post")
+    @ApiOperation(value="员工画像  获取员工商品旅程",httpMethod = "POST")
     @PostMapping("/getStaffProductTravel")
-    public ComResponse<Page<StaffProdcutTravelDto>> getStaffProductTravel(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") Integer staffNo,
+    public ComResponse<Page<StaffProdcutTravelDto>> getStaffProductTravel(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                           @ApiParam(name = "pageNo",value ="起始页") @RequestParam("pageNo") Integer pageNo,
                                                                           @ApiParam(name = "pageSize",value ="每页多少条") @RequestParam("pageSize") Integer pageSize){
         log.info("......StaffController.getStaffProductTravel()开始,请求参数,staffNo={},pageNo={},pageSize={}......",staffNo,pageNo,pageSize);
@@ -140,9 +141,9 @@ public class StaffController {
      * 员工画像  获取员工顾客列表
      * @return
      */
-    @ApiOperation(value="员工画像  获取员工顾客列表",httpMethod = "post")
+    @ApiOperation(value="员工画像  获取员工顾客列表",httpMethod = "POST")
     @PostMapping("/getCustomerListByStaffNo")
-    public ComResponse<Page<CustomerDto>> getCustomerListByStaffNo(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") Integer staffNo,
+    public ComResponse<Page<CustomerDto>> getCustomerListByStaffNo(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                    @ApiParam(name = "pageNo",value ="起始页") @RequestParam("pageNo") Integer pageNo,
                                                                    @ApiParam(name = "pageSize",value ="每页多少条") @RequestParam("pageSize") Integer pageSize){
         log.info("......StaffController.getCustomerListByStaffNo()开始,请求参数,staffNo={},pageNo={},pageSize={}......",staffNo,pageNo,pageSize);
@@ -158,24 +159,19 @@ public class StaffController {
      * 员工画像  获取员工订单列表
      * @return
      */
-    @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "post")
+    @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "POST")
     @PostMapping("/getStaffOrderList")
-    public ComResponse<Page<OrderDto>> getStaffOrderList(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
-                                                                   @ApiParam(name = "timeType",value ="时间类型 1昨日 2近七天 3近15天  4近一个月") @RequestParam("timeType") Integer timeType,
-                                                                   @ApiParam(name = "status",value ="状态 0.话务待审核 1.话务未通过 2. 物流部待审核 3.物流部审核未通过  4..物流已审核 5.已退 6.部分退 7.订单已取消 8.订单已完成 9.拒收'") @RequestParam("status") Integer status){
-        log.info("......StaffController.getStaffOrderList()开始,请求参数,staffNo={},timeType={},status={}......",staffNo,timeType,status);
-        if (StringUtils.isBlank(staffNo)){
-            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        }
-        Page<OrderDto> page = staffService.getStaffOrderList(staffNo);
-        return ComResponse.success(page);
+    public ComResponse<Page<OderListResDTO>> getStaffOrderList(OrderCriteriaDto req){
+        log.info("......StaffController.getStaffOrderList()开始,请求参数,{}......",JsonUtil.toJsonStr(req));
+        ComResponse<Page<OderListResDTO>> response = staffService.getStaffOrderList(req);
+        return response;
     }
 
     /**
      * 员工列表  获取员工所有状态
      * @return
      */
-    @ApiOperation(value="员工列表  获取员工所有状态",httpMethod = "get")
+    @ApiOperation(value="员工列表  获取员工所有状态",httpMethod = "GET")
     @GetMapping("/getAllStuffStatus")
     public ComResponse<List<StaffStatusDto>> getAllStuffStatus(){
         log.info("......StaffController.getAllStuffStatus()开始,......");
@@ -187,7 +183,7 @@ public class StaffController {
      * 员工列表  根据岗位id获取部门岗位级别列表
      * @return
      */
-    @ApiOperation(value="根据岗位id获取部门岗位级别列表",httpMethod = "get")
+    @ApiOperation(value="根据岗位id获取部门岗位级别列表",httpMethod = "GET")
     @GetMapping("/getPostLevelListByDepartId")
     public ComResponse<EhrPostLevelDto> getPostLevelListByPostId(@ApiParam(name = "postId") @RequestParam("postId") Integer postId){
         log.info("......StaffController.getPostLevelListByPostId()开始,请求参数: postId={}......",postId);
@@ -199,7 +195,7 @@ public class StaffController {
      * 员工列表  根据部门id获取部门岗位列表
      * @return
      */
-    @ApiOperation(value="根据部门id获取部门岗位列表",httpMethod = "get")
+    @ApiOperation(value="根据部门id获取部门岗位列表",httpMethod = "GET")
     @GetMapping("/getPostListByDepartId")
     public ComResponse<List<EhrPostDto>> getPostListByDepartId(@ApiParam(name = "departId")@RequestParam("departId") Integer departId){
         log.info("......StaffController.getPostListByDepartId()开始,......");
@@ -211,7 +207,7 @@ public class StaffController {
      * 员工列表  根据条件分页查询员工列表
      * @return
      */
-    @ApiOperation(value="根据条件分页查询员工列表",httpMethod = "post")
+    @ApiOperation(value="根据条件分页查询员工列表",httpMethod = "POST")
     @PostMapping("/getStaffListByPage")
     public ComResponse<Page<EhrStaff>> getStaffListByPage(@RequestBody StaffQueryDto query){
         log.info("......StaffController.getStaffListByPage()开始, 请求参数:{}......",JsonUtil.toJsonStr(query));
@@ -224,7 +220,7 @@ public class StaffController {
      * 根据员工id获取当前员工部门以及下属部门
      * @return
      */
-    @ApiOperation(value="根据员工id获取当前员工部门以及下属部门",httpMethod = "get")
+    @ApiOperation(value="根据员工id获取当前员工部门以及下属部门",httpMethod = "GET")
     @GetMapping("/getListByStaffNo")
     public ComResponse<List<EhrDepartDto>> getListByStaffNo(@ApiParam(name = "staffNo")@RequestParam("staffNo") String staffNo){
         log.info("......StaffController.getListByStaffNo(), 请求参数:{}......",staffNo);

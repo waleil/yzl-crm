@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.product.CategoryService;
 import cn.net.yzl.product.model.vo.category.CategoryDelVO;
 import cn.net.yzl.product.model.vo.category.CategorySelectTO;
@@ -25,6 +26,9 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
+
 
     @ApiOperation(value = "通过id精确匹配分类")
     @GetMapping("getCategoryById")
@@ -37,7 +41,7 @@ public class CategoryController {
         if (comResponse.getData() == null) {
             return ComResponse.nodata();
         }
-        return comResponse;
+        return comResponse.setMessage(fastDFSConfig.getUrl());
     }
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
