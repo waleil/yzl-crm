@@ -109,6 +109,6 @@ public interface EhrStaffClient {
      *  获取培训过的商品
      * @return
      */
-    @GetMapping(value = "/trainCourse/getTrainProduct")
-    ComResponse<List<String>> getTrainProduct();
+    @GetMapping(value = "/trainCourse/selectProduct")
+    ComResponse<List<String>> selectProduct();
 }

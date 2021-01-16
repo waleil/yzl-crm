@@ -60,4 +60,10 @@ public class CommonController {
         return launchManageClient.getAllLaunchManage();
     }
 
+    @ApiOperation(value = "培训过的商品")
+    @GetMapping("v1/selectProduct")
+    public ComResponse<List<String>> selectProduct() {
+        return ehrStaffClient.selectProduct();
+    }
+
 }
