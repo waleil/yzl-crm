@@ -1,7 +1,9 @@
 package cn.net.yzl.crm.utils;
 
+import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import org.apache.commons.lang.StringUtils;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,6 +81,15 @@ public class GetParamsValue {
     }
 
 
+    public <E ,T> E toModelMapping(T t,Class<E> clazz) {
+
+        Class<? extends Object> e=clazz.getClass();
+
+        Class<? extends Object> tClass=t.getClass();
+
+        Field[] fields = tClass.getDeclaredFields();
+        return null;
+    }
 
 
 
