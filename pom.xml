@@ -80,7 +80,6 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-
         <!--mybatis-plus启动器-->
         <dependency>
             <groupId>com.baomidou</groupId>
