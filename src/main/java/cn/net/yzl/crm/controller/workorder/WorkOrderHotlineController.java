@@ -12,6 +12,7 @@ import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
+import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class WorkOrderHotlineController {
      */
     @PostMapping("v1/findMyWorkOrderHotlinePageList")
     @ApiOperation(value = "热线工单：我的热线工单列表", notes = "热线工单：我的热线工单列表")
-    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
+    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
         return workOrderHotlineClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
     }
 

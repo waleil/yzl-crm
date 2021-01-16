@@ -9,6 +9,7 @@ import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
+import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.stereotype.Service;
@@ -63,7 +64,7 @@ public interface WorkOrderHotlineClient {
      * @return
      */
     @RequestMapping(value = "v1/findMyWorkOrderHotlinePageList",method = RequestMethod.POST)
-    ComResponse<Page<FindWorkOrderHotlinePageListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO);
+    ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO);
 
 
 
