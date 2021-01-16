@@ -48,13 +48,13 @@ public class StaffServiceImpl implements StaffService {
         }
         StaffImageBaseInfoDto data = ehrBaseInfoResponse.getData();
         // 获取产品优势
-        ComResponse<List<String>> basicProductAdvance = crmStaffClient.getBasicProductAdvance(Integer.parseInt(staffNo));
+        ComResponse<List<String>> basicProductAdvance = crmStaffClient.getBasicProductAdvance(staffNo);
         if (basicProductAdvance.getCode()==200){
             data.setProductAdvanced(basicProductAdvance.getData());
         }
 
         // 获取产品优势
-        ComResponse<List<String>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(Integer.parseInt(staffNo));
+        ComResponse<List<String>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(staffNo);
         if (basicDiseaseAdvance.getCode()==200){
             data.setDiseaseAdvanced(basicDiseaseAdvance.getData());
         }
@@ -63,7 +63,7 @@ public class StaffServiceImpl implements StaffService {
 
 
     @Override
-    public Page<StaffProdcutTravelDto> getStaffProductTravel(Integer staffNo, Integer pageNo, Integer pageSize) {
+    public Page<StaffProdcutTravelDto> getStaffProductTravel(String staffNo, Integer pageNo, Integer pageSize) {
         ComResponse<Page<StaffProdcutTravelDto>> response = crmStaffClient.getStaffProductTravelList(staffNo, pageNo, pageSize);
         if (response.getCode()!=200){
             log.info("......员工画像 获取员工商品旅程信息错误: code=[{}],msg=[{}]",response.getCode(),response.getMessage());
@@ -74,7 +74,7 @@ public class StaffServiceImpl implements StaffService {
 
 
     @Override
-    public Page<CustomerDto> getCustomerListByStaffNo(Integer staffNo, Integer pageNo, Integer pageSize) {
+    public Page<CustomerDto> getCustomerListByStaffNo(String staffNo, Integer pageNo, Integer pageSize) {
         ComResponse<Page<CustomerDto>> response = crmStaffClient.getCustomerList(staffNo, pageNo, pageSize);
         if (response.getCode()!=200){
             log.info("......员工画像 获取员工顾客列表错误: code=[{}],msg=[{}]",response.getCode(),response.getMessage());
