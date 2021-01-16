@@ -26,7 +26,7 @@ public class UserInfoUtil {
     }
 
     public static String getUserName() {
-        return userName;
+        return userName="YZL";
     }
 
     public static void setUserName(String userName) {
