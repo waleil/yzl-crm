@@ -22,12 +22,12 @@ public class WorkOrderHotlineServiceImpl implements WorkOrderHotlineService {
     @Autowired
     private EhrStaffClient EhrStaffClient;
     /**
-     * 热线工单：热线工单管理（可分配员工）
+     * 智能工单：热线工单管理-可分配员工
      * @param getDistributionStaffDTO
      */
     @Override
     public ComResponse<Page<EhrStaff>> getDistributionStaff(GetDistributionStaffDTO getDistributionStaffDTO) {
-        YLoggerUtil.infoLog("热线工单管理（可分配员工）Request", JsonUtil.toJsonStr(getDistributionStaffDTO));
+        YLoggerUtil.infoLog("智能工单：热线工单管理-可分配员工Request", JsonUtil.toJsonStr(getDistributionStaffDTO));
         //根据员工编码获取部门
         ComResponse<StaffImageBaseInfoDto> detailsByNo = EhrStaffClient.getDetailsByNo(getDistributionStaffDTO.getStaffNo());
         YLoggerUtil.infoLog("根据员工编码获取部门 Response", JsonUtil.toJsonStr(detailsByNo));
@@ -46,7 +46,7 @@ public class WorkOrderHotlineServiceImpl implements WorkOrderHotlineService {
         staffQueryDto.setPageSize(getDistributionStaffDTO.getPageSize());
         YLoggerUtil.infoLog("根据部门获取可分配员工 Request", JsonUtil.toJsonStr(staffQueryDto));
         ComResponse<Page<EhrStaff>> ehrStaffPage = EhrStaffClient.getStaffListByPage(staffQueryDto);
-        YLoggerUtil.infoLog("热线工单管理（可分配员工）Response",JsonUtil.toJsonStr(ehrStaffPage));
+        YLoggerUtil.infoLog("智能工单：热线工单管理-可分配员工Response",JsonUtil.toJsonStr(ehrStaffPage));
         return ehrStaffPage;
     }
 

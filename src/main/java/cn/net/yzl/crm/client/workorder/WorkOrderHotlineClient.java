@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface WorkOrderHotlineClient {
 
     /**
-     *  热线工单：回收
+     *  智能工单：热线工单管理-回收
      * @param updateRecyclingDTO
      * @return
      */
@@ -35,7 +35,7 @@ public interface WorkOrderHotlineClient {
 
 
     /**
-     * 热线工单：单数据调整
+     * 智能工单：热线工单管理-单数据调整
      * @param updateSingleAdjustDTO
      * @return
      */
@@ -43,7 +43,7 @@ public interface WorkOrderHotlineClient {
     ComResponse<Void> updateSingleAdjust(@RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO);
 
     /**
-     * 热线工单：多数据调整
+     * 智能工单：热线工单管理-多数据调整
      * @param updateMoreAdjustDTO
      * @return
      */
@@ -51,7 +51,7 @@ public interface WorkOrderHotlineClient {
     ComResponse<Void> updateMoreAdjust(@RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO);
 
     /**
-     * 热线工单：查询热线工单列表
+     * 智能工单：热线工单管理-列表
      * @param findWorkOrderHotlinePageListDTO
      * @return
      */
@@ -59,7 +59,7 @@ public interface WorkOrderHotlineClient {
     ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
 
     /**
-     * 热线工单：我的热线工单列表
+     * 智能工单：我的热线工单-列表
      * @param
      * @return
      */

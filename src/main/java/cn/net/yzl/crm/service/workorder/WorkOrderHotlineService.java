@@ -12,7 +12,7 @@ import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 public interface WorkOrderHotlineService {
 
     /**
-     * 热线工单：热线工单管理（可分配员工）
+     * 智能工单：热线工单管理-可分配员工
      * @param getDistributionStaffDTO
      */
     ComResponse<Page<EhrStaff>> getDistributionStaff(GetDistributionStaffDTO getDistributionStaffDTO);
