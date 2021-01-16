@@ -125,7 +125,7 @@ public class StaffController {
      */
     @ApiOperation(value="员工画像  获取员工商品旅程",httpMethod = "POST")
     @PostMapping("/getStaffProductTravel")
-    public ComResponse<Page<StaffProdcutTravelDto>> getStaffProductTravel(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") Integer staffNo,
+    public ComResponse<Page<StaffProdcutTravelDto>> getStaffProductTravel(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                           @ApiParam(name = "pageNo",value ="起始页") @RequestParam("pageNo") Integer pageNo,
                                                                           @ApiParam(name = "pageSize",value ="每页多少条") @RequestParam("pageSize") Integer pageSize){
         log.info("......StaffController.getStaffProductTravel()开始,请求参数,staffNo={},pageNo={},pageSize={}......",staffNo,pageNo,pageSize);
@@ -143,7 +143,7 @@ public class StaffController {
      */
     @ApiOperation(value="员工画像  获取员工顾客列表",httpMethod = "POST")
     @PostMapping("/getCustomerListByStaffNo")
-    public ComResponse<Page<CustomerDto>> getCustomerListByStaffNo(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") Integer staffNo,
+    public ComResponse<Page<CustomerDto>> getCustomerListByStaffNo(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                    @ApiParam(name = "pageNo",value ="起始页") @RequestParam("pageNo") Integer pageNo,
                                                                    @ApiParam(name = "pageSize",value ="每页多少条") @RequestParam("pageSize") Integer pageSize){
         log.info("......StaffController.getCustomerListByStaffNo()开始,请求参数,staffNo={},pageNo={},pageSize={}......",staffNo,pageNo,pageSize);
