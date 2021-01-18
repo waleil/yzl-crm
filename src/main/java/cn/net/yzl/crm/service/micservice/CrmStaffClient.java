@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.service.micservice;
 
+import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
@@ -55,7 +56,7 @@ public interface CrmStaffClient {
      * @return
      */
     @GetMapping("/staff/v1/getBasicDiseaseAdvance")
-    ComResponse<List<String>> getBasicDiseaseAdvance(@RequestParam("staffNo")String staffNo);
+    ComResponse<List<JSONObject>> getBasicDiseaseAdvance(@RequestParam("staffNo")String staffNo);
 
     /**
      * 保存 员工圈选接口

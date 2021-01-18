@@ -56,7 +56,7 @@ public class StaffServiceImpl implements StaffService {
         }
 
         // 获取产品优势
-        ComResponse<List<String>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(staffNo);
+        ComResponse<List<JSONObject>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(staffNo);
         if (basicDiseaseAdvance.getCode()==200){
             data.setDiseaseAdvanced(basicDiseaseAdvance.getData());
         }
