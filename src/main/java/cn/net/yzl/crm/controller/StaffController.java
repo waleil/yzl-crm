@@ -123,8 +123,8 @@ public class StaffController {
      * 员工画像  获取员工商品旅程
      * @return
      */
-    @ApiOperation(value="员工画像  获取员工商品旅程",httpMethod = "POST")
-    @PostMapping("/getStaffProductTravel")
+    @ApiOperation(value="员工画像  获取员工商品旅程",httpMethod = "GET")
+    @GetMapping("/getStaffProductTravel")
     public ComResponse<Page<StaffProdcutTravelDto>> getStaffProductTravel(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                           @ApiParam(name = "pageNo",value ="起始页") @RequestParam("pageNo") Integer pageNo,
                                                                           @ApiParam(name = "pageSize",value ="每页多少条") @RequestParam("pageSize") Integer pageSize){
@@ -141,8 +141,8 @@ public class StaffController {
      * 员工画像  获取员工顾客列表
      * @return
      */
-    @ApiOperation(value="员工画像  获取员工顾客列表",httpMethod = "POST")
-    @PostMapping("/getCustomerListByStaffNo")
+    @ApiOperation(value="员工画像  获取员工顾客列表",httpMethod = "GET")
+    @GetMapping("/getCustomerListByStaffNo")
     public ComResponse<Page<CustomerDto>> getCustomerListByStaffNo(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo,
                                                                    @ApiParam(name = "pageNo",value ="起始页") @RequestParam("pageNo") Integer pageNo,
                                                                    @ApiParam(name = "pageSize",value ="每页多少条") @RequestParam("pageSize") Integer pageSize){
@@ -158,8 +158,8 @@ public class StaffController {
      * 员工画像  获取员工旅程
      * @return
      */
-    @ApiOperation(value="员工画像  获取员工旅程",httpMethod = "POST")
-    @PostMapping("/getStaffTravleList")
+    @ApiOperation(value="员工画像  获取员工旅程",httpMethod = "GET")
+    @GetMapping("/getStaffTravleList")
     public ComResponse<List<StaffTrainDto>> getStaffTravleList(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo){
         log.info("......StaffController.getStaffTravleList()开始,请求参数,staffNo={}......",staffNo);
         if(null==staffNo){
@@ -174,9 +174,9 @@ public class StaffController {
      * 员工画像  获取员工订单列表
      * @return
      */
-    @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "POST")
+    @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "GET")
     @PostMapping("/getStaffOrderList")
-    public ComResponse<Page<OderListResDTO>> getStaffOrderList(OrderCriteriaDto req){
+    public ComResponse<Page<OderListResDTO>> getStaffOrderList(@RequestBody OrderCriteriaDto req){
         log.info("......StaffController.getStaffOrderList()开始,请求参数,{}......",JsonUtil.toJsonStr(req));
         ComResponse<Page<OderListResDTO>> response = staffService.getStaffOrderList(req);
         return response;
