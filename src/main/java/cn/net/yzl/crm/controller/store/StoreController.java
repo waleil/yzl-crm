@@ -5,7 +5,9 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.StoreFeginService;
 import cn.net.yzl.model.dto.StoreDto;
 import cn.net.yzl.model.dto.StoreLocalDto;
+import cn.net.yzl.model.pojo.StoreLocalPo;
 import cn.net.yzl.model.pojo.StorePo;
+import cn.net.yzl.model.pojo.SysDictDataPo;
 import cn.net.yzl.model.vo.StoreLocalVo;
 import cn.net.yzl.model.vo.StoreVO;
 import io.swagger.annotations.Api;
@@ -14,6 +16,8 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author wangxiao
@@ -90,4 +94,34 @@ public class StoreController {
     public ComResponse updateStoreLocal(@RequestBody StoreLocalVo storeLocalVo){
         return storeFeginService.updateStoreLocal(storeLocalVo);
     }
+
+
+    @GetMapping("v1/selectStoreLocalListPage")
+    @ApiOperation(value = "查询库位管理列表", notes = "查询库位管理列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "storeNo", value = "库位编号", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "storeAreaKindId", value = "库位类型", required = false, dataType = "String", paramType = "query"),
+    })
+    public ComResponse<Page<StoreLocalPo>> selectStoreLocalListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                                                    @RequestParam(value = "storeNo",required = false) String storeNo,
+                                                                    @RequestParam(value = "storeAreaKindId",required = false) Integer storeAreaKindId){
+
+        return storeFeginService.selectStoreLocalListPage(pageNo,pageSize,storeNo,storeAreaKindId);
+    }
+
+
+    @ApiOperation(value = "设置库位属性删除操作", notes = "设置库位属性删除操作")
+    @PostMapping("v1/delStoreArea")
+    public ComResponse delStoreArea(@RequestParam(value = "id")Integer id){
+        return storeFeginService.delStoreArea(id);
+    }
+
+    @ApiOperation(value = "修改新增库位属性", notes = "修改新增库位属性")
+    @PostMapping("v1/insertAndUpdateStoreArea")
+    public ComResponse insertAndUpdateStoreArea(@RequestBody List<SysDictDataPo> list){
+        return storeFeginService.insertAndUpdateStoreArea(list);
+    }
+
 }
