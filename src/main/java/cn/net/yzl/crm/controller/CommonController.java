@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.biTask.Indicators;
 import cn.net.yzl.crm.dto.dmc.CoopCompanyMediaDto;
@@ -78,7 +79,7 @@ public class CommonController {
 
     @ApiOperation(value = "指标名称")
     @GetMapping("v1/getBiIndicatorsSettingList")
-    public ComResponse<List<Indicators>> getBiIndicatorsSettingList() {
+    public ComResponse<Page<Indicators>> getBiIndicatorsSettingList() {
         return biTaskClient.getBiIndicatorsSettingList(1);
     }
 
