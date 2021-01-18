@@ -69,6 +69,7 @@ public class WorkOrderHotlineController {
         updateSingleAdjustDTO.setOperator(UserInfoUtil.getUserName());
         updateSingleAdjustDTO.setOperatorCode(UserInfoUtil.getUserId());
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+        updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
         return workOrderHotlineClient.updateSingleAdjust(updateSingleAdjustDTO);
     }
 
@@ -80,6 +81,7 @@ public class WorkOrderHotlineController {
     @PostMapping("v1/updateMoreAdjust")
     @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
     public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
+        updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
         updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         updateMoreAdjustDTO.setOperator(UserInfoUtil.getUserName());
         updateMoreAdjustDTO.setOperatorCode(UserInfoUtil.getUserId());
