@@ -20,11 +20,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "orderSale",url = "${api.gateway.url}/orderService/orderSale")
 public interface OrderSaleClient {
     /**
-     * 新建或者修改售后订单
+     * 新建售后订单
      * @return
      */
-    @PostMapping(path="v1/saveOrUpdateOrderSale")
-    public ComResponse saveOrUpdateOrderSale(@RequestBody @Validated OrderSale orderSalem);
+    @PostMapping(path="v1/saveOrderSale")
+    public ComResponse saveOrderSale(@RequestBody @Validated OrderSale orderSalem);
+
+    /**
+     * 修改售后订单信息
+     * @return
+     */
+    @PostMapping(path="v1/updateOrderSale")
+    public ComResponse updateOrderSale(@RequestBody @Validated OrderSale orderSalem);
 
     /**
      * 查询售后单详情
