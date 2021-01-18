@@ -37,7 +37,7 @@ public class WorkOrderHotlineServiceImpl implements WorkOrderHotlineService {
         }
         Integer departId = data.getDepartId();//部门id
         if(null == departId){
-            return ComResponse.fail(ComResponse.ERROR_STATUS,"部门id校验失败");
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"暂无部门数据");
         }
         //根据部门获取可分配员工
         StaffQueryDto staffQueryDto = new StaffQueryDto();
