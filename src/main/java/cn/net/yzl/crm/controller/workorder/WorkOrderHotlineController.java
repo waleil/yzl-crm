@@ -15,6 +15,7 @@ import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
 import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import io.swagger.annotations.Api;
@@ -143,5 +144,16 @@ public class WorkOrderHotlineController {
         updateAcceptStatusReceiveDTO.setOperator(UserInfoUtil.getUserName());
         updateAcceptStatusReceiveDTO.setOperatorCode(UserInfoUtil.getUserId());
         return workOrderHotlineClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
+    }
+
+    /**
+     * 智能工单：我的热线工单-处理工单详情
+     * @param
+     * @return
+     */
+    @PostMapping("v1/findDWorkOrderHotlineDetails")
+    @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
+    public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+        return workOrderHotlineClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
     }
 }
