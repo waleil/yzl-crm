@@ -11,11 +11,11 @@ import cn.net.yzl.crm.service.micservice.QualityInspectionApi;
 
 import cn.net.yzl.crm.utils.GetParamsValue;
 import cn.net.yzl.crm.utils.ValidateUtils;
-import cn.net.yzl.inspection.common.model.CallDurationQuality;
+import cn.net.yzl.inspection.common.model.CallDuration;
 import cn.net.yzl.inspection.common.model.Quality;
 import cn.net.yzl.inspection.common.model.WordQuality;
-import cn.net.yzl.inspection.common.model.vo.*;
 
+import cn.net.yzl.inspection.common.vo.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -70,16 +70,16 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="新增员工话术质检",httpMethod = "POST")
     @PostMapping("/saveStaffTalkQuality")
-    public ComResponse<Integer> saveStaffTalkQuality(@RequestBody StaffTalkQualityVo staffTalkQualityVo){
+    public ComResponse<Integer> saveStaffTalkQuality(@RequestBody StaffTalkVo staffTalkVo){
         // 非空校验
         StringBuffer staffTalk = new StringBuffer("qualityDepartmentCode,qualityDepartmentName," +
                 "qualityName,keyword,punishDescription" );
-        Map<String, Object> vmap = ValidateUtils.allField(staffTalkQualityVo,staffTalk.toString());
+        Map<String, Object> vmap = ValidateUtils.allField(staffTalkVo,staffTalk.toString());
         if (vmap.get("code") != null && (Integer.parseInt(vmap.get("code")+"")) == 0) {
             vmap = GetParamsValue.changeAllFieldResult(vmap,GetParamsValue.getStaffTalkMap());
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,vmap.toString());
         }
-        return qualityInspectionApi.saveStaffTalkQuality(staffTalkQualityVo);
+        return qualityInspectionApi.saveStaffTalkQuality(staffTalkVo);
     }
 
 
@@ -93,8 +93,8 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="员工话术质检列表",httpMethod = "POST")
     @PostMapping("/queryStaffTalkQualityList")
-    public ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestBody StaffTalkQualityVo staffTalkQualityVo){
-        return qualityInspectionApi.queryStaffTalkQualityList(staffTalkQualityVo);
+    public ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestBody StaffTalkVo staffTalkVo){
+        return qualityInspectionApi.queryStaffTalkQualityList(staffTalkVo);
     }
 
     /**
@@ -125,16 +125,16 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="更新员工话术质检",httpMethod = "POST")
     @PostMapping("/updateStaffTalkQualityByCode")
-    public ComResponse<Integer> updateStaffTalkQualityByCode(@RequestBody StaffTalkQualityVo staffTalkQualityVo){
+    public ComResponse<Integer> updateStaffTalkQualityByCode(@RequestBody StaffTalkVo staffTalkVo){
         // 非空校验
         StringBuffer staffTalk = new StringBuffer("staffTalkCode,qualityDepartmentCode,qualityDepartmentName," +
                 "qualityName,keyword,punishDescription" );
-        Map<String, Object> vmap = ValidateUtils.allField(staffTalkQualityVo,staffTalk.toString());
+        Map<String, Object> vmap = ValidateUtils.allField(staffTalkVo,staffTalk.toString());
         if (vmap.get("code") != null && (Integer.parseInt(vmap.get("code")+"")) == 0) {
             vmap = GetParamsValue.changeAllFieldResult(vmap,GetParamsValue.getStaffTalkMap());
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,vmap.toString());
         }
-        return qualityInspectionApi.updateStaffTalkQualityByCode(staffTalkQualityVo);
+        return qualityInspectionApi.updateStaffTalkQualityByCode(staffTalkVo);
     }
 
     /**
@@ -164,7 +164,7 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="停用某个员工话术质检",httpMethod = "POST")
     @PostMapping("/updateStaffTalkQualityDisabled")
-    public ComResponse<Boolean> updateStaffTalkQualityDisabled(@RequestParam("staffTalkCode") String staffTalkCode){
+    public ComResponse<Boolean> updateStaffTalkDisabled(@RequestParam("staffTalkCode") String staffTalkCode){
         // 非空校验
         if (StringUtils.isBlank(staffTalkCode)) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,"缺少必填参数或参数值为null:" + "员工话术质检编号");
@@ -194,16 +194,16 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="新增产品营销话术质检",httpMethod = "POST")
     @PostMapping("/saveProductMarketingQuality")
-    ComResponse<Boolean> saveProductMarketingQuality(@RequestBody ProductMarketingQualityVo productMarketingQualityVo){
+    ComResponse<Boolean> saveProductMarketingQuality(@RequestBody ProductMarketVo productMarketVo){
         // 非空校验
         StringBuffer productMarket = new StringBuffer("productCode,productName," +
                 "marketingContent,keyword,punishDescription" );
-        Map<String, Object> vmap = ValidateUtils.allField(productMarketingQualityVo,productMarket.toString());
+        Map<String, Object> vmap = ValidateUtils.allField(productMarketVo,productMarket.toString());
         if (vmap.get("code") != null && (Integer.parseInt(vmap.get("code")+"")) == 0) {
             vmap = GetParamsValue.changeAllFieldResult(vmap,GetParamsValue.getProductMarketingMap());
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,vmap.toString());
         }
-        return qualityInspectionApi.saveProductMarketingQuality(productMarketingQualityVo);
+        return qualityInspectionApi.saveProductMarketingQuality(productMarketVo);
     }
 
     /**
@@ -216,8 +216,8 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="产品营销话术质检列表",httpMethod = "POST")
     @PostMapping("/queryProductMarketingQualityList")
-    ComResponse<Page<ProductMarketingQuality>> queryProductMarketingQualityList(@RequestBody ProductMarketingQualityVo productMarketingQualityVo){
-       return qualityInspectionApi.queryProductMarketingQualityList(productMarketingQualityVo);
+    ComResponse<Page<ProductMarketingQuality>> queryProductMarketingQualityList(@RequestBody ProductMarketVo productMarketVo){
+        return qualityInspectionApi.queryProductMarketingQualityList(productMarketVo);
     }
 
 
@@ -231,17 +231,17 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="更新产品营销话术质检",httpMethod = "POST")
     @PostMapping("/updateProductMarketingQualityByCode")
-    ComResponse<Integer> updateProductMarketingQualityByCode(@RequestBody ProductMarketingQualityVo productMarketingQualityVo){
+    ComResponse<Integer> updateProductMarketingQualityByCode(@RequestBody ProductMarketVo productMarketVo){
 
         // 非空校验
         StringBuffer productMarket = new StringBuffer("productMarketingCode,productCode,productName," +
                 "marketingContent,keyword,punishDescription" );
-        Map<String, Object> vmap = ValidateUtils.allField(productMarketingQualityVo,productMarket.toString());
+        Map<String, Object> vmap = ValidateUtils.allField(productMarketVo,productMarket.toString());
         if (vmap.get("code") != null && (Integer.parseInt(vmap.get("code")+"")) == 0) {
             vmap = GetParamsValue.changeAllFieldResult(vmap,GetParamsValue.getProductMarketingMap());
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE,vmap.toString());
         }
-        return qualityInspectionApi.updateProductMarketingQualityByCode(productMarketingQualityVo);
+        return qualityInspectionApi.updateProductMarketingQualityByCode(productMarketVo);
     }
 
     /**
@@ -439,12 +439,12 @@ public class QualityInspectionController {
     @ApiOperation(value="下载质检列表",httpMethod = "GET")
     @GetMapping("/exportInspection")
     void exportInspection(@RequestParam("info") String info,@RequestParam("infoType") String infoType,
-                     @RequestParam("departmentCode") String departmentCode,
-                     @RequestParam("ehrDepartmentCode") String ehrDepartmentCode,
-                     @RequestParam("qualityType") String qualityType,
-                     @RequestParam("prohibitedLevel") String prohibitedLevel,
-                     @RequestParam("qualityStatus") String qualityStatus,
-                     HttpServletResponse response){
+                          @RequestParam("departmentCode") String departmentCode,
+                          @RequestParam("ehrDepartmentCode") String ehrDepartmentCode,
+                          @RequestParam("qualityType") String qualityType,
+                          @RequestParam("prohibitedLevel") String prohibitedLevel,
+                          @RequestParam("qualityStatus") String qualityStatus,
+                          HttpServletResponse response){
         qualityInspectionApi.exportInspection(info,infoType,departmentCode, ehrDepartmentCode, qualityType,
                 prohibitedLevel,qualityStatus,response);
     }
@@ -474,7 +474,7 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="查询通话时长质检设置",httpMethod = "GET")
     @GetMapping(value = "/queryCallDurations")
-    ComResponse<List<CallDurationQuality>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode, @RequestParam("postId") Integer postId){
+    ComResponse<List<CallDuration>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode, @RequestParam("postId") Integer postId){
         if (bussinessAtrrCode!=null && postId!=null){
             ComResponse<List<BusinessPostDto>> posts = ehrStaffClient.getBusiPostListByAttr(bussinessAtrrCode, postId);
             if (posts!=null){
@@ -508,7 +508,7 @@ public class QualityInspectionController {
      */
     @ApiOperation(value="更新通话时长质检设置",httpMethod = "POST")
     @PostMapping("/saveCallDuration")
-    ComResponse<Boolean> saveCallDuration(@RequestBody ArrayList<CallDurationQualityVo> callDurationQualityVos){
-        return qualityInspectionApi.saveCallDuration(callDurationQualityVos);
+    ComResponse<Boolean> saveCallDuration(@RequestBody ArrayList<CallDurationVo> callDurationVos){
+        return qualityInspectionApi.saveCallDuration(callDurationVos);
     }
 }

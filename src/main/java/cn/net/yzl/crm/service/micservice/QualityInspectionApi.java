@@ -1,28 +1,21 @@
 package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.dto.ehr.BusinessPostDto;
 import cn.net.yzl.crm.model.ProductMarketingQuality;
 import cn.net.yzl.crm.model.StaffTalkQuality;
-
-import cn.net.yzl.inspection.common.model.CallDurationQuality;
+import cn.net.yzl.inspection.common.model.CallDuration;
 import cn.net.yzl.inspection.common.model.Quality;
 import cn.net.yzl.inspection.common.model.WordQuality;
-import cn.net.yzl.inspection.common.model.enums.QualityinspectionEnum;
-import cn.net.yzl.inspection.common.model.vo.*;
-import com.alibaba.excel.EasyExcel;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import cn.net.yzl.inspection.common.vo.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +48,7 @@ public interface QualityInspectionApi {
      * @return ComResponse<Integer>
      */
     @PostMapping("/saveStaffTalkQuality")
-    ComResponse<Integer> saveStaffTalkQuality(@RequestBody StaffTalkQualityVo staffTalkQualityVo);
+    ComResponse<Integer> saveStaffTalkQuality(@RequestBody StaffTalkVo staffTalkVo);
 
 
     /**
@@ -67,7 +60,7 @@ public interface QualityInspectionApi {
      * @return ComResponse<Page<StaffTalkQuality>>
      */
     @PostMapping("/queryStaffTalkQualityList")
-    ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestBody StaffTalkQualityVo staffTalkQualityVo);
+    ComResponse<Page<StaffTalkQuality>> queryStaffTalkQualityList(@RequestBody StaffTalkVo staffTalkVo);
 
     /**
      * author: liufaguan
@@ -90,7 +83,7 @@ public interface QualityInspectionApi {
      */
 
     @PostMapping("/updateStaffTalkQualityByCode")
-    ComResponse<Integer> updateStaffTalkQualityByCode(@RequestBody StaffTalkQualityVo staffTalkQualityVo);
+    ComResponse<Integer> updateStaffTalkQualityByCode(@RequestBody StaffTalkVo staffTalkVo);
 
     /**
      * author: liufaguan
@@ -131,7 +124,7 @@ public interface QualityInspectionApi {
      * @return ComResponse<Boolean>
      */
     @PostMapping("saveProductMarketingQuality")
-    ComResponse<Boolean> saveProductMarketingQuality(@RequestBody ProductMarketingQualityVo productMarketingQualityVo);
+    ComResponse<Boolean> saveProductMarketingQuality(@RequestBody ProductMarketVo productMarketVo);
 
     /**
      * author: liufaguan
@@ -142,7 +135,7 @@ public interface QualityInspectionApi {
      * @return ComResponse<Page<ProductMarketingQuality>>
      */
     @PostMapping("queryProductMarketingQualityList")
-    ComResponse<Page<ProductMarketingQuality>>  queryProductMarketingQualityList(@RequestBody ProductMarketingQualityVo productMarketingQualityVo);
+    ComResponse<Page<ProductMarketingQuality>>  queryProductMarketingQualityList(@RequestBody ProductMarketVo productMarketVo);
 
     /**
      * author: liufaguan
@@ -152,7 +145,7 @@ public interface QualityInspectionApi {
      * @return ComResponse<Integer>
      */
     @PostMapping("updateProductMarketingQualityByCode")
-    ComResponse<Integer> updateProductMarketingQualityByCode(@RequestBody ProductMarketingQualityVo productMarketingQualityVo);
+    ComResponse<Integer> updateProductMarketingQualityByCode(@RequestBody ProductMarketVo productMarkeVo);
 
     /**
      * author: liufaguan
@@ -163,7 +156,7 @@ public interface QualityInspectionApi {
      * @return ComResponse<Boolean>
      */
     @PostMapping("updateProductMarketingQualityUsing")
-    ComResponse<Boolean> updateProductMarketingQualityUsing(@RequestParam("productMarketingCode") String productMarketingCode);
+    ComResponse<Boolean> updateProductMarketingQualityUsing(@RequestParam("productMarketingCode") String productMarketCode);
 
     /**
      * author: liufaguan
@@ -173,7 +166,7 @@ public interface QualityInspectionApi {
      * @return ComResponse<Boolean>
      */
     @PostMapping("updateProductMarketingQualityDisabled")
-    ComResponse<Boolean> updateProductMarketingQualityDisabled(@RequestParam("productMarketingCode") String productMarketingCode);
+    ComResponse<Boolean> updateProductMarketingQualityDisabled(@RequestParam("productMarketingCode") String productMarketCode);
 
     /**
      * author: liufaguan
@@ -249,17 +242,7 @@ public interface QualityInspectionApi {
      * @return saveCallDurationCallDuration
      */
     @PostMapping("/saveCallDuration")
-    ComResponse<Boolean> saveCallDuration(@RequestBody ArrayList<CallDurationQualityVo> callDurationQualityVos);
-
-    /**
-     * author: liufaguan
-     * description: 查询通话时长质检设置
-     * create time: 2021/1/7 19:50
-     * @Param: null
-     * @return ComResponse<List<CallDurationQuality>>
-     */
-    /*@GetMapping("/queryCallDurations")
-    ComResponse<List<CallDurationQuality>> queryCallDurations();*/
+    ComResponse<Boolean> saveCallDuration(@RequestBody ArrayList<CallDurationVo> callDurationVos);
 
     /**
      * author: liufaguan
@@ -292,7 +275,7 @@ public interface QualityInspectionApi {
      * @return ComResponse<Page<Quality>>
      */
     @GetMapping("/queryInspectionAppealList")
-    ComResponse<Page<Quality>> queryInspectionAppealList(@RequestParam("staffCode") String staffCode,@RequestParam("current") int current,@RequestParam("size") int size);
+    ComResponse<Page<Quality>> queryInspectionAppealList(@RequestParam("staffCode") String staffCode, @RequestParam("current") int current, @RequestParam("size") int size);
 
     /**
      * author: liufaguan
@@ -304,11 +287,11 @@ public interface QualityInspectionApi {
      */
     @GetMapping("/downloadInspectionList")
     List<Quality> downloadInspectionList(@RequestParam("info") String info, @RequestParam("infoType") String infoType,
-                                                @RequestParam("departmentCode") String departmentCode,
-                                                @RequestParam("ehrDepartmentCode") String ehrDepartmentCode,
-                                                @RequestParam("qualityType") String qualityType,
-                                                @RequestParam("prohibitedLevel") String prohibitedLevel,
-                                                @RequestParam("qualityStatus") String qualityStatus);
+                                         @RequestParam("departmentCode") String departmentCode,
+                                         @RequestParam("ehrDepartmentCode") String ehrDepartmentCode,
+                                         @RequestParam("qualityType") String qualityType,
+                                         @RequestParam("prohibitedLevel") String prohibitedLevel,
+                                         @RequestParam("qualityStatus") String qualityStatus);
 
     /**
      * author: liufaguan
@@ -339,13 +322,13 @@ public interface QualityInspectionApi {
      * @return
      */
     @GetMapping("/export")
-    void exportInspection(@RequestParam("info") String info,@RequestParam("infoType") String infoType,
-                            @RequestParam("departmentCode") String departmentCode,
-                            @RequestParam("ehrDepartmentCode") String ehrDepartmentCode,
-                            @RequestParam("qualityType") String qualityType,
-                            @RequestParam("prohibitedLevel") String prohibitedLevel,
-                            @RequestParam("qualityStatus") String qualityStatus,
-                            HttpServletResponse response);
+    void exportInspection(@RequestParam("info") String info, @RequestParam("infoType") String infoType,
+                          @RequestParam("departmentCode") String departmentCode,
+                          @RequestParam("ehrDepartmentCode") String ehrDepartmentCode,
+                          @RequestParam("qualityType") String qualityType,
+                          @RequestParam("prohibitedLevel") String prohibitedLevel,
+                          @RequestParam("qualityStatus") String qualityStatus,
+                          HttpServletResponse response);
 
     /**
      * author: liufaguan
@@ -355,13 +338,13 @@ public interface QualityInspectionApi {
      * @return
      */
     @GetMapping("/exportCheck")
-    void exportCheckInspection(@RequestParam("info") String info,@RequestParam("infoType") String infoType,
-                                      @RequestParam("departmentCode") String departmentCode,
-                                      @RequestParam("ehrDepartmentCode") String ehrDepartmentCode,
-                                      @RequestParam("qualityType") String qualityType,
-                                      @RequestParam("prohibitedLevel") String prohibitedLevel,
-                                      @RequestParam("qualityStatus") String checkStatus,
-                                      HttpServletResponse response);
+    void exportCheckInspection(@RequestParam("info") String info, @RequestParam("infoType") String infoType,
+                               @RequestParam("departmentCode") String departmentCode,
+                               @RequestParam("ehrDepartmentCode") String ehrDepartmentCode,
+                               @RequestParam("qualityType") String qualityType,
+                               @RequestParam("prohibitedLevel") String prohibitedLevel,
+                               @RequestParam("qualityStatus") String checkStatus,
+                               HttpServletResponse response);
 
     /**
      * author: liufaguan
@@ -371,5 +354,5 @@ public interface QualityInspectionApi {
      * @return ComResponse<List<CallDurationQuality>>
      */
     @GetMapping("/queryCallDurations")
-    ComResponse<List<CallDurationQuality>> queryCallDurations(@RequestParam("bussinessAtrrCode")Integer bussinessAtrrCode,@RequestParam("postId")Integer postId,@RequestParam("leves")List<Integer> leves);
+    ComResponse<List<CallDuration>> queryCallDurations(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode, @RequestParam("postId") Integer postId, @RequestParam("leves") List<Integer> leves);
 }

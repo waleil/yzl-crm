@@ -4,10 +4,13 @@ package cn.net.yzl.crm.service.micservice;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
-import cn.net.yzl.crm.dto.staff.EhrStaffTrainProductDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -80,7 +83,7 @@ public interface EhrStaffClient {
      * @return
      */
     @PostMapping("/staff/getListByParams")
-    ComResponse<Page<EhrStaff>> getStaffListByPage(StaffQueryDto query);
+    ComResponse<Page<EhrStaff>> getStaffListByPage(@RequestBody StaffQueryDto query);
 
     /**
      * 根据员工id获取当前员工部门以及下属部门
@@ -89,15 +92,6 @@ public interface EhrStaffClient {
      */
     @GetMapping("/depart/getListByStaffNo")
     ComResponse<List<EhrDepartDto>> getListByStaffNo(@RequestParam("staffNo") String staffNo);
-
-    /**
-     * 根据员工id和 size 获取培训过的商品和成绩
-     * @param staffNo
-     * @return
-     */
-    @GetMapping("/trainCourse/selectStaffTrainProduct")
-    ComResponse<List<EhrStaffTrainProductDto>> getStaffTrainProduct(@RequestParam("staffNo") String staffNo, @RequestParam("size") int size);
-
 
     /**
      * 根据业务属性和岗位id-获取对应岗位级别列表
@@ -111,4 +105,10 @@ public interface EhrStaffClient {
     @GetMapping(value = "/businessPost/getPostByBussinessAttrCode")
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode);
 
+    /**
+     *  获取培训过的商品
+     * @return
+     */
+    @GetMapping(value = "/trainCourse/selectProduct")
+    ComResponse<List<String>> selectProduct();
 }
