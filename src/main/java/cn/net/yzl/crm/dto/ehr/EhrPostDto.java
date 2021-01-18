@@ -30,7 +30,7 @@ public class EhrPostDto {
     @ApiModelProperty("")
     private  Integer jobNum;
     @ApiModelProperty("名称")
-    private  String name;
+    private  String postName;
     @ApiModelProperty("员工编号")
     private  Integer staffNum;
 }
