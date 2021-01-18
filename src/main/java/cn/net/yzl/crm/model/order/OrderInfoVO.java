@@ -10,6 +10,7 @@ import lombok.Data;
         value = "订单详情查询输出参数类",
         description = "参数类"
 )
+
 @Data
 public class OrderInfoVO {
     @ApiModelProperty("订单基础信息")

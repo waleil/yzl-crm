@@ -17,6 +17,7 @@ import java.util.List;
 @FeignClient(name = "orderSerch",url = "${api.gateway.url}/orderService/orderSearch")
 public interface OrderSearchClient {
 
+
     @ApiOperation(value = "查询订单列表")
     @RequestMapping(path="v1/selectOrderList",method = RequestMethod.POST)
     public ComResponse<Page<OderListResDTO>> selectOrderList(@RequestBody OderListReqDTO dto);

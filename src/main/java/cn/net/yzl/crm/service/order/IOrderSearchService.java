@@ -13,6 +13,7 @@ public interface IOrderSearchService {
      * @return
      */
     public ComResponse<OrderInfoVO> selectOrderInfo(String orderNo);
+
     /**
      * 根据订单号 查询订单购买商品明细列表
      * @param orderNo
