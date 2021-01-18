@@ -92,4 +92,7 @@ public interface PurchaseFeginService {
     @PostMapping("purchase/v1/withdraw")
     ComResponse purchaseWithdraw(@RequestBody PurchaseOrderDto purchaseOrderDto) ;
 
+    @ApiOperation(value = "采购订单状态下拉框列表")
+    @GetMapping("purchase/v1/status/list")
+    ComResponse purchaseStatus() ;
 }
