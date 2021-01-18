@@ -41,10 +41,8 @@ public interface SupplierFeginService {
     public ComResponse<Integer> updateState(@RequestBody SupplierPo supplierPo);
 
 
-    @ApiOperation(value = "无条件查询供应商状态", notes = "无条件查询供应商状态",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(value = "supplier/v1/selectByPrimaryKeyOrAll", method = RequestMethod.POST)
-    public ComResponse<Page<SupplierPo>> selectByPrimaryKeyOrAll(@RequestParam(value = "id",required = false)Integer id,@RequestParam(value = "pageNum")Integer pageNum,
-                                                                 @RequestParam(value = "pageSize") Integer pageSize);
+    @RequestMapping(value = "supplier/v1/selectByPrimaryKey", method = RequestMethod.GET)
+    public ComResponse<SupplierPo> selectByPrimaryKey(@RequestParam(value = "id")Integer id);
 
 
     @GetMapping("supplier/v1/search")
@@ -53,13 +51,11 @@ public interface SupplierFeginService {
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "noAndShortName", value = "供应商编号/供应商简称", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "supplierType", value = "供应商类型", required = false, dataType = "byte", paramType = "query"),
-            @ApiImplicitParam(name = "id", value = "供应商编号", required = false, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "supplierType", value = "供应商类型", required = false, dataType = "byte", paramType = "query")
     })
     public ComResponse<Page<SupplierPo>> selectStoreListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                              @RequestParam(value = "noAndShortName",required = false) String noAndShortName,
-                                                             @RequestParam(value = "supplierType",required = false) Byte supplierType,
-                                                             @RequestParam(value = "id",required = false) Integer id);
+                                                             @RequestParam(value = "supplierType",required = false) Byte supplierType);
 
 
     @ApiOperation(value = "删除供应商", notes = "删除查询供应商")

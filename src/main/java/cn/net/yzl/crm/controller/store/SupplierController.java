@@ -51,10 +51,10 @@ public class SupplierController{
     }
 
 
-    @ApiOperation(value = "无条件查询供应商状态", notes = "无条件查询供应商状态",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(value = "/v1/selectByPrimaryKeyOrAll", method = RequestMethod.POST)
-    public ComResponse<Page<SupplierPo>> selectByPrimaryKeyOrAll(@RequestParam(value = "id",required = false)Integer id,@RequestParam(value = "pageNum")Integer pageNum,@RequestParam(value = "pageSize") Integer pageSize){
-        return supplierFeginService.selectByPrimaryKeyOrAll(id,pageNum,pageSize);
+    @ApiOperation(value = "查询供应商详情", notes = "查询供应商详情")
+    @RequestMapping(value = "/v1/selectByPrimaryKey", method = RequestMethod.GET)
+    public ComResponse<SupplierPo> selectByPrimaryKey(@RequestParam(value = "id")Integer id){
+        return supplierFeginService.selectByPrimaryKey(id);
     }
 
 
@@ -69,9 +69,8 @@ public class SupplierController{
     })
     public ComResponse<Page<SupplierPo>> selectStoreListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                              @RequestParam(value = "noAndShortName",required = false) String noAndShortName,
-                                                             @RequestParam(value = "supplierType",required = false) Byte supplierType,
-                                                             @RequestParam(value = "id",required = false) Integer id){
-        return supplierFeginService.selectStoreListPage(pageNo,pageSize,noAndShortName,supplierType,id);
+                                                             @RequestParam(value = "supplierType",required = false) Byte supplierType){
+        return supplierFeginService.selectStoreListPage(pageNo,pageSize,noAndShortName,supplierType);
 
     }
 
