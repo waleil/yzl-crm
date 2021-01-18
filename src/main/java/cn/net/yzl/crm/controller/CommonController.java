@@ -2,11 +2,13 @@ package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.constant.EhrParamEnum;
+import cn.net.yzl.crm.dto.biTask.Indicators;
 import cn.net.yzl.crm.dto.dmc.CoopCompanyMediaDto;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.ehr.StaffStatusDto;
 import cn.net.yzl.crm.dto.product.ProduceDto;
 import cn.net.yzl.crm.service.CommonService;
+import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LaunchManageClient;
@@ -41,6 +43,9 @@ public class CommonController {
     @Autowired
     private CommonService commonService;
 
+    @Autowired
+    private BiTaskClient biTaskClient;
+
     @ApiOperation(value = "获取媒体列表")
     @GetMapping("/v1/getMediaList")
     public ComResponse<List<CoopCompanyMediaDto>> getMediaList() {
@@ -70,5 +75,12 @@ public class CommonController {
     public ComResponse<List<ProduceDto>> selectProduct() {
         return commonService.selectProduct();
     }
+
+    @ApiOperation(value = "指标名称")
+    @GetMapping("v1/getBiIndicatorsSettingList")
+    public ComResponse<List<Indicators>> getBiIndicatorsSettingList() {
+        return biTaskClient.getBiIndicatorsSettingList(1);
+    }
+
 
 }
