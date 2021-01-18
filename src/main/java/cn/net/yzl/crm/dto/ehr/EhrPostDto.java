@@ -25,6 +25,8 @@ public class EhrPostDto {
     private  String duty;
     @ApiModelProperty("主键")
     private  Integer id;
+    @ApiModelProperty("岗位id")
+    private  Integer postId;
     @ApiModelProperty("")
     private  Integer jobNum;
     @ApiModelProperty("名称")
