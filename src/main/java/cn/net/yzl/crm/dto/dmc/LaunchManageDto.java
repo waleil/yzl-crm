@@ -13,6 +13,9 @@ import lombok.Data;
 @ApiModel("投放管理详情出参")
 public class LaunchManageDto {
 
+    @ApiModelProperty(value = "业务主键")
+    private Long busNo;
+
     @ApiModelProperty(value = "媒介类型（0：电视媒体，1：广播电台媒体）")
     private Integer relationBusType;
 
