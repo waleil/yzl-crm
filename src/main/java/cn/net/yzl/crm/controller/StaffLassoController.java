@@ -25,30 +25,6 @@ public class StaffLassoController {
     private CrmStaffClient crmStaffClient;
 
 
-//    // 活动
-//    @ApiOperation(value = "获取活动",httpMethod = "GET")
-//    @GetMapping("v1/getActivity")
-//    public ComResponse<List<ActivityDto>> getActivity() {
-//        // todo 调用dmc
-//
-//        return ComResponse.success();
-//    }
-//
-//    // 培训过的商品
-//    @ApiOperation(value = "获取培训过的商品",httpMethod = "GET")
-//    @GetMapping("v1/getTrainProduct")
-//    public ComResponse<List<ProductDTO>> getTrainProduct() {
-//        //todo  调用ehr
-//        return ComResponse.success();
-//    }
-//    //获取指标库
-//    @ApiOperation(value = "获取指标库",httpMethod = "GET")
-//    @GetMapping("v1/getIndicator")
-//    public ComResponse<List<IndicatorDto>> getIndicator() {
-//        //todo  调用bi
-//        return ComResponse.success();
-//    }
-
     // 员工圈选 保存
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
     @PostMapping("v1/saveStaffCrowdGroupDTO")

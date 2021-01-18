@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.impl;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *  员工业务层业务层实现
@@ -47,16 +49,43 @@ public class StaffServiceImpl implements StaffService {
             throw new BizException(ResponseCodeEnums.API_ERROR_CODE);
         }
         StaffImageBaseInfoDto data = ehrBaseInfoResponse.getData();
-        // 获取产品优势
+        // 获取商品优势
         ComResponse<List<String>> basicProductAdvance = crmStaffClient.getBasicProductAdvance(staffNo);
         if (basicProductAdvance.getCode()==200){
             data.setProductAdvanced(basicProductAdvance.getData());
         }
 
-        // 获取产品优势
-        ComResponse<List<String>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(staffNo);
+        // 获取病症优势
+        ComResponse<List<JSONObject>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(staffNo);
         if (basicDiseaseAdvance.getCode()==200){
             data.setDiseaseAdvanced(basicDiseaseAdvance.getData());
+        }
+
+        ComResponse<List<JSONObject>> trainProductRes = ehrStaffClient.selectStaffTrainProduct(staffNo, 5);
+        if (trainProductRes.getCode()==200 && trainProductRes.getData()!=null){
+            List<String> trainProductHistory = trainProductRes.getData().stream().map(x -> {
+                String productName = x.getStr("productName");
+                Integer grade = x.getInt("grade");
+                if (grade == null) {
+                    return productName;
+                } else {
+                    String gradeStr = "不合格";
+                    switch (grade) {
+                        case 0:
+                            gradeStr = "不合格";
+                            break;
+                        case 1:
+                            gradeStr = "合格";
+                            break;
+                        case 2:
+                            gradeStr = "优秀";
+                            break;
+                        default:
+                    }
+                    return productName + ":" + gradeStr;
+                }
+            }).collect(Collectors.toList());
+            data.setTrainProductHistory(trainProductHistory);
         }
         return data;
     }

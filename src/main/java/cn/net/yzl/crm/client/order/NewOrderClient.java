@@ -55,8 +55,8 @@ public interface NewOrderClient {
     /**
      * 查询物流公司
      */
-    @GetMapping(value = "v1/selectExpressCompany")
-    public ComResponse<List<ExpressCompanyListDTO>> selectExpressCompany() ;
+//    @GetMapping(value = "v1/selectExpressCompany")
+//    public ComResponse<List<ExpressCompanyListDTO>> selectExpressCompany() ;
 
 
 }

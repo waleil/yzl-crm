@@ -72,9 +72,9 @@ public interface MealClient {
      * @param:
      * @return: cn.net.yzl.common.entity.ComResponse
      **/
-    @PostMapping(value = "v1/queryMealDetail")
+    @GetMapping(value = "v1/queryMealDetail")
     @ApiOperation("查询商品详情")
-    ComResponse<ProductMealDetailVO> queryMealDetail(@RequestBody Meal meal);
+    ComResponse<ProductMealDetailVO> queryMealDetail(@RequestParam("mealNo") String mealNo);
 
     /**
      * @Description:
