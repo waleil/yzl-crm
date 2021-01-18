@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.SupplierFeginService;
+import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.model.pojo.SupplierPo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -31,6 +32,9 @@ public class SupplierController{
 
     @Autowired
     private SupplierFeginService supplierFeginService;
+
+    @Autowired
+    private FastdfsUtils fastdfsUtils;
 
     @ApiOperation(value = "新增供应商管理列表", notes = "新增供应商管理列表", consumes = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/v1/insertsupplier", method = RequestMethod.POST)
@@ -103,7 +107,17 @@ public class SupplierController{
     @ApiOperation(value = "供应商营业执照上传", notes = "供应商营业执照下载",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @RequestMapping(value = "/v1/upLoadFile", method = RequestMethod.POST)
     public ComResponse<String> upLoadFile(@RequestParam(value = "file")MultipartFile file) {
-        return supplierFeginService.upLoadFile(file);
+        String path=null;
+        try {
+            path = fastdfsUtils.upload(file).getFullPath();
+            if (path != null && path.length() > 0) {
+                return ComResponse.success(path);
+            } else {
+                return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(), ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
+            }
+        } catch (IOException e) {
+            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(), ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
+        }
     }
 
     @ApiOperation(value = "按照编号查询供应商", notes = "按照编号查询供应商")
