@@ -58,14 +58,13 @@ public class SupplierController{
     }
 
 
-    @GetMapping("/v1/search")
+    @GetMapping("/v1/selectStoreListPage")
     @ApiOperation(value = "条件查询供应商管理列表", notes = "条件查询供应商管理列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "noAndShortName", value = "供应商编号/供应商简称", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "supplierType", value = "供应商类型", required = false, dataType = "byte", paramType = "query"),
-            @ApiImplicitParam(name = "id", value = "供应商编号", required = false, dataType = "Int", paramType = "query"),
     })
     public ComResponse<Page<SupplierPo>> selectStoreListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                              @RequestParam(value = "noAndShortName",required = false) String noAndShortName,

@@ -45,7 +45,7 @@ public interface SupplierFeginService {
     public ComResponse<SupplierPo> selectByPrimaryKey(@RequestParam(value = "id")Integer id);
 
 
-    @GetMapping("supplier/v1/search")
+    @GetMapping("supplier/v1/selectStoreListPage")
     @ApiOperation(value = "条件查询供应商管理列表", notes = "条件查询供应商管理列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
