@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Test;
 import cn.net.yzl.crm.dao.mogo.DemoMogoDAO;
 import cn.net.yzl.crm.dao.mogo.MongoBaseDao;
 
+/**
+ * 单元测试类
+ * @author zhangweiwei
+ * @date 2021年1月18日,下午7:10:24
+ */
 public class MongoBaseDaoTests {
 	@Test
 	public void testGetParamType() {
