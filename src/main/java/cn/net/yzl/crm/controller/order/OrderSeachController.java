@@ -66,36 +66,10 @@ public class OrderSeachController {
 
         return  orderSearchClient.selectOrderLogList(orderNo);
     }
-//    @ApiOperation(value = "查询媒介名称下拉类表")
-//    @GetMapping("v1/selectMedias")
-//    public ComResponse<List<Media>> selectMedias() {
-//        List<Media> list = new ArrayList<>();
-//        //todo  查询媒介名称
-//        Media media = new Media();
-//        media.setBusNo("1001");
-//        media.setBusNo("陕西卫视");
-//        Media media1 = new Media();
-//        media1.setBusNo("5001");
-//        media1.setBusNo("御芝林");
-//        list.add(media);
-//        list.add(media1);
-//        return ComResponse.success(list);
-//    }
-//
-//    @ApiOperation(value = "查询广告列表")
-//    @GetMapping("v1/selectAdvisors")
-//    public ComResponse<List<Advisor>> selectAdvisors() {
-//        List<Advisor> list = new ArrayList<>();
-//        //todo  查询媒介名称
-//        Advisor advisor = new Advisor();
-//        advisor.setAdvisorNo("1");
-//        advisor.setAdvisorName("真情剧场二集剧后");
-//        list.add(advisor);
-//        Advisor advisor2 = new Advisor();
-//        advisor2.setAdvisorNo("4");
-//        advisor2.setAdvisorName("真情剧场二集剧后");
-//        list.add(advisor2);
-//        return ComResponse.success(list);
-//    }
+    @ApiOperation(value = "查询订单审核列表")
+    @PostMapping("v1/selectOrderList4Check")
+    public  ComResponse<Page<OderListResDTO>> selectOrderList4Check(@RequestBody OrderList4CheckReqDTO dto) {
 
+        return  orderSearchClient.selectOrderList4Check(dto);
+    }
 }
