@@ -373,10 +373,12 @@ public class MemberController {
             member_group.setCrowd_id(crowd_id);
             member_group.setCreate_time(DateHelper.getCurrentDate());
 
-            return memberFien.addCrowdGroup(member_group);
+            ComResponse result= memberFien.addCrowdGroup(member_group);
+            return result;
         } else {
 
-            return memberFien.updateCrowdGroup(member_group);
+            ComResponse result= memberFien.updateCrowdGroup(member_group);
+            return result;
         }
     }
 
