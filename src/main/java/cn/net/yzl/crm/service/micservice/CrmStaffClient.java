@@ -65,6 +65,8 @@ public interface CrmStaffClient {
      */
     @PostMapping("/staff/v1/saveStaffCrowdGroupDTO")
     Integer saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroupDTO staffCrowdGroupDTO);
+
+
     @GetMapping("/staff/v1/getGroupListByPage")
     ComResponse<Page<StaffCrowdGroupDTO>> getGroupListByPage(@RequestParam("crowdGroupName")String crowdGroupName,
                                                              @RequestParam("status") Integer status,

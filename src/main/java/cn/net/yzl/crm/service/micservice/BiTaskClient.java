@@ -1,9 +1,11 @@
 package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.biTask.Indicators;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -16,5 +18,5 @@ import java.util.List;
 public interface BiTaskClient {
 
     @GetMapping("/indicatorsSetting/getBiIndicatorsSettingList")
-    ComResponse<List<Indicators>> getBiIndicatorsSettingList(Integer indicatorsDomainType);
+    ComResponse<Page<Indicators>> getBiIndicatorsSettingList(@RequestParam("indicatorsDomainType") Integer indicatorsDomainType);
 }
