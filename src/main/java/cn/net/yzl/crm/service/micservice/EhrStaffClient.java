@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.service.micservice;
 
 
+import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
@@ -111,4 +112,21 @@ public interface EhrStaffClient {
      */
     @GetMapping(value = "/trainCourse/selectProduct")
     ComResponse<List<String>> selectProduct();
+
+    /**
+     *  根据员工编号获取培训过的商品以及培训结果
+     * @return
+     * @param size
+     * @param staffNo
+     */
+    @GetMapping(value = "/trainCourse/selectStaffTrainProduct")
+    ComResponse<List<JSONObject>> selectStaffTrainProduct(@RequestParam("staffNo")String staffNo,@RequestParam("size") Integer size);
+
+    /**
+     *  根据员工编号获取员工旅程
+     * @return
+     * @param staffNo
+     */
+    @GetMapping(value = "/abnor/getStaffTrain")
+    ComResponse<List<StaffTrainDto>> getStaffTrain(@RequestParam("staffNo")String staffNo);
 }

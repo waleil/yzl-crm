@@ -154,6 +154,21 @@ public class StaffController {
         return ComResponse.success(page);
     }
 
+    /**
+     * 员工画像  获取员工旅程
+     * @return
+     */
+    @ApiOperation(value="员工画像  获取员工旅程",httpMethod = "POST")
+    @PostMapping("/getStaffTravleList")
+    public ComResponse<List<StaffTrainDto>> getStaffTravleList(@ApiParam(name = "staffNo",value ="员工工号") @RequestParam("staffNo") String staffNo){
+        log.info("......StaffController.getStaffTravleList()开始,请求参数,staffNo={}......",staffNo);
+        if(null==staffNo){
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
+        ComResponse<List<StaffTrainDto>> response = ehrStaffClient.getStaffTrain(staffNo);
+        return response;
+    }
+
 
     /**
      * 员工画像  获取员工订单列表
