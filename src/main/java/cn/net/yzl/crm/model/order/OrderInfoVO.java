@@ -15,6 +15,7 @@ import lombok.Data;
 public class OrderInfoVO {
     @ApiModelProperty("订单基础信息")
     private OrderInfoResDTO orderInfoResDTO ;
+
     @ApiModelProperty("购买人信息")
     private Member member ;
 }

@@ -55,7 +55,7 @@ public class OrderSeachController {
                                                                         @NotNull(message = "订单编号不能为空")
                                                                         @ApiParam(name="orderNo",value="订单编号",required=true)String orderNo) {
 
-        return  orderSearchService.selectOrderProductDetail(orderNo);
+        return  orderSearchClient.selectOrderProductDetail(orderNo);
     }
 
     @ApiOperation(value = "查询订单操作日志")
