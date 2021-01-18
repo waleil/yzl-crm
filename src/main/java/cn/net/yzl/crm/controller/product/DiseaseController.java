@@ -46,8 +46,11 @@ public class DiseaseController {
 
     @ApiOperation(value = "删除病症")
     @GetMapping("delete")
-    @ApiImplicitParam(name = "id",value = "id",required = true,paramType = "query")
-    public ComResponse deleteDisease(@RequestParam("id") Integer id, HttpServletRequest request) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "id",required = true,paramType = "query"),
+            @ApiImplicitParam(name = "pid",value = "该病症的一级id,如果本身就是一级病症，则传入0",required = true,paramType = "query")
+    })
+    public ComResponse deleteDisease(@RequestParam("id") Integer id, @RequestParam("pid")Integer pid, HttpServletRequest request) {
         String userId = request.getHeader("userId");
         if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取用户id，请检查您的登录状态");
@@ -58,6 +61,7 @@ public class DiseaseController {
         DiseaseDelVo delVo = new DiseaseDelVo();
         delVo.setUpdateNo(request.getHeader("userId"));
         delVo.setId(id);
+        delVo.setPId(pid);
         return diseaseService.deleteDisease(delVo);
     }
 

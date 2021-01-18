@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.service.product.AttributeService;
 import cn.net.yzl.product.model.db.AttributeBean;
 import io.swagger.annotations.Api;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -68,5 +70,4 @@ public class AttributeController {
     public ComResponse updateAttribute(@NotNull(message = "数据不能为空！")@RequestBody AttributeBean attributeBean) {
         return attributeService.updateAttribute(attributeBean);
     }
-
 }
