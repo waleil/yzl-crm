@@ -174,7 +174,7 @@ public class StaffController {
      * 员工画像  获取员工订单列表
      * @return
      */
-    @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "GET")
+    @ApiOperation(value="员工画像  获取员工订单列表",httpMethod = "POST")
     @PostMapping("/getStaffOrderList")
     public ComResponse<Page<OderListResDTO>> getStaffOrderList(@RequestBody OrderCriteriaDto req){
         log.info("......StaffController.getStaffOrderList()开始,请求参数,{}......",JsonUtil.toJsonStr(req));
