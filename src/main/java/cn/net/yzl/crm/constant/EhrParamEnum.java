@@ -17,6 +17,11 @@ public enum EhrParamEnum {
     public static final  String EHR_DICT_WORKPLACE_STATUS = "workplace";
 
     /**
+     * 异动类型
+     */
+    public static final  String EHR_DICT_ABNORMAL_TYPE = "abnormal_type";
+
+    /**
      * 业务属性   热线
      */
     public static final  int EHR_HOTLINE_BUSINESS_ATTRIBUTE_CODE = 42;

@@ -49,13 +49,13 @@ public class StaffServiceImpl implements StaffService {
             throw new BizException(ResponseCodeEnums.API_ERROR_CODE);
         }
         StaffImageBaseInfoDto data = ehrBaseInfoResponse.getData();
-        // 获取产品优势
+        // 获取商品优势
         ComResponse<List<String>> basicProductAdvance = crmStaffClient.getBasicProductAdvance(staffNo);
         if (basicProductAdvance.getCode()==200){
             data.setProductAdvanced(basicProductAdvance.getData());
         }
 
-        // 获取产品优势
+        // 获取病症优势
         ComResponse<List<JSONObject>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(staffNo);
         if (basicDiseaseAdvance.getCode()==200){
             data.setDiseaseAdvanced(basicDiseaseAdvance.getData());

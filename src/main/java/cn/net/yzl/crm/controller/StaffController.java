@@ -195,6 +195,18 @@ public class StaffController {
     }
 
     /**
+     * 员工画像  员工异动字典
+     * @return
+     */
+    @ApiOperation(value="员工画像  员工异动字典",httpMethod = "GET")
+    @GetMapping("/getAllAbnormalType")
+    public ComResponse<List<StaffStatusDto>> getAllAbnormalType(){
+        log.info("......StaffController.getAllAbnormalType()开始,......");
+        ComResponse<List<StaffStatusDto>> response = ehrStaffClient.getAllStuffStatus( EhrParamEnum.EHR_DICT_ABNORMAL_TYPE);
+        return response;
+    }
+
+    /**
      * 员工列表  根据岗位id获取部门岗位级别列表
      * @return
      */
