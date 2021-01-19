@@ -23,6 +23,7 @@ import javax.validation.Valid;
 public interface PurchaseFeginService {
     /**
      * 采购订单分页查询
+     * @author wangshuaidong
      * @param purchaseOrderCondition
      * @return
      */
@@ -32,6 +33,7 @@ public interface PurchaseFeginService {
 
     /**
      * 新增采购订单
+     * @author wangshuaidong
      * @param purchaseOrderVo
      * @return
      */
@@ -42,6 +44,7 @@ public interface PurchaseFeginService {
 
     /**
      * 修改采购订单
+     * @author wangshuaidong
      * @param purchaseOrderVo
      * @return
      */
@@ -52,6 +55,7 @@ public interface PurchaseFeginService {
 
     /**
      * 查看采购订单
+     * @author wangshuaidong
      * @param id
      * @return
      */
@@ -63,7 +67,7 @@ public interface PurchaseFeginService {
 
     /**
      * 审核采购订单
-     * @Author wangshuaidong
+     * @author wangshuaidong
      * @param purchaseOrderVo
      * @return
      */
@@ -73,7 +77,7 @@ public interface PurchaseFeginService {
 
     /**
      * 采购订单验收
-     * @Author wangshuaidong
+     * @author wangshuaidong
      * @param warehousingOrderDto
      * @return
      * @throws Exception
@@ -84,7 +88,7 @@ public interface PurchaseFeginService {
 
     /**
      * 采购订单撤回
-     * @Author wangshuaidong
+     * @author wangshuaidong
      * @param purchaseOrderDto
      * @return
      */
@@ -95,4 +99,15 @@ public interface PurchaseFeginService {
     @ApiOperation(value = "采购订单状态下拉框列表")
     @GetMapping("purchase/v1/status/list")
     ComResponse purchaseStatus() ;
+
+    /**
+     * 采购订单审核列表分页查询
+     * @author wangshuaidong
+     * @param purchaseOrderCondition
+     * @return
+     */
+    @ApiOperation(value = "采购订单审核列表", notes = "采购订单审核列表")
+    @PostMapping("purchase/v1/review/page")
+    ComResponse reviewPage(@RequestBody PurchaseOrderCondition purchaseOrderCondition);
+
 }
