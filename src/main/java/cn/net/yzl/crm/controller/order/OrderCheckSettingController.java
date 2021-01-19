@@ -2,7 +2,7 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.client.OrderSettingClient;
+import cn.net.yzl.crm.client.order.OrderSettingClient;
 import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingDTO;
 import cn.net.yzl.order.model.vo.order.OrderCheckSettingProduct;

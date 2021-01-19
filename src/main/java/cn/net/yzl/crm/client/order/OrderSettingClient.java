@@ -1,4 +1,4 @@
-package cn.net.yzl.crm.client;
+package cn.net.yzl.crm.client.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
