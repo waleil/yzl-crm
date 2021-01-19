@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * @author: liuChangFu
  * @date: 2021/1/16 23:17
- * @desc: //TODO  请说明该类的用途
+ * @desc: product的基本信息摘要
  **/
 @Data
 public class ProduceDto {

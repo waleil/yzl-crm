@@ -1,16 +1,11 @@
 package cn.net.yzl.crm.controller.store.listen;
 
-import cn.net.yzl.model.dto.InventoryProductDto;
-import cn.net.yzl.model.vo.InventoryProductExcelVo;
 import cn.net.yzl.model.vo.InventoryProductVo;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
-import com.sun.org.apache.regexp.internal.RE;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author wangxiao

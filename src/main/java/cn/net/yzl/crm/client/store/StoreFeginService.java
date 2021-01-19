@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,13 +41,18 @@ public interface StoreFeginService {
     public ComResponse<StoreDto> selectStore(@RequestParam("id") Integer id);
 
 
+    @ApiOperation(value = "编辑/修改仓库", notes = "编辑/修改仓库")
+    @PostMapping("store/v1/updateStore")
+    public ComResponse<Integer> updateStore(@RequestBody StorePo storePo);
+
 
     @PostMapping("store/v1/insertStore")
     public ComResponse insertStore(@RequestBody StoreVO storeVO);
 
 
-    @GetMapping("store/v1/updateStoreStatus")
-    public ComResponse updateStoreStatus(@RequestParam("id") Integer id,@RequestParam("status") Integer status);
+    @ApiOperation(value = "开启/关闭仓库状态", notes = "开启/关闭仓库状态")
+    @GetMapping("store/v1/updateStoreEnable")
+    public ComResponse<Integer> updateStoreEnable(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator);
 
 
     @PostMapping("store/v1/insertStoreLocal")
@@ -61,8 +67,10 @@ public interface StoreFeginService {
     public ComResponse updateStoreLocal(@RequestBody StoreLocalVo storeLocalVo);
 
 
+    @ApiOperation(value = "开启/关闭库位状态", notes = "开启/关闭库位状态")
     @GetMapping("store/v1/updateStoreLocalStatus")
-    public ComResponse updateStoreLocalStatus(@RequestParam("id") Integer id,@RequestParam("status") Integer status);
+    ComResponse<Integer> updateStoreLocalStatus(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator);
+
 
 
     @GetMapping("store/v1/selectStoreLocalListPage")
@@ -70,12 +78,31 @@ public interface StoreFeginService {
                                                                     @RequestParam(value = "storeNo",required = false) String storeNo,
                                                                     @RequestParam(value = "storeAreaKindId",required = false) Integer storeAreaKindId);
 
-    @PostMapping("store/v1/delStoreArea")
+    @GetMapping("store/v1/delStoreArea")
     public ComResponse delStoreArea(@RequestParam(value = "id")Integer id);
 
     @ApiOperation(value = "修改新增库位属性", notes = "修改新增库位属性")
     @PostMapping("store/v1/insertAndUpdateStoreArea")
     public ComResponse insertAndUpdateStoreArea(@RequestBody List<SysDictDataPo> list);
+
+
+    @ApiOperation(value = "查询库区类型", notes = "查询库区类型")
+    @GetMapping("store/v1/selectAreaType")
+    ComResponse<List<SysDictDataPo>> selectAreaType();
+
+    //TODO 库位查询是否返回list
+    @ApiOperation(value = "根据库位编码查询", notes = "根据库位编码查询")
+    @GetMapping("store/v1/selectAllByNo")
+    public ComResponse selectAllByNo(@RequestParam (value = "no") String no);
+
+
+    @ApiOperation(value = "库位字典查询", notes = "库位字典查询")
+    @GetMapping("store/v1/selectSysDictDate")
+    public ComResponse<List<SysDictDataPo>> selectSysDictDate();
+
+    @ApiOperation(value = "查询单个库位", notes = "查询单个库位")
+    @GetMapping("store/v1/selectStoreLocal")
+    public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no);
 
 
 }

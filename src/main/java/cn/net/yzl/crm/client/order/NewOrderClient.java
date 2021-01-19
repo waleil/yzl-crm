@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 @FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/newOrdder")
 public interface NewOrderClient {
 

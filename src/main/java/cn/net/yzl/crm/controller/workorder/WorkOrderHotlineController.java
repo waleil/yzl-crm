@@ -12,9 +12,11 @@ import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
 import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
+import cn.net.yzl.workorder.model.dto.UpdateDisposeWorkOrderCommit;
 import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.vo.CallInfoVo;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
@@ -155,5 +157,15 @@ public class WorkOrderHotlineController {
     @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
         return workOrderHotlineClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+    }
+
+    /**
+     * 智能工单：我的热线工单-处理工单提交
+     * @return
+     */
+    @PostMapping("v1/updateDisposeWorkOrderCommit")
+    @ApiOperation(value = "智能工单：我的热线工单-处理工单提交", notes = "智能工单：我的热线工单-处理工单提交")
+    public ComResponse<Void> updateDisposeWorkOrderCommit(@Validated @RequestBody UpdateDisposeWorkOrderCommit updateDisposeWorkOrderCommit){
+        return workOrderHotlineClient.updateDisposeWorkOrderCommit(updateDisposeWorkOrderCommit);
     }
 }
