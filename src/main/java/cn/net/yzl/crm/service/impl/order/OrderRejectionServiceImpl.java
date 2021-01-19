@@ -2,7 +2,7 @@ package cn.net.yzl.crm.service.impl.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.order.OrderRejectionClient;
-import cn.net.yzl.crm.client.order.OrderSearchClient;
+import cn.net.yzl.crm.client.store.StoreFeginService;
 import cn.net.yzl.crm.dto.order.OrderRejectionAddDTO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
@@ -27,7 +27,6 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
     private RedisUtil redisUtil;
 
     /**
-     *
      * @param orderRejectionAddDTO
      * @param userNo
      * @return
@@ -42,10 +41,18 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
                 departId = data.getDepartId();
             }
         }
+//        storeFeginService.selectStore(orderRejectionAddDTO.getStoreNo())
         //拒收单编号
         String seqNo = redisUtil.getSeqNo(String.valueOf(departId), userNo, "order:saleno", 4);
-
-
-        return null;
+        cn.net.yzl.order.model.vo.order.OrderRejectionAddDTO dto = new cn.net.yzl.order.model.vo.order.OrderRejectionAddDTO();
+        dto.setOrderNo(orderRejectionAddDTO.getOrderNo());
+        dto.setRejectType(orderRejectionAddDTO.getRejectType());
+        dto.setDepartId(departId);
+        dto.setRejectionNo(seqNo);
+        dto.setStoreNo(orderRejectionAddDTO.getStoreNo());
+//        dto.setStoreName();
+        dto.setUserNo(userNo);
+        dto.setUserName(detailsByNo.getData().getName());
+        return orderRejectionClient.addOrderRejection(dto);
     }
 }

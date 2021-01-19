@@ -5,6 +5,8 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.OrderRejectionClient;
 import cn.net.yzl.crm.dto.order.OrderRejectionAddDTO;
 import cn.net.yzl.crm.service.order.OrderRejectionService;
+import cn.net.yzl.order.model.vo.order.OderListResDTO;
+import cn.net.yzl.order.model.vo.order.OrderRejectionDetailDTO;
 import cn.net.yzl.order.model.vo.order.OrderRejectionPageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +37,26 @@ public class OrderRejectionController {
                                                                           @ApiParam(name = "pageNum", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNum,
                                                                           @ApiParam(name = "pageSize", value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         return orderRejectionClient.getOrderRejectionList(orderNo, pageNum, pageSize);
+    }
+
+    @GetMapping("v1/getOrderList")
+    @ApiOperation(value = "查询已发货、待发货订单")
+    public ComResponse<Page<OderListResDTO>> selectOrderList(@ApiParam(name = "orderNo", value = "订单号") @RequestParam("orderNo") String orderNo,
+                                                             @ApiParam(name = "pageNum", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                                                             @ApiParam(name = "pageSize", value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        return orderRejectionClient.selectOrderList(pageNum, pageSize, orderNo);
+    }
+
+    /**
+     * 查询拒收单详情
+     *
+     * @param orderNo
+     * @return
+     */
+    @GetMapping("v1/getOrderRejectionDetail")
+    @ApiOperation(value = "查询拒收单详情")
+    public ComResponse<OrderRejectionDetailDTO> getOrderRejectionDetail(@ApiParam(name = "orderNo", value = "订单号") @RequestParam("orderNo") String orderNo) {
+        return orderRejectionClient.getOrderRejectionDetail(orderNo);
     }
 
     @PutMapping("v1/addOrderRejection")
