@@ -37,7 +37,7 @@ public class SupplierController {
     @Autowired
     private FastdfsUtils fastdfsUtils;
 
-    @Value("${fast-dfs.url")
+    @Value("${fast-dfs.url}")
     private String fastUrlBase;
 
     @ApiOperation(value = "新增供应商管理列表", notes = "新增供应商管理列表", consumes = MediaType.APPLICATION_JSON_VALUE)
