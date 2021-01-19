@@ -6,7 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter(filterName ="parameterFilter",urlPatterns ={"/member/v1/saveMemberCrowdGroup"} )
+//暂时去掉，如果对参数处理的话，需要放开
+//@WebFilter(filterName ="parameterFilter",urlPatterns ={"/member/v1/saveMemberCrowdGroup"} )
 public class RequestWrapperFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
