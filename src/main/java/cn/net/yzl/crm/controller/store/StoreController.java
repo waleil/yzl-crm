@@ -74,7 +74,7 @@ public class StoreController {
 
 
     @ApiOperation(value = "开启/关闭仓库状态", notes = "开启/关闭仓库状态")
-    @PostMapping("v1/updateStoreEnable")
+    @GetMapping("v1/updateStoreEnable")
     public ComResponse<Integer> updateStoreEnable(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator){
         return storeFeginService.updateStoreEnable(id,status,updator);
     }
@@ -106,7 +106,7 @@ public class StoreController {
     }
 
     @ApiOperation(value = "开启/关闭库位状态", notes = "开启/关闭库位状态")
-    @PostMapping("/v1/updateStoreLocalStatus")
+    @GetMapping("/v1/updateStoreLocalStatus")
     public ComResponse<Integer> updateStoreLocalStatus(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator){
         //@RequestParam("id") Integer id,@RequestParam("status") Integer status
         //return storeService.updateStatusLocalEnable(id,status);

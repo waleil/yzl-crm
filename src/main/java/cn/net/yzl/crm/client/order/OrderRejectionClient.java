@@ -32,7 +32,7 @@ public interface OrderRejectionClient {
      * @return
      */
     @GetMapping("v1/getOrderRejectionList")
-    ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@RequestParam(name = "orderNo") String orderNo, @RequestParam(name = "pageNum") Integer pageNum, @RequestParam(name = "pageSize") Integer pageSize);
+    ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@RequestParam(value = "orderNo") String orderNo, @RequestParam(value = "pageNum") Integer pageNum, @RequestParam(value = "pageSize") Integer pageSize);
 
     /**
      * 新增拒收单
@@ -50,21 +50,20 @@ public interface OrderRejectionClient {
      * @return
      */
     @GetMapping("v1/getCouponListByOrderNo")
-    ComResponse<List<OrderCouponDTO>> getListByOrderNo(@RequestParam(name = "orderNo") String orderNo);
+    ComResponse<List<OrderCouponDTO>> getListByOrderNo(@RequestParam(value = "orderNo") String orderNo);
 
 
     @GetMapping("v1/getOrderList")
     @ApiOperation(value = "查询已发货、待发货订单")
-    ComResponse<Page<OderListResDTO>> selectOrderList(@ApiParam(name = "pageNum", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNum,
-                                                      @ApiParam(name = "pageSize", value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                      @ApiParam(name = "orderNo", value = "订单号") @RequestParam("orderNo") String orderNo);
+    ComResponse<Page<OderListResDTO>> selectOrderList(@RequestParam(value = "pageNum") Integer pageNum, @RequestParam(value = "pageSize") Integer pageSize, @RequestParam(value = "orderNo") String orderNo);
 
     /**
      * 查询拒收单详情
+     *
      * @param orderNo
      * @return
      */
     @GetMapping("v1/getOrderRejectionDetail")
     @ApiOperation(value = "查询拒收单详情")
-    ComResponse<OrderRejectionDetailDTO> getOrderRejectionDetail(@ApiParam(name = "orderNo", value = "订单号") @RequestParam("orderNo") String orderNo);
+    ComResponse<OrderRejectionDetailDTO> getOrderRejectionDetail(@RequestParam(value = "orderNo") String orderNo);
 }
