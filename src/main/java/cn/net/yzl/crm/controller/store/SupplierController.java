@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.SupplierFeginService;
+import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.model.pojo.SupplierPo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -32,6 +33,9 @@ public class SupplierController{
     @Autowired
     private SupplierFeginService supplierFeginService;
 
+    @Autowired
+    private FastdfsUtils fastdfsUtils;
+
     @ApiOperation(value = "新增供应商管理列表", notes = "新增供应商管理列表", consumes = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/v1/insertsupplier", method = RequestMethod.POST)
     public ComResponse<Integer> insertSupplier(@RequestBody SupplierPo supplierPo){
@@ -58,14 +62,13 @@ public class SupplierController{
     }
 
 
-    @GetMapping("/v1/search")
+    @GetMapping("/v1/selectStoreListPage")
     @ApiOperation(value = "条件查询供应商管理列表", notes = "条件查询供应商管理列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "noAndShortName", value = "供应商编号/供应商简称", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "supplierType", value = "供应商类型", required = false, dataType = "byte", paramType = "query"),
-            @ApiImplicitParam(name = "id", value = "供应商编号", required = false, dataType = "Int", paramType = "query"),
     })
     public ComResponse<Page<SupplierPo>> selectStoreListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                              @RequestParam(value = "noAndShortName",required = false) String noAndShortName,
@@ -104,7 +107,17 @@ public class SupplierController{
     @ApiOperation(value = "供应商营业执照上传", notes = "供应商营业执照下载",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @RequestMapping(value = "/v1/upLoadFile", method = RequestMethod.POST)
     public ComResponse<String> upLoadFile(@RequestParam(value = "file")MultipartFile file) {
-        return supplierFeginService.upLoadFile(file);
+        String path=null;
+        try {
+            path = fastdfsUtils.upload(file).getFullPath();
+            if (path != null && path.length() > 0) {
+                return ComResponse.success(path);
+            } else {
+                return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(), ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
+            }
+        } catch (IOException e) {
+            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(), ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
+        }
     }
 
     @ApiOperation(value = "按照编号查询供应商", notes = "按照编号查询供应商")

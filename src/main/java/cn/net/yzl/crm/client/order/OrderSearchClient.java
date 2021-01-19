@@ -35,4 +35,9 @@ public interface OrderSearchClient {
     public  ComResponse<List<OrderUpdateLogDTO>> selectOrderLogList(@RequestParam("orderNo")
                                                                     @NotNull(message = "订单编号不能为空")
                                                                     @ApiParam(name="orderNo",value="订单编号",required=true)String orderNo);
+
+    @ApiOperation(value = "查询订单审核列表")
+    @RequestMapping(path="v1/selectOrderList4Check",method = RequestMethod.POST)
+    public  ComResponse<Page<OderListResDTO>> selectOrderList4Check(@RequestBody OrderList4CheckReqDTO dto);
+
 }

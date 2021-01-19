@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -569,4 +572,40 @@ public class RedisUtil {
             return 0;
         }
     }
+	/**
+	 * 生成序列号
+	 *
+	 * @param workid 职场id
+	 * @param userno 用户id
+	 * @param rediskey redis中的键
+	 * @param length 尾号长度
+	 */
+	public String getSeqNo(String workid, String userno, String rediskey, int length) {
+		// 初始化长度
+		StringBuilder seqNo = new StringBuilder(length);
+		// 获取时间戳
+		String timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
+		// 获取自增值
+		String num = this.incr(rediskey).toString();
+		// 左补0
+		while (num.length() < length) {
+			num = "0" + num;
+		}
+		return seqNo.append(workid).append(userno).append("T").append(timestamp).append(num).toString();
+	}
+	/**
+	 * 递增
+	 * 
+	 * @param key
+	 * @return long
+	 */
+	public Long incr(String key) {
+		// 自增，并返回自增后的结果
+		Long value = redisTemplate.opsForValue().increment(key);
+		// 第一次使用时设置过期时间
+		if (value == 1L) {
+			expire(key, 24 * 60 * 60 * 1000);
+		}
+		return value;
+	}
 }

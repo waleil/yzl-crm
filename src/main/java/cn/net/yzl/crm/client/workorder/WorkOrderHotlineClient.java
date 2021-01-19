@@ -9,6 +9,7 @@ import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
 import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *  工单规则配置相关功能
  */
 @Service
-@FeignClient(name = "WorkOrderHotline",url = "${api.gateway.url}/workorderServer/hotline")
-//@FeignClient(name = "WorkOrderHotline",url = "127.0.0.1:4602/hotline")
+//@FeignClient(name = "WorkOrderHotline",url = "${api.gateway.url}/workorderServer/hotline")
+@FeignClient(name = "WorkOrderHotline",url = "127.0.0.1:4602/hotline")
 public interface WorkOrderHotlineClient {
 
     /**
@@ -73,4 +74,12 @@ public interface WorkOrderHotlineClient {
      */
     @RequestMapping(value = "v1/updateAcceptStatusReceive",method = RequestMethod.POST)
     ComResponse<Void> updateAcceptStatusReceive(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
+
+    /**
+     * 智能工单：我的热线工单-处理工单详情
+     * @param updateAcceptStatusReceiveDTO
+     * @return
+     */
+    @RequestMapping(value = "v1/findDWorkOrderHotlineDetails",method = RequestMethod.POST)
+    ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
 }
