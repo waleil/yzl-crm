@@ -6,6 +6,7 @@ import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.product.BrandService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.BrandBean;
+import cn.net.yzl.product.model.vo.brand.BrandBeanTO;
 import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author majinbao
@@ -229,5 +231,12 @@ public class BrandController {
         }
         return brandService.checkUnique(name, id);
     }
-    
+
+
+    @ApiOperation(value = "下拉列表查询", notes = "下拉列表查询")
+    @GetMapping("v1/query4Select")
+    public ComResponse<List<BrandBeanTO>> query4Select(){
+        return brandService.query4Select();
+    }
+
 }
