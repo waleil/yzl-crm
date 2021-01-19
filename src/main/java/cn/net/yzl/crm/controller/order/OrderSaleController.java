@@ -40,11 +40,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "售后订单管理")
 public class OrderSaleController {
     @Autowired
-   private OrderSaleClient orderSaleClient;
+    private OrderSaleClient orderSaleClient;
 
     @Autowired
-    private EhrStaffClient ehrStaffClient
-            ;
+    private EhrStaffClient ehrStaffClient;
     @Autowired
     private MemberFien memberFien;
 
@@ -53,17 +52,17 @@ public class OrderSaleController {
 
     @ApiOperation(value = "新建或修改售后订单")
     @PostMapping("v1/saveOrUpdateOrderSale")
-        public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSale orderSalem, HttpServletRequest request) {
+    public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSale orderSalem, HttpServletRequest request) {
         ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
-        if (userNo.getData()!=null){
+        if (userNo.getData() != null) {
             String workCodeStr = userNo.getData().getWorkCodeStr();
             orderSalem.setSaleOrderNo(workCodeStr);
         }
-        ComResponse<Boolean> comResponse =null;
-        if (orderSalem.getSaleOrderNo()==null){
+        ComResponse<Boolean> comResponse = null;
+        if (orderSalem.getSaleOrderNo() == null) {
             orderSalem.setCreateCode(request.getHeader("userNo"));
             comResponse = orderSaleClient.saveOrderSale(orderSalem);
-        }else {
+        } else {
             orderSalem.setUpdateCode(request.getHeader("userNo"));
             comResponse = orderSaleClient.updateOrderSale(orderSalem);
         }
@@ -72,26 +71,26 @@ public class OrderSaleController {
 
     @ApiOperation(value = "查询售后单列表")
     @GetMapping("v1/selectOrderSaleList")
-    public ComResponse<List<OrderSaleVO>> selectOrderSaleList(@RequestParam(required = false) String orderNo,
-                                                 @RequestParam(required = false) Integer saleOrderType,
-                                                 @RequestParam(required = false) Integer refundType,
-                                                 @RequestParam(required = false) String memberName,
-                                                 @RequestParam(required = false) String createStartTime,
-                                                 @RequestParam(required = false) String createEndTime) {
+    public ComResponse<List<OrderSaleVO>> selectOrderSaleList(@RequestParam(required = false) @ApiParam(name = "订单编号") String orderNo,
+                                                              @RequestParam(required = false) @ApiParam(name = "售后类型") Integer saleOrderType,
+                                                              @RequestParam(required = false) @ApiParam(name = "订单编号") Integer refundType,
+                                                              @RequestParam(required = false) @ApiParam(name = "订单编号") String memberName,
+                                                              @RequestParam(required = false) @ApiParam(name = "订单编号") String createStartTime,
+                                                              @RequestParam(required = false) @ApiParam(name = "订单编号") String createEndTime) {
 
-        ComResponse<List<OrderSaleVO>> comResponse = orderSaleClient.selectOrderSaleList(orderNo,saleOrderType,refundType,memberName,createStartTime,createEndTime);
+        ComResponse<List<OrderSaleVO>> comResponse = orderSaleClient.selectOrderSaleList(orderNo, saleOrderType, refundType, memberName, createStartTime, createEndTime);
         return comResponse;
     }
 
     @ApiOperation(value = "查询售后单详情")
     @GetMapping("v1/selectOrderSaleInfo")
-    public ComResponse<OrderSaleVO> selectOrderSaleInfo(@RequestParam(required = false) String orderNo,
-                                              @RequestParam String saleOrderNo) {
+    public ComResponse<OrderSaleVO> selectOrderSaleInfo(@RequestParam(required = false) @ApiParam(name = "orderNo", value = "订单编号") String orderNo,
+                                                        @RequestParam @ApiParam(name = "saleOrderNo", value = "售后单号") String saleOrderNo) {
         ComResponse<OrderSaleVO> comResponse = orderSaleClient.selectOrderSaleInfo(orderNo, saleOrderNo);
-        if (comResponse.getData() !=null){
+        if (comResponse.getData() != null) {
             OrderSaleVO orderSaleVO = comResponse.getData();
             GeneralResult<Member> memberResult = memberFien.getMember(orderSaleVO.getMemberCardNo());
-            if (memberResult.getData()!=null){
+            if (memberResult.getData() != null) {
                 Member member = memberResult.getData();
                 orderSaleVO.setMemberProvinceCode(member.getProvince_code());
                 orderSaleVO.setMemberCityCode(member.getCity_code());
@@ -102,34 +101,41 @@ public class OrderSaleController {
         }
         return comResponse;
     }
+
     @ApiOperation(value = "售后单审批")
     @GetMapping("v1/updateOrderSaleState")
-    public ComResponse<Boolean> updateOrderSaleState(@RequestParam @NotBlank(message = "售后单状态不能为空") @ApiParam(name="orderSaleNo",value="售后单号",required=true) String orderSaleNo,
-                                                     @RequestParam @NotBlank(message = "审批状态不能为空") @ApiParam(name="state",value="审批状态 0:不通过,其他:通过",required=true) Integer checkStatus,
-                                                     @RequestParam(required = false) String userNo,
-                                                     @RequestParam(required = false) Integer userWorkInfo,
-                                                     @RequestParam(required = false) String remark,
-                                                     @RequestParam(required = false) String checkType){
-        ComResponse<Boolean> booleanComResponse = orderSaleClient.updateOrderSaleState(orderSaleNo, checkStatus,userNo,userWorkInfo,remark,checkType);
+    public ComResponse<Boolean> updateOrderSaleState(@RequestParam @NotBlank(message = "售后单状态不能为空") @ApiParam(name = "orderSaleNo", value = "售后单号", required = true) String orderSaleNo,
+                                                     @RequestParam @NotBlank(message = "审批状态不能为空") @ApiParam(name = "state", value = "审批状态 0:不通过,其他:通过", required = true) Integer checkStatus,
+                                                     @RequestParam(required = false) @ApiParam(name = "userNo", value = "用户ID") String userNo,
+                                                     @RequestParam(required = false) @ApiParam(name = "userWorkInfo", value = "用户岗位") Integer userWorkInfo,
+                                                     @RequestParam(required = false) @ApiParam(name = "remark", value = "备注") String remark,
+                                                     @RequestParam(required = false) @ApiParam(name = "checkType", value = "售后类型") String checkType) {
+        ComResponse<Boolean> booleanComResponse = orderSaleClient.updateOrderSaleState(orderSaleNo, checkStatus, userNo, userWorkInfo, remark, checkType);
         return booleanComResponse;
     }
+
     @ApiOperation(value = "查询售后单审核列表")
     @GetMapping("v1/selectOrderSaleCheckList")
-    public ComResponse<List<OrderSaleVO>> selectOrderSaleCheckList(@RequestParam(required = false) String orderNo,  @RequestParam(required = false) String memberName, @RequestParam(required = false) String createStartTime,@RequestParam(required = false) String createEndTime,@RequestParam @NotBlank(message = "售后单状态不能为空") @ApiParam(name="state",value="售后单状态 1:未审核,其他:已审核",required=true) Integer state){
+    public ComResponse<List<OrderSaleVO>> selectOrderSaleCheckList(@RequestParam(required = false) @ApiParam(name = "orderNo", value = "订单编号") String orderNo
+            , @RequestParam(required = false) @ApiParam(name = "memberName", value = "顾客姓名") String memberName
+            , @RequestParam(required = false) @ApiParam(name = "createStartTime", value = "开始时间") String createStartTime
+            , @RequestParam(required = false) @ApiParam(name = "createEndTime", value = "结束时间") String createEndTime
+            , @RequestParam @NotBlank(message = "售后单状态不能为空") @ApiParam(name = "state", value = "售后单状态 1:未审核,其他:已审核", required = true) Integer state) {
         ComResponse<List<OrderSaleVO>> listComResponse = orderSaleClient.selectOrderSaleCheckList(orderNo, memberName, createStartTime, createEndTime, state);
         return listComResponse;
     }
+
     @ApiOperation(value = "查询售后单审核页详情")
     @GetMapping("v1/selectOrderSaleCheckInfo")
-    public ComResponse<OrderSaleVO> selectOrderSaleCheckInfo(@RequestParam(required = false) String orderNo,
-                                                             @RequestParam @NotBlank(message = "售后单号不能为空") @ApiParam(name="saleOrderNo",value="售后单号",required=true)String saleOrderNo) {
-      ComResponse<OrderSaleVO> comResponse = orderSaleClient.selectOrderSaleCheckInfo(orderNo,saleOrderNo);
+    public ComResponse<OrderSaleVO> selectOrderSaleCheckInfo(@RequestParam(required = false) @ApiParam(name = "orderNo", value = "订单编号") String orderNo,
+                                                             @RequestParam @NotBlank(message = "售后单号不能为空") @ApiParam(name = "saleOrderNo", value = "售后单号", required = true) String saleOrderNo) {
+        ComResponse<OrderSaleVO> comResponse = orderSaleClient.selectOrderSaleCheckInfo(orderNo, saleOrderNo);
         return comResponse;
-
     }
+
     @ApiOperation(value = "新建售后订单时查询订单信息")
     @GetMapping("v1/selectOrderSaleProductInfo")
-    public ComResponse<NewCreateOrderSaleVO> selectOrderSaleProductInfo(@RequestParam(required = false) String orderNo){
+    public ComResponse<NewCreateOrderSaleVO> selectOrderSaleProductInfo(@RequestParam(required = false) @ApiParam(name = "orderNo", value = "订单编号") String orderNo) {
         ComResponse<NewCreateOrderSaleVO> comResponse = orderSaleClient.selectOrderSaleProductInfo(orderNo);
         return comResponse;
     }
