@@ -20,7 +20,6 @@ import java.util.List;
  *
  * @author zhouchangsong
  */
-@Service
 @FeignClient(name = "orderRejection", url = "${api.gateway.url}/orderService/orderRejection")
 public interface OrderRejectionClient {
 
