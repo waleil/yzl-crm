@@ -331,7 +331,7 @@ public class MemberController {
         member_group.setTotal_amount(memberCrowdGroup.getTotal_amount());
         member_group.setTicket(memberCrowdGroup.getTicket());
         member_group.setLast_order_to_days(memberCrowdGroup.getLast_order_to_days());
-        member_group.setLogistics_company_id(memberCrowdGroup.getLogistics_company_id());
+        member_group.setLogistics_company_id(memberCrowdGroup.getLogistics_company());
         member_group.setLogistics_state(memberCrowdGroup.getLogistics_state());
         member_group.setMediaList(memberCrowdGroup.getMediaList());
         member_group.setIntegral(memberCrowdGroup.getIntegral());
