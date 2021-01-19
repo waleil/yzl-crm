@@ -575,10 +575,10 @@ public class RedisUtil {
     /**
      * 生成序列号
      *
-     * @param workid 职场id
-     * @param userno 用户id
+     * @param workid   职场id
+     * @param userno   用户id
      * @param rediskey redis中的键
-     * @param length 尾号长度
+     * @param length   尾号长度
      */
     public String getSeqNo(String workid, String userno, String rediskey, int length) {
         // 初始化长度
@@ -593,7 +593,6 @@ public class RedisUtil {
         }
         return seqNo.append(workid).append(userno).append("T").append(timestamp).append(num).toString();
     }
-
 
     /**
      * 递增

@@ -78,4 +78,19 @@ public interface StoreFeginService {
     public ComResponse insertAndUpdateStoreArea(@RequestBody List<SysDictDataPo> list);
 
 
+    //TODO 库位查询是否返回list
+    @ApiOperation(value = "根据库位编码查询", notes = "根据库位编码查询")
+    @PostMapping("store/v1/selectAllByNo")
+    public ComResponse selectAllByNo(@RequestParam (value = "no") String no);
+
+
+    @ApiOperation(value = "库位字典查询", notes = "库位字典查询")
+    @GetMapping("store/v1/selectSysDictDate")
+    public ComResponse<List<SysDictDataPo>> selectSysDictDate();
+
+    @ApiOperation(value = "查询单个库位", notes = "查询单个库位")
+    @GetMapping("store/v1/selectStoreLocal")
+    public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no);
+
+
 }

@@ -124,4 +124,24 @@ public class StoreController {
         return storeFeginService.insertAndUpdateStoreArea(list);
     }
 
+
+    @ApiOperation(value = "根据库位编码查询", notes = "根据库位编码查询")
+    @PostMapping("v1/selectAllByNo")
+    public ComResponse selectAllByNo(@RequestParam (value = "no") String no){
+        return storeFeginService.selectAllByNo(no);
+    }
+
+
+    @ApiOperation(value = "库位字典查询", notes = "库位字典查询")
+    @GetMapping("v1/selectSysDictDate")
+    public ComResponse<List<SysDictDataPo>> selectSysDictDate(){
+        return storeFeginService.selectSysDictDate();
+    }
+
+    @ApiOperation(value = "查询单个库位", notes = "查询单个库位")
+    @GetMapping("v1/selectStoreLocal")
+    public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no){
+        return storeFeginService.selectStoreLocal(no);
+    }
+
 }
