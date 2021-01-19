@@ -2,11 +2,14 @@ package cn.net.yzl.crm.client.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.product.model.db.BrandBean;
+import cn.net.yzl.product.model.vo.brand.BrandBeanTO;
 import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @FeignClient(name = "brandClient",url = "${api.gateway.url}/productServer/brand/v1")
@@ -30,4 +33,7 @@ public interface BrandClient {
 
     @GetMapping("checkUnique")
     ComResponse<Boolean> checkUnique(@RequestParam("name") String name, @RequestParam("id") int id);
+
+    @GetMapping("query4Select")
+    ComResponse<List<BrandBeanTO>> query4Select();
 }
