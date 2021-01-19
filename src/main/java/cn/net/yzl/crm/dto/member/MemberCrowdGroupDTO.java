@@ -142,7 +142,7 @@ public class MemberCrowdGroupDTO {
     private List<crowd_base_value> logistics_state;
 
     @ApiModelProperty("物流公司")
-    private List<crowd_base_value> logistics_company_id;
+    private List<crowd_base_value> logistics_company;
 
     @ApiModelProperty(value = "累计消费金额")
     private Integer total_amount;
