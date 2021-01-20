@@ -40,6 +40,12 @@ public class ImageController {
 
     @Autowired
     private FastDFSConfig fastDFSConfig;
+    
+    private final String[] typeList = {"套餐","分类"};
+
+    private final Integer[] sizeList = {2<<20,50<<10};
+    
+    private final String[] thresholdList = {"2MB","50KB"};
 
     @ApiOperation("上传接口")
     @ApiImplicitParams({
@@ -193,8 +199,15 @@ public class ImageController {
 
     @PostMapping("uploadWithOutStore")
     @ApiOperation("图片上传接口（不通过图片库）")
-    @ApiImplicitParam(name = "file", value = "需要上传的图片", required = true, dataType = "MultipartFile")
-    public ComResponse upload(MultipartFile file, HttpServletRequest request) throws IOException {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "需要上传的图片", required = true, dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "type", value = "上传的图片类型（0：套餐图片，1：分类图片）", required = true,paramType = "query")
+    })
+    public ComResponse upload(MultipartFile file,Integer type, HttpServletRequest request) throws IOException {
+
+        if(type==null || type < 0 || type >= sizeList.length){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"类型参数传递错误！");
+        }
 
         String userId = request.getHeader("userId");
 
@@ -206,8 +219,8 @@ public class ImageController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件为空，请检查！");
         }
         long size = file.getSize();
-        if(size > 50<<10){
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件过大，上传文件的最大限制为50KB！");
+        if(size > sizeList[type]){
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件过大，上传"+typeList[type]+"图片的最大限制为"+thresholdList[type]+"!");
         }
         String fileName = file.getOriginalFilename();
         if(com.alibaba.nacos.common.utils.StringUtils.isBlank(fileName)||(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png"))&&!fileName.endsWith(".jpeg")&&!fileName.endsWith(".gif")){
