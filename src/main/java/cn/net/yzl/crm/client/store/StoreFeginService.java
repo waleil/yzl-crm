@@ -43,7 +43,7 @@ public interface StoreFeginService {
 
     @ApiOperation(value = "编辑/修改仓库", notes = "编辑/修改仓库")
     @PostMapping("store/v1/updateStore")
-    public ComResponse<Integer> updateStore(@RequestBody StorePo storePo);
+    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO);
 
 
     @PostMapping("store/v1/insertStore")
@@ -103,6 +103,11 @@ public interface StoreFeginService {
     @ApiOperation(value = "查询单个库位", notes = "查询单个库位")
     @GetMapping("store/v1/selectStoreLocal")
     public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no);
+
+    @GetMapping("v1/stockInquiry")
+    public ComResponse stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                    @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
+                                    @RequestParam(value = "storeName",required = false) String storeName);
 
 
 }

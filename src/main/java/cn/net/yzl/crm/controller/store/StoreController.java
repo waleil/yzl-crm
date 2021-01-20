@@ -35,7 +35,7 @@ public class StoreController {
 
 
     @GetMapping("v1/selectStoreListPage")
-    @ApiOperation(value = "查询仓库管理列表", notes = "查询仓库管理列表")
+    @ApiOperation(value = "分页查询仓库管理列表", notes = "分页查询仓库管理列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
@@ -61,8 +61,8 @@ public class StoreController {
 
     @ApiOperation(value = "编辑/修改仓库", notes = "编辑/修改仓库")
     @PostMapping("v1/updateStore")
-    public ComResponse<Integer> updateStore(@RequestBody StorePo storePo){
-        return storeFeginService.updateStore(storePo);
+    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO){
+        return storeFeginService.updateStore(storeVO);
     }
 
 
@@ -161,5 +161,21 @@ public class StoreController {
     public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no){
         return storeFeginService.selectStoreLocal(no);
     }
+
+    @GetMapping("v1/stockInquiry")
+    @ApiOperation(value = "库存查询", notes = "库存查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "codeAndName", value = "商品编码/条形码/商品名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "storeName", value = "仓库名称", required = false, dataType = "String", paramType = "query"),
+    })
+    public ComResponse stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                    @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
+                                    @RequestParam(value = "storeName",required = false) String storeName){
+
+        return storeFeginService.stockInquiry(pageNo,pageSize,codeAndName,storeName);
+    }
+
 
 }
