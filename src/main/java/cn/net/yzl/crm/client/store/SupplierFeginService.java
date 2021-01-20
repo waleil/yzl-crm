@@ -37,8 +37,8 @@ public interface SupplierFeginService {
     public ComResponse<Integer> updateSupplier(@RequestBody SupplierPo supplierPo);
 
     @ApiOperation(value = "编辑供应商状态", notes = "编辑供应商状态",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(value = "supplier/v1/nosearch", method = RequestMethod.POST)
-    public ComResponse<Integer> updateState(@RequestBody SupplierPo supplierPo);
+    @RequestMapping(value = "supplier/v1/nosearch", method = RequestMethod.GET)
+    public ComResponse<Integer> updateState(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator);
 
 
     @RequestMapping(value = "supplier/v1/selectByPrimaryKey", method = RequestMethod.GET)
