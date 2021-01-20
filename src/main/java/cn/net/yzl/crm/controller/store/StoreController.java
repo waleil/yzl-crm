@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.StoreFeginService;
+import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.model.dto.StoreDto;
 import cn.net.yzl.model.dto.StoreLocalDto;
 import cn.net.yzl.model.pojo.StoreLocalPo;
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -177,5 +179,10 @@ public class StoreController {
         return storeFeginService.stockInquiry(pageNo,pageSize,codeAndName,storeName);
     }
 
+    @ApiOperation(value = "获取已存在的财务归属", notes = "获取已存在的财务归属", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "v1/getAllFinanceDepart", method = RequestMethod.GET)
+    ComResponse<List<DepartDto>> getAllFinanceDepart() {
+        return storeFeginService.getAllFinanceDepart();
+    }
 
 }
