@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -39,5 +40,13 @@ public class SimpleTests {
 		mp.setPhone_number("134679313256");
 		System.err.println(Optional.ofNullable(phones).filter(p -> !p.isEmpty()).map(m -> m.get(0))
 				.map(MemberPhone::getPhone_number).orElse(null));
+	}
+
+	@Test
+	public void testAtomicInteger() {
+		AtomicInteger ai = new AtomicInteger(0);
+		Arrays.asList("a", "b", "c").stream().forEach(s -> {
+			System.err.println(String.format("%s%s", s, ai.incrementAndGet()));
+		});
 	}
 }

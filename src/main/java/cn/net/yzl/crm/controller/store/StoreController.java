@@ -27,7 +27,7 @@ import java.util.List;
  * @version 1.0
  * @date 2021/1/16 13:41
  */
-@Api(value = "仓库管理", tags = {"仓库管理"})
+@Api(value = "仓储中心-仓库管理", tags = {"仓储中心-仓库管理"})
 @RequestMapping("store")
 @RestController
 public class StoreController {
