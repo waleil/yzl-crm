@@ -19,7 +19,7 @@ import java.io.InputStream;
  * @date 2021/1/20 10:07
  */
 @Controller
-@Api(value = "供应商图片下载", tags = {"供应商图片下载"})
+@Api(value = "仓储中心下载", tags = {"仓储中心下载"})
 @RequestMapping("down")
 public class DownImageInController {
 
@@ -31,23 +31,24 @@ public class DownImageInController {
         ServletOutputStream outputStream = null;
         InputStream inputStream = null;
         try {
-             inputStream = fastdfsUtils.download(imageUrl, null);
+            inputStream = fastdfsUtils.download(imageUrl, null);
             String[] split = imageUrl.split("[.]");
-            httpServletResponse.setContentType("image/"+split[split.length-1]);
-//        httpServletResponse.setHeader("Content-Disposition","attachment;fileName=");
-             outputStream = httpServletResponse.getOutputStream();
+            String[] splitPath = split[0].split("/");
+            httpServletResponse.setContentType("image/" + split[split.length - 1]);
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + splitPath[splitPath.length - 1]+"."+split[split.length - 1]);
+            outputStream = httpServletResponse.getOutputStream();
             //读取文件流
             int len = 0;
-            byte[] buffer= new byte[1024*10];
-            while ((len=inputStream.read(buffer)) != -1){
-                outputStream.write(buffer,0,len);
+            byte[] buffer = new byte[1024 * 10];
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
             }
             outputStream.flush();
         } finally {
-            if (outputStream !=null)
-            outputStream.close();
+            if (outputStream != null)
+                outputStream.close();
             if (inputStream != null)
-            inputStream.close();
+                inputStream.close();
         }
     }
 
