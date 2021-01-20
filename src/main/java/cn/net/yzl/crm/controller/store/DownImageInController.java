@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ public class DownImageInController {
     @Autowired
     private FastdfsUtils fastdfsUtils;
 
+    @ApiOperation("下载图片")
     @GetMapping("v1/downImage")
     public void downImage(@RequestParam("imageUrl") String imageUrl, HttpServletResponse httpServletResponse) throws IOException {
         ServletOutputStream outputStream = null;
