@@ -26,7 +26,7 @@ import java.util.List;
  * @version 1.0
  * @date 2021/1/18 9:24
  */
-@Api(value = "供应商管理", tags = {"供应商管理"})
+@Api(value = "仓储中心-供应商管理", tags = {"仓储中心-仓库管理供应商管理"})
 @RestController
 @RequestMapping("supplier")
 public class SupplierController {
@@ -37,7 +37,7 @@ public class SupplierController {
     @Autowired
     private FastdfsUtils fastdfsUtils;
 
-    @Value("${fast-dfs.url")
+    @Value("${fast-dfs.url}")
     private String fastUrlBase;
 
     @ApiOperation(value = "新增供应商管理列表", notes = "新增供应商管理列表", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -52,10 +52,10 @@ public class SupplierController {
         return supplierFeginService.updateSupplier(supplierPo);
     }
 
-    @ApiOperation(value = "编辑供应商状态", notes = "编辑供应商状态", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(value = "/v1/nosearch", method = RequestMethod.POST)
-    public ComResponse<Integer> updateState(@RequestBody SupplierPo supplierPo) {
-        return supplierFeginService.updateState(supplierPo);
+    @ApiOperation(value = "编辑供应商状态", notes = "编辑供应商状态",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/v1/nosearch", method = RequestMethod.GET)
+    public ComResponse<Integer> updateState(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator){
+        return supplierFeginService.updateState(id,status,updator);
     }
 
 
@@ -115,13 +115,13 @@ public class SupplierController {
         try {
             path = fastdfsUtils.upload(file).getFullPath();
             if (path != null && path.length() > 0) {
-                path = fastUrlBase + "/" + path;
+//                path = fastUrlBase + "/" + path;
                 return ComResponse.success(path);
             } else {
-                return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(), ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
+                return ComResponse.fail(ResponseCodeEnums.UPLOAD_FAIL.getCode(), ResponseCodeEnums.UPLOAD_FAIL.getMessage());
             }
         } catch (IOException e) {
-            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(), ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
+            return ComResponse.fail(ResponseCodeEnums.UPLOAD_FAIL.getCode(), ResponseCodeEnums.UPLOAD_FAIL.getMessage());
         }
     }
 
@@ -130,4 +130,12 @@ public class SupplierController {
     public ComResponse selectByNo(@RequestParam(value = "no") String no) {
         return supplierFeginService.selectByNo(no);
     }
+
+    @ApiOperation(value = "查询全部供应商", notes = "查询全部供应商")
+    @RequestMapping(value = "/v1/selectAll", method = RequestMethod.GET)
+    public ComResponse<List<SupplierPo>> selectAll() {
+        return supplierFeginService.selectAll();
+
+    }
+
 }

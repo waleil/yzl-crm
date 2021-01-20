@@ -47,10 +47,10 @@ public class CommonServiceImpl implements CommonService {
             ComResponse<ProductDetailVO> productDetail = productClient.queryProductDetail(productCode);
             if (null != productDetail) {
                 ProduceDto produceDto = new ProduceDto();
-                BeanUtil.copyProperties(productDetail, produceDto, true);
+                BeanUtil.copyProperties(productDetail.getData(), produceDto, true);
                 produceDtoList.add(produceDto);
             }
         });
-        return ComResponse.success(produceDtoList);
+        return CollectionUtils.isEmpty(produceDtoList) ? ComResponse.success() : ComResponse.success(produceDtoList);
     }
 }

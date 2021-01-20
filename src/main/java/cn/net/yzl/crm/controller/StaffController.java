@@ -269,7 +269,7 @@ public class StaffController {
      */
     @ApiOperation(value="根据员工id获取当前员工部门以及下属部门",httpMethod = "GET")
     @GetMapping("/getListByStaffNo")
-    public ComResponse<List<EhrDepartDto>> getListByStaffNo(@ApiParam(name = "staffNo")@RequestParam("staffNo") String staffNo){
+    public ComResponse<List<EhrDepartDto>> getListByStaffNo(@ApiParam(name = "staffNo")/*@RequestParam(value = "staffNo",required = false)*/ String staffNo){
         log.info("......StaffController.getListByStaffNo(), 请求参数:{}......",staffNo);
         if (StringUtils.isBlank(staffNo)){
             //未传 默认为当前用户 从头消息中获取

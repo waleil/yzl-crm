@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.StoreFeginService;
+import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.model.dto.StoreDto;
 import cn.net.yzl.model.dto.StoreLocalDto;
 import cn.net.yzl.model.pojo.StoreLocalPo;
@@ -15,6 +16,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -25,7 +27,7 @@ import java.util.List;
  * @version 1.0
  * @date 2021/1/16 13:41
  */
-@Api(value = "仓库管理", tags = {"仓库管理"})
+@Api(value = "仓储中心-仓库管理", tags = {"仓储中心-仓库管理"})
 @RequestMapping("store")
 @RestController
 public class StoreController {
@@ -35,7 +37,7 @@ public class StoreController {
 
 
     @GetMapping("v1/selectStoreListPage")
-    @ApiOperation(value = "查询仓库管理列表", notes = "查询仓库管理列表")
+    @ApiOperation(value = "分页查询仓库管理列表", notes = "分页查询仓库管理列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
@@ -61,8 +63,8 @@ public class StoreController {
 
     @ApiOperation(value = "编辑/修改仓库", notes = "编辑/修改仓库")
     @PostMapping("v1/updateStore")
-    public ComResponse<Integer> updateStore(@RequestBody StorePo storePo){
-        return storeFeginService.updateStore(storePo);
+    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO){
+        return storeFeginService.updateStore(storeVO);
     }
 
 
@@ -74,7 +76,7 @@ public class StoreController {
 
 
     @ApiOperation(value = "开启/关闭仓库状态", notes = "开启/关闭仓库状态")
-    @PostMapping("v1/updateStoreEnable")
+    @GetMapping("v1/updateStoreEnable")
     public ComResponse<Integer> updateStoreEnable(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator){
         return storeFeginService.updateStoreEnable(id,status,updator);
     }
@@ -106,7 +108,7 @@ public class StoreController {
     }
 
     @ApiOperation(value = "开启/关闭库位状态", notes = "开启/关闭库位状态")
-    @PostMapping("/v1/updateStoreLocalStatus")
+    @GetMapping("/v1/updateStoreLocalStatus")
     public ComResponse<Integer> updateStoreLocalStatus(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator){
         //@RequestParam("id") Integer id,@RequestParam("status") Integer status
         //return storeService.updateStatusLocalEnable(id,status);
@@ -160,6 +162,27 @@ public class StoreController {
     @GetMapping("v1/selectStoreLocal")
     public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no){
         return storeFeginService.selectStoreLocal(no);
+    }
+
+    @GetMapping("v1/stockInquiry")
+    @ApiOperation(value = "库存查询", notes = "库存查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "codeAndName", value = "商品编码/条形码/商品名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "storeName", value = "仓库名称", required = false, dataType = "String", paramType = "query"),
+    })
+    public ComResponse stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                    @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
+                                    @RequestParam(value = "storeName",required = false) String storeName){
+
+        return storeFeginService.stockInquiry(pageNo,pageSize,codeAndName,storeName);
+    }
+
+    @ApiOperation(value = "获取已存在的财务归属", notes = "获取已存在的财务归属", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @RequestMapping(value = "v1/getAllFinanceDepart", method = RequestMethod.GET)
+    ComResponse<List<DepartDto>> getAllFinanceDepart() {
+        return storeFeginService.getAllFinanceDepart();
     }
 
 }

@@ -18,5 +18,7 @@ import java.util.List;
 public interface BiTaskClient {
 
     @GetMapping("/indicatorsSetting/getBiIndicatorsSettingList")
-    ComResponse<Page<Indicators>> getBiIndicatorsSettingList(@RequestParam("indicatorsDomainType") Integer indicatorsDomainType);
+    ComResponse<Page<Indicators>> getBiIndicatorsSettingList(@RequestParam("pageNum") Integer pageNum,
+                                                             @RequestParam("pageSize") Integer pageSize,
+                                                             @RequestParam("indicatorsDomainType") Integer indicatorsDomainType);
 }
