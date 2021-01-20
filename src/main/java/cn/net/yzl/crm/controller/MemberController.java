@@ -20,9 +20,11 @@ import cn.net.yzl.crm.model.Media;
 import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaFien;
+import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.logistics.model.vo.logistics.ExpressCodeVo;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
@@ -48,6 +50,7 @@ public class MemberController {
 
     @Autowired
     MemberFien memberFien;
+
     @Autowired
     CoopCompanyMediaFien coopCompanyMediaFien;
 
