@@ -20,9 +20,15 @@ import cn.net.yzl.crm.model.Media;
 //import cn.net.yzl.crm.model.MemberGrade;
 import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
+<<<<<<< HEAD
+import cn.net.yzl.crm.service.micservice.CoopCompanyMediaFien;
+import cn.net.yzl.crm.service.micservice.LogisticsFien;
+=======
+>>>>>>> 9fb6a824cd13bc96258c9a33cee9bf24f13a5474
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.logistics.model.vo.logistics.ExpressCodeVo;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
@@ -48,13 +54,19 @@ public class MemberController {
 
     @Autowired
     MemberFien memberFien;
+<<<<<<< HEAD
+
+    @Autowired
+    CoopCompanyMediaFien coopCompanyMediaFien;
+=======
+>>>>>>> 9fb6a824cd13bc96258c9a33cee9bf24f13a5474
 
     @Autowired
     WorkOrderClient workOrderClient;
 
     @ApiOperation(value = "分页查询顾客列表")
     @PostMapping("v1/listPage")
-    public GeneralResult<Page<Member>> listPage(@RequestBody MemberSerchDTO dto) {
+    public GeneralResult<Page<Member>> listPage( MemberSerchDTO dto) {
         GeneralResult<Page<Member>> result = memberFien.listPage(dto);
         return result;
     }
