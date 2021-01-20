@@ -54,7 +54,7 @@ public class MemberController {
 
     @ApiOperation(value = "分页查询顾客列表")
     @PostMapping("v1/listPage")
-    public GeneralResult<Page<Member>> listPage(@RequestBody MemberSerchDTO dto) {
+    public GeneralResult<Page<Member>> listPage( MemberSerchDTO dto) {
         GeneralResult<Page<Member>> result = memberFien.listPage(dto);
         return result;
     }
