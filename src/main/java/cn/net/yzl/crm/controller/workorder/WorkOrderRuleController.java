@@ -7,6 +7,7 @@ import cn.net.yzl.crm.dto.ehr.BusinessPostDto;
 import cn.net.yzl.crm.dto.ehr.PostDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
+import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
 import cn.net.yzl.workorder.model.vo.WorkOrderRuleConfigTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +35,11 @@ public class WorkOrderRuleController {
     @ApiOperation(value="根据业务属性获取岗位列表",httpMethod = "GET")
     @GetMapping(value = "/getPostByBussinessAttrCode")
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode){
+        if(bussinessAtrrCode == DeptTypeEnums.HOTLINE_CENTER.getCode()){
+            bussinessAtrrCode=41;//热线工单 42
+        } else {
+            bussinessAtrrCode=42;//回访工单 43
+        }
         return ehrStaffClient.getPostByBussinessAttrCode(bussinessAtrrCode);
     }
 
@@ -44,6 +50,11 @@ public class WorkOrderRuleController {
     @GetMapping(value = "/getBusiPostListByAttr")
     ComResponse<List<BusinessPostDto>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode, @RequestParam("postId") Integer postId){
         if (bussinessAtrrCode!=null && postId!=null){
+            if(bussinessAtrrCode == DeptTypeEnums.HOTLINE_CENTER.getCode()){
+                bussinessAtrrCode=41;//热线工单 42
+            } else {
+                bussinessAtrrCode=42;//回访工单 43
+            }
             ComResponse<List<BusinessPostDto>> posts = ehrStaffClient.getBusiPostListByAttr(bussinessAtrrCode, postId);
             return posts;
         }else{
