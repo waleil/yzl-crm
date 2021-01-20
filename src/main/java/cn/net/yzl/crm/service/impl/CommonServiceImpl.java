@@ -51,6 +51,6 @@ public class CommonServiceImpl implements CommonService {
                 produceDtoList.add(produceDto);
             }
         });
-        return ComResponse.success(produceDtoList);
+        return CollectionUtils.isEmpty(produceDtoList) ? ComResponse.success() : ComResponse.success(produceDtoList);
     }
 }
