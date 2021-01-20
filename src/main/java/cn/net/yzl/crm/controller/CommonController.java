@@ -16,6 +16,7 @@ import cn.net.yzl.crm.service.micservice.LaunchManageClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,8 +80,10 @@ public class CommonController {
 
     @ApiOperation(value = "指标名称")
     @GetMapping("v1/getBiIndicatorsSettingList")
-    public ComResponse<Page<Indicators>> getBiIndicatorsSettingList() {
-        return biTaskClient.getBiIndicatorsSettingList(1);
+    public ComResponse<Page<Indicators>> getBiIndicatorsSettingList(@RequestParam("pageNum") Integer pageNum,
+                                                                    @RequestParam("pageSize") Integer pageSize,
+                                                                    @RequestParam("indicatorsDomainType") Integer indicatorsDomainType) {
+        return biTaskClient.getBiIndicatorsSettingList(pageNum,pageSize,indicatorsDomainType);
     }
 
 
