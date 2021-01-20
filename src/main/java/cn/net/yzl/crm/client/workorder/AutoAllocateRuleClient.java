@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Service
 @FeignClient(name = "autoAllocateRuleClient",url = "${api.gateway.url}/workorderServer/autoAllocateRule")
 //@FeignClient(name = "autoAllocateRuleClient",url = "localhost:4602/autoAllocateRule")
 public interface AutoAllocateRuleClient {

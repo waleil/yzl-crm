@@ -52,4 +52,8 @@ public interface ProductClient {
      */
     @PostMapping(value = "v1/productReduce")
     ComResponse productReduce(@RequestBody @Valid OrderProductVO orderProductVO);
+
+    @GetMapping(value = "v1/queryProducts")
+    ComResponse<List<ProductMainInfoDTO>> queryProducts(@RequestParam(value = "ids",required = false) String ids);
+
 }

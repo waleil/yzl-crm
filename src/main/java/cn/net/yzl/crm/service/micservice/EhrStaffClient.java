@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.service.micservice;
 
 
+import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
@@ -16,9 +17,6 @@ import java.util.List;
 
 @FeignClient(name = "ehr-staff-api",url = "${api.gateway.url}/staffDB")
 public interface EhrStaffClient {
-
-//    @GetMapping("getAllTypesByGroup")
-//    String  getAllTypesByGroup();
 
     /**
      * 获取员工排班记录
@@ -109,6 +107,30 @@ public interface EhrStaffClient {
      *  获取培训过的商品
      * @return
      */
-    @GetMapping(value = "/trainCourse/getTrainProduct")
-    ComResponse<List<String>> getTrainProduct();
+    @GetMapping(value = "/trainCourse/selectProduct")
+    ComResponse<List<String>> selectProduct();
+
+    /**
+     *  根据员工编号获取培训过的商品以及培训结果
+     * @return
+     * @param size
+     * @param staffNo
+     */
+    @GetMapping(value = "/trainCourse/selectStaffTrainProduct")
+    ComResponse<List<JSONObject>> selectStaffTrainProduct(@RequestParam("staffNo")String staffNo,@RequestParam("size") Integer size);
+
+    /**
+     *  根据员工编号获取员工旅程
+     * @return
+     * @param staffNo
+     */
+    @GetMapping(value = "/abnor/getStaffTrain")
+    ComResponse<List<StaffTrainDto>> getStaffTrain(@RequestParam("staffNo")String staffNo);
+
+    /**
+     * 获取组织架构 部门树形列表
+     * @return
+     */
+    @GetMapping(value = "/depart/getTreeList")
+    ComResponse<EhrDepartDto> getDepartTree();
 }

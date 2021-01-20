@@ -1,7 +1,8 @@
 package cn.net.yzl.crm.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import org.apache.commons.lang.StringUtils;
 
 import javax.validation.constraints.NotNull;
@@ -29,7 +30,7 @@ public class ValidateUtils {
      * @param requiredColumns 必填的参数字段名称 逗号隔开 比如"userId,name,telephone"
      */
     public static Map<String,Object> allField(final Object object, String requiredColumns) {
-        JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
+        JSONObject jsonObject = (JSONObject) JSONUtil.parse(object);
         Map<String,Object> notNullValidate = new HashMap<>();
         if (StringUtils.isNotBlank(requiredColumns)) {
             //验证字段非空
@@ -75,7 +76,7 @@ public class ValidateUtils {
     }
 
     public static boolean booleanRequired(final Object object, String requiredColumns) {
-        JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
+        JSONObject jsonObject = (JSONObject) JSONUtil.parse(object);
         Map<String,Object> notNullValidate = new HashMap<>();
         if (StringUtils.isNotBlank(requiredColumns)) {
             //验证字段非空
@@ -269,11 +270,6 @@ public class ValidateUtils {
             return num;
         }
         return new BigDecimal(0);
-    }
-
-    public static <T> T MapToObject(Map<String, Object> paramMap, Class<T> cls) {
-
-        return JSONObject.parseObject(JSONObject.toJSONString(paramMap), cls);
     }
 
     /**

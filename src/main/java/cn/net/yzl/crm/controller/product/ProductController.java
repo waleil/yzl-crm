@@ -238,4 +238,11 @@ public class ProductController {
         }
         return productService.queryDiseaseByProductCode(productCode);
     }
+
+    @GetMapping(value = "v1/queryProducts")
+    @ApiOperation("根据商品编号串查询商品列表,需要在编号中间用半角,间隔（如需查询全部则键入空值）")
+    ComResponse<List<ProductMainInfoDTO>> queryProducts(@RequestParam(value = "ids",required = false) String ids){
+        return productService.queryProducts(ids);
+    }
+
 }

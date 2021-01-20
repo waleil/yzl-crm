@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.dto.staff;
 
+import cn.hutool.json.JSONObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -34,7 +35,8 @@ public class StaffImageBaseInfoDto {
 //    private String degreeCodeStr;
     @ApiModelProperty("部门id")
     private Integer departId;
-
+    @ApiModelProperty("部门名称")
+    private String departName;
     @ApiModelProperty("部门ids")
     private String departIds;
     @ApiModelProperty("部门ids对应的名称集合")
@@ -136,7 +138,7 @@ public class StaffImageBaseInfoDto {
     @ApiModelProperty("商品优势")
     private List<String> productAdvanced;
     @ApiModelProperty("病症优势")
-    private List<String> diseaseAdvanced;
+    private List<JSONObject> diseaseAdvanced;
     @ApiModelProperty("培训商品历史")
     private List<String> trainProductHistory;
 }

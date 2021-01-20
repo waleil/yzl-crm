@@ -17,7 +17,6 @@ import java.util.List;
 /**
  *  工单规则配置相关功能
  */
-@Service
 @FeignClient(name = "workOrderRuleClient",url = "${api.gateway.url}/workorderServer/rule")
 public interface WorkOrderRuleConfigClient {
 

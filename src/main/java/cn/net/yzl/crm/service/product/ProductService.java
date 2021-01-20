@@ -68,4 +68,6 @@ public interface ProductService {
      * @Return:
      */
     ComResponse<List<ProductDiseaseDTO>> queryDiseaseByProductCode(String productCode);
+
+    ComResponse<List<ProductMainInfoDTO>> queryProducts(String ids);
 }

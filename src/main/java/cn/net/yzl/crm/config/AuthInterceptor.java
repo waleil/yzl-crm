@@ -3,6 +3,7 @@ package cn.net.yzl.crm.config;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.UUIDGenerator;
+import cn.net.yzl.crm.utils.UserInfoUtil;
 import cn.net.yzl.logger.json.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +50,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         QueryIds.tranceId.set (request.getHeader("traceId"));
         QueryIds.spanId.set(spanId);
         QueryIds.userNo.set (request.getHeader("userNo"));
+        QueryIds.userName.set (request.getHeader("userName"));
         String requestURI = request.getRequestURI();
         boolean isIgnore = false;
         if (!CollectionUtils.isEmpty(ignoreUrlConfig.getUrlsSet())) {
@@ -71,7 +73,6 @@ public class AuthInterceptor implements HandlerInterceptor {
             returnJson(response, ComResponse.fail(ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getCode(),ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getMessage()));
             return false;
         }
-
 //        var generalResult = oauthRemoteService.verifyToken(token);
 //        if (HttpStatus.OK.value() != generalResult.getCode()) {
 //            log.error("token:[{}],校验失败:[{}]", token, generalResult.getMessage());
@@ -86,6 +87,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         QueryIds.tranceId.remove();
         QueryIds.spanId.remove();
         QueryIds.userNo.remove();
+        QueryIds.userName.remove();
     }
 
     private void returnJson(HttpServletResponse response, ComResponse<Object> result) {

@@ -41,7 +41,8 @@ mvnw.cmd
 
 .idea
 
-**/.gitignore
+#**/.gitignore
 
 *.log
 SYS_LOG_HOME_IS_UNDEFINED
+/crm.bat
