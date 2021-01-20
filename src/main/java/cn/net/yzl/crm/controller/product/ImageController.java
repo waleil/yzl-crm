@@ -40,11 +40,14 @@ public class ImageController {
 
     @Autowired
     private FastDFSConfig fastDFSConfig;
-    
+
+    //图片的提示类型，顺序需要和下方对应，用于拼接提示信息
     private final String[] typeList = {"套餐","分类"};
 
+    //图片的大小限制，顺序需要和上下方对应，单位：B
     private final Integer[] sizeList = {2<<20,50<<10};
-    
+
+    //图片的大小限制提示，顺序需要和上方对应，用于拼接提示信息
     private final String[] thresholdList = {"2MB","50KB"};
 
     @ApiOperation("上传接口")
