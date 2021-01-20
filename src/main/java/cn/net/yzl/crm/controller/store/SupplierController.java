@@ -115,7 +115,7 @@ public class SupplierController {
         try {
             path = fastdfsUtils.upload(file).getFullPath();
             if (path != null && path.length() > 0) {
-                path = fastUrlBase + "/" + path;
+//                path = fastUrlBase + "/" + path;
                 return ComResponse.success(path);
             } else {
                 return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(), ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
