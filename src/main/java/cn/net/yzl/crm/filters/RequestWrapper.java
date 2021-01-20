@@ -42,7 +42,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         }
         //Store request pody content in 'body' variable
         body = stringBuilder.toString();
-        body=body.replaceAll("\n","");
+     //   body=body.replaceAll("\n","");
 
       //  request = new RequestWrapper(request), body);
     }
