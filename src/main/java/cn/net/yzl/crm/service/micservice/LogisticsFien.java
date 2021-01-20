@@ -22,7 +22,7 @@ import java.util.List;
 public interface LogisticsFien {
 
     @ApiOperation("物流快递追踪轨迹信息")
-    @GetMapping("/v1/selectExpressComponyDetail")
+    @GetMapping("/v1/selectExpressComponyCode")
     ComResponse<List<ExpressCodeVo>> selectExpressComponyCode();
 
     @ApiOperation("物流快递公司信息")
