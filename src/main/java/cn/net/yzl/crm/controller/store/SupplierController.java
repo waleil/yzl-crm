@@ -52,10 +52,10 @@ public class SupplierController {
         return supplierFeginService.updateSupplier(supplierPo);
     }
 
-    @ApiOperation(value = "编辑供应商状态", notes = "编辑供应商状态", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(value = "/v1/nosearch", method = RequestMethod.POST)
-    public ComResponse<Integer> updateState(@RequestBody SupplierPo supplierPo) {
-        return supplierFeginService.updateState(supplierPo);
+    @ApiOperation(value = "编辑供应商状态", notes = "编辑供应商状态",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/v1/nosearch", method = RequestMethod.GET)
+    public ComResponse<Integer> updateState(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator){
+        return supplierFeginService.updateState(id,status,updator);
     }
 
 

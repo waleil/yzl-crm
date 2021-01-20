@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication(scanBasePackages = {"cn.net.yzl.crm","cn.net.yzl.logger","cn.net.yzl.pm"})
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"cn.net.yzl.crm.service.micservice","cn.net.yzl.crm.client"})
-//@ServletComponentScan(basePackages = {"cn.net.yzl.crm.filters"})
+@ServletComponentScan(basePackages = {"cn.net.yzl.crm.filters"})
 public class YzlCrmApplication {
 
     public static void main(String[] args) {
