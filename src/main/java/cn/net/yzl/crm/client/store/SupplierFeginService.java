@@ -83,4 +83,9 @@ public interface SupplierFeginService {
     public ComResponse selectByNo(@RequestParam(value = "no")String  no);
 
 
+    @ApiOperation(value = "查询全部供应商", notes = "查询全部供应商")
+    @RequestMapping(value = "supplier/v1/selectAll", method = RequestMethod.GET)
+    public ComResponse<List<SupplierPo>> selectAll();
+
+
 }

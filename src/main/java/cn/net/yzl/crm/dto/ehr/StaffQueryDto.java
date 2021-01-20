@@ -18,4 +18,7 @@ public class StaffQueryDto  extends PageDto {
     private Integer postStatusCode;
     @ApiModelProperty("岗位级别")
     private Integer postLevelId;
+
+    @ApiModelProperty(value = "属性(1:正编,2:外包)")
+    private Integer nature;
 }
