@@ -6,7 +6,6 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateHelper;
-import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
@@ -20,15 +19,10 @@ import cn.net.yzl.crm.model.Media;
 //import cn.net.yzl.crm.model.MemberGrade;
 import cn.net.yzl.crm.model.OrderMember;
 import cn.net.yzl.crm.service.MemberService;
-<<<<<<< HEAD
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaFien;
-import cn.net.yzl.crm.service.micservice.LogisticsFien;
-=======
->>>>>>> 9fb6a824cd13bc96258c9a33cee9bf24f13a5474
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.sys.BizException;
-import cn.net.yzl.logistics.model.vo.logistics.ExpressCodeVo;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
@@ -54,19 +48,15 @@ public class MemberController {
 
     @Autowired
     MemberFien memberFien;
-<<<<<<< HEAD
-
     @Autowired
     CoopCompanyMediaFien coopCompanyMediaFien;
-=======
->>>>>>> 9fb6a824cd13bc96258c9a33cee9bf24f13a5474
 
     @Autowired
     WorkOrderClient workOrderClient;
 
     @ApiOperation(value = "分页查询顾客列表")
     @PostMapping("v1/listPage")
-    public GeneralResult<Page<Member>> listPage( MemberSerchDTO dto) {
+    public GeneralResult<Page<Member>> listPage(@RequestBody MemberSerchDTO dto) {
         GeneralResult<Page<Member>> result = memberFien.listPage(dto);
         return result;
     }
@@ -112,7 +102,12 @@ public class MemberController {
         return result;
     }
 
-
+    @ApiOperation(value = "获取媒体列表")
+    @GetMapping("v1/getMediaList")
+    public GeneralResult<List<Media>> getMediaList() {
+        GeneralResult<List<Media>> result = coopCompanyMediaFien.getMediaList();
+        return result;
+    }
 
     @ApiOperation(value = "根据媒体id获取广告列表列表")
     @GetMapping("v1/getAdverList")
@@ -343,7 +338,7 @@ public class MemberController {
         member_group.setTotal_amount(memberCrowdGroup.getTotal_amount());
         member_group.setTicket(memberCrowdGroup.getTicket());
         member_group.setLast_order_to_days(memberCrowdGroup.getLast_order_to_days());
-        member_group.setLogistics_company_id(memberCrowdGroup.getLogistics_company());
+        member_group.setLogistics_company_id(memberCrowdGroup.getLogistics_company_id());
         member_group.setLogistics_state(memberCrowdGroup.getLogistics_state());
         member_group.setMediaList(memberCrowdGroup.getMediaList());
         member_group.setIntegral(memberCrowdGroup.getIntegral());
@@ -356,7 +351,7 @@ public class MemberController {
         member_group.setPay_form(memberCrowdGroup.getPay_form());
         member_group.setPay_state(memberCrowdGroup.getPay_state());
         member_group.setPay_type(memberCrowdGroup.getPay_type());
-      //  member_group.setPerson_count(memberCrowdGroup.); //人数
+        //  member_group.setPerson_count(memberCrowdGroup.); //人数
         member_group.setPhone_time(memberCrowdGroup.getPhone_time());
         member_group.setRecharge(memberCrowdGroup.getRecharge());
         member_group.setRed_bag(memberCrowdGroup.getRed_bag());
@@ -385,12 +380,10 @@ public class MemberController {
             member_group.setCrowd_id(crowd_id);
             member_group.setCreate_time(DateHelper.getCurrentDate());
 
-            ComResponse result= memberFien.addCrowdGroup(member_group);
-            return result;
+            return memberFien.addCrowdGroup(member_group);
         } else {
 
-            ComResponse result= memberFien.updateCrowdGroup(member_group);
-            return result;
+            return memberFien.updateCrowdGroup(member_group);
         }
     }
 
@@ -436,13 +429,6 @@ public class MemberController {
     ) {
         if (StringUtil.isNullOrEmpty(crowdIds)) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         return memberFien.getCrowdGroupList(crowdIds);
-    }
-
-    @ApiOperation("分页获取圈选列表")
-    @PostMapping("/v1/getCrowdGroupByPage")
-    public ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO) {
-        if (crowdGroupDTO == null) throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE);
-        return memberFien.getCrowdGroupByPage(crowdGroupDTO);
     }
 
 
