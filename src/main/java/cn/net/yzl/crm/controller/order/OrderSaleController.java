@@ -84,7 +84,7 @@ public class OrderSaleController {
         ComResponse<OrderSaleCheckDetailVO> comResponse = orderSaleClient.selectOrderSaleCheckInfo(saleOrderNo);
         if (comResponse.getData() != null) {
             OrderSaleCheckDetailVO orderSaleCheckDetailVO = comResponse.getData();
-            GeneralResult<Member> memberResult = memberFien.getMember(orderSaleCheckDetailVO.getOrderSaleMemberInfo().getMemberCardNo());
+            GeneralResult<Member> memberResult = memberFien.getMember(orderSaleCheckDetailVO.getMemberCardNo());
             if (memberResult.getData() != null) {
                 Member member = memberResult.getData();
                 OrderSaleMemberInfo orderSaleMemberInfo = orderSaleCheckDetailVO.getOrderSaleMemberInfo();
@@ -110,7 +110,7 @@ public class OrderSaleController {
         ComResponse<OrderSaleDetailVO> comResponse = orderSaleClient.selectOrderSaleInfo(orderNo, saleOrderNo);
         if (comResponse.getData() != null) {
             OrderSaleDetailVO orderSaleCheckDetailVO = comResponse.getData();
-            GeneralResult<Member> memberResult = memberFien.getMember(orderSaleCheckDetailVO.getOrderSaleMemberInfo().getMemberCardNo());
+            GeneralResult<Member> memberResult = memberFien.getMember(orderSaleCheckDetailVO.getMemberCardNo());
             if (memberResult.getData() != null) {
                 Member member = memberResult.getData();
                 OrderSaleMemberInfo orderSaleMemberInfo = orderSaleCheckDetailVO.getOrderSaleMemberInfo();
