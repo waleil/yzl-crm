@@ -37,8 +37,8 @@ public interface SupplierFeginService {
     public ComResponse<Integer> updateSupplier(@RequestBody SupplierPo supplierPo);
 
     @ApiOperation(value = "编辑供应商状态", notes = "编辑供应商状态",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(value = "supplier/v1/nosearch", method = RequestMethod.POST)
-    public ComResponse<Integer> updateState(@RequestBody SupplierPo supplierPo);
+    @RequestMapping(value = "supplier/v1/nosearch", method = RequestMethod.GET)
+    public ComResponse<Integer> updateState(@RequestParam("id") Integer id,@RequestParam("status") Integer status,@RequestParam("updator")String updator);
 
 
     @RequestMapping(value = "supplier/v1/selectByPrimaryKey", method = RequestMethod.GET)
@@ -75,7 +75,7 @@ public interface SupplierFeginService {
     public ComResponse selectUrl(@RequestParam(value = "id")Integer id);
 
     @ApiOperation(value = "供应商营业执照上传", notes = "供应商营业执照下载",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @RequestMapping(value = "supplier/v1/upLoadFile", method = RequestMethod.POST)
+    @RequestMapping(value = "supplier/v1/upLoadFile", method = RequestMethod.POST,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ComResponse<String> upLoadFile(@RequestParam(value = "file")MultipartFile file);
 
     @ApiOperation(value = "按照编号查询供应商", notes = "按照编号查询供应商")

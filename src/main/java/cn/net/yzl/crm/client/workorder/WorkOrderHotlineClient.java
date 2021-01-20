@@ -6,6 +6,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
 import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
+import cn.net.yzl.workorder.model.dto.UpdateDisposeWorkOrderCommit;
 import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
@@ -21,9 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  *  工单规则配置相关功能
  */
-@Service
-//@FeignClient(name = "WorkOrderHotline",url = "${api.gateway.url}/workorderServer/hotline")
-@FeignClient(name = "WorkOrderHotline",url = "127.0.0.1:4602/hotline")
+@FeignClient(name = "WorkOrderHotline",url = "${api.gateway.url}/workorderServer/hotline")
+//@FeignClient(name = "WorkOrderHotline",url = "127.0.0.1:4602/hotline")
 public interface WorkOrderHotlineClient {
 
     /**
@@ -82,4 +82,11 @@ public interface WorkOrderHotlineClient {
      */
     @RequestMapping(value = "v1/findDWorkOrderHotlineDetails",method = RequestMethod.POST)
     ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
+
+    /**
+     * 智能工单：我的热线工单-处理工单提交
+     * @param updateDisposeWorkOrderCommit
+     */
+    @RequestMapping(value = "v1/updateDisposeWorkOrderCommit",method = RequestMethod.POST)
+    ComResponse<Void> updateDisposeWorkOrderCommit(UpdateDisposeWorkOrderCommit updateDisposeWorkOrderCommit);
 }

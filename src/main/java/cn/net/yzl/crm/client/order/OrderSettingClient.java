@@ -1,4 +1,4 @@
-package cn.net.yzl.crm.client;
+package cn.net.yzl.crm.client.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.List;
-@Service
 @FeignClient(name = "orderSettingClient",url = "${api.gateway.url}/orderService/orderCheckSetting")
 public interface OrderSettingClient {
 

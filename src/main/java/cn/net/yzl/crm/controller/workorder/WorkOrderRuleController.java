@@ -7,8 +7,11 @@ import cn.net.yzl.crm.dto.ehr.BusinessPostDto;
 import cn.net.yzl.crm.dto.ehr.PostDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
+import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
 import cn.net.yzl.workorder.model.vo.WorkOrderRuleConfigTO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +35,16 @@ public class WorkOrderRuleController {
      * 根据业务属性获取岗位列表
      */
     @ApiOperation(value="根据业务属性获取岗位列表",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bussinessAtrrCode",paramType="query",dataType = "Integer",required = true,value = "业务属性（1：热线，2：回访）")
+    })
     @GetMapping(value = "/getPostByBussinessAttrCode")
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode){
+        if(bussinessAtrrCode == DeptTypeEnums.HOTLINE_CENTER.getCode()){
+            bussinessAtrrCode=41;//热线工单 42
+        } else {
+            bussinessAtrrCode=42;//回访工单 43
+        }
         return ehrStaffClient.getPostByBussinessAttrCode(bussinessAtrrCode);
     }
 
@@ -41,9 +52,18 @@ public class WorkOrderRuleController {
      * 根据业务属性获取岗位列表
      */
     @ApiOperation(value="根据业务属性和岗位id获取岗位级别列表",httpMethod = "GET")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bussinessAtrrCode",paramType="query",dataType = "Integer",required = true,value = "业务属性（1：热线，2：回访）"),
+            @ApiImplicitParam(name = "postId",paramType="query",dataType = "Integer",required = true,value = "岗位id")
+    })
     @GetMapping(value = "/getBusiPostListByAttr")
     ComResponse<List<BusinessPostDto>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode, @RequestParam("postId") Integer postId){
         if (bussinessAtrrCode!=null && postId!=null){
+            if(bussinessAtrrCode == DeptTypeEnums.HOTLINE_CENTER.getCode()){
+                bussinessAtrrCode=41;//热线工单 42
+            } else {
+                bussinessAtrrCode=42;//回访工单 43
+            }
             ComResponse<List<BusinessPostDto>> posts = ehrStaffClient.getBusiPostListByAttr(bussinessAtrrCode, postId);
             return posts;
         }else{
