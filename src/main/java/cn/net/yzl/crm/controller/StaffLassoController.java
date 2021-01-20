@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
+import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +14,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 @Api(tags = "员工圈选服务")
 @RestController
@@ -24,6 +26,13 @@ public class StaffLassoController {
     @Autowired
     private CrmStaffClient crmStaffClient;
 
+
+    @ApiOperation(value = "试算")
+    @PostMapping("v1/calculationDto")
+    public ComResponse<Integer> calculationDto(@RequestBody CalculationDto calculationDto) {
+        Integer lassoCount = crmStaffClient.calculationDto(calculationDto);
+        return ComResponse.success(lassoCount);
+    }
 
     // 员工圈选 保存
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")

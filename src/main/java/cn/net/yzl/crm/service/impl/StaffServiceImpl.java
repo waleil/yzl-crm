@@ -120,7 +120,7 @@ public class StaffServiceImpl implements StaffService {
         reqDTO.setStaffCode(req.getStaffNo());
         switch (req.getTimeType()){
             case 1:
-                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now()), DatePattern.NORM_DATETIME_FORMATTER));
+                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(1)), DatePattern.NORM_DATETIME_FORMATTER));
                 break;
             case 2:
                 reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(7)), DatePattern.NORM_DATETIME_FORMATTER));
