@@ -3,6 +3,8 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.store.PurchaseFeginService;
 import cn.net.yzl.model.dto.PurchaseOrderDto;
+import cn.net.yzl.model.dto.PurchaseReviewDto;
+import cn.net.yzl.model.dto.PurchaseWithdrawDto;
 import cn.net.yzl.model.dto.WarehousingOrderDto;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
 import cn.net.yzl.model.vo.PurchaseOrderVo;
@@ -58,8 +60,8 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "审核采购订单")
     @PostMapping("v1/review")
-    public ComResponse purchaseOrderReview(@RequestBody PurchaseOrderVo purchaseOrderVo){
-        return purchaseFeginService.purchaseOrderReview(purchaseOrderVo);
+    public ComResponse purchaseOrderReview(@RequestBody PurchaseReviewDto purchaseReviewDto){
+        return purchaseFeginService.purchaseOrderReview(purchaseReviewDto);
     }
 
     @ApiOperation(value = "采购订单验收")
@@ -70,8 +72,8 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "采购订单撤回")
     @PostMapping("v1/withdraw")
-    public ComResponse purchaseWithdraw(@RequestBody PurchaseOrderDto purchaseOrderDto) {
-        return purchaseFeginService.purchaseWithdraw(purchaseOrderDto);
+    public ComResponse purchaseWithdraw(@RequestBody PurchaseWithdrawDto purchaseWithdrawDto) {
+        return purchaseFeginService.purchaseWithdraw(purchaseWithdrawDto);
     }
 
     @ApiOperation(value = "采购订单状态下拉框列表")
