@@ -55,11 +55,6 @@ public class InventoryController {
         return inventoryFeginService.selectInventoryProduct(inventoryParamVo);
     }
 
-    @ApiOperation(value = "导出查看盘点商品(附带下载路径)",notes = "导出查看盘点商品(附带下载路径)")
-    @PostMapping("v1/exportInventoryExcel")
-    public ComResponse<String> exportInventoryExcel(@RequestBody InventoryExcelVo inventoryExcelVo){
-        return inventoryFeginService.exportInventoryExcel(inventoryExcelVo);
-    }
 
     @ApiOperation(value = "导入查看盘点商品",notes = "导入查看盘点商品信息")
     @PostMapping("v1/readExcelnventoryProduct")
