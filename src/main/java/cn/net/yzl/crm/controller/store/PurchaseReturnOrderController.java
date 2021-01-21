@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * @version 1.0
  * @date 2021/1/14 17:11
  */
-@Api(value = "采购退货单管理", tags = {"采购退货单管理"})
+@Api(value = "仓储中心心心心心-采购退货单管理", tags = {"仓储中心心心心心-采购退货单管理"})
 @RequestMapping("purchaseReturn")
 @RestController
 @Slf4j

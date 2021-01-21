@@ -6,7 +6,6 @@ spring:
         username: servergateway
         password: servergateway
         namespace: 71088b30-7c81-48cd-9f1e-481977d6157d
-#        register-enabled: false
 #        namespace: ca2511dc-ae29-40f0-b1d9-8daca30a7e9c
 #        username: crm
 #        password: crm123456!
