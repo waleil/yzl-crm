@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 //@FeignClient(name = "orderSale",url = "${api.gateway.url}/orderService/orderSale")
-@FeignClient(name = "orderSale",url = "localhost:4455/orderSale")
+@FeignClient(name = "orderSale",url = "${api.gateway.url}/orderService/orderSale")
 public interface OrderSaleClient {
     //新建售后订单
     @PostMapping("v1/saveOrderSale")
