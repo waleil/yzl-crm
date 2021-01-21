@@ -1,22 +1,22 @@
 package cn.net.yzl.crm.service.micservice;
 
 
+import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 @FeignClient(name = "ehr-staff-api",url = "${api.gateway.url}/staffDB")
 public interface EhrStaffClient {
-
-//    @GetMapping("getAllTypesByGroup")
-//    String  getAllTypesByGroup();
 
     /**
      * 获取员工排班记录
@@ -81,7 +81,7 @@ public interface EhrStaffClient {
      * @return
      */
     @PostMapping("/staff/getListByParams")
-    ComResponse<Page<EhrStaff>> getStaffListByPage(StaffQueryDto query);
+    ComResponse<Page<EhrStaff>> getStaffListByPage(@RequestBody StaffQueryDto query);
 
     /**
      * 根据员工id获取当前员工部门以及下属部门
@@ -102,4 +102,35 @@ public interface EhrStaffClient {
      */
     @GetMapping(value = "/businessPost/getPostByBussinessAttrCode")
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode);
+
+    /**
+     *  获取培训过的商品
+     * @return
+     */
+    @GetMapping(value = "/trainCourse/selectProduct")
+    ComResponse<List<String>> selectProduct();
+
+    /**
+     *  根据员工编号获取培训过的商品以及培训结果
+     * @return
+     * @param size
+     * @param staffNo
+     */
+    @GetMapping(value = "/trainCourse/selectStaffTrainProduct")
+    ComResponse<List<JSONObject>> selectStaffTrainProduct(@RequestParam("staffNo")String staffNo,@RequestParam("size") Integer size);
+
+    /**
+     *  根据员工编号获取员工旅程
+     * @return
+     * @param staffNo
+     */
+    @GetMapping(value = "/abnor/getStaffTrain")
+    ComResponse<List<StaffTrainDto>> getStaffTrain(@RequestParam("staffNo")String staffNo);
+
+    /**
+     * 获取组织架构 部门树形列表
+     * @return
+     */
+    @GetMapping(value = "/depart/getTreeList")
+    ComResponse<EhrDepartDto> getDepartTree();
 }

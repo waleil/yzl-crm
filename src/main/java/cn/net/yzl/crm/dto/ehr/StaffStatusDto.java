@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@ApiModel("Ehr返回员工在职状态实体")
+@ApiModel("Ehr返回员工职场实体")
 public class StaffStatusDto {
     @ApiModelProperty("字典编码")
     private String dictCode;

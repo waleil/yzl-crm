@@ -25,6 +25,11 @@
             <artifactId>yzl-product-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>cn.net.yzl.logistics</groupId>
+            <artifactId>yzl-logistics-common</artifactId>
+            <version>1.0-RELEASE</version>
+        </dependency>
         <!--引入staff common 依赖-->
         <dependency>
             <groupId>cn.net.yzl.staff</groupId>
@@ -53,9 +58,22 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!--菜单角色权限-->
+        <dependency>
+            <groupId>cn.net.yzl</groupId>
+            <artifactId>yzl-common-pm</artifactId>
+            <version>1.0-RELEASE</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
@@ -121,12 +139,6 @@
         <!--            <artifactId>mybatis-plus-boot-starter</artifactId>-->
         <!--            <version>3.3.1</version>-->
         <!--        </dependency>-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <!--<scope>test</scope>-->
-        </dependency>
 
         <!-- 包含了jsr 303的很多注解 -->
         <dependency>
@@ -180,6 +192,13 @@
             <version>2.1.1</version>
         </dependency>
 
+        <!--公共资源-->
+        <dependency>
+            <groupId>cn.net.yzl</groupId>
+            <artifactId>yzl-store-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!--        <dependency>-->
         <!--            <groupId>cn.net.yzl</groupId>-->
         <!--            <artifactId>yzl-common</artifactId>-->
@@ -197,58 +216,34 @@
 
     <repositories>
         <repository>
-            <id>nexus</id>
-            <url>http://192.168.32.31/nexus/conetent/repositories/snapshots</url>
+            <id>snapshots</id>
+            <url>http://192.168.32.31/nexus/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+		<repository>
+            <id>releases</id>
+            <url>http://192.168.32.31/nexus/content/repositories/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
     </repositories>
 
     <build>
         <plugins>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-compiler-plugin</artifactId>-->
-            <!--                <configuration>-->
-            <!--                    <skip>true</skip>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
-
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.maven.plugins</groupId>-->
-            <!--                <artifactId>maven-surefire-plugin</artifactId>-->
-            <!--                <configuration>-->
-            <!--                    <skipTests>true</skipTests>    &lt;!&ndash;默认关掉单元测试 &ndash;&gt;-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
 
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- 1、设置jar的入口类 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>cn.net.yzl.crm.YzlCrmApplication</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
 
             <!-- 3、打包过程忽略Junit测试 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
