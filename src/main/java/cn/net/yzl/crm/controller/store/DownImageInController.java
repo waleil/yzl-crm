@@ -27,7 +27,7 @@ import java.util.List;
  * @date 2021/1/20 10:07
  */
 @Controller
-@Api(value = "仓储中心-下载", tags = {"仓储中心-下载"})
+@Api(value = "仓储中心心心心心-下载", tags = {"仓储中心心心心心-下载"})
 @RequestMapping("down")
 public class DownImageInController {
 
