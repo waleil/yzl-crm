@@ -20,8 +20,6 @@ public class InventoryExcelListener extends AnalysisEventListener {
     public void invoke(Object object, AnalysisContext analysisContext) {
         InventoryProductVo inventoryProductDto = (InventoryProductVo) object;
         inventoryProductExcelVoList.add(inventoryProductDto);
-
-
     }
 
     @Override
