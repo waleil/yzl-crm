@@ -26,7 +26,7 @@ import java.util.List;
  * @version 1.0
  * @date 2021/1/18 9:24
  */
-@Api(value = "仓储中心-供应商管理", tags = {"仓储中心-仓库管理供应商管理"})
+@Api(value = "仓储中心心心心心-供应商管理", tags = {"仓储中心心心心心-仓库管理供应商管理"})
 @RestController
 @RequestMapping("supplier")
 public class SupplierController {
