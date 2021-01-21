@@ -3,10 +3,7 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.PurchaseFeginService;
-import cn.net.yzl.model.dto.PurchaseOrderDto;
-import cn.net.yzl.model.dto.PurchaseReviewDto;
-import cn.net.yzl.model.dto.PurchaseWithdrawDto;
-import cn.net.yzl.model.dto.WarehousingOrderDto;
+import cn.net.yzl.model.dto.*;
 import cn.net.yzl.model.vo.PurchaseOrderAddVo;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
 import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
@@ -58,7 +55,7 @@ public class PurchaseOrderController {
     @ApiOperation(value = "查看采购订单", notes = "查看采购订单")
     @ApiImplicitParam(name = "id", value = "采购订单id", required = true, dataType = "Int", paramType = "query")
     @GetMapping("v1/detail")
-    public ComResponse<PurchaseOrderDto> detail(@RequestParam("id") Integer id){
+    public ComResponse<PurchaseOrderResDto> detail(@RequestParam("id") Integer id){
         return purchaseFeginService.detail(id);
     }
 
