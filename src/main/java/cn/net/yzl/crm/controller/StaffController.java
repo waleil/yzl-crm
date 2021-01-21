@@ -249,6 +249,17 @@ public class StaffController {
         ComResponse<List<EhrPostDto>> response = ehrStaffClient.getPostListByDepartId(departId);
         return response;
     }
+    /**
+     * 获取 组织架构 部门树形列表
+     * @return
+     */
+    @ApiOperation(value="获取 组织架构 部门树形列表",httpMethod = "GET")
+    @GetMapping("/getDepartTree")
+    public ComResponse<EhrDepartDto> getDepartTree(){
+        log.info("......StaffController.getDepartTree()开始,......");
+        ComResponse<EhrDepartDto> response = ehrStaffClient.getDepartTree();
+        return response;
+    }
 
     /**
      * 员工列表  根据条件分页查询员工列表
