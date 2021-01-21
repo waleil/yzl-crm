@@ -1,7 +1,7 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.config.RestPage;
 import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +56,7 @@ public class StaffLassoController {
     // 获取员工群组列表
     @ApiOperation(value = "分页获取圈选群组", httpMethod = "GET")
     @GetMapping("v1/getGroupListByPage")
-    public ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(
+    public ComResponse<RestPage<StaffCrowdGroup>> getGroupListByPage(
             @RequestParam(value = "crowdGroupName", required = true) @ApiParam(value = "群组名称") String crowdGroupName,
             @RequestParam(value = "status", required = false) @ApiParam(value = "状态") Integer status,
             @RequestParam(value = "startTime", required = false) @ApiParam(value = "开始时间(yyyy-MM-dd)") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,
