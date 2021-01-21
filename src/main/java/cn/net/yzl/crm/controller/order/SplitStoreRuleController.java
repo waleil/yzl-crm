@@ -1,7 +1,10 @@
 package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.SplitStoreRuleClient;
+import cn.net.yzl.crm.dto.order.SplitStoreRulePageDTO;
+import cn.net.yzl.crm.service.SplitStoreRuleService;
 import cn.net.yzl.order.model.vo.order.SplitStoreProvinceDTO;
 import cn.net.yzl.order.model.vo.order.SplitStoreRuleAddDTO;
 import io.swagger.annotations.Api;
@@ -24,6 +27,8 @@ public class SplitStoreRuleController {
 
     @Autowired
     private SplitStoreRuleClient splitStoreRuleClient;
+    @Autowired
+    private SplitStoreRuleService splitStoreRuleService;
 
     /**
      * 添加分仓规则
@@ -63,5 +68,20 @@ public class SplitStoreRuleController {
     @ApiOperation(value = "查询仓库覆盖省市")
     ComResponse<List<SplitStoreProvinceDTO>> getStoreProvinceList(@ApiParam(value = "仓库编号", name = "storeNo") @RequestParam("storeNo") String storeNo) {
         return splitStoreRuleClient.getStoreProvinceList(storeNo);
+    }
+
+
+    /**
+     * 订单分仓规则分页查询
+     *
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @GetMapping("v1/getSplitStoreRuleList")
+    @ApiOperation(value = "订单分仓规则分页查询")
+    ComResponse<Page<SplitStoreRulePageDTO>> getSplitStoreRuleList(@ApiParam(name = "pageNum", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+                                                                  @ApiParam(name = "pageSize", value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        return splitStoreRuleService.getSplitStoreRuleList(pageSize, pageNum);
     }
 }

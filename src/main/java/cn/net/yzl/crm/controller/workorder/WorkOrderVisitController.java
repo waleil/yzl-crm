@@ -34,7 +34,6 @@ public class WorkOrderVisitController {
     @ApiOperation(value = "商品下拉列表（首单、最后一次购买商品）")
     @GetMapping("v1/listProduct")
     public ComResponse<Page<ProductListDTO>> listProduct(ProductSelectVO productSelectVO){
-        productSelectVO.setPageSize(1000);//暂时不分页
         return productClient.queryListProduct(productSelectVO);
     }
 
@@ -43,7 +42,7 @@ public class WorkOrderVisitController {
      * @param criteriaTO
      * @return
      */
-    @GetMapping("/v1/list")
+    @GetMapping("v1/list")
     @ApiOperation(value = "分页查询回访工单", notes = "分页查询回访工单")
     public ComResponse<Page<WorkOrderVisitBean>> listByCriteriaTO(WorkOrderVisitCriteriaTO criteriaTO){
         ComResponse<Page<WorkOrderVisitBean>> result = workOrderVisitClient.listPageByCriteria(criteriaTO);
