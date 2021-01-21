@@ -21,12 +21,12 @@ import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
-import cn.net.yzl.order.model.vo.order.OrderSale;
 import cn.net.yzl.order.model.vo.order.OrderSaleCheckDetailVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleCheckListVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleDetailVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleListVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleMemberInfo;
+import cn.net.yzl.order.model.vo.order.OrderSaleVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -45,7 +45,7 @@ public class OrderSaleController {
 
 	@ApiOperation(value = "新建或修改售后订单")
 	@PostMapping("/v1/saveOrderSale")
-	public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSale orderSalem,
+	public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSaleVO orderSalem,
 			HttpServletRequest request) {
 		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
 		if (userNo.getData() != null) {

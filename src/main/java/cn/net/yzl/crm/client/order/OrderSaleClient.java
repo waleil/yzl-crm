@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.order.model.vo.order.OrderSale;
 import cn.net.yzl.order.model.vo.order.OrderSaleCheckDetailVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleCheckListVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleDetailVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleListVO;
+import cn.net.yzl.order.model.vo.order.OrderSaleVO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -24,10 +24,10 @@ import io.swagger.annotations.ApiParam;
 public interface OrderSaleClient {
 	// 新建售后订单
 	@PostMapping("/v1/saveOrderSale")
-	public ComResponse<Boolean> saveOrderSale(@RequestBody @Validated OrderSale orderSalem);
+	public ComResponse<Boolean> saveOrderSale(@RequestBody @Validated OrderSaleVO orderSalem);
 
 	@PostMapping("/v1/updateOrderSale")
-	public ComResponse<Boolean> updateOrderSale(@RequestBody @Validated OrderSale orderSalem);
+	public ComResponse<Boolean> updateOrderSale(@RequestBody @Validated OrderSaleVO orderSalem);
 
 	@ApiOperation(value = "查询售后单列表")
 	@GetMapping("/v1/selectOrderSaleList")

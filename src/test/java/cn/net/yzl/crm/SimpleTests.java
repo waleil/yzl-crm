@@ -102,7 +102,6 @@ public class SimpleTests {
 
 		List<OrderDetailIn> proList = Arrays.asList(d1, d2, d3);
 		int proTotal = proList.stream().mapToInt(OrderDetailIn::getTotal).sum();
-		System.err.println(proTotal);
 		BigDecimal b2 = new BigDecimal(taocan.getMealPrice());
 		BigDecimal b3 = new BigDecimal(proTotal);
 		proList.stream().forEach(m -> {
