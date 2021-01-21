@@ -75,7 +75,7 @@ public class WorkOrderVisitController {
     }
 
     @PostMapping("v1/isListPage")
-    @ApiOperation(value = "查询回访工单列表",notes = "查询回访工单列表")
+    @ApiOperation(value = "查询我的回访工单列表",notes = "查询我的回访工单列表")
     public ComResponse<Page<WorkOrderVisitBean>> isListPage(@RequestBody IsListPageDTO isListPage){
         isListPage.setStaffNO(QueryIds.userNo.get());
         return workOrderVisitClient.isListPage(isListPage);
