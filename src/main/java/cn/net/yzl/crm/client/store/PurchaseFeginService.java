@@ -1,6 +1,8 @@
 package cn.net.yzl.crm.client.store;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.model.dto.PurchaseOrderDto;
 import cn.net.yzl.model.dto.PurchaseReviewDto;
 import cn.net.yzl.model.dto.PurchaseWithdrawDto;
 import cn.net.yzl.model.dto.WarehousingOrderDto;
@@ -16,6 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author wangshuaidong
  * @version 1.0
@@ -30,7 +35,7 @@ public interface PurchaseFeginService {
      */
     @ApiOperation(value = "采购订单列表", notes = "采购订单列表")
     @PostMapping("purchase/v1/page")
-    ComResponse page(@RequestBody PurchaseOrderCondition purchaseOrderCondition);
+    ComResponse<Page<PurchaseOrderDto>> page(@RequestBody PurchaseOrderCondition purchaseOrderCondition);
 
     /**
      * 新增采购订单
@@ -63,7 +68,7 @@ public interface PurchaseFeginService {
     @ApiOperation(value = "查看采购订单", notes = "查看采购订单")
     @ApiImplicitParam(name = "id", value = "采购订单id", required = true, dataType = "Int", paramType = "query")
     @GetMapping("purchase/v1/detail")
-    ComResponse detail(@RequestParam("id") Integer id);
+    ComResponse<PurchaseOrderDto> detail(@RequestParam("id") Integer id);
 
 
     /**
@@ -99,7 +104,7 @@ public interface PurchaseFeginService {
 
     @ApiOperation(value = "采购订单状态下拉框列表")
     @GetMapping("purchase/v1/status/list")
-    ComResponse purchaseStatus() ;
+    ComResponse<List<Map<String,Object>>> purchaseStatus() ;
 
     /**
      * 采购订单审核列表分页查询
@@ -109,11 +114,11 @@ public interface PurchaseFeginService {
      */
     @ApiOperation(value = "采购订单审核列表", notes = "采购订单审核列表")
     @PostMapping("purchase/v1/review/page")
-    ComResponse reviewPage(@RequestBody PurchaseOrderCondition purchaseOrderCondition);
+    ComResponse<Page<PurchaseOrderDto>> reviewPage(@RequestBody PurchaseOrderCondition purchaseOrderCondition);
 
     @ApiOperation(value = "采购订单预计到货日期", notes = "采购订单预计到货日期")
     @ApiImplicitParam(name = "supplierNo", value = "供应商编码", required = true, dataType = "String", paramType = "query")
     @GetMapping("v1/computer/expect/date")
-    ComResponse computerExpectDate(@RequestParam(value = "supplierNo") String supplierNo);
+    ComResponse<String> computerExpectDate(@RequestParam(value = "supplierNo") String supplierNo);
 
 }
