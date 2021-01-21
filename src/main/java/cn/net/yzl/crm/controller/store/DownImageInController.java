@@ -69,7 +69,7 @@ public class DownImageInController {
 
     @ApiOperation(value = "导出查看盘点商品(附带下载路径)",notes = "导出查看盘点商品(附带下载路径)")
     @PostMapping("v1/exportInventoryExcel")
-    public ComResponse exportInventoryExcel(@RequestBody InventoryExcelVo inventoryExcelVo,HttpServletResponse httpServletResponse) throws IOException {
+    public ComResponse<List<InventoryProductExcelVo>> exportInventoryExcel(@RequestBody InventoryExcelVo inventoryExcelVo,HttpServletResponse httpServletResponse) throws IOException {
         ComResponse<List<InventoryProductExcelVo>> listComResponse = inventoryFeginService.exportInventoryExcel(inventoryExcelVo);
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
