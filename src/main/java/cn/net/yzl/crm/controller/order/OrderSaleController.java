@@ -72,9 +72,11 @@ public class OrderSaleController {
                                                                   @RequestParam(required = false) @ApiParam(value = "返货类型", name = "refundType") Integer refundType,
                                                                   @RequestParam(required = false) @ApiParam(value = "顾客名称", name = "memberName") String memberName,
                                                                   @RequestParam(required = false) @ApiParam(value = "开始时间", name = "createStartTime") String createStartTime,
-                                                                  @RequestParam(required = false) @ApiParam(value = "结束时间", name = "createEndTime") String createEndTime) {
+                                                                  @RequestParam(required = false) @ApiParam(value = "结束时间", name = "createEndTime") String createEndTime,
+                                                                  @RequestParam(required = false) @ApiParam(value = "返货类型", name = "refundType") Integer pageSize,
+                                                                  @RequestParam(required = false) @ApiParam(value = "返货类型", name = "refundType") Integer pageNum) {
 
-        ComResponse<List<OrderSaleListVO>> comResponse = orderSaleClient.selectOrderSaleList(orderNo, saleOrderType, refundType, memberName, createStartTime, createEndTime);
+        ComResponse<List<OrderSaleListVO>> comResponse = orderSaleClient.selectOrderSaleList(orderNo, saleOrderType, refundType, memberName, createStartTime, createEndTime,pageSize,pageNum);
         return comResponse;
     }
 
@@ -143,8 +145,10 @@ public class OrderSaleController {
             , @RequestParam(required = false) @ApiParam(name = "memberName", value = "顾客姓名") String memberName
             , @RequestParam(required = false) @ApiParam(name = "createStartTime", value = "开始时间") String createStartTime
             , @RequestParam(required = false) @ApiParam(name = "createEndTime", value = "结束时间") String createEndTime
+            ,@RequestParam(required = false) @ApiParam(value = "页数", name = "refundType") Integer pageSize
+            , @RequestParam(required = false) @ApiParam(value = "条数", name = "refundType") Integer pageNum
             , @RequestParam @NotBlank(message = "售后单状态不能为空") @ApiParam(name = "state", value = "售后单状态 1:未审核,其他:已审核", required = true) Integer state) {
-        ComResponse<List<OrderSaleCheckListVO>> listComResponse = orderSaleClient.selectOrderSaleCheckList(orderNo, memberName, createStartTime, createEndTime, state);
+        ComResponse<List<OrderSaleCheckListVO>> listComResponse = orderSaleClient.selectOrderSaleCheckList(orderNo, memberName, createStartTime, createEndTime,pageSize,pageNum,state);
         return listComResponse;
     }
 

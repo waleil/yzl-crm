@@ -35,7 +35,9 @@ public interface OrderSaleClient {
                                                                   @RequestParam(required = false,name = "refundType") @ApiParam(value = "返货类型", name = "refundType") Integer refundType,
                                                                   @RequestParam(required = false,name = "memberName") @ApiParam(value = "顾客名称", name = "memberName") String memberName,
                                                                   @RequestParam(required = false,name = "createStartTime") @ApiParam(value = "开始时间", name = "createStartTime") String createStartTime,
-                                                                  @RequestParam(required = false,name = "createEndTime") @ApiParam(value = "结束时间", name = "createEndTime") String createEndTime) ;
+                                                                  @RequestParam(required = false,name = "createEndTime") @ApiParam(value = "结束时间", name = "createEndTime") String createEndTime
+                                                                    ,@RequestParam(required = false) @ApiParam(value = "页数", name = "refundType") Integer pageSize
+                                                                    , @RequestParam(required = false) @ApiParam(value = "条数", name = "refundType") Integer pageNum) ;
 
     @ApiOperation(value = "查询售后单详情")
     @GetMapping("v1/selectOrderSaleInfo")
@@ -55,6 +57,8 @@ public interface OrderSaleClient {
             , @RequestParam(required = false,name = "memberName") @ApiParam(name = "memberName", value = "顾客姓名") String memberName
             , @RequestParam(required = false,name = "createStartTime") @ApiParam(name = "createStartTime", value = "开始时间") String createStartTime
             , @RequestParam(required = false,name = "createEndTime") @ApiParam(name = "createEndTime", value = "结束时间") String createEndTime
+            ,@RequestParam(required = false) @ApiParam(value = "页数", name = "refundType") Integer pageSize
+            , @RequestParam(required = false) @ApiParam(value = "条数", name = "refundType") Integer pageNum
             , @RequestParam(name = "state") @NotBlank(message = "售后单状态不能为空") @ApiParam(name = "state", value = "售后单状态 1:未审核,其他:已审核", required = true) Integer state) ;
 
 
