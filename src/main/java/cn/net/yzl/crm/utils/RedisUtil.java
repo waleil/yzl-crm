@@ -580,7 +580,7 @@ public class RedisUtil {
      * @param rediskey redis中的键
      * @param length   尾号长度
      */
-    public String getSeqNo(String workid, String userno, String rediskey, int length) {
+    public String getSeqNo(Object workid, Object userno, String rediskey, int length) {
         // 初始化长度
         StringBuilder seqNo = new StringBuilder(length);
         // 获取时间戳
