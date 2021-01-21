@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 //@FeignClient("yzl-store-server")
 public interface ProductStockDetailFeignService {
 
-    @PostMapping(value = "store/v1/selectProductStockDetail")
+    @PostMapping(value = "productStockDetail/v1/selectProductStockDetail")
     @ApiOperation("库存流水分页查询")
     public ComResponse<Page<ProductStockDetailDTO>> selectProductStockDetail(@RequestBody ProductStockDetailSelectVO productStockDetailSelectVO);
 }
