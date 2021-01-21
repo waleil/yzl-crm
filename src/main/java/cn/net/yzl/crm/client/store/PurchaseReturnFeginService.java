@@ -78,6 +78,6 @@ public interface PurchaseReturnFeginService {
      * @return
      */
     @ApiOperation(value = "采购退货单退回添加货运单号")
-    @PostMapping("v1/back/waybill/")
+    @PostMapping("purchaseReturn/v1/back/waybill/")
     ComResponse backWayBill(@RequestBody List<PurchaseReturnWaybillDto> returnWaybillDtos);
 }
