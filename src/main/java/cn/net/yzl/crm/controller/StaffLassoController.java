@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
@@ -14,7 +15,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 @Api(tags = "员工圈选服务")
 @RestController
@@ -26,20 +26,30 @@ public class StaffLassoController {
     @Autowired
     private CrmStaffClient crmStaffClient;
 
+    @Autowired
+    private StaffLassoService staffLassoService;
+
 
     @ApiOperation(value = "试算")
     @PostMapping("v1/calculationDto")
-    public ComResponse<Integer> calculationDto(@RequestBody CalculationDto calculationDto) {
-        Integer lassoCount = crmStaffClient.calculationDto(calculationDto);
+    public ComResponse<Integer> calculationDto(@RequestBody CalculationDto calculationDto) throws Exception {
+        Integer lassoCount = staffLassoService.calculationDto(calculationDto);
         return ComResponse.success(lassoCount);
     }
+
+
+    @ApiOperation(value = "列表页 - 试算员工数量")
+    @GetMapping("v1/trialStaffNo")
+    public ComResponse<Integer> trialStaffNo(@RequestParam("groupId") long groupId) throws Exception {
+        return staffLassoService.trialStaffNo(groupId);
+    }
+
 
     // 员工圈选 保存
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
     @PostMapping("v1/saveStaffCrowdGroup")
-    public ComResponse<Integer> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
-        Integer lassoCount = crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
-        return ComResponse.success(lassoCount);
+    public ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
+        return crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
     }
 
     // 获取员工群组列表
@@ -55,12 +65,6 @@ public class StaffLassoController {
 
         return crmStaffClient.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
 
-    }
-
-    @ApiOperation(value = "试算员工数量")
-    @GetMapping("v1/trialStaffNo")
-    public ComResponse<Integer> trialStaffNo(@RequestParam("groupId") long groupId) {
-        return crmStaffClient.trialStaffNo(groupId);
     }
 
     @ApiOperation(value = "圈选组 1:启用,-1未启用")

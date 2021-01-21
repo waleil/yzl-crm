@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.PurchaseReturnFeginService;
 import cn.net.yzl.model.dto.PurchaseReturnResDto;
 import cn.net.yzl.model.dto.PurchaseReturnReviewDto;
+import cn.net.yzl.model.dto.PurchaseReturnWaybillDto;
 import cn.net.yzl.model.vo.PurReturnOrderAddVo;
 import cn.net.yzl.model.vo.PurReturnOrderUpdateVo;
 import cn.net.yzl.model.vo.PurchaseReturnCondition;
@@ -14,6 +15,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author wangshuaidong
@@ -89,5 +92,14 @@ public class PurchaseReturnOrderController {
     public ComResponse<Page<PurchaseReturnResDto>> reviewPage(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
         return purchaseReturnFeginService.reviewPage(purchaseReturnCondition);
     }
-
+    /**
+     * 采购退货单审核列表
+     * @param returnWaybillDtos
+     * @return
+     */
+    @ApiOperation(value = "采购退货单退回添加货运单号")
+    @PostMapping("v1/back/waybill/")
+    public ComResponse backWayBill(@RequestBody List<PurchaseReturnWaybillDto> returnWaybillDtos){
+        return purchaseReturnFeginService.backWayBill(returnWaybillDtos);
+    }
 }

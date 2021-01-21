@@ -68,8 +68,8 @@ public interface CrmStaffClient {
      * @param staffCrowdGroupDTO
      * @return
      */
-    @PostMapping("/staff/v1/saveStaffCrowdGroupDTO")
-    Integer saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroupDTO);
+    @PostMapping("/staff/v1/saveStaffCrowdGroup")
+    ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroupDTO);
 
 
     @GetMapping("/staff/v1/getGroupListByPage")
@@ -79,15 +79,6 @@ public interface CrmStaffClient {
                                                              @RequestParam("endTime") Date endTime,
                                                              @RequestParam("pageNo")Integer pageNo,
                                                              @RequestParam("pageSize") Integer pageSize);
-
-    /**
-     * 员工圈选 试算
-     * @param groupId
-     * @return
-     */
-    @GetMapping("/staff/v1/trialStaffNo")
-    ComResponse<Integer> trialStaffNo(@RequestParam("groupId") long groupId);
-
     /**
      *  员工圈选 启用 失效
      * @param enable 1:启用, -1:失效
@@ -102,7 +93,7 @@ public interface CrmStaffClient {
      * @param groupId 群组id
      * @return
      */
-    @GetMapping("/staff/v1/getStaffCrowdGroupDTO")
+    @GetMapping("/staff/v1/getStaffCrowdGroup")
     ComResponse<StaffCrowdGroup> getStaffCrowdGroupDTO(@RequestParam("groupId")long groupId);
 
 }
