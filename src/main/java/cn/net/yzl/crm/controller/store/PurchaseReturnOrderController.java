@@ -78,7 +78,7 @@ public class PurchaseReturnOrderController {
 
     @ApiOperation(value = "采购退货单详情")
     @ApiImplicitParam(name = "id", value = "采购退货单id", required = true, dataType = "Int", paramType = "query")
-    @PostMapping("v1/detail")
+    @GetMapping("v1/detail")
     public ComResponse detail(@RequestParam("id") Integer id){
         return purchaseReturnFeginService.detail(id);
     }

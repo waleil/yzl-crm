@@ -42,7 +42,7 @@ public interface PurchaseReturnFeginService {
 
     @ApiOperation(value = "采购退货单详情")
     @ApiImplicitParam(name = "id", value = "采购退货单id", required = true, dataType = "Int", paramType = "query")
-    @PostMapping("purchaseReturn/v1/detail")
+    @GetMapping("purchaseReturn/v1/detail")
     ComResponse detail(@RequestParam("id") Integer id);
 
 
