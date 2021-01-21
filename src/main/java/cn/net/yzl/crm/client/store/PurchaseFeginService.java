@@ -4,7 +4,9 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.model.dto.PurchaseReviewDto;
 import cn.net.yzl.model.dto.PurchaseWithdrawDto;
 import cn.net.yzl.model.dto.WarehousingOrderDto;
+import cn.net.yzl.model.vo.PurchaseOrderAddVo;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
+import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
 import cn.net.yzl.model.vo.PurchaseOrderVo;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -33,23 +35,23 @@ public interface PurchaseFeginService {
     /**
      * 新增采购订单
      * @author wangshuaidong
-     * @param purchaseOrderVo
+     * @param purchaseOrderaddVo
      * @return
      */
     @ApiOperation(value = "新增采购订单", notes = "新增采购订单")
     @PostMapping("purchase/v1/add")
-    ComResponse add(@RequestBody PurchaseOrderVo purchaseOrderVo) ;
+    ComResponse add(@RequestBody PurchaseOrderAddVo purchaseOrderaddVo) ;
 
 
     /**
      * 修改采购订单
      * @author wangshuaidong
-     * @param purchaseOrderVo
+     * @param purchaseOrderUpdateVo
      * @return
      */
     @ApiOperation(value = "修改采购订单", notes = "修改采购订单")
     @PostMapping("purchase/v1/update")
-    ComResponse update(@RequestBody PurchaseOrderVo purchaseOrderVo);
+    ComResponse update(@RequestBody PurchaseOrderUpdateVo purchaseOrderUpdateVo);
 
 
     /**

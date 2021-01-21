@@ -6,7 +6,9 @@ import cn.net.yzl.model.dto.PurchaseOrderDto;
 import cn.net.yzl.model.dto.PurchaseReviewDto;
 import cn.net.yzl.model.dto.PurchaseWithdrawDto;
 import cn.net.yzl.model.dto.WarehousingOrderDto;
+import cn.net.yzl.model.vo.PurchaseOrderAddVo;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
+import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
 import cn.net.yzl.model.vo.PurchaseOrderVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -38,15 +40,15 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "新增采购订单", notes = "新增采购订单")
     @PostMapping("v1/add")
-    public ComResponse add(@RequestBody PurchaseOrderVo purchaseOrderVo)  {
-        return purchaseFeginService.add(purchaseOrderVo);
+    public ComResponse add(@RequestBody PurchaseOrderAddVo purchaseOrderAddVo)  {
+        return purchaseFeginService.add(purchaseOrderAddVo);
     }
 
 
     @ApiOperation(value = "修改采购订单", notes = "修改采购订单")
     @PostMapping("v1/update")
-    public ComResponse update(@RequestBody PurchaseOrderVo purchaseOrderVo){
-        return purchaseFeginService.update(purchaseOrderVo);
+    public ComResponse update(@RequestBody PurchaseOrderUpdateVo purchaseOrderUpdateVo){
+        return purchaseFeginService.update(purchaseOrderUpdateVo);
     }
 
 
