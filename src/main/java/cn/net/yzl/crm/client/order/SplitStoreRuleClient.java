@@ -2,6 +2,7 @@ package cn.net.yzl.crm.client.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.order.model.vo.order.SplitStoreProvinceDTO;
+import cn.net.yzl.order.model.vo.order.SplitStoreProvinceNamesDTO;
 import cn.net.yzl.order.model.vo.order.SplitStoreRuleAddDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -41,4 +42,14 @@ public interface SplitStoreRuleClient {
      */
     @GetMapping("v1/getStoreProvinceList")
     ComResponse<List<SplitStoreProvinceDTO>> getStoreProvinceList(@RequestParam("storeNo") String storeNo);
+
+
+    /**
+     *
+     * 根据多个仓库编号查询
+     * @param storeNoList
+     * @return
+     */
+    @GetMapping("v1/getStoreProvinceByStoreNoList")
+    ComResponse<List<SplitStoreProvinceNamesDTO>> getStoreProvinceByStoreNoList(@RequestParam("storeNoList") List<String> storeNoList);
 }
