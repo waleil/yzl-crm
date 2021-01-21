@@ -6,6 +6,10 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.staff.dto.lasso.Base;
+import cn.net.yzl.crm.staff.dto.lasso.ScheduleDto;
+import cn.net.yzl.crm.staff.dto.lasso.TrainProductDto;
+import cn.net.yzl.crm.staff.dto.lasso.WorkOrderTypeDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @FeignClient(name = "ehr-staff-api",url = "${api.gateway.url}/staffDB")
@@ -133,4 +139,52 @@ public interface EhrStaffClient {
      */
     @GetMapping(value = "/depart/getTreeList")
     ComResponse<EhrDepartDto> getDepartTree();
+
+
+
+    @PostMapping("/staff/getStaffByBaseVOParams")
+    ComResponse<List<String>> getStaffScheduleInfo(@RequestBody Base base);
+
+    @PostMapping("/staff/getStaffByTrainProductParams")
+    ComResponse<List<String>> getStaffTrainProduct(@RequestBody TrainProductDto trainProduct);
+
+    @PostMapping("/staff/getStaffListByBussinessAttr")
+    ComResponse<List<String>> getStaffWorkOrderType(@RequestBody List<WorkOrderTypeDto> workOrderType);
+
+    @PostMapping("/attend/schedule/getStaffListByTime")
+    ComResponse<List<String>> getStaffScheduleRemote(@RequestBody ScheduleDto schedule);
+
+
+    default List<String> getStaffScheduleInfoList(Base base) {
+        ComResponse<List<String>> staffScheduleInfo = this.getStaffScheduleInfo(base);
+        if (null != staffScheduleInfo && staffScheduleInfo.getCode() == 200) {
+            return staffScheduleInfo.getData();
+        }
+        return Collections.emptyList();
+    }
+
+    default List<String> getStaffTrainProductList(TrainProductDto trainProduct) {
+        ComResponse<List<String>> staffTrainProduct = this.getStaffTrainProduct(trainProduct);
+        if (null != staffTrainProduct && staffTrainProduct.getCode() == 200) {
+            return staffTrainProduct.getData();
+        }
+        return Collections.emptyList();
+    }
+
+    default List<String> getStaffWorkOrderTypeList(List<WorkOrderTypeDto> workOrderType) {
+        ComResponse<List<String>> staffWorkOrderType = this.getStaffWorkOrderType(workOrderType);
+        if (null != staffWorkOrderType && staffWorkOrderType.getCode() == 200) {
+            return staffWorkOrderType.getData();
+        }
+        return Collections.emptyList();
+    }
+
+    default List<String> getStaffSchedule(ScheduleDto schedule) {
+        schedule.setTime(new Date());
+        ComResponse<List<String>> staffSchedule = this.getStaffScheduleRemote(schedule);
+        if (null != staffSchedule && staffSchedule.getCode() == 200) {
+            return staffSchedule.getData();
+        }
+        return Collections.emptyList();
+    }
 }

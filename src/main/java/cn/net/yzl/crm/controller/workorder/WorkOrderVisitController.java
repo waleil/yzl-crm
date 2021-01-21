@@ -13,6 +13,7 @@ import cn.net.yzl.workorder.model.vo.WorkOrderVisitCriteriaTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +43,9 @@ public class WorkOrderVisitController {
      * @param criteriaTO
      * @return
      */
-    @GetMapping("v1/list")
+    @PostMapping("v1/list")
     @ApiOperation(value = "分页查询回访工单", notes = "分页查询回访工单")
-    public ComResponse<Page<WorkOrderVisitBean>> listByCriteriaTO(WorkOrderVisitCriteriaTO criteriaTO){
+    public ComResponse<Page<WorkOrderVisitBean>> listByCriteriaTO(@RequestBody WorkOrderVisitCriteriaTO criteriaTO){
         ComResponse<Page<WorkOrderVisitBean>> result = workOrderVisitClient.listPageByCriteria(criteriaTO);
         return result;
     }
@@ -55,9 +56,8 @@ public class WorkOrderVisitController {
      * @return
      */
     @GetMapping("v1/getByCode")
-    @ApiImplicitParam(name = "code", value = "工单编号", required = true, dataType = "integer")
     @ApiOperation(value = "根据CODE查询回访工单", notes = "根据CODE查询回访工单")
-    public ComResponse<WorkOrderVisitBean> getByCode(@RequestParam("code") Integer code){
+    public ComResponse<WorkOrderVisitBean> getByCode(@RequestParam("code") @ApiParam(value = "回访工单标识",name = "code") Integer code){
         ComResponse<WorkOrderVisitBean> result = workOrderVisitClient.getByCode(code);
         return result;
     }
@@ -75,7 +75,7 @@ public class WorkOrderVisitController {
     }
 
     @PostMapping("v1/isListPage")
-    @ApiOperation(value = "查询回访工单列表",notes = "查询回访工单列表")
+    @ApiOperation(value = "查询我的回访工单列表",notes = "查询我的回访工单列表")
     public ComResponse<Page<WorkOrderVisitBean>> isListPage(@RequestBody IsListPageDTO isListPage){
         isListPage.setStaffNO(QueryIds.userNo.get());
         return workOrderVisitClient.isListPage(isListPage);
