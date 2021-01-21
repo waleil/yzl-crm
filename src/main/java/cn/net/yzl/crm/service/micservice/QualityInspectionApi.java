@@ -6,6 +6,7 @@ import cn.net.yzl.crm.model.StaffTalkQuality;
 import cn.net.yzl.inspection.common.model.CallDuration;
 import cn.net.yzl.inspection.common.model.Quality;
 import cn.net.yzl.inspection.common.model.WordQuality;
+import cn.net.yzl.inspection.common.model.vo.CallDurationVo;
 import cn.net.yzl.inspection.common.vo.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.cloud.openfeign.FeignClient;
