@@ -1,15 +1,18 @@
 package cn.net.yzl.crm.controller.store;
 
+import cn.hutool.core.date.DateUtil;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.PurchaseFeginService;
 import cn.net.yzl.model.dto.PurchaseOrderDto;
 import cn.net.yzl.model.dto.PurchaseReviewDto;
 import cn.net.yzl.model.dto.PurchaseWithdrawDto;
 import cn.net.yzl.model.dto.WarehousingOrderDto;
+import cn.net.yzl.model.pojo.SupplierPo;
 import cn.net.yzl.model.vo.PurchaseOrderAddVo;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
 import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
-import cn.net.yzl.model.vo.PurchaseOrderVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -17,12 +20,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author wangshuaidong
  * @version 1.0
  * @date 2021/1/14 17:11
  */
-@Api(value = "仓储中心-采购订单管理", tags = {"仓储中心-采购订单管理"})
+@Api(value = "仓储中心心心心心-采购订单管理", tags = {"仓储中心心心心心-采购订单管理"})
 @RequestMapping("purchase")
 @RestController
 @Slf4j
@@ -34,7 +42,7 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "采购订单列表", notes = "采购订单列表")
     @PostMapping("v1/page")
-    public ComResponse page(@RequestBody PurchaseOrderCondition purchaseOrderCondition){
+    public ComResponse<Page<PurchaseOrderDto>> page(@RequestBody PurchaseOrderCondition purchaseOrderCondition){
         return purchaseFeginService.page(purchaseOrderCondition);
     }
 
@@ -55,7 +63,7 @@ public class PurchaseOrderController {
     @ApiOperation(value = "查看采购订单", notes = "查看采购订单")
     @ApiImplicitParam(name = "id", value = "采购订单id", required = true, dataType = "Int", paramType = "query")
     @GetMapping("v1/detail")
-    public ComResponse detail(@RequestParam("id") Integer id){
+    public ComResponse<PurchaseOrderDto> detail(@RequestParam("id") Integer id){
         return purchaseFeginService.detail(id);
     }
 
@@ -80,16 +88,26 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "采购订单状态下拉框列表")
     @GetMapping("v1/status/list")
-    public ComResponse purchaseStatus() {
+    public ComResponse<List<Map<String,Object>>> purchaseStatus() {
         return purchaseFeginService.purchaseStatus();
     }
 
 
     @ApiOperation(value = "采购订单审核列表", notes = "采购订单审核列表")
     @PostMapping("v1/review/page")
-    public ComResponse reviewPage(@RequestBody PurchaseOrderCondition purchaseOrderCondition){
+    public ComResponse<Page<PurchaseOrderDto>> reviewPage(@RequestBody PurchaseOrderCondition purchaseOrderCondition){
         return purchaseFeginService.reviewPage(purchaseOrderCondition);
     }
-
+    /**
+     * 采购订单预计到货日期
+     * @param  supplierNo
+     * @return
+     */
+    @ApiOperation(value = "采购订单预计到货日期", notes = "采购订单预计到货日期")
+    @ApiImplicitParam(name = "supplierNo", value = "供应商编码", required = true, dataType = "String", paramType = "query")
+    @GetMapping("v1/computer/expect/date")
+    public ComResponse<String> computerExpectDate(@RequestParam(value = "supplierNo") String supplierNo){
+        return purchaseFeginService.computerExpectDate(supplierNo);
+    }
 
 }
