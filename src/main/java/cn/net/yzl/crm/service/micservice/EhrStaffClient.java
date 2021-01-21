@@ -29,7 +29,7 @@ public interface EhrStaffClient {
      * @param queryDto
      * @return
      */
-    @PostMapping("/attend/schedule/getListByParams")
+    @PostMapping("/staff/getStaffByBaseVOParams")
     ComResponse getStaffScheduleInfo(StaffScheduleQueryDto queryDto);
 
     /**

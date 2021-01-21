@@ -69,7 +69,7 @@ public interface CrmStaffClient {
      * @return
      */
     @PostMapping("/staff/v1/saveStaffCrowdGroup")
-    Integer saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroupDTO);
+    ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroupDTO);
 
 
     @GetMapping("/staff/v1/getGroupListByPage")
