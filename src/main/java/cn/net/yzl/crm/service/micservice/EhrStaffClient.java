@@ -18,9 +18,6 @@ import java.util.List;
 @FeignClient(name = "ehr-staff-api",url = "${api.gateway.url}/staffDB")
 public interface EhrStaffClient {
 
-//    @GetMapping("getAllTypesByGroup")
-//    String  getAllTypesByGroup();
-
     /**
      * 获取员工排班记录
      * @param queryDto
@@ -129,4 +126,11 @@ public interface EhrStaffClient {
      */
     @GetMapping(value = "/abnor/getStaffTrain")
     ComResponse<List<StaffTrainDto>> getStaffTrain(@RequestParam("staffNo")String staffNo);
+
+    /**
+     * 获取组织架构 部门树形列表
+     * @return
+     */
+    @GetMapping(value = "/depart/getTreeList")
+    ComResponse<EhrDepartDto> getDepartTree();
 }

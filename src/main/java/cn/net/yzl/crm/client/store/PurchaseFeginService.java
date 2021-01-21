@@ -1,7 +1,8 @@
 package cn.net.yzl.crm.client.store;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.model.dto.PurchaseOrderDto;
+import cn.net.yzl.model.dto.PurchaseReviewDto;
+import cn.net.yzl.model.dto.PurchaseWithdrawDto;
 import cn.net.yzl.model.dto.WarehousingOrderDto;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
 import cn.net.yzl.model.vo.PurchaseOrderVo;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.Valid;
 
 /**
  * @author wangshuaidong
@@ -39,7 +38,7 @@ public interface PurchaseFeginService {
      */
     @ApiOperation(value = "新增采购订单", notes = "新增采购订单")
     @PostMapping("purchase/v1/add")
-    ComResponse add(@RequestBody @Valid PurchaseOrderVo purchaseOrderVo) ;
+    ComResponse add(@RequestBody PurchaseOrderVo purchaseOrderVo) ;
 
 
     /**
@@ -50,7 +49,7 @@ public interface PurchaseFeginService {
      */
     @ApiOperation(value = "修改采购订单", notes = "修改采购订单")
     @PostMapping("purchase/v1/update")
-    ComResponse update(@RequestBody @Valid PurchaseOrderVo purchaseOrderVo);
+    ComResponse update(@RequestBody PurchaseOrderVo purchaseOrderVo);
 
 
     /**
@@ -68,12 +67,12 @@ public interface PurchaseFeginService {
     /**
      * 审核采购订单
      * @author wangshuaidong
-     * @param purchaseOrderVo
+     * @param purchaseReviewDto
      * @return
      */
     @ApiOperation(value = "审核采购订单")
     @PostMapping("purchase/v1/review")
-    ComResponse purchaseOrderReview(@RequestBody PurchaseOrderVo purchaseOrderVo);
+    ComResponse purchaseOrderReview(@RequestBody PurchaseReviewDto purchaseReviewDto);
 
     /**
      * 采购订单验收
@@ -84,7 +83,7 @@ public interface PurchaseFeginService {
      */
     @ApiOperation(value = "采购订单验收")
     @PostMapping("purchase/v1/check/accept")
-    ComResponse purchaseCheckAccept(@RequestBody @Valid WarehousingOrderDto warehousingOrderDto);
+    ComResponse purchaseCheckAccept(@RequestBody WarehousingOrderDto warehousingOrderDto);
 
     /**
      * 采购订单撤回
@@ -94,7 +93,7 @@ public interface PurchaseFeginService {
      */
     @ApiOperation(value = "采购订单撤回")
     @PostMapping("purchase/v1/withdraw")
-    ComResponse purchaseWithdraw(@RequestBody PurchaseOrderDto purchaseOrderDto) ;
+    ComResponse purchaseWithdraw(@RequestBody PurchaseWithdrawDto purchaseWithdrawDto) ;
 
     @ApiOperation(value = "采购订单状态下拉框列表")
     @GetMapping("purchase/v1/status/list")

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Service
 @FeignClient(name = "workOrderVisitClient", url = "${api.gateway.url}/workorderServer/visit")
 public interface WorkOrderVisitClient {
 

@@ -20,7 +20,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("file/v1")
-@Api("上传接口")
+@Api(tags = "上传接口")
 public class FileController {
 
     @Autowired
