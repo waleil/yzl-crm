@@ -90,7 +90,7 @@ public interface PurchaseFeginService {
     /**
      * 采购订单撤回
      * @author wangshuaidong
-     * @param purchaseOrderDto
+     * @param purchaseWithdrawDto
      * @return
      */
     @ApiOperation(value = "采购订单撤回")
@@ -110,5 +110,10 @@ public interface PurchaseFeginService {
     @ApiOperation(value = "采购订单审核列表", notes = "采购订单审核列表")
     @PostMapping("purchase/v1/review/page")
     ComResponse reviewPage(@RequestBody PurchaseOrderCondition purchaseOrderCondition);
+
+    @ApiOperation(value = "采购订单预计到货日期", notes = "采购订单预计到货日期")
+    @ApiImplicitParam(name = "supplierNo", value = "供应商编码", required = true, dataType = "String", paramType = "query")
+    @GetMapping("v1/computer/expect/date")
+    ComResponse computerExpectDate(@RequestParam(value = "supplierNo") String supplierNo);
 
 }

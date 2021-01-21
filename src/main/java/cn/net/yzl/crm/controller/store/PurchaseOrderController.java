@@ -1,21 +1,25 @@
 package cn.net.yzl.crm.controller.store;
 
+import cn.hutool.core.date.DateUtil;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.PurchaseFeginService;
-import cn.net.yzl.model.dto.PurchaseOrderDto;
 import cn.net.yzl.model.dto.PurchaseReviewDto;
 import cn.net.yzl.model.dto.PurchaseWithdrawDto;
 import cn.net.yzl.model.dto.WarehousingOrderDto;
+import cn.net.yzl.model.pojo.SupplierPo;
 import cn.net.yzl.model.vo.PurchaseOrderAddVo;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
 import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
-import cn.net.yzl.model.vo.PurchaseOrderVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author wangshuaidong
@@ -90,6 +94,16 @@ public class PurchaseOrderController {
     public ComResponse reviewPage(@RequestBody PurchaseOrderCondition purchaseOrderCondition){
         return purchaseFeginService.reviewPage(purchaseOrderCondition);
     }
-
+    /**
+     * 采购订单预计到货日期
+     * @param  supplierNo
+     * @return
+     */
+    @ApiOperation(value = "采购订单预计到货日期", notes = "采购订单预计到货日期")
+    @ApiImplicitParam(name = "supplierNo", value = "供应商编码", required = true, dataType = "String", paramType = "query")
+    @GetMapping("v1/computer/expect/date")
+    public ComResponse computerExpectDate(@RequestParam(value = "supplierNo") String supplierNo){
+        return purchaseFeginService.computerExpectDate(supplierNo);
+    }
 
 }
