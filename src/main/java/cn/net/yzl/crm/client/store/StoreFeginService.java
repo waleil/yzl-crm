@@ -103,10 +103,10 @@ public interface StoreFeginService {
     @GetMapping("store/v1/selectStoreLocal")
     public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no);
 
-    @GetMapping("v1/stockInquiry")
+    @GetMapping("store/v1/stockInquiry")
     public ComResponse stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                     @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
-                                    @RequestParam(value = "storeName",required = false) String storeName);
+                                    @RequestParam(value = "storeName",required = false) String storeNo);
 
 
     @ApiOperation(value = "获取已存在的财务归属", notes = "获取已存在的财务归属", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)

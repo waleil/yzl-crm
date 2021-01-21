@@ -27,7 +27,7 @@ import java.util.List;
  * @version 1.0
  * @date 2021/1/16 13:41
  */
-@Api(value = "仓储中心-仓库管理", tags = {"仓储中心-仓库管理"})
+@Api(value = "仓储中心心心心心-仓库管理", tags = {"仓储中心心心心心-仓库管理"})
 @RequestMapping("store")
 @RestController
 public class StoreController {
@@ -174,9 +174,9 @@ public class StoreController {
     })
     public ComResponse stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                     @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
-                                    @RequestParam(value = "storeName",required = false) String storeName){
+                                    @RequestParam(value = "storeNo",required = false) String storeNo){
 
-        return storeFeginService.stockInquiry(pageNo,pageSize,codeAndName,storeName);
+        return storeFeginService.stockInquiry(pageNo,pageSize,codeAndName,storeNo);
     }
 
     @ApiOperation(value = "获取已存在的财务归属", notes = "获取已存在的财务归属", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
