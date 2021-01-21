@@ -5,9 +5,11 @@ import cn.net.yzl.crm.client.store.InventoryFeginService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.model.vo.InventoryExcelVo;
 import cn.net.yzl.model.vo.InventoryProductExcelVo;
+import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -74,6 +77,7 @@ public class DownImageInController {
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
 
+        Integer status = inventoryExcelVo.getStatus();
         List<InventoryProductExcelVo> listComResponseData = listComResponse.getData();
 
         //盘点日期
@@ -87,10 +91,24 @@ public class DownImageInController {
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + storeName+ date+".xlsx");
-//
-        //向前端写入文件流流
-        EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
-                .sheet("盘点商品库存表").doWrite(listComResponseData);
+
+        if (status==1){
+            //向前端写入文件流流
+            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
+                    .sheet("盘点商品库存表").doWrite(listComResponseData);
+        }else if (status==2){
+
+            List<InventoryProductResultExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
+            for (InventoryProductExcelVo listComResponseDatum : listComResponseData) {
+                InventoryProductResultExcelVo inventoryProductResultExcelVo = new InventoryProductResultExcelVo();
+                BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
+                inventoryProductResultExcelVoList.add(inventoryProductResultExcelVo);
+            }
+            //向前端写入文件流流
+            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductResultExcelVo.class)
+                    .sheet("盘点商品库存表").doWrite(inventoryProductResultExcelVoList);
+        }
+
 
         return ComResponse.success();
     }
