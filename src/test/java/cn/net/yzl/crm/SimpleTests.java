@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import cn.net.yzl.crm.customer.model.MemberPhone;
+import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 
 /**
  * 单元测试类
@@ -20,9 +21,14 @@ import cn.net.yzl.crm.customer.model.MemberPhone;
 public class SimpleTests {
 	@Test
 	public void testCollect() {
-		System.err.println(Arrays.asList("a", "b", "c").stream()
-				.collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString());
-		System.err.println(Arrays.asList("a", "b", "c").stream().collect(Collectors.joining(",")));
+		OrderDetailIn od1 = new OrderDetailIn();
+		od1.setProductCode("11");
+		OrderDetailIn od2 = new OrderDetailIn();
+		od2.setProductCode("22");
+		OrderDetailIn od3 = new OrderDetailIn();
+		od3.setProductCode("33");
+		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3);
+		System.err.println(detailIns.stream().map(OrderDetailIn::getProductCode).collect(Collectors.joining(",")));
 	}
 
 	@Test
