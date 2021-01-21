@@ -4,9 +4,11 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderVisitClient;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
 import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
 import cn.net.yzl.workorder.model.db.WorkOrderVisitBean;
+import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitCriteriaTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -71,5 +73,12 @@ public class WorkOrderVisitController {
     public ComResponse<Void> add(@RequestBody WorkOrderVisitBean workOrderVisitBean){
         ComResponse<Void> result = workOrderVisitClient.add(workOrderVisitBean);
         return result;
+    }
+
+    @PostMapping("v1/isListPage")
+    @ApiOperation(value = "查询回访工单列表",notes = "查询回访工单列表")
+    public ComResponse<Page<WorkOrderVisitBean>> isListPage(@RequestBody IsListPageDTO isListPage){
+        isListPage.setStaffNO(QueryIds.userNo.get());
+        return workOrderVisitClient.isListPage(isListPage);
     }
 }

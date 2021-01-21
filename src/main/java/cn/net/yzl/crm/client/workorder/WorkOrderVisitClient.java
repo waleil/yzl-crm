@@ -3,6 +3,7 @@ package cn.net.yzl.crm.client.workorder;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderVisitBean;
+import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitCriteriaTO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -45,4 +46,8 @@ public interface WorkOrderVisitClient {
     @GetMapping("v1/list")
     @ApiOperation(value = "查询回访工单列表", notes = "查询回访工单列表")
     ComResponse<Page<WorkOrderVisitBean>> listPageByCriteria(@SpringQueryMap WorkOrderVisitCriteriaTO criteriaTO);
+
+    @PostMapping("v1/isListPage")
+    @ApiOperation(value = "查询我的回访工单列表", notes = "查询我的回访工单列表")
+    ComResponse<Page<WorkOrderVisitBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO);
 }
