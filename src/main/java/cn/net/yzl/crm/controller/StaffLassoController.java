@@ -48,9 +48,8 @@ public class StaffLassoController {
     // 员工圈选 保存
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
     @PostMapping("v1/saveStaffCrowdGroup")
-    public ComResponse<Integer> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
-        Integer lassoCount = crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
-        return ComResponse.success(lassoCount);
+    public ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
+        return crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
     }
 
     // 获取员工群组列表
