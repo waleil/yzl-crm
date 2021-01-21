@@ -54,7 +54,7 @@ public class MemberController {
 
     @ApiOperation(value = "分页查询顾客列表")
     @PostMapping("v1/listPage")
-    public GeneralResult<Page<Member>> listPage(@RequestBody MemberSerchDTO dto) {
+    public GeneralResult<Page<Member>> listPage( MemberSerchDTO dto) {
         GeneralResult<Page<Member>> result = memberFien.listPage(dto);
         return result;
     }
@@ -344,7 +344,7 @@ public class MemberController {
         member_group.setPay_form(memberCrowdGroup.getPay_form());
         member_group.setPay_state(memberCrowdGroup.getPay_state());
         member_group.setPay_type(memberCrowdGroup.getPay_type());
-      //  member_group.setPerson_count(memberCrowdGroup.); //人数
+        //  member_group.setPerson_count(memberCrowdGroup.); //人数
         member_group.setPhone_time(memberCrowdGroup.getPhone_time());
         member_group.setRecharge(memberCrowdGroup.getRecharge());
         member_group.setRed_bag(memberCrowdGroup.getRed_bag());

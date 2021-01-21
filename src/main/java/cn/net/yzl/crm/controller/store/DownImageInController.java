@@ -1,18 +1,23 @@
 package cn.net.yzl.crm.controller.store;
 
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.crm.client.store.InventoryFeginService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
+import cn.net.yzl.model.vo.InventoryExcelVo;
+import cn.net.yzl.model.vo.InventoryProductExcelVo;
+import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author wangxiao
@@ -26,6 +31,12 @@ public class DownImageInController {
 
     @Autowired
     private FastdfsUtils fastdfsUtils;
+
+    @Autowired
+    private InventoryFeginService inventoryFeginService;
+
+//    @Value("${supplierDown.url}")
+//    private String baseUrl;
 
     @ApiOperation("下载图片")
     @GetMapping("v1/downImage")
@@ -53,5 +64,33 @@ public class DownImageInController {
                 inputStream.close();
         }
     }
+
+    @ApiOperation(value = "导出查看盘点商品(附带下载路径)",notes = "导出查看盘点商品(附带下载路径)")
+    @PostMapping("v1/exportInventoryExcel")
+    public ComResponse exportInventoryExcel(@RequestBody InventoryExcelVo inventoryExcelVo,HttpServletResponse httpServletResponse) throws IOException {
+        ComResponse<List<InventoryProductExcelVo>> listComResponse = inventoryFeginService.exportInventoryExcel(inventoryExcelVo);
+        if (listComResponse==null || listComResponse.getCode() != 200)
+            return listComResponse;
+
+        List<InventoryProductExcelVo> listComResponseData = listComResponse.getData();
+
+        //盘点日期
+//        LocalDate inventoryDate = inventoryExcelVo.getInventoryDate();
+//        String date = inventoryDate.toString();
+        //仓库名称
+        String storeName = inventoryExcelVo.getStoreName();
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        //响应内容格式
+        httpServletResponse.setContentType("application/vnd.ms-excel");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + storeName+ "date"+".xlsx");
+//
+        //向前端写入文件流流
+        EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
+                .sheet("盘点商品库存表").doWrite(listComResponseData);
+
+        return ComResponse.success();
+    }
+
+
 
 }

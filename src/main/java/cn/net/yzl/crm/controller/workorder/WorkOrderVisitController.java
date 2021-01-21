@@ -32,7 +32,6 @@ public class WorkOrderVisitController {
     @ApiOperation(value = "商品下拉列表（首单、最后一次购买商品）")
     @GetMapping("v1/listProduct")
     public ComResponse<Page<ProductListDTO>> listProduct(ProductSelectVO productSelectVO){
-        productSelectVO.setPageSize(1000);//暂时不分页
         return productClient.queryListProduct(productSelectVO);
     }
 
@@ -41,7 +40,7 @@ public class WorkOrderVisitController {
      * @param criteriaTO
      * @return
      */
-    @GetMapping("/v1/list")
+    @GetMapping("v1/list")
     @ApiOperation(value = "分页查询回访工单", notes = "分页查询回访工单")
     public ComResponse<Page<WorkOrderVisitBean>> listByCriteriaTO(WorkOrderVisitCriteriaTO criteriaTO){
         ComResponse<Page<WorkOrderVisitBean>> result = workOrderVisitClient.listPageByCriteria(criteriaTO);
@@ -49,15 +48,15 @@ public class WorkOrderVisitController {
     }
 
     /**
-     *  根据ID查询回访工单
-     * @param _id
+     *  根据Code查询回访工单
+     * @param code
      * @return
      */
-    @GetMapping("v1/getById")
-    @ApiImplicitParam(name = "id", value = "主键信息", required = true, dataType = "String")
-    @ApiOperation(value = "根据ID查询回访工单", notes = "根据ID查询回访工单")
-    public ComResponse<WorkOrderVisitBean> getById(@RequestParam("_id") String _id){
-        ComResponse<WorkOrderVisitBean> result = workOrderVisitClient.getById(_id);
+    @GetMapping("v1/getByCode")
+    @ApiImplicitParam(name = "code", value = "工单编号", required = true, dataType = "integer")
+    @ApiOperation(value = "根据CODE查询回访工单", notes = "根据CODE查询回访工单")
+    public ComResponse<WorkOrderVisitBean> getByCode(@RequestParam("code") Integer code){
+        ComResponse<WorkOrderVisitBean> result = workOrderVisitClient.getByCode(code);
         return result;
     }
 

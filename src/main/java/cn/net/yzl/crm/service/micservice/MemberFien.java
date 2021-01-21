@@ -11,6 +11,7 @@ import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
-    @RequestMapping(method = RequestMethod.POST, value = "/v1/getMemberListByPage")
-    GeneralResult<Page<Member>> listPage(@RequestBody MemberSerchDTO dto);
+    @RequestMapping(method = RequestMethod.GET, value = "/v1/getMemberListByPage")
+    GeneralResult<Page<Member>> listPage(@SpringQueryMap MemberSerchDTO dto);
 
     @ApiOperation("保存会员信息")
     @PostMapping("/v1/save")
