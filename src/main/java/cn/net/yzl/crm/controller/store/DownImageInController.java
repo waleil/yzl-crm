@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -75,14 +77,16 @@ public class DownImageInController {
         List<InventoryProductExcelVo> listComResponseData = listComResponse.getData();
 
         //盘点日期
-//        LocalDate inventoryDate = inventoryExcelVo.getInventoryDate();
+        Date inventoryDate = inventoryExcelVo.getInventoryDate();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = simpleDateFormat.format(inventoryDate);
 //        String date = inventoryDate.toString();
         //仓库名称
         String storeName = inventoryExcelVo.getStoreName();
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + storeName+ "date"+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + storeName+ date+".xlsx");
 //
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
