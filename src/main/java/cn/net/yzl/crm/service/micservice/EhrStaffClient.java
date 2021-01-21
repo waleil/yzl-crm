@@ -126,4 +126,11 @@ public interface EhrStaffClient {
      */
     @GetMapping(value = "/abnor/getStaffTrain")
     ComResponse<List<StaffTrainDto>> getStaffTrain(@RequestParam("staffNo")String staffNo);
+
+    /**
+     * 获取组织架构 部门树形列表
+     * @return
+     */
+    @GetMapping(value = "/depart/getTreeList")
+    ComResponse<EhrDepartDto> getDepartTree();
 }

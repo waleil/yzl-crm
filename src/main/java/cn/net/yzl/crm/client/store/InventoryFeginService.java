@@ -6,11 +6,14 @@ import cn.net.yzl.model.dto.InventoryDto;
 import cn.net.yzl.model.dto.InventoryProductDto;
 import cn.net.yzl.model.vo.InventoryExcelVo;
 import cn.net.yzl.model.vo.InventoryParamVo;
+import cn.net.yzl.model.vo.InventoryProductExcelVo;
 import cn.net.yzl.model.vo.InventoryVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 /**
  * @author wangxiao
@@ -37,7 +40,7 @@ public interface InventoryFeginService {
 
     @ApiOperation(value = "导出查看盘点商品",notes = "导出查看盘点商品信息")
     @PostMapping("inventory/v1/exportInventoryExcel")
-    ComResponse<String> exportInventoryExcel(@RequestBody InventoryExcelVo inventoryExcelVo);
+    ComResponse<List<InventoryProductExcelVo>> exportInventoryExcel(@RequestBody InventoryExcelVo inventoryExcelVo);
 
     @ApiOperation(value = "导入查看盘点商品",notes = "导入查看盘点商品信息")
     @PostMapping("inventory/v1/readExcelnventoryProduct")
