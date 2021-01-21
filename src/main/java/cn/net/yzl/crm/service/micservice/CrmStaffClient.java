@@ -6,7 +6,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
-import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupDTO;
+import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,11 +69,11 @@ public interface CrmStaffClient {
      * @return
      */
     @PostMapping("/staff/v1/saveStaffCrowdGroupDTO")
-    Integer saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroupDTO staffCrowdGroupDTO);
+    Integer saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroupDTO);
 
 
     @GetMapping("/staff/v1/getGroupListByPage")
-    ComResponse<Page<StaffCrowdGroupDTO>> getGroupListByPage(@RequestParam("crowdGroupName")String crowdGroupName,
+    ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(@RequestParam("crowdGroupName")String crowdGroupName,
                                                              @RequestParam("status") Integer status,
                                                              @RequestParam("startTime") Date startTime,
                                                              @RequestParam("endTime") Date endTime,
@@ -103,6 +103,6 @@ public interface CrmStaffClient {
      * @return
      */
     @GetMapping("/staff/v1/getStaffCrowdGroupDTO")
-    ComResponse<StaffCrowdGroupDTO> getStaffCrowdGroupDTO(@RequestParam("groupId")long groupId);
+    ComResponse<StaffCrowdGroup> getStaffCrowdGroupDTO(@RequestParam("groupId")long groupId);
 
 }

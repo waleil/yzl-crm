@@ -4,7 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
-import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupDTO;
+import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -36,16 +36,16 @@ public class StaffLassoController {
 
     // 员工圈选 保存
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
-    @PostMapping("v1/saveStaffCrowdGroupDTO")
-    public ComResponse<Integer> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroupDTO staffCrowdGroupDTO) {
-        Integer lassoCount = crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroupDTO);
+    @PostMapping("v1/saveStaffCrowdGroup")
+    public ComResponse<Integer> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
+        Integer lassoCount = crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
         return ComResponse.success(lassoCount);
     }
 
     // 获取员工群组列表
     @ApiOperation(value = "分页获取圈选群组", httpMethod = "GET")
     @GetMapping("v1/getGroupListByPage")
-    public ComResponse<Page<StaffCrowdGroupDTO>> getGroupListByPage(
+    public ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(
             @RequestParam(value = "crowdGroupName", required = true) @ApiParam(value = "群组名称") String crowdGroupName,
             @RequestParam(value = "status", required = false) @ApiParam(value = "状态") Integer status,
             @RequestParam(value = "startTime", required = false) @ApiParam(value = "开始时间(yyyy-MM-dd)") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,
@@ -72,8 +72,8 @@ public class StaffLassoController {
 
     // 获取员工群组列表
     @ApiOperation(value = "获取圈选详情")
-    @GetMapping("v1/getStaffCrowdGroupDTO")
-    public ComResponse<StaffCrowdGroupDTO> getStaffCrowdGroupDTO(
+    @GetMapping("v1/getStaffCrowdGroup")
+    public ComResponse<StaffCrowdGroup> getStaffCrowdGroupDTO(
             @RequestParam("groupId") long groupId) {
 
         return crmStaffClient.getStaffCrowdGroupDTO(groupId);
