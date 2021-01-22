@@ -3,6 +3,7 @@ package cn.net.yzl.crm.service.micservice;
 import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.config.RestPage;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
@@ -73,12 +74,12 @@ public interface CrmStaffClient {
 
 
     @GetMapping("/staff/v1/getGroupListByPage")
-    ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(@RequestParam("crowdGroupName")String crowdGroupName,
-                                                             @RequestParam("status") Integer status,
-                                                             @RequestParam("startTime") Date startTime,
-                                                             @RequestParam("endTime") Date endTime,
-                                                             @RequestParam("pageNo")Integer pageNo,
-                                                             @RequestParam("pageSize") Integer pageSize);
+    ComResponse<RestPage<StaffCrowdGroup>> getGroupListByPage(@RequestParam("crowdGroupName")String crowdGroupName,
+                                                              @RequestParam("status") Integer status,
+                                                              @RequestParam("startTime") Date startTime,
+                                                              @RequestParam("endTime") Date endTime,
+                                                              @RequestParam("pageNo")Integer pageNo,
+                                                              @RequestParam("pageSize") Integer pageSize);
     /**
      *  员工圈选 启用 失效
      * @param enable 1:启用, -1:失效
