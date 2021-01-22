@@ -1,13 +1,13 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupListDTO;
-import cn.net.yzl.crm.staff.model.mogo.RestPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -59,7 +59,7 @@ public class StaffLassoController {
     // 获取员工群组列表
     @ApiOperation(value = "分页获取圈选群组", httpMethod = "GET")
     @GetMapping("v1/getGroupListByPage")
-    public ComResponse<RestPage<StaffCrowdGroupListDTO>> getGroupListByPage(
+    public ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(
             @RequestParam(value = "crowdGroupName", required = true) @ApiParam(value = "群组名称") String crowdGroupName,
             @RequestParam(value = "status", required = false) @ApiParam(value = "状态") Integer status,
             @RequestParam(value = "startTime", required = false) @ApiParam(value = "开始时间(yyyy-MM-dd)") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,
