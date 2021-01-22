@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.store.InventoryFeginService;
+import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.model.vo.InventoryExcelVo;
 import cn.net.yzl.model.vo.InventoryProductExcelVo;
@@ -42,6 +43,9 @@ public class DownImageInController {
 
     @Autowired
     private InventoryFeginService inventoryFeginService;
+
+    @Autowired
+    private DownImageInService downImageInService;
 
 //    @Value("${supplierDown.url}")
 //    private String baseUrl;
@@ -123,8 +127,8 @@ public class DownImageInController {
             @ApiImplicitParam(name = "storeNo", value = "仓库编号", required = true, dataType = "string", paramType = "query")
     })
     @GetMapping("v1/exportProductStockExcel")
-    public ComResponse exportProductStockExcel(@RequestParam String codeAndName,@RequestParam String storeNo, HttpServletResponse httpServletResponse){
-//        return storeService.exportProductStockExcel(codeAndName,storeNo);
+    public ComResponse exportProductStockExcel(@RequestParam String codeAndName,@RequestParam String storeNo, HttpServletResponse httpServletResponse) throws IOException {
+        downImageInService.exportProductStockExcel(codeAndName,storeNo,httpServletResponse);
         return null;
     }
 
