@@ -9,6 +9,7 @@ import cn.net.yzl.crm.customer.mongomodel.crowd.UpdateCrowdStatusVO;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,7 +45,7 @@ public interface MemberGroupFeign {
 
     @ApiOperation("分页获取顾客圈选列表")
     @GetMapping("/v1/getCrowdGroupByPage")
-    ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
+    ComResponse getCrowdGroupByPage(@SpringQueryMap CrowdGroupDTO crowdGroupDTO);
 
     @ApiOperation("删除顾客圈选")
     @GetMapping("/v1/delMemberCrowdGroup")
