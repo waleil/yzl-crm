@@ -5,6 +5,7 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.ProductStockFeignService;
 import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.model.vo.InventoryProductExcelVo;
+import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.model.vo.ProductStockExcelVo;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
@@ -63,5 +64,17 @@ public class DownImageInServiceImpl implements DownImageInService {
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), ProductStockExcelVo.class)
                 .sheet("库存表").doWrite(listComResponseData);
+    }
+
+
+    /**
+     * 导出商品采购预警
+     * @param productPurchaseWarnExcelVO
+     * @param httpServletResponse
+     */
+    @Override
+    public void exportExcelOfProductPurchaseWarn(ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO, HttpServletResponse httpServletResponse) {
+
+
     }
 }
