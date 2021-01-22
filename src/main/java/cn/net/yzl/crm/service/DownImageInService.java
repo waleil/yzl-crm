@@ -5,6 +5,7 @@ import cn.net.yzl.model.vo.ProductStockExcelVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -16,5 +17,5 @@ import java.util.List;
 public interface DownImageInService {
 
 
-    ComResponse<List<ProductStockExcelVo>> exportProductStockExcel(String codeAndName, String storeNo);
+    void exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException;
 }
