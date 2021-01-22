@@ -59,7 +59,7 @@ public class OrderRejectionController {
         return orderRejectionClient.getOrderRejectionDetail(orderNo);
     }
 
-    @PutMapping("v1/addOrderRejection")
+    @PostMapping("v1/addOrderRejection")
     @ApiOperation(value = "新增拒收订单")
     public ComResponse addOrderRejection(HttpServletRequest request, @Valid @RequestBody OrderRejectionAddDTO orderRejectionAddDTO) {
         String userNo = request.getHeader("userNo");

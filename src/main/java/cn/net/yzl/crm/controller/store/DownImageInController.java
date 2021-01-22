@@ -1,13 +1,18 @@
 package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.InventoryFeginService;
+import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.model.vo.InventoryExcelVo;
-import cn.net.yzl.model.vo.InventoryProductExcelVo;
+import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
+import cn.net.yzl.model.vo.*;
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -18,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +42,9 @@ public class DownImageInController {
 
     @Autowired
     private InventoryFeginService inventoryFeginService;
+
+    @Autowired
+    private DownImageInService downImageInService;
 
 //    @Value("${supplierDown.url}")
 //    private String baseUrl;
@@ -69,11 +78,12 @@ public class DownImageInController {
 
     @ApiOperation(value = "导出查看盘点商品(附带下载路径)",notes = "导出查看盘点商品(附带下载路径)")
     @PostMapping("v1/exportInventoryExcel")
-    public ComResponse exportInventoryExcel(@RequestBody InventoryExcelVo inventoryExcelVo,HttpServletResponse httpServletResponse) throws IOException {
+    public ComResponse<List<InventoryProductExcelVo>> exportInventoryExcel(@RequestBody InventoryExcelVo inventoryExcelVo,HttpServletResponse httpServletResponse) throws IOException {
         ComResponse<List<InventoryProductExcelVo>> listComResponse = inventoryFeginService.exportInventoryExcel(inventoryExcelVo);
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
 
+        Integer status = inventoryExcelVo.getStatus();
         List<InventoryProductExcelVo> listComResponseData = listComResponse.getData();
 
         //盘点日期
@@ -87,14 +97,48 @@ public class DownImageInController {
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + storeName+ date+".xlsx");
-//
-        //向前端写入文件流流
-        EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
-                .sheet("盘点商品库存表").doWrite(listComResponseData);
+
+        if (status==1){
+            //向前端写入文件流流
+            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
+                    .sheet("盘点商品库存表").doWrite(listComResponseData);
+        }else if (status==2){
+
+            List<InventoryProductResultExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
+            for (InventoryProductExcelVo listComResponseDatum : listComResponseData) {
+                InventoryProductResultExcelVo inventoryProductResultExcelVo = new InventoryProductResultExcelVo();
+                BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
+                inventoryProductResultExcelVoList.add(inventoryProductResultExcelVo);
+            }
+            //向前端写入文件流流
+            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductResultExcelVo.class)
+                    .sheet("盘点商品库存表").doWrite(inventoryProductResultExcelVoList);
+        }
+
 
         return ComResponse.success();
     }
 
+
+    @ApiOperation(value = "导出库存",notes = "导出库存")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "codeAndName", value = "商品编码、条形码或者商品名称", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "storeNo", value = "仓库编号", dataType = "string", paramType = "query")
+    })
+    @GetMapping("v1/exportProductStockExcel")
+    public void exportProductStockExcel(@RequestParam String codeAndName,@RequestParam String storeNo, HttpServletResponse httpServletResponse) throws IOException {
+        downImageInService.exportProductStockExcel(codeAndName,storeNo,httpServletResponse);
+    }
+
+
+    @PostMapping(value = "v1/exportExcelOfProductPurchaseWarn")
+    @ApiOperation("预警商品导出EXCEL")
+    public void exportExcelOfProductPurchaseWarn(@RequestBody ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO,HttpServletResponse httpServletResponse) {
+//        return downImageInService.exportExcelOfProductPurchaseWarn(productPurchaseWarnExcelVO,httpServletResponse);
+
+        return;
+
+    }
 
 
 }

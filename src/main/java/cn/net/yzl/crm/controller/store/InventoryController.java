@@ -18,7 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,8 +63,22 @@ public class InventoryController {
 
     @ApiOperation(value = "导入查看盘点商品",notes = "导入查看盘点商品信息")
     @PostMapping("v1/readExcelnventoryProduct")
-    public ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(ReadExcelInventoryProductVo readExcelInventoryProductVo) throws IOException {
-      return inventoryService.readExcelnventoryProduct(readExcelInventoryProductVo);
+    public ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(@RequestParam("file") MultipartFile file,Integer id,String storeNo,
+                                                                           String storeName,String inventoryDate) throws IOException, ParseException {
+        ReadExcelInventoryProductVo readExcelInventoryProductVo = new ReadExcelInventoryProductVo();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date parse = sdf.parse(inventoryDate);
+        readExcelInventoryProductVo.setId(id);
+        readExcelInventoryProductVo.setStoreNo(storeNo);
+        readExcelInventoryProductVo.setStoreName(storeName);
+        readExcelInventoryProductVo.setInventoryDate(parse);
+        return inventoryService.readExcelnventoryProduct(readExcelInventoryProductVo,file);
+    }
+
+    @ApiOperation(value = "修改盘点商品库存数据",notes = "修改盘点商品库存数据")
+    @PostMapping("v1/updateInventoryProduct")
+    public ComResponse updateInventoryProduct(@RequestBody InventoryAllProductVo inventoryAllProductVo){
+        return inventoryFeginService.updateInventoryProduct(inventoryAllProductVo);
     }
 
 

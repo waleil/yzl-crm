@@ -149,9 +149,10 @@ public class ProductController {
         if (vo.getSalePriceD() == null) {
             return "市场价价格不能为空";
         }
-        if (CollectionUtils.isEmpty(vo.getImages())||vo.getImages().size()>5){
-            return "商品图片数量不正确，应为1-5张，当前为"+vo.getImages()==null?"0":vo.getImages().size()+"张";
-        }
+        //更改为上架时需要上传图片
+//        if (CollectionUtils.isEmpty(vo.getImages())||vo.getImages().size()>5){
+//            return "商品图片数量不正确，应为1-5张，当前为"+vo.getImages()==null?"0":vo.getImages().size()+"张";
+//        }
         return null;
     }
 
