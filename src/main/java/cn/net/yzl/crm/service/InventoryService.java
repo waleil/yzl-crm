@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.InventoryProductDto;
 import cn.net.yzl.model.vo.ReadExcelInventoryProductVo;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -19,5 +20,5 @@ public interface InventoryService {
      * @param readExcelInventoryProductVo
      * @return
      */
-    ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(ReadExcelInventoryProductVo readExcelInventoryProductVo);
+    ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(ReadExcelInventoryProductVo readExcelInventoryProductVo, MultipartFile file);
 }

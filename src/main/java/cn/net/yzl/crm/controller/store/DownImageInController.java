@@ -6,8 +6,11 @@ import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.model.vo.InventoryExcelVo;
 import cn.net.yzl.model.vo.InventoryProductExcelVo;
 import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
+import cn.net.yzl.model.vo.ProductStockExcelVo;
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +115,19 @@ public class DownImageInController {
 
         return ComResponse.success();
     }
+
+
+    @ApiOperation(value = "导出库存",notes = "导出库存")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "codeAndName", value = "商品编码、条形码或者商品名称", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "storeNo", value = "仓库编号", required = true, dataType = "string", paramType = "query")
+    })
+    @GetMapping("v1/exportProductStockExcel")
+    public ComResponse exportProductStockExcel(@RequestParam String codeAndName,@RequestParam String storeNo, HttpServletResponse httpServletResponse){
+//        return storeService.exportProductStockExcel(codeAndName,storeNo);
+        return null;
+    }
+
 
 
 
