@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.dto.ehr.StaffDetailDto;
 import cn.net.yzl.crm.service.StaffLassoService;
@@ -9,7 +10,6 @@ import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.*;
-import cn.net.yzl.crm.staff.model.mogo.RestPage;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -161,16 +161,16 @@ public class StaffLassoServiceImpl implements StaffLassoService {
     }
 
     @Override
-    public ComResponse<RestPage<StaffCrowdGroupListDTO>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize) {
-        ComResponse<RestPage<StaffCrowdGroupListDTO>> groupListByPage = crmStaffClient.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
+    public ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize) {
+        ComResponse<Page<StaffCrowdGroupListDTO>> groupListByPage = crmStaffClient.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
         if (null == groupListByPage) {
             return ComResponse.success();
         }
-        RestPage<StaffCrowdGroupListDTO> data = groupListByPage.getData();
+        Page<StaffCrowdGroupListDTO> data = groupListByPage.getData();
         if (null == data) {
             return ComResponse.success();
         }
-        List<StaffCrowdGroupListDTO> content = data.getContent();
+        List<StaffCrowdGroupListDTO> content = data.getItems();
         if (CollectionUtils.isEmpty(content)) {
             return ComResponse.success();
         }
