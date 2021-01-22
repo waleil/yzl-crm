@@ -51,13 +51,13 @@ public class StaffServiceImpl implements StaffService {
         StaffImageBaseInfoDto data = ehrBaseInfoResponse.getData();
         // 获取商品优势
         ComResponse<List<String>> basicProductAdvance = crmStaffClient.getBasicProductAdvance(staffNo);
-        if (basicProductAdvance.getCode()==200){
+        if (null != basicProductAdvance && basicProductAdvance.getCode()==200){
             data.setProductAdvanced(basicProductAdvance.getData());
         }
 
         // 获取病症优势
         ComResponse<List<JSONObject>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(staffNo);
-        if (basicDiseaseAdvance.getCode()==200){
+        if (null != basicDiseaseAdvance && basicDiseaseAdvance.getCode()==200){
             data.setDiseaseAdvanced(basicDiseaseAdvance.getData());
         }
 
