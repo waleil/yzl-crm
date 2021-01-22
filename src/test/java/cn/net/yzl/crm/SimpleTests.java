@@ -29,8 +29,11 @@ public class SimpleTests {
 		od2.setProductCode("22");
 		OrderDetailIn od3 = new OrderDetailIn();
 		od3.setProductCode("33");
-		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3);
-		System.err.println(detailIns.stream().map(OrderDetailIn::getProductCode).collect(Collectors.joining(",")));
+		OrderDetailIn od4 = new OrderDetailIn();
+		od4.setProductCode("33");
+		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3, od4);
+		System.err.println(
+				detailIns.stream().map(OrderDetailIn::getProductCode).distinct().collect(Collectors.joining(",")));
 	}
 
 	@Test
