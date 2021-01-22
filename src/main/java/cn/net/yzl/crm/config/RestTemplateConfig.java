@@ -8,6 +8,7 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicHeader;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -26,6 +27,7 @@ public class RestTemplateConfig {
 
 
     @Bean
+    @LoadBalanced
     public RestTemplate restTemplate() {
         // 添加内容转换器,使用默认的内容转换器
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory());
