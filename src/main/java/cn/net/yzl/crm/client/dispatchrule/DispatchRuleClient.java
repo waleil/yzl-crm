@@ -37,7 +37,7 @@ public interface DispatchRuleClient {
      * @return
      */
     @GetMapping("v1/updateDispatchRule")
-    public ComResponse updateDispatchRule(@RequestParam String id, @RequestParam Integer status);
+    public ComResponse updateDispatchRule(@RequestParam("id") String id, @RequestParam("status") Integer status);
 
 
     /**
