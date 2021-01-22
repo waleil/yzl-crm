@@ -84,7 +84,15 @@ public class SimpleTests {
 	}
 
 	@Test
-	public void testOrder() {
+	public void testOrderRules() {
+		this.testOrderRule1();
+		this.testOrderRule2();
+		this.testOrderRule3();
+	}
+
+	@Test
+	public void testOrderRule1() {
+		System.err.println("计算规则一：");
 		OrderDetailIn taocan = new OrderDetailIn();
 		taocan.setMealPrice(400);// 套餐价
 		taocan.setMealName("套餐");
@@ -110,14 +118,97 @@ public class SimpleTests {
 		d3.setProductCode("CCC");
 		d3.setProductName("商品C");
 
-		List<OrderDetailIn> proList = Arrays.asList(d1, d2, d3);
-		int proTotal = proList.stream().mapToInt(OrderDetailIn::getTotal).sum();
+		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
+		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
+
 		BigDecimal b2 = new BigDecimal(taocan.getMealPrice());
-		BigDecimal b3 = new BigDecimal(proTotal);
-		proList.stream().forEach(m -> {
+		BigDecimal b3 = new BigDecimal(orderTotal);
+		orderList.stream().forEach(m -> {
 			BigDecimal b1 = new BigDecimal(m.getTotal());
+			BigDecimal b4 = new BigDecimal(m.getProductCount());
+			System.err.println(String.format("%s: %s", m.getProductName(),
+					b1.multiply(b2).divide(b3, BigDecimal.ROUND_HALF_UP).divide(b4, BigDecimal.ROUND_HALF_UP)));
+		});
+	}
+
+	@Test
+	public void testOrderRule2() {
+		System.err.println("计算规则二：");
+		OrderDetailIn taocan = new OrderDetailIn();
+		taocan.setMealPrice(400);// 套餐价
+		taocan.setMealName("套餐");
+
+		OrderDetailIn d1 = new OrderDetailIn();
+		d1.setProductUnitPrice(100);// 商品单价
+		d1.setProductCount(2);// 商品数量
+		d1.setTotal(d1.getProductUnitPrice() * d1.getProductCount());// 商品总价=商品单价*商品数量
+		d1.setProductCode("AAA");
+		d1.setProductName("商品A");
+
+		OrderDetailIn d2 = new OrderDetailIn();
+		d2.setProductUnitPrice(50);// 商品单价
+		d2.setProductCount(3);// 商品数量
+		d2.setTotal(d2.getProductUnitPrice() * d2.getProductCount());
+		d2.setProductCode("BBB");
+		d2.setProductName("商品B");
+
+		OrderDetailIn d3 = new OrderDetailIn();
+		d3.setProductUnitPrice(60);// 商品单价
+		d3.setProductCount(3);// 商品数量
+		d3.setTotal(d3.getProductUnitPrice() * d3.getProductCount());
+		d3.setProductCode("CCC");
+		d3.setProductName("商品C");
+
+		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
+		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
+		int proTotal = orderList.stream().mapToInt(OrderDetailIn::getProductUnitPrice).sum();
+		int cha = orderTotal - taocan.getMealPrice();
+
+		BigDecimal b1 = new BigDecimal(cha);
+		BigDecimal b2 = new BigDecimal(proTotal);
+		orderList.stream().forEach(m -> {
+			BigDecimal b3 = new BigDecimal(m.getProductUnitPrice());
 			System.err.println(
-					String.format("%s: %s", m.getProductName(), b1.multiply(b2).divide(b3, BigDecimal.ROUND_HALF_UP)));
+					String.format("%s: %s", m.getProductName(), b1.multiply(b3).divide(b2, BigDecimal.ROUND_HALF_UP)));
+		});
+	}
+
+	@Test
+	public void testOrderRule3() {
+		System.err.println("计算规则三：");
+		OrderDetailIn taocan = new OrderDetailIn();
+		taocan.setMealPrice(400);// 套餐价
+		taocan.setMealName("套餐");
+
+		OrderDetailIn d1 = new OrderDetailIn();
+		d1.setProductUnitPrice(100);// 商品单价
+		d1.setProductCount(2);// 商品数量
+		d1.setTotal(d1.getProductUnitPrice() * d1.getProductCount());// 商品总价=商品单价*商品数量
+		d1.setProductCode("AAA");
+		d1.setProductName("商品A");
+
+		OrderDetailIn d2 = new OrderDetailIn();
+		d2.setProductUnitPrice(50);// 商品单价
+		d2.setProductCount(3);// 商品数量
+		d2.setTotal(d2.getProductUnitPrice() * d2.getProductCount());
+		d2.setProductCode("BBB");
+		d2.setProductName("商品B");
+
+		OrderDetailIn d3 = new OrderDetailIn();
+		d3.setProductUnitPrice(60);// 商品单价
+		d3.setProductCount(3);// 商品数量
+		d3.setTotal(d3.getProductUnitPrice() * d3.getProductCount());
+		d3.setProductCode("CCC");
+		d3.setProductName("商品C");
+
+		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
+		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
+		BigDecimal b1 = new BigDecimal(taocan.getMealPrice());
+		BigDecimal b2 = new BigDecimal(orderTotal);
+		orderList.stream().forEach(m -> {
+			BigDecimal b3 = new BigDecimal(m.getProductUnitPrice());
+			System.err.println(String.format("%s: %s", m.getProductName(),
+					b1.multiply(b3).divide(b2, 2, BigDecimal.ROUND_HALF_UP)));
 		});
 	}
 }
