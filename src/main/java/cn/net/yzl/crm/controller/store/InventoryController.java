@@ -58,8 +58,8 @@ public class InventoryController {
 
     @ApiOperation(value = "导入查看盘点商品",notes = "导入查看盘点商品信息")
     @PostMapping("v1/readExcelnventoryProduct")
-    public ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(ReadExcelInventoryProductVo readExcelInventoryProductVo) throws IOException {
-      return inventoryService.readExcelnventoryProduct(readExcelInventoryProductVo);
+    public ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(ReadExcelInventoryProductVo readExcelInventoryProductVo,@RequestParam("file") MultipartFile file) throws IOException {
+      return inventoryService.readExcelnventoryProduct(readExcelInventoryProductVo,file);
     }
 
     @ApiOperation(value = "修改盘点商品库存数据",notes = "修改盘点商品库存数据")
