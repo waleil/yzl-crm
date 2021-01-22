@@ -12,9 +12,11 @@ import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.UUID;
@@ -34,7 +36,7 @@ public class MemberGroupController {
 
     @ApiOperation("保存顾客圈选")
     @PostMapping("/v1/saveMemberCrowdGroup")
-    public ComResponse saveMemberCrowdGroup(@RequestBody MemberCrowdGroupDTO memberCrowdGroup) {
+    public ComResponse saveMemberCrowdGroup(@RequestBody MemberCrowdGroupDTO memberCrowdGroup, HttpServletRequest request) {
         if (memberCrowdGroup == null ||memberCrowdGroup.getEffective_date()==null
                 || memberCrowdGroup.getExpire_date()==null)
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
@@ -44,6 +46,8 @@ public class MemberGroupController {
         if(memberCrowdGroup.getExpire_date().before(DateHelper.getCurrentDate())){
             throw  new BizException(101,"失效日期在当前日期之前");
         }
+        //获取操作人id
+        String userId= request.getHeader("userId");
         member_crowd_group member_group = new member_crowd_group();
         member_group.setAge(memberCrowdGroup.getAge());
         member_group.setEmail(memberCrowdGroup.getEmail());
@@ -55,7 +59,6 @@ public class MemberGroupController {
         member_group.setTotal_amount(memberCrowdGroup.getTotal_amount());
         member_group.setWechat(memberCrowdGroup.getWechat());
         member_group.setActions(memberCrowdGroup.getActions());
-        member_group.setCrowd_id(memberCrowdGroup.getCrowd_id());
         member_group.setCrowd_name(memberCrowdGroup.getCrowd_name());
         member_group.setActive_degree(memberCrowdGroup.getActive_degree());
         member_group.setActive_order(member_group.getActive_order());
@@ -85,7 +88,6 @@ public class MemberGroupController {
         member_group.setPay_form(memberCrowdGroup.getPay_form());
         member_group.setPay_state(memberCrowdGroup.getPay_state());
         member_group.setPay_type(memberCrowdGroup.getPay_type());
-        //  member_group.setPerson_count(memberCrowdGroup.); //人数
         member_group.setPhone_time(memberCrowdGroup.getPhone_time());
         member_group.setRecharge(memberCrowdGroup.getRecharge());
         member_group.setRed_bag(memberCrowdGroup.getRed_bag());
@@ -101,23 +103,15 @@ public class MemberGroupController {
         member_group.setUpdate_time(DateHelper.getCurrentDate());
         member_group.setEnable(0);
         Date currentDate=DateHelper.getCurrentDate();
-
         if(currentDate.after(memberCrowdGroup.getEffective_date()) && currentDate.before(memberCrowdGroup.getExpire_date())){
             member_group.setEnable(1);
         }
-
-        //todo增加创建人， 修改人信息
-
-        if (StringUtil.isNullOrEmpty(memberCrowdGroup.getCrowd_id())) {
-            String crowd_id = UUID.randomUUID().toString().replaceAll("-", "");
-
-            member_group.setCrowd_id(crowd_id);
-            member_group.setCreate_time(DateHelper.getCurrentDate());
-
+        if (StringUtil.isNullOrEmpty(memberCrowdGroup.get_id())) {
+            member_group.setCreate_code(userId);
             ComResponse result= memberGroupFeign.addCrowdGroup(member_group);
             return result;
         } else {
-
+            member_group.setUpdate_code(userId);
             ComResponse result= memberGroupFeign.updateCrowdGroup(member_group);
             return result;
         }
