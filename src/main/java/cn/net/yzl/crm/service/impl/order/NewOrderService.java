@@ -3,6 +3,7 @@ package cn.net.yzl.crm.service.impl.order;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateFormatUtil;
+import cn.net.yzl.common.util.SnowFlakeUtil;
 import cn.net.yzl.crm.client.order.NewOrderClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
@@ -11,8 +12,10 @@ import cn.net.yzl.crm.service.order.INewOrderService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
 
+import cn.net.yzl.order.model.vo.order.CustomerGroup;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
 
+import cn.net.yzl.order.model.vo.order.Product4OrderDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductDTO;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
@@ -106,17 +109,25 @@ public class NewOrderService implements INewOrderService {
             OrderProductVO vo = new OrderProductVO();
             List<ProductReduceVO> reduceVOS = new ArrayList<>();
 
+            //查询群组信息
+            List<CustomerGroup> groups = searchGroups(dto.getCustomerGroupIds());
+            //人数
+            Integer count = groups.stream().mapToInt(CustomerGroup ::getGroupcount).sum();
+
             dto.getProducts().forEach(map -> {
                 ProductReduceVO reduceVO = new ProductReduceVO();
-//                reduceVO.setProductCode(map.getProductCode());
-//                reduceVO.setNum(map.getCount() * count);
+                reduceVO.setProductCode(map.getProductCode());
+                reduceVO.setNum(map.getCount() * count);
                 reduceVOS.add(reduceVO);
 
             });
             vo.setProductReduceVOS(reduceVOS);
+            //计算各个商品所需要的库存量，并校验库存是否充足
+            vo = caculateStackInfo(dto);
 
-//            vo.setOrderNo(orderNo);
-            //调用扣减内存接口
+            //批次号
+            vo.setOrderNo(SnowFlakeUtil.getId() + "");
+            //todo 调用扣减内存接口（根据批次号扣减库存）
             orderRes = productClient.productReduce(vo);
             if(orderRes.getCode().compareTo(200) == 0){
                 Map map = new HashMap();
@@ -148,44 +159,44 @@ public class NewOrderService implements INewOrderService {
     /**
      * 组合成最终处理的dto类，用于发送订单服务
      */
-//    public NewOrderDTO mkFinalOrderInfo(NewOrderDTO dto){
-//        //校验商品是否合规
-//        if(dto.getProducts() == null || dto.getProducts().size() == 0){
-//            throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"商品不能为空");
-//        }
-//        String products = dto.getProducts().stream().map(Product4OrderDTO::getProductCode).collect(Collectors.joining(","));
-//        List<Product4OrderDTO> list = searchProducts(products,dto.getProducts());
-//        dto.setProducts(list);
-//
-//        //查询顾客群信息
-//        if(dto.getCustomerGroupIds() == null || dto.getCustomerGroupIds().size() == 0 ){
-//            throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"顾客群不能为空");
-//        }
-//
-//        List<CustomerGroup> groups = searchGroups(dto.getCustomerGroupIds());
-//
-//        //计算各各个商品所需所需数量
-//        //各个群组 累计人数
+    public NewOrderDTO mkFinalOrderInfo(NewOrderDTO dto){
+        //校验商品是否合规
+        if(dto.getProducts() == null || dto.getProducts().size() == 0){
+            throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"商品不能为空");
+        }
+        String products = dto.getProducts().stream().map(Product4OrderDTO::getProductCode).collect(Collectors.joining(","));
+        List<Product4OrderDTO> list = searchProducts(products,dto.getProducts());
+        dto.setProducts(list);
+
+        //查询顾客群信息
+        if(dto.getCustomerGroupIds() == null || dto.getCustomerGroupIds().size() == 0 ){
+            throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"顾客群不能为空");
+        }
+
+        List<CustomerGroup> groups = searchGroups(dto.getCustomerGroupIds());
+
+        //计算各各个商品所需所需数量
+        //各个群组 累计人数
 //        int count = dto.getGroups().stream().collect(Collectors.summingInt(CustomerGroup::getGroupcount));
-//        OrderProductVO vo = new OrderProductVO();
-//        List<ProductReduceVO> reduceVOS = new ArrayList<>();
-//
-//        dto.getProducts().forEach(map -> {
-//            ProductReduceVO reduceVO = new ProductReduceVO();
-//            reduceVO.setProductCode(map.getProductCode());
+        OrderProductVO vo = new OrderProductVO();
+        List<ProductReduceVO> reduceVOS = new ArrayList<>();
+
+        dto.getProducts().forEach(map -> {
+            ProductReduceVO reduceVO = new ProductReduceVO();
+            reduceVO.setProductCode(map.getProductCode());
 //            reduceVO.setNum(map.getCount() * count);
-//            reduceVOS.add(reduceVO);
-//
-//        });
-//        vo.setProductReduceVOS(reduceVOS);
-//
-//        //生成订单号 HK+userNo +年月日时分秒毫秒+ 6位数字
-//        String seq = String.format("%06d",redisUtil.incr("OrderSeq",1000));
-//        String orderNo = "HK" + DateFormatUtil.dateToString(new Date(),"YYYYMMDDHHmmssSSS") + seq;
-//        dto.setOrderTempNo(orderNo);
-//
-//        return dto;
-//    }
+            reduceVOS.add(reduceVO);
+
+        });
+        vo.setProductReduceVOS(reduceVOS);
+
+        //生成订单号 HK+userNo +年月日时分秒毫秒+ 6位数字
+        String seq = String.format("%06d",redisUtil.incr("OrderSeq",1000));
+        String orderNo = "HK" + DateFormatUtil.dateToString(new Date(),"YYYYMMDDHHmmssSSS") + seq;
+        dto.setOrderTempNo(orderNo);
+
+        return dto;
+    }
     /**
      * 计算需要扣减的库存信息,并校验库存
      */
@@ -193,18 +204,18 @@ public class NewOrderService implements INewOrderService {
         //各个群组 累计人数
 //        int count = dto.getGroups().stream().collect(Collectors.summingInt(CustomerGroup::getGroupcount));
         OrderProductVO vo = new OrderProductVO();
-//        List<ProductReduceVO> reduceVOS = new ArrayList<>();
-//
-//        dto.getProducts().forEach(map -> {
-//            ProductReduceVO reduceVO = new ProductReduceVO();
-////            reduceVO.setProductCode(map.getProductCode());
-//            reduceVO.setNum(map.getCount() * count);
-//            reduceVOS.add(reduceVO);
+        List<ProductReduceVO> reduceVOS = new ArrayList<>();
 
-//        });
-//        vo.setProductReduceVOS(reduceVOS);
+        dto.getProducts().forEach(map -> {
+            ProductReduceVO reduceVO = new ProductReduceVO();
+            reduceVO.setProductCode(map.getProductCode());
+//            reduceVO.setNum(map.getCount() * count);
+            reduceVOS.add(reduceVO);
+
+        });
+        vo.setProductReduceVOS(reduceVOS);
         //校验库存
-//        checkStore(reduceVOS,dto.getProducts());
+        checkStore(reduceVOS,dto.getProducts());
         return vo;
     }
 
@@ -215,22 +226,22 @@ public class NewOrderService implements INewOrderService {
      * @param reduceVOS 需要扣减库存的商品列表
      * @param products 商品列表，存储商品库存
      */
-//    private void checkStore(List<ProductReduceVO> reduceVOS, List<Product4OrderDTO> products) {
-//        products.forEach(map ->{
-//            reduceVOS.forEach(item ->{
-//                if(map.getProductCode().equals(item.getProductCode())){
-//                    //当库存为-1时，无需校验
-//                    if(map.getStock() != -1){
-//                        if(item.getNum()>map.getStock()){
-//                            throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),"商品编号为：" +map.getProductCode()+"库存不足");
-//                        }
-//                    }
-//                }
-//
+    private void checkStore(List<ProductReduceVO> reduceVOS, List<Product4OrderDTO> products) {
+        products.forEach(map ->{
+            reduceVOS.forEach(item ->{
+                if(map.getProductCode().equals(item.getProductCode())){
+                    //当库存为-1时，无需校验
+                    if(map.getStock() != -1){
+                        if(item.getNum()>map.getStock()){
+                            throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),"库存不足");
+                        }
+                    }
+                }
 
-//            });
-//        });
-//    }
+
+            });
+        });
+    }
 
     /**
      * 执行失败回调方法
@@ -259,9 +270,9 @@ public class NewOrderService implements INewOrderService {
      * @param groupCodes
      * @return
      */
-//    protected List<CustomerGroup> searchGroups(List<String> groupCodes){
-//        String groupsStr = groupCodes.stream().collect(Collectors.joining(","));
-//        //查询顾客群组接口
+    protected List<CustomerGroup> searchGroups(List<String> groupCodes){
+        String groupsStr = groupCodes.stream().collect(Collectors.joining(","));
+        //查询顾客群组接口
 //        ComResponse<List<CrowdGroup>> response = memberFien.getCrowdGroupList(groupsStr);
 //        if(response.getCode().compareTo(Integer.valueOf(200))!=0){
 //            throw new BizException(response.getCode(),response.getMessage());
@@ -273,36 +284,14 @@ public class NewOrderService implements INewOrderService {
 //        System.out.println(response.getData().get(0) instanceof CrowdGroup);
 //        response.getData().forEach(map ->{
 //            CustomerGroup customerGroup = new CustomerGroup();
-//            customerGroup.setGroupId(map.getId()+"");
+////            customerGroup.setGroupId(map.getCrowd_id());
 //            customerGroup.setGroupcount(map.getPerson_count());
 //            groups.add(customerGroup);
-//
+
 //        });
-//
-//       return groups;
-//    }
-//    protected List<CustomerGroup> searchGroups(List<String> groupCodes){
-//        String groupsStr = groupCodes.stream().collect(Collectors.joining(","));
-//        //查询顾客群组接口
-//        ComResponse<List<CrowdGroup>> response = memberFien.getCrowdGroupList(groupsStr);
-//        if(response.getCode().compareTo(Integer.valueOf(200))!=0){
-//            throw new BizException(response.getCode(),response.getMessage());
-//        }
-//        if(response.getData() !=null && (groupCodes.size() != response.getData().size())){
-//            throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分群组已失效");
-//        }
-//        List<CustomerGroup> groups = new ArrayList<>();
-//        System.out.println(response.getData().get(0) instanceof CrowdGroup);
-//        response.getData().forEach(map ->{
-//            CustomerGroup customerGroup = new CustomerGroup();
-//            customerGroup.setGroupId(map.getCrowd_id());
-//            customerGroup.setGroupcount(map.getPerson_count());
-//            groups.add(customerGroup);
-//
-//        });
-//
-//       return groups;
-//    }
+
+       return null;
+    }
 
     /**
      * 查询商品列表
@@ -310,32 +299,32 @@ public class NewOrderService implements INewOrderService {
      * @param list
      * @return
      */
-//    protected List<Product4OrderDTO> searchProducts(String productCodes,List<Product4OrderDTO> list){
-//        ComResponse<List<ProductDTO>> prd = productClient.queryByCodes(productCodes);
-//        if(prd.getCode().compareTo(200)!=0){
-//            throw new BizException(prd.getCode(),prd.getMessage());
-//        }
-//        if(prd.getData() !=null && (list.size() != prd.getData().size())){
-//            throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分商品已下架");
-//        }
-//
-//        list.forEach(map -> {
-//            prd.getData().stream().map(item -> {
-//                if (Objects.equals(item.getProductCode(), map.getProductCode())) {
-//                    map.setName(item.getName());
-//                    //价格前端上送，已前端上送为主
-//                    if(map.getProductPrice() == null){
-//                        map.setProductPrice(item.getSalePrice());
-//                        map.setStock(item.getStock());
-//                    }
-//
-//                }
-//                return map;
-//            }).distinct().collect(Collectors.toList());
-//        });
-//        return list;
-//    }
-//
+    protected List<Product4OrderDTO> searchProducts(String productCodes,List<Product4OrderDTO> list){
+        ComResponse<List<ProductDTO>> prd = productClient.queryByCodes(productCodes);
+        if(prd.getCode().compareTo(200)!=0){
+            throw new BizException(prd.getCode(),prd.getMessage());
+        }
+        if(prd.getData() !=null && (list.size() != prd.getData().size())){
+            throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分商品已下架");
+        }
+
+        list.forEach(map -> {
+            prd.getData().stream().map(item -> {
+                if (Objects.equals(item.getProductCode(), map.getProductCode())) {
+                    map.setName(item.getName());
+                    //价格前端上送，已前端上送为主
+                    if(map.getProductPrice() == null){
+                        map.setProductPrice(item.getSalePrice());
+                        map.setStock(item.getStock());
+                    }
+
+                }
+                return map;
+            }).distinct().collect(Collectors.toList());
+        });
+        return list;
+    }
+
 
     /**
      * excel数据格式化
