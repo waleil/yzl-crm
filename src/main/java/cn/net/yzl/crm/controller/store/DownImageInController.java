@@ -1,13 +1,12 @@
 package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.InventoryFeginService;
 import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.model.vo.InventoryExcelVo;
-import cn.net.yzl.model.vo.InventoryProductExcelVo;
-import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
-import cn.net.yzl.model.vo.ProductStockExcelVo;
+import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
+import cn.net.yzl.model.vo.*;
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -132,6 +131,14 @@ public class DownImageInController {
     }
 
 
+    @PostMapping(value = "v1/exportExcelOfProductPurchaseWarn")
+    @ApiOperation("预警商品导出EXCEL")
+    public void exportExcelOfProductPurchaseWarn(@RequestBody ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO,HttpServletResponse httpServletResponse) {
+//        return downImageInService.exportExcelOfProductPurchaseWarn(productPurchaseWarnExcelVO,httpServletResponse);
+
+        return;
+
+    }
 
 
 }
