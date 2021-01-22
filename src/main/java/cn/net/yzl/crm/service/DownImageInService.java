@@ -1,5 +1,14 @@
 package cn.net.yzl.crm.service;
 
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.model.vo.ProductStockExcelVo;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
 /**
  * @author wangxiao
  * @version 1.0
@@ -7,4 +16,6 @@ package cn.net.yzl.crm.service;
  */
 public interface DownImageInService {
 
+
+    ComResponse exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException;
 }

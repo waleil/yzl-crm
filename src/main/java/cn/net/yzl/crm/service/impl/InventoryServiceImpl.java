@@ -38,12 +38,10 @@ public class InventoryServiceImpl implements InventoryService {
      * @return
      */
     @Override
-    public ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(ReadExcelInventoryProductVo readExcelInventoryProductVo) {
-        if (readExcelInventoryProductVo == null || readExcelInventoryProductVo.getFile()==null)
+    public ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(ReadExcelInventoryProductVo readExcelInventoryProductVo,MultipartFile file) {
+        if (readExcelInventoryProductVo == null || file==null)
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getMessage());
 
-        //获取文件
-        MultipartFile file = readExcelInventoryProductVo.getFile();
         //创建监听器
         InventoryExcelListener inventoryExcelListener = new InventoryExcelListener();
         ExcelReader excelReader = null;

@@ -11,7 +11,7 @@ import cn.net.yzl.crm.staff.dto.lasso.ScheduleDto;
 import cn.net.yzl.crm.staff.dto.lasso.TrainProductDto;
 import cn.net.yzl.crm.staff.dto.lasso.WorkOrderTypeDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,20 +20,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-@FeignClient(name = "ehr-staff-api",url = "${api.gateway.url}/staffDB")
+@FeignClient(name = "ehr-staff-api", url = "${api.gateway.url}/staffDB")
 public interface EhrStaffClient {
 
     /**
      * 获取员工排班记录
+     *
      * @param queryDto
      * @return
      */
-    @PostMapping("/staff/getStaffByBaseVOParams")
-    ComResponse getStaffScheduleInfo(StaffScheduleQueryDto queryDto);
+    @PostMapping("/attend/schedule/getListByParams")
+    ComResponse getStaffBaseInfo(StaffScheduleQueryDto queryDto);
 
     /**
      * 员工抢班
+     *
      * @param queryDto
      * @return
      */
@@ -42,15 +46,17 @@ public interface EhrStaffClient {
 
     /**
      * 获取排班详情
+     *
      * @param staffNo
      * @param time
      * @return
      */
     @GetMapping("/attend/schedule/getDetailByStaffNoAndTime")
-    ComResponse getDetailByStaffNoAndTime(@RequestParam("staffNo") String staffNo, @RequestParam("time")String time);
+    ComResponse getDetailByStaffNoAndTime(@RequestParam("staffNo") String staffNo, @RequestParam("time") String time);
 
     /**
      * 通过员工编号获取员工基本信息
+     *
      * @param staffNo
      * @return
      */
@@ -59,6 +65,7 @@ public interface EhrStaffClient {
 
     /**
      * 获取ehr字典表  员工在职状态
+     *
      * @param dictType
      * @return
      */
@@ -67,22 +74,25 @@ public interface EhrStaffClient {
 
     /**
      * 获取岗位级别通过岗位
+     *
      * @param postId
      * @return
      */
     @GetMapping("/postLevel/getListByPostId")
-    ComResponse<EhrPostLevelDto> getPostLevelListByPostId(@RequestParam("postId")Integer postId);
+    ComResponse<EhrPostLevelDto> getPostLevelListByPostId(@RequestParam("postId") Integer postId);
 
     /**
      * 获取岗位列表通过部门id
+     *
      * @param departId
      * @return
      */
     @GetMapping("/departPost/getListByDepartId")
-    ComResponse<List<EhrPostDto>> getPostListByDepartId(@RequestParam("departId")Integer departId);
+    ComResponse<List<EhrPostDto>> getPostListByDepartId(@RequestParam("departId") Integer departId);
 
     /**
      * 分页查询员工列表
+     *
      * @param query
      * @return
      */
@@ -91,6 +101,7 @@ public interface EhrStaffClient {
 
     /**
      * 根据员工id获取当前员工部门以及下属部门
+     *
      * @param staffNo
      * @return
      */
@@ -101,7 +112,7 @@ public interface EhrStaffClient {
      * 根据业务属性和岗位id-获取对应岗位级别列表
      */
     @GetMapping(value = "/businessPost/getBusinessPostList")
-    ComResponse<List<BusinessPostDto>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode,@RequestParam("postId") Integer postId);
+    ComResponse<List<BusinessPostDto>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode, @RequestParam("postId") Integer postId);
 
     /**
      * 根据业务属性获取岗位列表
@@ -110,40 +121,43 @@ public interface EhrStaffClient {
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode);
 
     /**
-     *  获取培训过的商品
+     * 获取培训过的商品
+     *
      * @return
      */
     @GetMapping(value = "/trainCourse/selectProduct")
     ComResponse<List<String>> selectProduct();
 
     /**
-     *  根据员工编号获取培训过的商品以及培训结果
-     * @return
+     * 根据员工编号获取培训过的商品以及培训结果
+     *
      * @param size
      * @param staffNo
+     * @return
      */
     @GetMapping(value = "/trainCourse/selectStaffTrainProduct")
-    ComResponse<List<JSONObject>> selectStaffTrainProduct(@RequestParam("staffNo")String staffNo,@RequestParam("size") Integer size);
+    ComResponse<List<JSONObject>> selectStaffTrainProduct(@RequestParam("staffNo") String staffNo, @RequestParam("size") Integer size);
 
     /**
-     *  根据员工编号获取员工旅程
-     * @return
+     * 根据员工编号获取员工旅程
+     *
      * @param staffNo
+     * @return
      */
     @GetMapping(value = "/abnor/getStaffTrain")
-    ComResponse<List<StaffTrainDto>> getStaffTrain(@RequestParam("staffNo")String staffNo);
+    ComResponse<List<StaffTrainDto>> getStaffTrain(@RequestParam("staffNo") String staffNo);
 
     /**
      * 获取组织架构 部门树形列表
+     *
      * @return
      */
     @GetMapping(value = "/depart/getTreeList")
     ComResponse<EhrDepartDto> getDepartTree();
 
 
-
     @PostMapping("/staff/getStaffByBaseVOParams")
-    ComResponse<List<String>> getStaffScheduleInfo(@RequestBody Base base);
+    ComResponse<List<String>> getStaffBaseInfo(@RequestBody Base baseVOParams);
 
     @PostMapping("/staff/getStaffByTrainProductParams")
     ComResponse<List<String>> getStaffTrainProduct(@RequestBody TrainProductDto trainProduct);
@@ -154,9 +168,12 @@ public interface EhrStaffClient {
     @PostMapping("/attend/schedule/getStaffListByTime")
     ComResponse<List<String>> getStaffScheduleRemote(@RequestBody ScheduleDto schedule);
 
+    @PostMapping("/staff/getByStaffNos")
+    ComResponse<List<StaffDetailDto>> getByStaffNos(@RequestBody List<String> staffNos);
 
-    default List<String> getStaffScheduleInfoList(Base base) {
-        ComResponse<List<String>> staffScheduleInfo = this.getStaffScheduleInfo(base);
+
+    default List<String> getStaffBaseInfoList(Base base) {
+        ComResponse<List<String>> staffScheduleInfo = getStaffBaseInfo(base);
         if (null != staffScheduleInfo && staffScheduleInfo.getCode() == 200) {
             return staffScheduleInfo.getData();
         }
@@ -187,4 +204,23 @@ public interface EhrStaffClient {
         }
         return Collections.emptyList();
     }
+
+
+    default Map<String, StaffDetailDto> getMapByStaffNos(List<String> staffNos) {
+        ComResponse<List<StaffDetailDto>> byStaffNos;
+        try {
+            byStaffNos = getByStaffNos(staffNos);
+        } catch (Exception e) {
+            return null;
+        }
+        if (null == byStaffNos) {
+            return null;
+        }
+        List<StaffDetailDto> data = byStaffNos.getData();
+        if (CollectionUtils.isEmpty(data)) {
+            return null;
+        }
+        return data.stream().collect(Collectors.toMap(StaffDetailDto::getUserNo, staff -> staff, (oldValue, newValue) -> newValue));
+    }
+
 }
