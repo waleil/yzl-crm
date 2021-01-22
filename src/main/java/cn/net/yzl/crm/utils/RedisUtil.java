@@ -4,6 +4,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import cn.net.yzl.order.enums.RedisKeys;
+
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -575,10 +577,15 @@ public class RedisUtil {
 	/**
 	 * 生成序列号
 	 *
-	 * @param prefix   前缀
+	 * @param prefix   前缀<br>
+	 *                 {@link RedisKeys#CREATE_ORDER_NO_PREFIX}<br>
+	 *                 {@link RedisKeys#REJECT_ORDER_NO_PREFIX}<br>
+	 *                 {@link RedisKeys#SALE_ORDER_NO_PREFIX}
 	 * @param workid   职场id
 	 * @param userno   用户id
-	 * @param rediskey redis中的键
+	 * @param rediskey redis中的键<br>
+	 *                 {@link RedisKeys#CREATE_ORDER_NO}<br>
+	 *                 {@link RedisKeys#SALE_ORDER_NO}
 	 * @param length   尾号长度
 	 */
 	public String getSeqNo(String prefix, Object workid, Object userno, String rediskey, int length) {
