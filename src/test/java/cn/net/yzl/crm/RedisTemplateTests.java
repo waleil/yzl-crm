@@ -31,5 +31,10 @@ public class RedisTemplateTests {
 			System.err.println(
 					redisUtil.getSeqNo(RedisKeys.SALE_ORDER_NO_PREFIX, "100000", "100000", RedisKeys.SALE_ORDER_NO, 4));
 		}
+		for (int i = 0; i < 10; i++) {
+			// 拒收单号生成器
+			System.err.println(redisUtil.getSeqNo(RedisKeys.REJECT_ORDER_NO_PREFIX, "100000", "100000",
+					RedisKeys.SALE_ORDER_NO, 4));
+		}
 	}
 }
