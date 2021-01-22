@@ -52,7 +52,7 @@ public class StaffController {
         if (null==staffScheduleQueryDto||staffScheduleQueryDto.getPageSize()==null||staffScheduleQueryDto.getPageNo()==null){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        ComResponse<StaffScheduleInfoDto> response = ehrStaffClient.getStaffScheduleInfo(staffScheduleQueryDto);
+        ComResponse<StaffScheduleInfoDto> response = ehrStaffClient.getStaffBaseInfo(staffScheduleQueryDto);
         return response;
     }
 

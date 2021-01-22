@@ -1,17 +1,18 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.config.RestPage;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
+import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupListDTO;
+import cn.net.yzl.crm.staff.model.mogo.RestPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,13 +51,15 @@ public class StaffLassoController {
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
     @PostMapping("v1/saveStaffCrowdGroup")
     public ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
+        staffCrowdGroup.setCreateCode(QueryIds.userNo.get());
+        staffCrowdGroup.setUpdateCode(QueryIds.userNo.get());
         return crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
     }
 
     // 获取员工群组列表
     @ApiOperation(value = "分页获取圈选群组", httpMethod = "GET")
     @GetMapping("v1/getGroupListByPage")
-    public ComResponse<RestPage<StaffCrowdGroup>> getGroupListByPage(
+    public ComResponse<RestPage<StaffCrowdGroupListDTO>> getGroupListByPage(
             @RequestParam(value = "crowdGroupName", required = true) @ApiParam(value = "群组名称") String crowdGroupName,
             @RequestParam(value = "status", required = false) @ApiParam(value = "状态") Integer status,
             @RequestParam(value = "startTime", required = false) @ApiParam(value = "开始时间(yyyy-MM-dd)") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,
@@ -64,7 +67,7 @@ public class StaffLassoController {
             @RequestParam("pageNo") @ApiParam(value = "开始页") Integer pageNo,
             @RequestParam("pageSize") @ApiParam(value = "每页大小") Integer pageSize) {
 
-        return crmStaffClient.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
+        return staffLassoService.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
 
     }
 
@@ -72,7 +75,7 @@ public class StaffLassoController {
     @GetMapping("v1/updateEnable")
     public ComResponse<Integer> updateEnable(@RequestParam(value = "enable", required = false) @ApiParam(value = "1:启用,-1:已结束") int enable,
                                              @RequestParam(value = "groupId", required = true) @ApiParam(value = "组id") long groupId) {
-        return crmStaffClient.updateEnable(enable, groupId);
+        return crmStaffClient.updateEnable(enable, groupId,QueryIds.userNo.get());
     }
 
     // 获取员工群组列表
@@ -81,7 +84,7 @@ public class StaffLassoController {
     public ComResponse<StaffCrowdGroup> getStaffCrowdGroupDTO(
             @RequestParam("groupId") long groupId) {
 
-        return crmStaffClient.getStaffCrowdGroupDTO(groupId);
+        return crmStaffClient.getStaffCrowdGroup(groupId);
 
     }
 }
