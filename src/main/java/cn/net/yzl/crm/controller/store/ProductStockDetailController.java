@@ -29,6 +29,7 @@ public class ProductStockDetailController {
     @Autowired
     ProductStockDetailFeignService productStockDetailFeignService;
 
+
     @PostMapping(value = "v1/selectProductStockDetail")
     @ApiOperation("库存流水分页查询")
     public ComResponse<Page<ProductStockDetailDTO>> selectProductStockDetail(@RequestBody ProductStockDetailSelectVO productStockDetailSelectVO) {

@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "workOrderVisitClient", url = "${api.gateway.url}/workorderServer/visit")
+import javax.sound.midi.SoundbankResource;
+
+@FeignClient(name = "workOrderVisitClient", url = "localhost:4206/visit")
 public interface WorkOrderVisitClient {
 
     /**
@@ -55,4 +57,8 @@ public interface WorkOrderVisitClient {
     @GetMapping("v1/queryFirstProduct")
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
     ComResponse<String> queryFirstProduct();
+
+    @GetMapping("v1/queryLastProduct")
+    @ApiOperation(value = "查询所有用户最后一次购买商品", notes = "查询所有用户最后一次购买商品")
+    ComResponse<String> queryLastProduct();
 }

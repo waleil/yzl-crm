@@ -94,4 +94,11 @@ public class WorkOrderVisitController {
         String data = workOrderVisitClient.queryFirstProduct().getData();
         return  productClient.queryProducts(data);
     }
+
+    @ApiOperation(value = "查询所有用户最后一次购买商品",notes = "查询所有用户最后一次购买商品")
+    @GetMapping("v1/queryLastProduct")
+    public ComResponse<List<ProductMainInfoDTO>> queryLastProduct(){
+        String data = workOrderVisitClient.queryLastProduct().getData();
+        return  productClient.queryProducts(data);
+    }
 }

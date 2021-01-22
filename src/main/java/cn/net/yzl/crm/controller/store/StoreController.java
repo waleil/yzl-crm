@@ -6,6 +6,7 @@ import cn.net.yzl.crm.client.store.StoreFeginService;
 import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.model.dto.StoreDto;
 import cn.net.yzl.model.dto.StoreLocalDto;
+import cn.net.yzl.model.pojo.ProductStockPo;
 import cn.net.yzl.model.pojo.StoreLocalPo;
 import cn.net.yzl.model.pojo.StorePo;
 import cn.net.yzl.model.pojo.SysDictDataPo;
@@ -172,9 +173,9 @@ public class StoreController {
             @ApiImplicitParam(name = "codeAndName", value = "商品编码/条形码/商品名称", required = false, dataType = "String", paramType = "query"),
             @ApiImplicitParam(name = "storeName", value = "仓库名称", required = false, dataType = "String", paramType = "query"),
     })
-    public ComResponse stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
-                                    @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
-                                    @RequestParam(value = "storeNo",required = false) String storeNo){
+    public ComResponse<Page<ProductStockPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                                          @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
+                                                          @RequestParam(value = "storeNo",required = false) String storeNo){
 
         return storeFeginService.stockInquiry(pageNo,pageSize,codeAndName,storeNo);
     }
