@@ -8,7 +8,6 @@ import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupListDTO;
-import cn.net.yzl.crm.staff.model.mogo.RestPage;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,7 +79,7 @@ public interface CrmStaffClient {
 
 
     @GetMapping("/staff/v1/getGroupListByPage")
-    ComResponse<RestPage<StaffCrowdGroupListDTO>> getGroupListByPage(@RequestParam("crowdGroupName") String crowdGroupName,
+    ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(@RequestParam("crowdGroupName") String crowdGroupName,
                                                                      @RequestParam("status") Integer status,
                                                                      @RequestParam("startTime") Date startTime,
                                                                      @RequestParam("endTime") Date endTime,
