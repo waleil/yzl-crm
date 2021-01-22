@@ -9,7 +9,9 @@ import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
+
 import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "crmCustomer",url = "${api.gateway.url}/crmCustomer/member")
+@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/member")
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
@@ -39,7 +41,7 @@ public interface MemberFien {
 
     @ApiOperation("根据卡号获取会员信息")
     @GetMapping("/v1/getMember")
-    GeneralResult<Member> getMember(@RequestParam("memberCard") String  memberCard);
+    GeneralResult<Member> getMember(@RequestParam("memberCard") String memberCard);
 
     @ApiOperation("获取会员等级")
     @GetMapping("/v1/getMemberGrad")
@@ -55,7 +57,7 @@ public interface MemberFien {
 
     @ApiOperation("设置顾客为会员")
     @GetMapping("/v1/setMemberToVip")
-    void   setMemberToVip(@RequestParam("member_card") String member_card);
+    void setMemberToVip(@RequestParam("member_card") String member_card);
 
     @ApiOperation("获取顾客购买商品")
     @GetMapping("/v1/getMemberProductEffectList")
@@ -63,7 +65,7 @@ public interface MemberFien {
 
     @ApiOperation("获取顾客咨询商品")
     @GetMapping("/v1/getProductConsultationList")
-    GeneralResult<List<ProductConsultation>>  getProductConsultationList(@RequestParam("member_card") String member_card);
+    GeneralResult<List<ProductConsultation>> getProductConsultationList(@RequestParam("member_card") String member_card);
 
     @ApiOperation("获取顾客病症")
     @GetMapping("/v1/getMemberDisease")
@@ -95,7 +97,7 @@ public interface MemberFien {
     @GetMapping("/v1/updateMemberOrderStat")
     GeneralResult updateMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
 
-//    @ApiOperation("添加顾客行为偏好")
+    //    @ApiOperation("添加顾客行为偏好")
 //    @GetMapping("/v1/addMemberAction")
 //    GeneralResult addMemberAction(@RequestBody MemberAction memberAction);
 //
@@ -106,32 +108,7 @@ public interface MemberFien {
 //    @ApiOperation("获取顾客行为偏好")
 //    @GetMapping("/v1/getMemberAction")
 //    GeneralResult<MemberAction> getMemberAction(@RequestParam("member_card") String member_card);
-
-    @ApiOperation("新增顾客圈选")
-    @PostMapping("/v1/addCrowdGroup")
-    ComResponse  addCrowdGroup(@RequestBody member_crowd_group memberCrowdGroup);
-
-    @ApiOperation("修改顾客圈选")
-    @PostMapping("/v1/updateCrowdGroup")
-    ComResponse updateCrowdGroup(@RequestBody member_crowd_group memberCrowdGroup);
-
-    @ApiOperation("根据圈选id获取圈选信息")
-    @GetMapping("/v1/getMemberCrowdGroup")
-    ComResponse getMemberCrowdGroup(@RequestParam("crowdId") String crowdId);
-
-    @ApiOperation("根据一批顾客群组id获取群组信息,用英文逗号分隔")
-    @GetMapping("/v1/getCrowdGroupList")
-    ComResponse<List<CrowdGroup>> getCrowdGroupList( @RequestParam("crowdGroupIds")String crowdGroupIds);
-
-    @ApiOperation("分页获取顾客圈选列表")
-    @PostMapping("/v1/getCrowdGroupByPage")
-    ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
-
     @ApiOperation("获取顾客行为偏好字典数据")
     @GetMapping("/v1/getMemberActions")
     ComResponse<List<MemberBaseAttr>> getMemberActions();
-
-    @ApiOperation("删除顾客圈选")
-    @GetMapping("/v1/delMemberCrowdGroup")
-    ComResponse delMemberCrowdGroup(@RequestParam("crowdId") String crowdId);
 }

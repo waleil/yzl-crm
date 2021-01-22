@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.order;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.crm.service.order.INewOrderService;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
 import io.swagger.annotations.Api;
@@ -26,7 +27,7 @@ import java.io.InputStream;
 public class NewOrderController {
 
     @Autowired
-    private MemberFien memberFien;
+    private MemberGroupFeign memberFien;
 
     @Autowired
     private INewOrderService newOrderService;
