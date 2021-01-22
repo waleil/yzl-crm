@@ -136,7 +136,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 , advertCompletable, mediaCompletable, saleProductCompletable, diseaseCompletable, scheduleCompletable
                 , trainProductCompletable, indicatorCompletable).thenApply(x -> {
             try {
-                return (List<String>)this.intersection(baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
+                return (List<String>)intersection(baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
                         , mediaCompletable.get(), saleProductCompletable.get(), diseaseCompletable.get(), scheduleCompletable.get()
                         , trainProductCompletable.get(), indicatorCompletable.get());
             } catch (Exception e) {
