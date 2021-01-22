@@ -6,16 +6,21 @@ import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderVisitClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.product.model.vo.product.dto.ProductListDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
 import cn.net.yzl.workorder.model.db.WorkOrderVisitBean;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitCriteriaTO;
+import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("visit")
 @Api(tags = "回访工单相关接口")
+@Slf4j
 public class WorkOrderVisitController {
 
     @Autowired
@@ -32,6 +38,7 @@ public class WorkOrderVisitController {
     @Autowired
     private ProductClient productClient;
 
+
     @ApiOperation(value = "商品下拉列表（首单、最后一次购买商品）")
     @GetMapping("v1/listProduct")
     public ComResponse<Page<ProductListDTO>> listProduct(ProductSelectVO productSelectVO){
@@ -39,14 +46,14 @@ public class WorkOrderVisitController {
     }
 
     /**
-     *  分页查询回访工单
-     * @param criteriaTO
+     *  分页查询回访工单管理列表
+     * @param workOrderVisitVO
      * @return
      */
     @PostMapping("v1/list")
-    @ApiOperation(value = "分页查询回访工单", notes = "分页查询回访工单")
-    public ComResponse<Page<WorkOrderVisitBean>> listByCriteriaTO(@RequestBody WorkOrderVisitCriteriaTO criteriaTO){
-        ComResponse<Page<WorkOrderVisitBean>> result = workOrderVisitClient.listPageByCriteria(criteriaTO);
+    @ApiOperation(value = "分页查询回访工单管理列表", notes = "分页查询回访工单管理列表")
+    public ComResponse<Page<WorkOrderVisitBean>> listByCriteriaTO(@RequestBody WorkOrderVisitVO workOrderVisitVO){
+        ComResponse<Page<WorkOrderVisitBean>> result = workOrderVisitClient.listPage(workOrderVisitVO);
         return result;
     }
 
@@ -79,5 +86,12 @@ public class WorkOrderVisitController {
     public ComResponse<Page<WorkOrderVisitBean>> isListPage(@RequestBody IsListPageDTO isListPage){
         isListPage.setStaffNO(QueryIds.userNo.get());
         return workOrderVisitClient.isListPage(isListPage);
+    }
+
+    @ApiOperation(value = "查询所有用户首次购买商品",notes = "查询所有用户首次购买商品")
+    @GetMapping("v1/queryFirstProduct")
+    public ComResponse<List<ProductMainInfoDTO>> queryFirstProduct(){
+        String data = workOrderVisitClient.queryFirstProduct().getData();
+        return  productClient.queryProducts(data);
     }
 }

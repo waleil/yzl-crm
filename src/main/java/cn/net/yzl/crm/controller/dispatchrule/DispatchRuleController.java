@@ -41,8 +41,8 @@ public class DispatchRuleController {
 
     @ApiOperation(value = "启用/停用 智能派单分配规则")
     @GetMapping(value = "v1/updateDispatchRule")
-    public ComResponse updateDispatchRule(@ApiParam(value = "id", required = true) @RequestParam("id") String id,
-                                          @ApiParam(value = "status", required = true) @RequestParam("status") Integer status) {
+    public ComResponse updateDispatchRule(@ApiParam(value = "id", required = true) @RequestParam(value = "id",required = true) String id,
+                                          @ApiParam(value = "status", required = true) @RequestParam(value = "status",required = true) Integer status) {
         ComResponse comResponse = null;
         try {
             comResponse = this.dispatchRuleClient.updateDispatchRule(id, status);

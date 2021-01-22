@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderVisitBean;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitCriteriaTO;
+import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -40,14 +41,18 @@ public interface WorkOrderVisitClient {
 
     /**
      *  分页查询回访工单列表
-     * @param criteriaTO
+     * @param workOrderVisitVO
      * @return
      */
-    @PostMapping("v1/list")
+    @PostMapping("v1/listPage")
     @ApiOperation(value = "查询回访工单列表", notes = "查询回访工单列表")
-    ComResponse<Page<WorkOrderVisitBean>> listPageByCriteria(@RequestBody WorkOrderVisitCriteriaTO criteriaTO);
+    ComResponse<Page<WorkOrderVisitBean>> listPage(@RequestBody WorkOrderVisitVO workOrderVisitVO);
 
     @PostMapping("v1/isListPage")
     @ApiOperation(value = "查询我的回访工单列表", notes = "查询我的回访工单列表")
     ComResponse<Page<WorkOrderVisitBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO);
+
+    @GetMapping("v1/queryFirstProduct")
+    @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
+    ComResponse<String> queryFirstProduct();
 }

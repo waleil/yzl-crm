@@ -20,7 +20,7 @@ import java.util.List;
  * @title: MemberGroupFegin
  * @date: 2021/1/22 3:09 下午
  */
-@FeignClient(name = "crmCustomer",url = "${api.gateway.url}/crmCustomer/customerGroup")
+@FeignClient(name = "crmCustomerGroup",url = "${api.gateway.url}/crmCustomer/customerGroup")
 //@FeignClient(name = "crmCustomerGroup",url = "http://127.0.0.1:2070/customerGroup")
 public interface MemberGroupFeign {
     @ApiOperation("新增顾客圈选")
