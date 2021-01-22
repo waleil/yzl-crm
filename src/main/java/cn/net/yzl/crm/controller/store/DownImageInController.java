@@ -126,18 +126,15 @@ public class DownImageInController {
             @ApiImplicitParam(name = "storeNo", value = "仓库编号", dataType = "string", paramType = "query")
     })
     @GetMapping("v1/exportProductStockExcel")
-    public void exportProductStockExcel(@RequestParam String codeAndName,@RequestParam String storeNo, HttpServletResponse httpServletResponse) throws IOException {
+    public void exportProductStockExcel(@RequestParam("codeAndName") String codeAndName,@RequestParam("storeNo") String storeNo, HttpServletResponse httpServletResponse) throws IOException {
         downImageInService.exportProductStockExcel(codeAndName,storeNo,httpServletResponse);
     }
 
 
     @PostMapping(value = "v1/exportExcelOfProductPurchaseWarn")
     @ApiOperation("预警商品导出EXCEL")
-    public void exportExcelOfProductPurchaseWarn(@RequestBody ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO,HttpServletResponse httpServletResponse) {
-//        return downImageInService.exportExcelOfProductPurchaseWarn(productPurchaseWarnExcelVO,httpServletResponse);
-
-        return;
-
+    public void exportExcelOfProductPurchaseWarn(@RequestBody ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO,HttpServletResponse httpServletResponse) throws IOException {
+        downImageInService.exportExcelOfProductPurchaseWarn(productPurchaseWarnExcelVO, httpServletResponse);
     }
 
 

@@ -26,23 +26,23 @@ import java.util.List;
 //@FeignClient("yzl-store-server")
 public interface ProductPurchaseWarnFeignService {
 
-    @GetMapping(value = "v1/selectProductPurchaseWarnSet")
+    @GetMapping(value = "productPurchaseWarn/v1/selectProductPurchaseWarnSet")
     @ApiOperation("查询预警通知设置")
     public ComResponse<ProductPurchaseWarnSetDTO> selectProductPurchaseWarnSet();
 
-    @PostMapping(value = "v1/updateProductPurchaseWarnSet")
+    @PostMapping(value = "productPurchaseWarn/v1/updateProductPurchaseWarnSet")
     @ApiOperation("修改预警通知设置")
-    public ComResponse updateProductPurchaseWarnSet(ProductPurchaseWarnSetVO productPurchaseWarnSetVO);
+    public ComResponse updateProductPurchaseWarnSet(@RequestBody ProductPurchaseWarnSetVO productPurchaseWarnSetVO);
 
-    @GetMapping(value = "v1/selectProductPurchaseWarnList")
+    @GetMapping(value = "productPurchaseWarn/v1/selectProductPurchaseWarnList")
     @ApiOperation("采购商品预警列表分页查询")
-    public ComResponse<Page<ProductPurchaseWarnDTO>> selectProductPurchaseWarnList(ProductPurchaseWarnVO productPurchaseWarnVO);
+    public ComResponse<Page<ProductPurchaseWarnDTO>> selectProductPurchaseWarnList(@RequestBody ProductPurchaseWarnVO productPurchaseWarnVO);
 
-    @PostMapping(value = "v1/insertOrderDataToProductPurchaseWarn")
+    @PostMapping(value = "productPurchaseWarn/v1/insertOrderDataToProductPurchaseWarn")
     @ApiOperation("获取订单服务数据计算并保存")
     public ComResponse insertOrderDataToProductPurchaseWarn();
 
-    @PostMapping(value = "v1/selectExcelOfProductPurchaseWarn")
+    @PostMapping(value = "productPurchaseWarn/v1/selectExcelOfProductPurchaseWarn")
     @ApiOperation("预警商品导出EXCEL")
     public ComResponse<List<ProductPurchaseWarnExcelDTO>> selectExcelOfProductPurchaseWarn(@RequestBody ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO);
 }

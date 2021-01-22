@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.model.dto.StoreDto;
 import cn.net.yzl.model.dto.StoreLocalDto;
+import cn.net.yzl.model.pojo.ProductStockPo;
 import cn.net.yzl.model.pojo.StoreLocalPo;
 import cn.net.yzl.model.pojo.StorePo;
 import cn.net.yzl.model.pojo.SysDictDataPo;
@@ -104,9 +105,9 @@ public interface StoreFeginService {
     public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no);
 
     @GetMapping("store/v1/stockInquiry")
-    public ComResponse stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
-                                    @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
-                                    @RequestParam(value = "storeName",required = false) String storeNo);
+    public ComResponse<Page<ProductStockPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                                          @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
+                                                          @RequestParam(value = "storeName",required = false) String storeNo);
 
 
     @ApiOperation(value = "获取已存在的财务归属", notes = "获取已存在的财务归属", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
