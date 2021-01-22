@@ -19,7 +19,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryClient categoryClient;
 
     @Override
-    public ComResponse getCategoryById(Integer id) {
+    public ComResponse<Category> getCategoryById(Integer id) {
         return categoryClient.getCategoryById(id);
     }
 

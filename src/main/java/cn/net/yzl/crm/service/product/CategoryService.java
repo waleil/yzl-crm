@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public interface CategoryService {
-    ComResponse getCategoryById(Integer id);
+    ComResponse<Category> getCategoryById(Integer id);
 
     ComResponse<Category> insertCategory(CategoryTO categoryTO);
 

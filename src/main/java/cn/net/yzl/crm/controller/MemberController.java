@@ -314,7 +314,7 @@ public class MemberController {
         member_group.setTotal_amount(memberCrowdGroup.getTotal_amount());
         member_group.setWechat(memberCrowdGroup.getWechat());
         member_group.setActions(memberCrowdGroup.getActions());
-        member_group.setCrowd_id(memberCrowdGroup.getCrowd_id());
+//        member_group.setCrowd_id(memberCrowdGroup.getCrowd_id());
         member_group.setCrowd_name(memberCrowdGroup.getCrowd_name());
         member_group.setActive_degree(memberCrowdGroup.getActive_degree());
         member_group.setActive_order(member_group.getActive_order());
@@ -370,7 +370,7 @@ public class MemberController {
         if (StringUtil.isNullOrEmpty(memberCrowdGroup.getCrowd_id())) {
             String crowd_id = UUID.randomUUID().toString().replaceAll("-", "");
 
-            member_group.setCrowd_id(crowd_id);
+//            member_group.setCrowd_id(crowd_id);
             member_group.setCreate_time(DateHelper.getCurrentDate());
 
             ComResponse result= memberFien.addCrowdGroup(member_group);

@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.product.CategoryService;
+import cn.net.yzl.product.model.db.Category;
 import cn.net.yzl.product.model.vo.category.CategoryDelVO;
 import cn.net.yzl.product.model.vo.category.CategorySelectTO;
 import cn.net.yzl.product.model.vo.category.CategoryTO;
@@ -33,11 +34,11 @@ public class CategoryController {
     @ApiOperation(value = "通过id精确匹配分类")
     @GetMapping("getCategoryById")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
-    public ComResponse<CategoryTO> getCategoryById(@RequestParam("id") Integer id) {
+    public ComResponse<Category> getCategoryById(@RequestParam("id") Integer id) {
         if(id == null || id < 1){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"不合法的id类型！");
         }
-        ComResponse comResponse = categoryService.getCategoryById(id);
+        ComResponse<Category> comResponse = categoryService.getCategoryById(id);
         if (comResponse.getData() == null) {
             return ComResponse.nodata();
         }

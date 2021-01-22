@@ -13,7 +13,7 @@ import java.util.List;
 public interface CategoryClient {
 
     @GetMapping("getById")
-    ComResponse<CategoryTO> getCategoryById(@RequestParam("id") Integer id);
+    ComResponse<Category> getCategoryById(@RequestParam("id") Integer id);
 
     @PostMapping("insert")
     ComResponse<Category> insertCategory(@RequestBody CategoryVO categoryVO);
