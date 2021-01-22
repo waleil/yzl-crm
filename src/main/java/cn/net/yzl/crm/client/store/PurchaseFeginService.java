@@ -2,10 +2,7 @@ package cn.net.yzl.crm.client.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.model.dto.PurchaseOrderDto;
-import cn.net.yzl.model.dto.PurchaseReviewDto;
-import cn.net.yzl.model.dto.PurchaseWithdrawDto;
-import cn.net.yzl.model.dto.WarehousingOrderDto;
+import cn.net.yzl.model.dto.*;
 import cn.net.yzl.model.vo.PurchaseOrderAddVo;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
 import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
@@ -68,7 +65,7 @@ public interface PurchaseFeginService {
     @ApiOperation(value = "查看采购订单", notes = "查看采购订单")
     @ApiImplicitParam(name = "id", value = "采购订单id", required = true, dataType = "Int", paramType = "query")
     @GetMapping("purchase/v1/detail")
-    ComResponse<PurchaseOrderDto> detail(@RequestParam("id") Integer id);
+    ComResponse<PurchaseOrderResDto> detail(@RequestParam("id") Integer id);
 
 
     /**
@@ -118,7 +115,7 @@ public interface PurchaseFeginService {
 
     @ApiOperation(value = "采购订单预计到货日期", notes = "采购订单预计到货日期")
     @ApiImplicitParam(name = "supplierNo", value = "供应商编码", required = true, dataType = "String", paramType = "query")
-    @GetMapping("v1/computer/expect/date")
+    @GetMapping("purchase/v1/computer/expect/date")
     ComResponse<String> computerExpectDate(@RequestParam(value = "supplierNo") String supplierNo);
 
 }

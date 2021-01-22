@@ -4,10 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.InventoryDto;
 import cn.net.yzl.model.dto.InventoryProductDto;
-import cn.net.yzl.model.vo.InventoryExcelVo;
-import cn.net.yzl.model.vo.InventoryParamVo;
-import cn.net.yzl.model.vo.InventoryProductExcelVo;
-import cn.net.yzl.model.vo.InventoryVo;
+import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,5 +42,9 @@ public interface InventoryFeginService {
     @ApiOperation(value = "导入查看盘点商品",notes = "导入查看盘点商品信息")
     @PostMapping("inventory/v1/readExcelnventoryProduct")
     ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(@RequestBody InventoryExcelVo inventoryExcelVo);
+
+    @ApiOperation(value = "修改盘点商品库存数据",notes = "修改盘点商品库存数据")
+    @PostMapping("inventory/v1/updateInventoryProduct")
+     ComResponse updateInventoryProduct(@RequestBody InventoryAllProductVo inventoryAllProductVo);
 
 }

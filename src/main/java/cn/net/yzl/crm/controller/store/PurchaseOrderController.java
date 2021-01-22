@@ -1,15 +1,9 @@
 package cn.net.yzl.crm.controller.store;
 
-import cn.hutool.core.date.DateUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.PurchaseFeginService;
-import cn.net.yzl.model.dto.PurchaseOrderDto;
-import cn.net.yzl.model.dto.PurchaseReviewDto;
-import cn.net.yzl.model.dto.PurchaseWithdrawDto;
-import cn.net.yzl.model.dto.WarehousingOrderDto;
-import cn.net.yzl.model.pojo.SupplierPo;
+import cn.net.yzl.model.dto.*;
 import cn.net.yzl.model.vo.PurchaseOrderAddVo;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
 import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
@@ -20,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +55,7 @@ public class PurchaseOrderController {
     @ApiOperation(value = "查看采购订单", notes = "查看采购订单")
     @ApiImplicitParam(name = "id", value = "采购订单id", required = true, dataType = "Int", paramType = "query")
     @GetMapping("v1/detail")
-    public ComResponse<PurchaseOrderDto> detail(@RequestParam("id") Integer id){
+    public ComResponse<PurchaseOrderResDto> detail(@RequestParam("id") Integer id){
         return purchaseFeginService.detail(id);
     }
 

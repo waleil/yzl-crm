@@ -3,10 +3,11 @@ package cn.net.yzl.crm.service.micservice;
 import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.config.RestPage;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
-import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupDTO;
+import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,26 +69,17 @@ public interface CrmStaffClient {
      * @param staffCrowdGroupDTO
      * @return
      */
-    @PostMapping("/staff/v1/saveStaffCrowdGroupDTO")
-    Integer saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroupDTO staffCrowdGroupDTO);
+    @PostMapping("/staff/v1/saveStaffCrowdGroup")
+    ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroupDTO);
 
 
     @GetMapping("/staff/v1/getGroupListByPage")
-    ComResponse<Page<StaffCrowdGroupDTO>> getGroupListByPage(@RequestParam("crowdGroupName")String crowdGroupName,
-                                                             @RequestParam("status") Integer status,
-                                                             @RequestParam("startTime") Date startTime,
-                                                             @RequestParam("endTime") Date endTime,
-                                                             @RequestParam("pageNo")Integer pageNo,
-                                                             @RequestParam("pageSize") Integer pageSize);
-
-    /**
-     * 员工圈选 试算
-     * @param groupId
-     * @return
-     */
-    @GetMapping("/staff/v1/trialStaffNo")
-    ComResponse<Integer> trialStaffNo(@RequestParam("groupId") long groupId);
-
+    ComResponse<RestPage<StaffCrowdGroup>> getGroupListByPage(@RequestParam("crowdGroupName")String crowdGroupName,
+                                                              @RequestParam("status") Integer status,
+                                                              @RequestParam("startTime") Date startTime,
+                                                              @RequestParam("endTime") Date endTime,
+                                                              @RequestParam("pageNo")Integer pageNo,
+                                                              @RequestParam("pageSize") Integer pageSize);
     /**
      *  员工圈选 启用 失效
      * @param enable 1:启用, -1:失效
@@ -102,7 +94,7 @@ public interface CrmStaffClient {
      * @param groupId 群组id
      * @return
      */
-    @GetMapping("/staff/v1/getStaffCrowdGroupDTO")
-    ComResponse<StaffCrowdGroupDTO> getStaffCrowdGroupDTO(@RequestParam("groupId")long groupId);
+    @GetMapping("/staff/v1/getStaffCrowdGroup")
+    ComResponse<StaffCrowdGroup> getStaffCrowdGroupDTO(@RequestParam("groupId")long groupId);
 
 }

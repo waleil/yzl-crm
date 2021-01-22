@@ -62,6 +62,12 @@ public class InventoryController {
       return inventoryService.readExcelnventoryProduct(readExcelInventoryProductVo);
     }
 
+    @ApiOperation(value = "修改盘点商品库存数据",notes = "修改盘点商品库存数据")
+    @PostMapping("v1/updateInventoryProduct")
+    public ComResponse updateInventoryProduct(@RequestBody InventoryAllProductVo inventoryAllProductVo){
+        return inventoryFeginService.updateInventoryProduct(inventoryAllProductVo);
+    }
+
 
 
 }
