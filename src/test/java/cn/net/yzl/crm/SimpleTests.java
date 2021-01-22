@@ -22,6 +22,18 @@ import cn.net.yzl.order.model.vo.order.OrderDetailIn;
  */
 public class SimpleTests {
 	@Test
+	public void testJoining() {
+		OrderDetailIn od1 = new OrderDetailIn();
+		od1.setProductCode("11");
+		OrderDetailIn od2 = new OrderDetailIn();
+		od2.setProductCode("22");
+		OrderDetailIn od3 = new OrderDetailIn();
+		od3.setProductCode("33");
+		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3);
+		System.err.println(detailIns.stream().map(OrderDetailIn::getProductCode).collect(Collectors.joining(",")));
+	}
+
+	@Test
 	public void testCollect() {
 		OrderDetailIn od1 = new OrderDetailIn();
 		od1.setMealNo("11");
@@ -38,9 +50,7 @@ public class SimpleTests {
 		OrderDetailIn m2 = new OrderDetailIn();
 		m2.setProductCode("55");
 		m2.setMealFlag(CommonConstant.MEAL_FLAG_0);
-//		List<OrderDetailIn> meal = Arrays.asList(m1, m2);
 		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3);
-		System.err.println(detailIns.stream().map(OrderDetailIn::getProductCode).collect(Collectors.joining(",")));
 		List<OrderDetailIn> list = detailIns.stream().filter(p -> p.getMealFlag() != CommonConstant.MEAL_FLAG_0)
 				.collect(Collectors.toList());
 		System.err.println(list.size());

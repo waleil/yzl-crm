@@ -7,10 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,7 +17,7 @@ import java.util.List;
  *
  * @author zhouchangsong
  */
-@FeignClient(name = "orderRejection", url = "${api.gateway.url}/orderService/orderRejection")
+@FeignClient(name = "orderRejection", url = "localhost:4455/orderRejection")
 public interface OrderRejectionClient {
 
     /**
@@ -40,7 +37,7 @@ public interface OrderRejectionClient {
      * @param dto
      * @return
      */
-    @PutMapping("v1/addOrderRejection")
+    @PostMapping("v1/addOrderRejection")
     ComResponse<?> addOrderRejection(@Valid @RequestBody OrderRejectionAddDTO dto);
 
     /**
