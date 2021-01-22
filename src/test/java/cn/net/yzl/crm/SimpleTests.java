@@ -124,11 +124,11 @@ public class SimpleTests {
 		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
 		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
 
-		BigDecimal b2 = new BigDecimal(taocan.getMealPrice());
-		BigDecimal b3 = new BigDecimal(orderTotal);
+		BigDecimal b2 = BigDecimal.valueOf(taocan.getMealPrice());
+		BigDecimal b3 = BigDecimal.valueOf(orderTotal);
 		orderList.stream().forEach(m -> {
-			BigDecimal b1 = new BigDecimal(m.getTotal());
-			BigDecimal b4 = new BigDecimal(m.getProductCount());
+			BigDecimal b1 = BigDecimal.valueOf(m.getTotal());
+			BigDecimal b4 = BigDecimal.valueOf(m.getProductCount());
 			System.err.println(String.format("%s: %s", m.getProductName(),
 					b1.multiply(b2).divide(b3, BigDecimal.ROUND_HALF_UP).divide(b4, BigDecimal.ROUND_HALF_UP)));
 		});
@@ -167,10 +167,10 @@ public class SimpleTests {
 		int proTotal = orderList.stream().mapToInt(OrderDetailIn::getProductUnitPrice).sum();
 		int cha = orderTotal - taocan.getMealPrice();
 
-		BigDecimal b1 = new BigDecimal(cha);
-		BigDecimal b2 = new BigDecimal(proTotal);
+		BigDecimal b1 = BigDecimal.valueOf(cha);
+		BigDecimal b2 = BigDecimal.valueOf(proTotal);
 		orderList.stream().forEach(m -> {
-			BigDecimal b3 = new BigDecimal(m.getProductUnitPrice());
+			BigDecimal b3 = BigDecimal.valueOf(m.getProductUnitPrice());
 			System.err.println(
 					String.format("%s: %s", m.getProductName(), b1.multiply(b3).divide(b2, BigDecimal.ROUND_HALF_UP)));
 		});
@@ -206,10 +206,10 @@ public class SimpleTests {
 
 		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
 		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
-		BigDecimal b1 = new BigDecimal(taocan.getMealPrice());
-		BigDecimal b2 = new BigDecimal(orderTotal);
+		BigDecimal b1 = BigDecimal.valueOf(taocan.getMealPrice());
+		BigDecimal b2 = BigDecimal.valueOf(orderTotal);
 		orderList.stream().forEach(m -> {
-			BigDecimal b3 = new BigDecimal(m.getProductUnitPrice());
+			BigDecimal b3 = BigDecimal.valueOf(m.getProductUnitPrice());
 			System.err.println(String.format("%s: %s", m.getProductName(),
 					b1.multiply(b3).divide(b2, 2, BigDecimal.ROUND_HALF_UP)));
 		});
