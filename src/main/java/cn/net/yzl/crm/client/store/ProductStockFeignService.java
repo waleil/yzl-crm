@@ -13,8 +13,8 @@ import java.util.List;
  * @version 1.0
  * @date 2021/1/22 11:09
  */
-@FeignClient(name = "inventoryClient",url = "${api.gateway.url}/storeServer")
-//@FeignClient("yzl-store-server")
+//@FeignClient(name = "inventoryClient",url = "${api.gateway.url}/storeServer")
+@FeignClient("yzl-store-server")
 public interface ProductStockFeignService {
 
     /**

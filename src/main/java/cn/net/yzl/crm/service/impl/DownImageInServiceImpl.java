@@ -7,11 +7,13 @@ import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.model.vo.InventoryProductExcelVo;
 import cn.net.yzl.model.vo.ProductStockExcelVo;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,14 +31,22 @@ public class DownImageInServiceImpl implements DownImageInService {
 
 
     @Override
-    public ComResponse exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException {
+    public void exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException {
         ComResponse<List<ProductStockExcelVo>> listComResponse = productStockFeignService.selectProductStockExcel(codeAndName, storeNo);
 
-        if (listComResponse==null || listComResponse.getCode() !=200)
-            return ComResponse.fail(ResponseCodeEnums.BIZ_ERROR_CODE.getCode(),ResponseCodeEnums.BIZ_ERROR_CODE.getMessage());
+        if (listComResponse==null || listComResponse.getCode() !=200){
+            httpServletResponse.setContentType("application/json;charset=utf-8");
+            PrintWriter out = httpServletResponse.getWriter();
+            out.write(JSON.toJSONString(listComResponse));
+            return;
+        }
         List<ProductStockExcelVo> listComResponseData = listComResponse.getData();
-        if (listComResponseData == null || listComResponseData.size()==0)
-            return ComResponse.fail(ResponseCodeEnums.BIZ_ERROR_CODE.getCode(),ResponseCodeEnums.BIZ_ERROR_CODE.getMessage());
+        if (listComResponseData == null || listComResponseData.size()==0){
+            httpServletResponse.setContentType("application/json;charset=utf-8");
+            PrintWriter out = httpServletResponse.getWriter();
+            out.write(JSON.toJSONString(listComResponse));
+            return;
+        }
 
         //系统时间
         Date date = new Date();
@@ -46,14 +56,12 @@ public class DownImageInServiceImpl implements DownImageInService {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=stock" + date+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=stock" + sysDate+".xlsx");
 
 
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), ProductStockExcelVo.class)
                 .sheet("库存表").doWrite(listComResponseData);
-
-        return ComResponse.success();
     }
 }

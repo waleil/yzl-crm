@@ -17,5 +17,5 @@ import java.util.List;
 public interface DownImageInService {
 
 
-    ComResponse exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException;
+    void exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException;
 }
