@@ -41,5 +41,6 @@ public interface CategoryClient {
                                                  @RequestParam("pageNo") Integer pageNo,
                                                  @RequestParam("pageSize") Integer pageSize);
     @GetMapping("query4SelectOption")
-    ComResponse<List<CategorySelectTO>> query4SelectOption(@RequestParam(value ="pid") Integer pid);
+    ComResponse<List<CategorySelectTO>> query4SelectOption(@RequestParam(value ="pid") Integer pid,
+                                                           @RequestParam(value = "type") String type);
 }

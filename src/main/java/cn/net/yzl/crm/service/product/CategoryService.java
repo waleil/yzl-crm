@@ -27,5 +27,5 @@ public interface CategoryService {
 
     ComResponse<Page<CategoryTO>> selectAll(Integer pid, Integer pageNo, Integer pageSize);
 
-    ComResponse<List<CategorySelectTO>> selectForOptions(Integer pid);
+    ComResponse<List<CategorySelectTO>> selectForOptions(Integer pid,String type);
 }

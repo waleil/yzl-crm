@@ -71,8 +71,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse<List<CategorySelectTO>> selectForOptions(Integer pid) {
-        return categoryClient.query4SelectOption(pid);
+    public ComResponse<List<CategorySelectTO>> selectForOptions(Integer pid,String type) {
+        return categoryClient.query4SelectOption(pid,type);
     }
 
 

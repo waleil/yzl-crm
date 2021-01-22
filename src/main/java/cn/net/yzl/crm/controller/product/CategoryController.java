@@ -155,13 +155,17 @@ public class CategoryController {
     }
 
     @ApiOperation("提供给前端下拉列表的查询接口")
-    @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true)
     @GetMapping("selectForOptions")
-    public ComResponse<List<CategorySelectTO>> selectForOptions(@RequestParam("pid")Integer pid){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true),
+            @ApiImplicitParam(name = "type",value = "如不需要过滤空值，则在此输入'pid'",paramType = "query", required = false)
+    })
+    public ComResponse<List<CategorySelectTO>> selectForOptions(@RequestParam("pid")Integer pid,
+                                                                @RequestParam(value = "type",required = false)String type){
         if (pid == null || pid < 0) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
         }
-        return categoryService.selectForOptions(pid);
+        return categoryService.selectForOptions(pid,type);
     }
 
  }
