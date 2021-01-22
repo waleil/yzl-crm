@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * <p>
  * 远程调用  规则接口
  */
-@FeignClient(name = "dispatchRuleClient", url = "${api.gateway.url}/workorderServer/dispatch_rule")
-//@FeignClient(name = "dispatchRuleClient", url = "localhost:4602/dispatch_rule") // 本地测试
+//@FeignClient(name = "dispatchRuleClient", url = "${api.gateway.url}/workorderServer/dispatch_rule")
+@FeignClient(name = "dispatchRuleClient", url = "localhost:4602/dispatch_rule") // 本地测试
 @Service
 public interface DispatchRuleClient {
     /**
@@ -37,7 +37,7 @@ public interface DispatchRuleClient {
      * @return
      */
     @GetMapping("v1/updateDispatchRule")
-    public ComResponse updateDispatchRule(@RequestParam String id, @RequestParam Integer status);
+    public ComResponse updateDispatchRule(@RequestParam("id") String id, @RequestParam("status") Integer status);
 
 
     /**
