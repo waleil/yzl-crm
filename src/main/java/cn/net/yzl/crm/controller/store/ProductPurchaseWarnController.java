@@ -2,7 +2,6 @@ package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.ProductPurchaseWarnFeignService;
 import cn.net.yzl.model.dto.ProductPurchaseWarnDTO;
 import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
@@ -42,7 +41,7 @@ public class ProductPurchaseWarnController {
         return feignService.updateProductPurchaseWarnSet(productPurchaseWarnSetVO);
     }
 
-    @GetMapping(value = "v1/selectProductPurchaseWarnList")
+    @PostMapping(value = "v1/selectProductPurchaseWarnList")
     @ApiOperation("采购商品预警列表分页查询")
     public ComResponse<Page<ProductPurchaseWarnDTO>> selectProductPurchaseWarnList(@RequestBody ProductPurchaseWarnVO productPurchaseWarnVO) {
         return feignService.selectProductPurchaseWarnList(productPurchaseWarnVO);
