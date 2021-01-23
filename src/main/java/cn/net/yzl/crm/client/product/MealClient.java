@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.product.model.vo.meal.MealProductVO;
+import cn.net.yzl.crm.model.meal.MealProductVO;
 import cn.net.yzl.product.model.vo.product.dto.MealDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
