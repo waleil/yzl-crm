@@ -1,9 +1,10 @@
-package cn.net.yzl.crm;
+package cn.net.yzl.crm.test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -29,8 +30,39 @@ public class SimpleTests {
 		od2.setProductCode("22");
 		OrderDetailIn od3 = new OrderDetailIn();
 		od3.setProductCode("33");
-		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3);
-		System.err.println(detailIns.stream().map(OrderDetailIn::getProductCode).collect(Collectors.joining(",")));
+		OrderDetailIn od4 = new OrderDetailIn();
+		od4.setProductCode("33");
+		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3, od4);
+		System.err.println(
+				detailIns.stream().map(OrderDetailIn::getProductCode).distinct().collect(Collectors.joining(",")));
+	}
+
+	@Test
+	public void testGroupingBy() {
+		OrderDetailIn od1 = new OrderDetailIn();
+		od1.setMealNo("11");
+		od1.setMealName("套餐11");
+		od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+		OrderDetailIn od2 = new OrderDetailIn();
+		od2.setProductCode("22");
+		od2.setProductName("商品22");
+		od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		OrderDetailIn od3 = new OrderDetailIn();
+		od3.setProductCode("33");
+		od3.setProductName("商品33");
+		od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		OrderDetailIn od4 = new OrderDetailIn();
+		od4.setProductCode("44");
+		od4.setProductName("商品44");
+		od4.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		OrderDetailIn od5 = new OrderDetailIn();
+		od5.setMealNo("55");
+		od5.setMealName("套餐55");
+		od5.setMealFlag(CommonConstant.MEAL_FLAG_1);
+		Map<Integer, List<OrderDetailIn>> odMap = Arrays.asList(od1, od2, od3, od4, od5).stream()
+				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
+		odMap.entrySet().stream()
+				.forEach(en -> System.err.println(String.format("%s\t%s", en.getKey(), en.getValue())));
 	}
 
 	@Test
@@ -78,9 +110,8 @@ public class SimpleTests {
 	@Test
 	public void testAtomicInteger() {
 		AtomicInteger ai = new AtomicInteger(0);
-		Arrays.asList("a", "b", "c").stream().forEach(s -> {
-			System.err.println(String.format("%s%s", s, ai.incrementAndGet()));
-		});
+		Arrays.asList("a", "b", "c").stream()
+				.forEach(s -> System.err.println(String.format("%s%s", s, ai.incrementAndGet())));
 	}
 
 	@Test
@@ -121,11 +152,11 @@ public class SimpleTests {
 		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
 		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
 
-		BigDecimal b2 = new BigDecimal(taocan.getMealPrice());
-		BigDecimal b3 = new BigDecimal(orderTotal);
+		BigDecimal b2 = BigDecimal.valueOf(taocan.getMealPrice());
+		BigDecimal b3 = BigDecimal.valueOf(orderTotal);
 		orderList.stream().forEach(m -> {
-			BigDecimal b1 = new BigDecimal(m.getTotal());
-			BigDecimal b4 = new BigDecimal(m.getProductCount());
+			BigDecimal b1 = BigDecimal.valueOf(m.getTotal());
+			BigDecimal b4 = BigDecimal.valueOf(m.getProductCount());
 			System.err.println(String.format("%s: %s", m.getProductName(),
 					b1.multiply(b2).divide(b3, BigDecimal.ROUND_HALF_UP).divide(b4, BigDecimal.ROUND_HALF_UP)));
 		});
@@ -164,10 +195,10 @@ public class SimpleTests {
 		int proTotal = orderList.stream().mapToInt(OrderDetailIn::getProductUnitPrice).sum();
 		int cha = orderTotal - taocan.getMealPrice();
 
-		BigDecimal b1 = new BigDecimal(cha);
-		BigDecimal b2 = new BigDecimal(proTotal);
+		BigDecimal b1 = BigDecimal.valueOf(cha);
+		BigDecimal b2 = BigDecimal.valueOf(proTotal);
 		orderList.stream().forEach(m -> {
-			BigDecimal b3 = new BigDecimal(m.getProductUnitPrice());
+			BigDecimal b3 = BigDecimal.valueOf(m.getProductUnitPrice());
 			System.err.println(
 					String.format("%s: %s", m.getProductName(), b1.multiply(b3).divide(b2, BigDecimal.ROUND_HALF_UP)));
 		});
@@ -203,10 +234,10 @@ public class SimpleTests {
 
 		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
 		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
-		BigDecimal b1 = new BigDecimal(taocan.getMealPrice());
-		BigDecimal b2 = new BigDecimal(orderTotal);
+		BigDecimal b1 = BigDecimal.valueOf(taocan.getMealPrice());
+		BigDecimal b2 = BigDecimal.valueOf(orderTotal);
 		orderList.stream().forEach(m -> {
-			BigDecimal b3 = new BigDecimal(m.getProductUnitPrice());
+			BigDecimal b3 = BigDecimal.valueOf(m.getProductUnitPrice());
 			System.err.println(String.format("%s: %s", m.getProductName(),
 					b1.multiply(b3).divide(b2, 2, BigDecimal.ROUND_HALF_UP)));
 		});

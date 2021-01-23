@@ -1,13 +1,10 @@
 package cn.net.yzl.crm.client.product;
 
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.product.model.db.Meal;
-import cn.net.yzl.product.model.vo.product.dto.MealDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
-import cn.net.yzl.product.model.vo.product.vo.*;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +12,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.util.List;
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.product.model.vo.meal.MealProductVO;
+import cn.net.yzl.product.model.vo.product.dto.MealDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
+import cn.net.yzl.product.model.vo.product.vo.MealVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductMealDetailVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductMealSelectVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductMealUpdateStatusVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductMealUpdateTimeVO;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @FeignClient(name = "mealClient",url = "${api.gateway.url}/productServer/productMeal/v1")
 //@FeignClient("yzl-product-server")
@@ -91,4 +99,16 @@ public interface MealClient {
     @ApiOperation("查询商品套餐画像")
     ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") String mealNo);
 
+	/**
+	 * 根据套餐编号查询，多个套餐编号以英文逗号分隔
+	 * 
+	 * @param codes 套餐编号，多个以,分隔
+	 * @return 套餐关联的商品列表
+	 * @author zhangweiwei
+	 * @date 2021年1月23日,上午10:45:44
+	 */
+	@GetMapping("/queryByCodes")
+	@ApiOperation("根据套餐编号查询，多个套餐编号以英文逗号分隔")
+	ComResponse<List<MealProductVO>> queryListProductMealByCodes(
+			@RequestParam @NotBlank @ApiParam(value = "套餐编号，多个以,分隔", required = true) String codes);
 }

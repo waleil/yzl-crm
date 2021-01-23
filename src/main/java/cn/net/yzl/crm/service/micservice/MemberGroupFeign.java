@@ -4,14 +4,18 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.customer.model.MemberBaseAttr;
+import cn.net.yzl.crm.customer.mongomodel.crowd.CustomerCrowdGroupVO;
+import cn.net.yzl.crm.customer.mongomodel.crowd.UpdateCrowdStatusVO;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -41,9 +45,27 @@ public interface MemberGroupFeign {
 
     @ApiOperation("分页获取顾客圈选列表")
     @GetMapping("/v1/getCrowdGroupByPage")
-    ComResponse getCrowdGroupByPage(@RequestBody CrowdGroupDTO crowdGroupDTO);
+    ComResponse getCrowdGroupByPage(@SpringQueryMap CrowdGroupDTO crowdGroupDTO);
 
     @ApiOperation("删除顾客圈选")
     @GetMapping("/v1/delMemberCrowdGroup")
     ComResponse delMemberCrowdGroup(@RequestParam("crowdId") String crowdId);
+    /**
+     * @Author: lichanghong
+     * @Description: 修改圈选规则状态
+     * @Date: 2021/1/22 8:39 下午
+     * @Return:
+     */
+    @PostMapping("/v1/updateStatus")
+    ComResponse updateCustomerCrowdGroupStatus(@RequestBody UpdateCrowdStatusVO vo);
+    /**
+     * @Author: lichanghong
+     * @Description:  查询圈选规则
+     * @Date: 2021/1/22 8:20 下午
+     * @param
+     * @Return: cn.net.yzl.common.entity.ComResponse<cn.net.yzl.crm.customer.mongomodel.crowd.CustomerCrowdGroupVO>
+     */
+    @GetMapping("/v1/query4Select")
+    ComResponse<List<CustomerCrowdGroupVO>> query4Select();
+
 }

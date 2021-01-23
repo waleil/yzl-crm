@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.dto.ehr.StaffDetailDto;
 import cn.net.yzl.crm.service.StaffLassoService;
@@ -9,9 +10,7 @@ import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.*;
-import cn.net.yzl.crm.staff.model.mogo.RestPage;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
@@ -19,6 +18,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static cn.hutool.core.collection.CollUtil.isEmpty;
@@ -43,9 +43,9 @@ public class StaffLassoServiceImpl implements StaffLassoService {
 
 
     @Override
-    public Integer calculationDto(CalculationDto calculationDto) throws Exception {
+    public List<String> calculationDto(CalculationDto calculationDto) throws Exception {
         if (null == calculationDto) {
-            return 0;
+            return Collections.emptyList();
         }
         //获取原线程的请求参数
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
@@ -136,7 +136,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 , advertCompletable, mediaCompletable, saleProductCompletable, diseaseCompletable, scheduleCompletable
                 , trainProductCompletable, indicatorCompletable).thenApply(x -> {
             try {
-                return (List<String>)intersection(baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
+                return (List<String>) intersection(baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
                         , mediaCompletable.get(), saleProductCompletable.get(), diseaseCompletable.get(), scheduleCompletable.get()
                         , trainProductCompletable.get(), indicatorCompletable.get());
             } catch (Exception e) {
@@ -144,7 +144,20 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             }
             return null;
         });
-        return CollectionUtils.isNotEmpty(all.get()) ? all.get().size() : 0;
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup();
+
+        List<String> staffNoList = all.get();
+        if (CollectionUtils.isEmpty(staffNoList)) {
+            return Collections.emptyList();
+        }
+
+        List<List<String>> collect = staffCrowdGroup.stream().map(StaffCrowdGroup::getStaffCodeList).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)) {
+            return CollectionUtils.isNotEmpty(all.get()) ? all.get() : Collections.emptyList();
+        }
+        AtomicReference<List<String>> newStaffNo = new AtomicReference<>();
+        collect.forEach(staffList-> newStaffNo.set(CollUtil.subtractToList(staffNoList, staffList)));
+        return newStaffNo.get();
     }
 
     @SafeVarargs
@@ -158,10 +171,10 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         if (isEmpty(newColl)) {
             return Collections.emptyList();
         }
-        if(newColl.size()==1){
+        if (newColl.size() == 1) {
             return newColl.get(0);
         }
-        if(newColl.size()==2){
+        if (newColl.size() == 2) {
             return CollUtil.intersection(newColl.get(0), newColl.get(1));
         }
         List<Collection<T>> collect = newColl.stream().skip(2).collect(Collectors.toList());
@@ -185,20 +198,20 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         if (null == data) {
             return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE);
         }
-        return ComResponse.success(this.calculationDto(data.getCalculationDto()));
+        return ComResponse.success(this.calculationDto(data.getCalculationDto()).size());
     }
 
     @Override
-    public ComResponse<RestPage<StaffCrowdGroupListDTO>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize) {
-        ComResponse<RestPage<StaffCrowdGroupListDTO>> groupListByPage = crmStaffClient.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
+    public ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize) {
+        ComResponse<Page<StaffCrowdGroupListDTO>> groupListByPage = crmStaffClient.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
         if (null == groupListByPage) {
             return ComResponse.success();
         }
-        RestPage<StaffCrowdGroupListDTO> data = groupListByPage.getData();
+        Page<StaffCrowdGroupListDTO> data = groupListByPage.getData();
         if (null == data) {
             return ComResponse.success();
         }
-        List<StaffCrowdGroupListDTO> content = data.getContent();
+        List<StaffCrowdGroupListDTO> content = data.getItems();
         if (CollectionUtils.isEmpty(content)) {
             return ComResponse.success();
         }
