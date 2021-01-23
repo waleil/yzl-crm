@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.product.CategoryService;
+import cn.net.yzl.product.model.db.Category;
 import cn.net.yzl.product.model.vo.category.CategoryDelVO;
 import cn.net.yzl.product.model.vo.category.CategorySelectTO;
 import cn.net.yzl.product.model.vo.category.CategoryTO;
@@ -33,11 +34,11 @@ public class CategoryController {
     @ApiOperation(value = "通过id精确匹配分类")
     @GetMapping("getCategoryById")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
-    public ComResponse<CategoryTO> getCategoryById(@RequestParam("id") Integer id) {
+    public ComResponse<Category> getCategoryById(@RequestParam("id") Integer id) {
         if(id == null || id < 1){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"不合法的id类型！");
         }
-        ComResponse comResponse = categoryService.getCategoryById(id);
+        ComResponse<Category> comResponse = categoryService.getCategoryById(id);
         if (comResponse.getData() == null) {
             return ComResponse.nodata();
         }
@@ -154,13 +155,17 @@ public class CategoryController {
     }
 
     @ApiOperation("提供给前端下拉列表的查询接口")
-    @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true)
     @GetMapping("selectForOptions")
-    public ComResponse<List<CategorySelectTO>> selectForOptions(@RequestParam("pid")Integer pid){
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true),
+            @ApiImplicitParam(name = "type",value = "如不需要过滤空值，则在此输入'pid'",paramType = "query", required = false)
+    })
+    public ComResponse<List<CategorySelectTO>> selectForOptions(@RequestParam("pid")Integer pid,
+                                                                @RequestParam(value = "type",required = false)String type){
         if (pid == null || pid < 0) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
         }
-        return categoryService.selectForOptions(pid);
+        return categoryService.selectForOptions(pid,type);
     }
 
  }

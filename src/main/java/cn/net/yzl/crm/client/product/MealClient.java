@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import cn.net.yzl.product.model.vo.product.vo.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +19,6 @@ import cn.net.yzl.crm.model.meal.MealProductVO;
 import cn.net.yzl.product.model.vo.product.dto.MealDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductStatusCountDTO;
-import cn.net.yzl.product.model.vo.product.vo.MealVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductMealDetailVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductMealSelectVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductMealUpdateStatusVO;
-import cn.net.yzl.product.model.vo.product.vo.ProductMealUpdateTimeVO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
