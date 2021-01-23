@@ -23,6 +23,17 @@ import cn.net.yzl.order.model.vo.order.OrderDetailIn;
  */
 public class SimpleTests {
 	@Test
+	public void testBigDecimal() {
+		System.err.println(BigDecimal.valueOf(999.999).multiply(BigDecimal.valueOf(100)).intValue());
+//		System.err.println(20.01 * 10.0);
+//		System.err.println(20.01 * 10);
+//		System.err.println(20.01 - 10.0);
+//		System.err.println(20.01 - 10);
+//		System.err.println(20.01 / 10);
+//		System.err.println(20.01 / 10.0);
+	}
+
+	@Test
 	public void testJoining() {
 		OrderDetailIn od1 = new OrderDetailIn();
 		od1.setProductCode("11");
