@@ -23,11 +23,11 @@ public interface OrderSearchClient {
 
     @ApiOperation(value = "查询订单基本信息")
     @GetMapping("v1/selectOrderInfo")
-    public ComResponse<OrderInfoResDTO> selectOrderInfo(@RequestParam String orderNo);
+    public ComResponse<List<OrderInfoResDTO>> selectOrderInfo(@RequestParam String orderNo);
 
     @ApiOperation(value = "查询订单商品列表")
     @GetMapping("v1/selectOrderProductDetail")
-    public  ComResponse<List<OrderProductDTO>> selectOrderProductDetail(@RequestParam String orderNo);
+    public  ComResponse<OrderProductListVo> selectOrderProductDetail(@RequestParam String orderNo);
 
     @ApiOperation(value = "查询订单操作日志")
     @GetMapping("v1/selectOrderLogList")
