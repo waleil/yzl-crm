@@ -102,6 +102,7 @@ public class StaffServiceImpl implements StaffService {
         reqDTO.setPageNo(req.getPageNo());
         reqDTO.setPageSize(req.getPageSize());
         reqDTO.setStaffCode(req.getStaffNo());
+        reqDTO.setOrderStatus(req.getStatus());
         switch (req.getTimeType()) {
             case 1:
                 reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(1)), DatePattern.NORM_DATETIME_FORMATTER));
