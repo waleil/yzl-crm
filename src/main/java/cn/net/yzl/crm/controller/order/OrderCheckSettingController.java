@@ -69,7 +69,7 @@ public class OrderCheckSettingController {
     public ComResponse<Page<OrderCheckSettingProduct>> selectSettingedProducts(@RequestParam(required = false, defaultValue = "1") Integer pageNo,
                                                                                @RequestParam(required = false, defaultValue = "15") Integer pageSize,
                                                                                @NotBlank(message = "免审类型不能为空")
-                                                                               @ApiParam(name = "settingType", value = "免审规则类型", required = true)
+                                                                               @ApiParam(value = "免审规则类型", required = true)
                                                                                @RequestParam Integer settingType) {
 
         ComResponse<Page<OrderCheckSettingProduct>> result = orderFein.selectSettingedProducts(pageNo, pageSize, settingType);
