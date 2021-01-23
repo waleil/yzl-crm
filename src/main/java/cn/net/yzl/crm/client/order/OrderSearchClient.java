@@ -23,17 +23,17 @@ public interface OrderSearchClient {
 
     @ApiOperation(value = "查询订单基本信息")
     @GetMapping("v1/selectOrderInfo")
-    public ComResponse<OrderInfoResDTO> selectOrderInfo(@RequestParam("orderNo")String orderNo);
+    public ComResponse<OrderInfoResDTO> selectOrderInfo(@RequestParam String orderNo);
 
     @ApiOperation(value = "查询订单商品列表")
     @GetMapping("v1/selectOrderProductDetail")
-    public  ComResponse<List<OrderProductDTO>> selectOrderProductDetail(@RequestParam("orderNo")String orderNo);
+    public  ComResponse<List<OrderProductDTO>> selectOrderProductDetail(@RequestParam String orderNo);
 
     @ApiOperation(value = "查询订单操作日志")
     @GetMapping("v1/selectOrderLogList")
-    public  ComResponse<List<OrderUpdateLogDTO>> selectOrderLogList(@RequestParam("orderNo")
+    public  ComResponse<List<OrderUpdateLogDTO>> selectOrderLogList(@RequestParam
                                                                     @NotNull(message = "订单编号不能为空")
-                                                                    @ApiParam(name="orderNo",value="订单编号",required=true)String orderNo);
+                                                                    @ApiParam(value="订单编号",required=true)String orderNo);
 
     @ApiOperation(value = "查询订单审核列表")
     @RequestMapping(path="v1/selectOrderList4Check",method = RequestMethod.POST)
