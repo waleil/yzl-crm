@@ -1,12 +1,6 @@
 package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.GeneralResult;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
-import cn.net.yzl.crm.customer.model.*;
-import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
-import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.logistics.model.vo.logistics.ExpressCodeVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;

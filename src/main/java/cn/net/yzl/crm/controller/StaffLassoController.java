@@ -17,6 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Api(tags = "员工圈选服务")
 @RestController
@@ -35,7 +36,7 @@ public class StaffLassoController {
     @ApiOperation(value = "试算")
     @PostMapping("v1/calculationDto")
     public ComResponse<Integer> calculationDto(@RequestBody CalculationDto calculationDto) throws Exception {
-        Integer lassoCount = staffLassoService.calculationDto(calculationDto);
+        Integer lassoCount = staffLassoService.calculationDto(calculationDto).size();
         return ComResponse.success(lassoCount);
     }
 
@@ -47,7 +48,7 @@ public class StaffLassoController {
     }
 
 
-    // 员工圈选 保存
+
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
     @PostMapping("v1/saveStaffCrowdGroup")
     public ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
@@ -56,7 +57,7 @@ public class StaffLassoController {
         return crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
     }
 
-    // 获取员工群组列表
+
     @ApiOperation(value = "分页获取圈选群组", httpMethod = "GET")
     @GetMapping("v1/getGroupListByPage")
     public ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(
@@ -75,10 +76,9 @@ public class StaffLassoController {
     @GetMapping("v1/updateEnable")
     public ComResponse<Integer> updateEnable(@RequestParam(value = "enable", required = false) @ApiParam(value = "1:启用,-1:已结束") int enable,
                                              @RequestParam(value = "groupId", required = true) @ApiParam(value = "组id") long groupId) {
-        return crmStaffClient.updateEnable(enable, groupId,QueryIds.userNo.get());
+        return crmStaffClient.updateEnable(enable, groupId, QueryIds.userNo.get());
     }
 
-    // 获取员工群组列表
     @ApiOperation(value = "获取圈选详情")
     @GetMapping("v1/getStaffCrowdGroup")
     public ComResponse<StaffCrowdGroup> getStaffCrowdGroupDTO(

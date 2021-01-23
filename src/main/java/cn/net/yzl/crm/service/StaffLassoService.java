@@ -3,11 +3,10 @@ package cn.net.yzl.crm.service;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
-import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupListDTO;
 
-
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -17,7 +16,7 @@ import java.util.concurrent.ExecutionException;
  **/
 public interface StaffLassoService {
 
-    Integer calculationDto(CalculationDto calculationDto) throws ExecutionException, Exception;
+    List<String> calculationDto(CalculationDto calculationDto) throws ExecutionException, Exception;
 
     ComResponse<Integer> trialStaffNo(long groupId) throws Exception;
 

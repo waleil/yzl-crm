@@ -4,6 +4,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import cn.net.yzl.order.enums.RedisKeys;
+
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -572,27 +574,33 @@ public class RedisUtil {
         }
     }
 
-    /**
-     * 生成序列号
-     *
-     * @param workid   职场id
-     * @param userno   用户id
-     * @param rediskey redis中的键
-     * @param length   尾号长度
-     */
-    public String getSeqNo(Object workid, Object userno, String rediskey, int length) {
-        // 初始化长度
-        StringBuilder seqNo = new StringBuilder(length);
-        // 获取时间戳
-        String timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
-        // 获取自增值
-        String num = this.incr(rediskey).toString();
-        // 左补0
-        while (num.length() < length) {
-            num = "0" + num;
-        }
-        return seqNo.append(workid).append(userno).append("T").append(timestamp).append(num).toString();
-    }
+	/**
+	 * 生成序列号
+	 *
+	 * @param prefix   前缀<br>
+	 *                 {@link RedisKeys#CREATE_ORDER_NO_PREFIX}<br>
+	 *                 {@link RedisKeys#REJECT_ORDER_NO_PREFIX}<br>
+	 *                 {@link RedisKeys#SALE_ORDER_NO_PREFIX}
+	 * @param workid   职场id
+	 * @param userno   用户id
+	 * @param rediskey redis中的键<br>
+	 *                 {@link RedisKeys#CREATE_ORDER_NO}<br>
+	 *                 {@link RedisKeys#SALE_ORDER_NO}
+	 * @param length   尾号长度
+	 */
+	public String getSeqNo(String prefix, Object workid, Object userno, String rediskey, int length) {
+		// 初始化长度
+		StringBuilder seqNo = new StringBuilder(length);
+		// 获取时间戳
+		String timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
+		// 获取自增值
+		String num = this.incr(rediskey).toString();
+		// 左补0
+		while (num.length() < length) {
+			num = "0" + num;
+		}
+		return seqNo.append(prefix).append(workid).append(userno).append("T").append(timestamp).append(num).toString();
+	}
 
     /**
      * 递增

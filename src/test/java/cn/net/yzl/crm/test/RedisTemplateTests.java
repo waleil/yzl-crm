@@ -1,4 +1,4 @@
-package cn.net.yzl.crm;
+package cn.net.yzl.crm.test;
 
 import javax.annotation.Resource;
 
@@ -23,11 +23,18 @@ public class RedisTemplateTests {
 	public void testGetSeqNo() {
 		for (int i = 0; i < 10; i++) {
 			// 订单号生成器
-			System.err.println(redisUtil.getSeqNo("100000", "100000", RedisKeys.CREATE_ORDER_NO, 4));
+			System.err.println(redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, "100000", "100000",
+					RedisKeys.CREATE_ORDER_NO, 4));
 		}
 		for (int i = 0; i < 10; i++) {
 			// 售后单号生成器
-			System.err.println(redisUtil.getSeqNo("100000", "100000", RedisKeys.SALE_ORDER_NO, 4));
+			System.err.println(
+					redisUtil.getSeqNo(RedisKeys.SALE_ORDER_NO_PREFIX, "100000", "100000", RedisKeys.SALE_ORDER_NO, 4));
+		}
+		for (int i = 0; i < 10; i++) {
+			// 拒收单号生成器
+			System.err.println(redisUtil.getSeqNo(RedisKeys.REJECT_ORDER_NO_PREFIX, "100000", "100000",
+					RedisKeys.SALE_ORDER_NO, 4));
 		}
 	}
 }

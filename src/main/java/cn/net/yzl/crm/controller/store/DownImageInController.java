@@ -1,13 +1,12 @@
 package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.InventoryFeginService;
 import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.model.vo.InventoryExcelVo;
-import cn.net.yzl.model.vo.InventoryProductExcelVo;
-import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
-import cn.net.yzl.model.vo.ProductStockExcelVo;
+import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
+import cn.net.yzl.model.vo.*;
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -127,11 +126,16 @@ public class DownImageInController {
             @ApiImplicitParam(name = "storeNo", value = "仓库编号", dataType = "string", paramType = "query")
     })
     @GetMapping("v1/exportProductStockExcel")
-    public void exportProductStockExcel(@RequestParam String codeAndName,@RequestParam String storeNo, HttpServletResponse httpServletResponse) throws IOException {
+    public void exportProductStockExcel(@RequestParam("codeAndName") String codeAndName,@RequestParam("storeNo") String storeNo, HttpServletResponse httpServletResponse) throws IOException {
         downImageInService.exportProductStockExcel(codeAndName,storeNo,httpServletResponse);
     }
 
 
+    @PostMapping(value = "v1/exportExcelOfProductPurchaseWarn")
+    @ApiOperation("预警商品导出EXCEL")
+    public void exportExcelOfProductPurchaseWarn(@RequestBody ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO,HttpServletResponse httpServletResponse) throws IOException {
+        downImageInService.exportExcelOfProductPurchaseWarn(productPurchaseWarnExcelVO, httpServletResponse);
+    }
 
 
 }

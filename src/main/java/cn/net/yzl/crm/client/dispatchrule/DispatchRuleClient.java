@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * @author liyadong
  * @date: 2021/1/2211:01
@@ -18,9 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 远程调用  规则接口
  */
 @FeignClient(name = "dispatchRuleClient", url = "${api.gateway.url}/workorderServer/dispatch_rule")
-//@FeignClient(name = "dispatchRuleClient", url = "localhost:4602/dispatch_rule") // 本地测试
 @Service
 public interface DispatchRuleClient {
+
+
     /**
      * 保存修改 智能派单规则分配
      *
@@ -30,6 +33,7 @@ public interface DispatchRuleClient {
     @PostMapping("v1/saveDispatch")
     public ComResponse saveDispatch(@RequestBody DispatchRuleDetail detail);
 
+
     /**
      * 通过id 修改 分配规则 状态(是否 启用 )
      *
@@ -37,8 +41,8 @@ public interface DispatchRuleClient {
      * @return
      */
     @GetMapping("v1/updateDispatchRule")
-    public ComResponse updateDispatchRule(@RequestParam("id") String id, @RequestParam("status") Integer status);
-
+    public ComResponse updateDispatchRule(@RequestParam("id")     @NotBlank(message = "分配规则ID不能为空") String id,
+                                          @RequestParam("status") @NotBlank(message = "请选择操作") Integer status);
 
     /**
      * @return 智能派单查询，按照条件查询分页查询

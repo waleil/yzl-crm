@@ -63,20 +63,14 @@ public class InventoryController {
 
     @ApiOperation(value = "导入查看盘点商品",notes = "导入查看盘点商品信息")
     @PostMapping("v1/readExcelnventoryProduct")
-    public ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) throws IOException, ParseException {
-        ReadExcelInventoryProductVo readExcelInventoryProductVo = new ReadExcelInventoryProductVo();
-        String id = httpServletRequest.getHeader("id");
-        String storeNo = httpServletRequest.getHeader("storeNo");
-        String storeName = httpServletRequest.getHeader("storeName");
-        String inventoryDate = httpServletRequest.getHeader("inventoryDate");
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date parse = sdf.parse(inventoryDate);
-
-        readExcelInventoryProductVo.setId(Integer.parseInt(id));
-        readExcelInventoryProductVo.setStoreNo(storeNo);
-        readExcelInventoryProductVo.setStoreName(storeName);
-        readExcelInventoryProductVo.setInventoryDate(parse);
+    public ComResponse<Page<InventoryProductDto>> readExcelnventoryProduct(@RequestParam("file") MultipartFile file,ReadExcelInventoryProductVo readExcelInventoryProductVo) throws IOException, ParseException {
+//        ReadExcelInventoryProductVo readExcelInventoryProductVo = new ReadExcelInventoryProductVo();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date parse = sdf.parse(inventoryDate);
+//        readExcelInventoryProductVo.setId(id);
+//        readExcelInventoryProductVo.setStoreNo(storeNo);
+//        readExcelInventoryProductVo.setStoreName(storeName);
+//        readExcelInventoryProductVo.setInventoryDate(parse);
         return inventoryService.readExcelnventoryProduct(readExcelInventoryProductVo,file);
     }
 

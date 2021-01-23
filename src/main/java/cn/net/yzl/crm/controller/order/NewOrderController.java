@@ -2,8 +2,9 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
-import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.crm.service.order.INewOrderService;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import cn.net.yzl.crm.sys.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
@@ -26,7 +26,7 @@ import java.io.InputStream;
 public class NewOrderController {
 
     @Autowired
-    private MemberFien memberFien;
+    private MemberGroupFeign memberFien;
 
     @Autowired
     private INewOrderService newOrderService;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -80,11 +81,11 @@ public interface CrmStaffClient {
 
     @GetMapping("/staff/v1/getGroupListByPage")
     ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(@RequestParam("crowdGroupName") String crowdGroupName,
-                                                                     @RequestParam("status") Integer status,
-                                                                     @RequestParam("startTime") Date startTime,
-                                                                     @RequestParam("endTime") Date endTime,
-                                                                     @RequestParam("pageNo") Integer pageNo,
-                                                                     @RequestParam("pageSize") Integer pageSize);
+                                                                 @RequestParam("status") Integer status,
+                                                                 @RequestParam("startTime") Date startTime,
+                                                                 @RequestParam("endTime") Date endTime,
+                                                                 @RequestParam("pageNo") Integer pageNo,
+                                                                 @RequestParam("pageSize") Integer pageSize);
 
     /**
      * 员工圈选 启用 失效
@@ -105,5 +106,16 @@ public interface CrmStaffClient {
      */
     @GetMapping("/staff/v1/getStaffCrowdGroup")
     ComResponse<StaffCrowdGroup> getStaffCrowdGroup(@RequestParam("groupId") long groupId);
+
+    @GetMapping("/staff/v1/getStaffCrowdGroupList")
+    ComResponse<List<StaffCrowdGroup>> getStaffCrowdGroupList();
+
+    default List<StaffCrowdGroup> getStaffCrowdGroup() {
+        ComResponse<List<StaffCrowdGroup>> staffCrowdGroupList = getStaffCrowdGroupList();
+        if (null == staffCrowdGroupList || 200 != staffCrowdGroupList.getCode()) {
+            return Collections.emptyList();
+        }
+        return staffCrowdGroupList.getData();
+    }
 
 }

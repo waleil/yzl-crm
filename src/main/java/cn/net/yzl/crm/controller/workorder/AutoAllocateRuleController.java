@@ -9,6 +9,7 @@ import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.workorder.model.db.AutoAllocateConfigBean;
 import cn.net.yzl.workorder.model.db.AutoAllocateRuleBean;
 import cn.net.yzl.workorder.model.vo.AutoAllocateConfigVO;
@@ -40,7 +41,7 @@ public class AutoAllocateRuleController {
     private AutoAllocateRuleClient autoAllocateRuleClient;
 
     @Autowired
-    private MemberFien memberClient;
+    private MemberGroupFeign memberClient;
 
     @Autowired
     private CrmStaffClient staffClient;

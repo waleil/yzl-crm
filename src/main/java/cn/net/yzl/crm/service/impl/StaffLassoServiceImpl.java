@@ -16,12 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static cn.hutool.core.collection.CollUtil.isEmpty;
 
 /**
  * @author: liuChangFu
@@ -43,12 +43,21 @@ public class StaffLassoServiceImpl implements StaffLassoService {
 
 
     @Override
-    public Integer calculationDto(CalculationDto calculationDto) throws Exception {
+    public List<String> calculationDto(CalculationDto calculationDto) throws Exception {
         if (null == calculationDto) {
-            return 0;
+            return Collections.emptyList();
+        }
+        if (CollectionUtils.isEmpty(calculationDto.getPostIdList())) {
+            return Collections.emptyList();
         }
         //获取原线程的请求参数
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+
+        //岗位相关条件查询
+        CompletableFuture<List<String>> postIdCompletable = CompletableFuture.supplyAsync(() -> {
+            RequestContextHolder.setRequestAttributes(attributes);
+            return ehrStaffClient.getPostIdList(calculationDto.getPostIdList());
+        });
 
         //基础信息相关条件查询
         CompletableFuture<List<String>> baseCompletable = CompletableFuture.supplyAsync(() -> {
@@ -57,7 +66,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return ehrStaffClient.getStaffBaseInfoList(base);
             }
-            return Collections.emptyList();
+            return null;
         });
         //工单类型条件查询
         CompletableFuture<List<String>> workOrderTypeCompletable = CompletableFuture.supplyAsync(() -> {
@@ -66,7 +75,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return ehrStaffClient.getStaffWorkOrderTypeList(workOrderType);
             }
-            return Collections.emptyList();
+            return null;
         });
         //广告相关条件查询
         CompletableFuture<List<String>> advertCompletable = CompletableFuture.supplyAsync(() -> {
@@ -75,7 +84,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return null;
             }
-            return Collections.emptyList();
+            return null;
         });
         //媒体相关条件查询
         CompletableFuture<List<String>> mediaCompletable = CompletableFuture.supplyAsync(() -> {
@@ -84,7 +93,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return null;
             }
-            return Collections.emptyList();
+            return null;
         });
         //售卖商品相关条件查询
         CompletableFuture<List<String>> saleProductCompletable = CompletableFuture.supplyAsync(() -> {
@@ -93,7 +102,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return null;
             }
-            return Collections.emptyList();
+            return null;
         });
         //病症相关条件查询
         CompletableFuture<List<String>> diseaseCompletable = CompletableFuture.supplyAsync(() -> {
@@ -102,7 +111,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return null;
             }
-            return Collections.emptyList();
+            return null;
         });
         //排班相关条件查询
         CompletableFuture<List<String>> scheduleCompletable = CompletableFuture.supplyAsync(() -> {
@@ -111,7 +120,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return ehrStaffClient.getStaffSchedule(schedule);
             }
-            return Collections.emptyList();
+            return null;
         });
         //培训商品相关条件查询
         CompletableFuture<List<String>> trainProductCompletable = CompletableFuture.supplyAsync(() -> {
@@ -120,7 +129,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return ehrStaffClient.getStaffTrainProductList(trainProduct);
             }
-            return Collections.emptyList();
+            return null;
         });
         //员工指标相关条件查询
         CompletableFuture<List<String>> indicatorCompletable = CompletableFuture.supplyAsync(() -> {
@@ -129,22 +138,63 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return biTaskClient.getStaffIndicatorList(indicator);
             }
-            return Collections.emptyList();
+            return null;
         });
 
         CompletableFuture<List<String>> all = CompletableFuture.allOf(baseCompletable, workOrderTypeCompletable
                 , advertCompletable, mediaCompletable, saleProductCompletable, diseaseCompletable, scheduleCompletable
                 , trainProductCompletable, indicatorCompletable).thenApply(x -> {
             try {
-                return (List<String>) CollUtil.intersection(baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
+                return (List<String>) intersection(baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
                         , mediaCompletable.get(), saleProductCompletable.get(), diseaseCompletable.get(), scheduleCompletable.get()
                         , trainProductCompletable.get(), indicatorCompletable.get());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return Collections.emptyList();
+            return null;
         });
-        return CollectionUtils.isNotEmpty(all.get()) ? all.get().size() : 0;
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup();
+
+        List<String> staffNoList = all.get();
+        if (CollectionUtils.isEmpty(staffNoList)) {
+            return Collections.emptyList();
+        }
+
+        List<List<String>> collect = staffCrowdGroup.stream().map(StaffCrowdGroup::getStaffCodeList).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)) {
+            return CollectionUtils.isNotEmpty(all.get()) ? all.get() : Collections.emptyList();
+        }
+        AtomicReference<List<String>> newStaffNo = new AtomicReference<>();
+        collect.forEach(staffList -> newStaffNo.set(CollUtil.subtractToList(staffNoList, staffList)));
+        return newStaffNo.get();
+    }
+
+    @SafeVarargs
+    public static <T> Collection<T> intersection(Collection<T>... otherColls) {
+        List<Collection<T>> newColl = new ArrayList<>();
+        for (Collection<T> coll : otherColls) {
+            if (null != coll) {
+                newColl.add(coll);
+            }
+        }
+        if (isEmpty(newColl)) {
+            return Collections.emptyList();
+        }
+        if (newColl.size() == 1) {
+            return newColl.get(0);
+        }
+        if (newColl.size() == 2) {
+            return CollUtil.intersection(newColl.get(0), newColl.get(1));
+        }
+        List<Collection<T>> collect = newColl.stream().skip(2).collect(Collectors.toList());
+        Collection<T> intersection = CollUtil.intersection(newColl.get(0), newColl.get(1));
+        for (Collection<T> coll : collect) {
+            intersection = CollUtil.intersection(intersection, coll);
+            if (isEmpty(intersection)) {
+                return intersection;
+            }
+        }
+        return intersection;
     }
 
     @Override
@@ -157,7 +207,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         if (null == data) {
             return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE);
         }
-        return ComResponse.success(this.calculationDto(data.getCalculationDto()));
+        return ComResponse.success(this.calculationDto(data.getCalculationDto()).size());
     }
 
     @Override

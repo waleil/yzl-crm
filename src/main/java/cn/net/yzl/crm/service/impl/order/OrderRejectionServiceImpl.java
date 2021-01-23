@@ -8,6 +8,8 @@ import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.order.OrderRejectionService;
 import cn.net.yzl.crm.utils.RedisUtil;
+import cn.net.yzl.order.enums.RedisKeys;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +44,9 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
             }
         }
 //        storeFeginService.selectStore(orderRejectionAddDTO.getStoreNo())
-        //拒收单编号
-        String seqNo = redisUtil.getSeqNo(String.valueOf(departId), userNo, "order:saleno", 4);
+		// 拒收单编号
+		String seqNo = redisUtil.getSeqNo(RedisKeys.REJECT_ORDER_NO_PREFIX, String.valueOf(departId), userNo,
+				RedisKeys.SALE_ORDER_NO, 4);
         cn.net.yzl.order.model.vo.order.OrderRejectionAddDTO dto = new cn.net.yzl.order.model.vo.order.OrderRejectionAddDTO();
         dto.setOrderNo(orderRejectionAddDTO.getOrderNo());
         dto.setRejectType(orderRejectionAddDTO.getRejectType());
