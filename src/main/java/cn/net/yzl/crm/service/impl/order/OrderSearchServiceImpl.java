@@ -30,17 +30,17 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
     @Override
     public ComResponse<OrderInfoVO> selectOrderInfo(String orderNo) {
         OrderInfoVO orderInfoVO = new OrderInfoVO();
-        ComResponse<OrderInfoResDTO> respons = orderSearchClient.selectOrderInfo(orderNo);
+        ComResponse<List<OrderInfoResDTO>> respons = orderSearchClient.selectOrderInfo(orderNo);
         if(respons.getCode().compareTo(Integer.valueOf(200)) !=0){
             throw new BizException(respons.getCode(),respons.getMessage());
         }
-        OrderInfoResDTO orderInfoResDTO = respons.getData();
-        if(orderInfoResDTO == null ){
+        List<OrderInfoResDTO> list = respons.getData();
+        if(list == null || list.size()==0){
             throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(),respons.getMessage());
         }
 
-        orderInfoVO.setOrderInfoResDTO(orderInfoResDTO);
-        GeneralResult<Member> member = memberFien.getMember(orderInfoResDTO.getMemberCardNo());
+        orderInfoVO.setOrderInfoResDTOList(list);
+        GeneralResult<Member> member = memberFien.getMember(list.get(0).getMemberCardNo());
         if(member.getCode().compareTo(Integer.valueOf(200)) !=0){
             throw new BizException(respons.getCode(),respons.getMessage());
         }
