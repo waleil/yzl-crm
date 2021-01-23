@@ -171,6 +171,12 @@ public interface EhrStaffClient {
     @PostMapping("/staff/getByStaffNos")
     ComResponse<List<StaffDetailDto>> getByStaffNos(@RequestBody List<String> staffNos);
 
+    @GetMapping(value = "/postLevel/getList")
+    ComResponse<List<EhrPostLevelDto>> getPostLevelList();
+
+//   TODO @GetMapping(value = "/postLevel/getList")
+    ComResponse<List<String>> getPostIdListRemote(@RequestBody List<String> postIdList);
+
 
     default List<String> getStaffBaseInfoList(Base base) {
         ComResponse<List<String>> staffScheduleInfo = getStaffBaseInfo(base);
@@ -205,6 +211,14 @@ public interface EhrStaffClient {
         return Collections.emptyList();
     }
 
+    default List<String> getPostIdList(List<String> postIdList) {
+        ComResponse<List<String>> postId = this.getPostIdListRemote(postIdList);
+        if (null != postId && postId.getCode() == 200) {
+            return postId.getData();
+        }
+        return Collections.emptyList();
+    }
+
 
     default Map<String, StaffDetailDto> getMapByStaffNos(List<String> staffNos) {
         ComResponse<List<StaffDetailDto>> byStaffNos;
@@ -222,5 +236,6 @@ public interface EhrStaffClient {
         }
         return data.stream().collect(Collectors.toMap(StaffDetailDto::getUserNo, staff -> staff, (oldValue, newValue) -> newValue));
     }
+
 
 }
