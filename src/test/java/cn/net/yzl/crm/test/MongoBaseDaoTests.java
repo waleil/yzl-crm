@@ -1,4 +1,4 @@
-package cn.net.yzl.crm;
+package cn.net.yzl.crm.test;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,6 +7,7 @@ import cn.net.yzl.crm.dao.mogo.MongoBaseDao;
 
 /**
  * 单元测试类
+ * 
  * @author zhangweiwei
  * @date 2021年1月18日,下午7:10:24
  */

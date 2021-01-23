@@ -6,6 +6,7 @@ import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.biTask.Indicators;
 import cn.net.yzl.crm.dto.dmc.CoopCompanyMediaDto;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
+import cn.net.yzl.crm.dto.ehr.EhrPostLevelDto;
 import cn.net.yzl.crm.dto.ehr.StaffStatusDto;
 import cn.net.yzl.crm.dto.product.ProduceDto;
 import cn.net.yzl.crm.service.CommonService;
@@ -47,6 +48,12 @@ public class CommonController {
 
     @Autowired
     private BiTaskClient biTaskClient;
+
+    @ApiOperation(value = "获取岗位列表")
+    @GetMapping("/v1/getPostLevelList")
+    public ComResponse<List<EhrPostLevelDto>> getPostLevelList() {
+        return ehrStaffClient.getPostLevelList();
+    }
 
     @ApiOperation(value = "获取媒体列表")
     @GetMapping("/v1/getMediaList")

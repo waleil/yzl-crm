@@ -4,8 +4,11 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateHelper;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
+import cn.net.yzl.crm.customer.mongomodel.crowd.CustomerCrowdGroupVO;
+import cn.net.yzl.crm.customer.mongomodel.crowd.UpdateCrowdStatusVO;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.member.MemberCrowdGroupDTO;
+import cn.net.yzl.crm.model.customer.UpdateCrowdStatus;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.crm.sys.BizException;
 import io.netty.util.internal.StringUtil;
@@ -17,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,7 +41,8 @@ public class MemberGroupController {
 
     @ApiOperation("保存顾客圈选")
     @PostMapping("/v1/saveMemberCrowdGroup")
-    public ComResponse saveMemberCrowdGroup(@RequestBody MemberCrowdGroupDTO memberCrowdGroup, HttpServletRequest request) {
+    public ComResponse saveMemberCrowdGroup(@RequestBody MemberCrowdGroupDTO memberCrowdGroup,
+                                            HttpServletRequest request) {
         if (memberCrowdGroup == null ||memberCrowdGroup.getEffective_date()==null
                 || memberCrowdGroup.getExpire_date()==null)
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
@@ -162,5 +168,29 @@ public class MemberGroupController {
     public ComResponse getCrowdGroupByPage(CrowdGroupDTO crowdGroupDTO) {
         if (crowdGroupDTO == null) throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE);
         return memberGroupFeign.getCrowdGroupByPage(crowdGroupDTO);
+    }
+    @ApiOperation("修改圈选规则状态")
+    @PostMapping("/v1/updateStatus")
+    public ComResponse updateMemberCrowdGroupStatus(@RequestBody @Valid UpdateCrowdStatus updateCrowdStatus,
+                                                    HttpServletRequest request){
+        UpdateCrowdStatusVO vo = new UpdateCrowdStatusVO();
+        vo.set_id(updateCrowdStatus.get_id());
+        vo.setEnable(updateCrowdStatus.getEnable());
+        //获取操作人id
+        String userId= request.getHeader("userId");
+        vo.setUpdate_code(userId);
+        return memberGroupFeign.updateCustomerCrowdGroupStatus(vo);
+    }
+    /**
+     * @Author: lichanghong
+     * @Description:  查询圈选规则
+     * @Date: 2021/1/22 8:20 下午
+     * @param
+     * @Return: cn.net.yzl.common.entity.ComResponse<cn.net.yzl.crm.customer.mongomodel.crowd.CustomerCrowdGroupVO>
+     */
+    @ApiOperation("查询顾客圈选列表")
+    @GetMapping("/v1/query4Select")
+    public ComResponse<List<CustomerCrowdGroupVO>> query4Select(){
+        return memberGroupFeign.query4Select();
     }
 }

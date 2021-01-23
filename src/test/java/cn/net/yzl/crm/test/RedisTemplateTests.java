@@ -1,4 +1,4 @@
-package cn.net.yzl.crm;
+package cn.net.yzl.crm.test;
 
 import javax.annotation.Resource;
 

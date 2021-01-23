@@ -23,7 +23,7 @@ public interface SplitStoreRuleClient {
      * @return
      */
     @PostMapping("v1/addRule")
-    ComResponse<Boolean> addRule(@Valid @RequestBody List<SplitStoreRuleAddDTO> list, @RequestParam("userNo") String orderNo);
+    ComResponse<Boolean> addRule(@Valid @RequestBody List<SplitStoreRuleAddDTO> list, @RequestParam String userNo);
 
     /**
      * 变更分仓规则状态
@@ -32,7 +32,7 @@ public interface SplitStoreRuleClient {
      * @return
      */
     @PutMapping("v1/updateRuleStatus")
-    ComResponse<Boolean> updateRuleStatus(@RequestParam("userNo") String userNo, @RequestParam("storeNo") String storeNo, @RequestParam("storeStatus") Integer storeStatus);
+    ComResponse<Boolean> updateRuleStatus(@RequestParam String userNo, @RequestParam String storeNo, @RequestParam Integer storeStatus);
 
     /**
      * 查询仓库覆盖省市
@@ -41,7 +41,7 @@ public interface SplitStoreRuleClient {
      * @return
      */
     @GetMapping("v1/getStoreProvinceList")
-    ComResponse<List<SplitStoreProvinceDTO>> getStoreProvinceList(@RequestParam("storeNo") String storeNo);
+    ComResponse<List<SplitStoreProvinceDTO>> getStoreProvinceList(@RequestParam String storeNo);
 
 
     /**
@@ -51,5 +51,5 @@ public interface SplitStoreRuleClient {
      * @return
      */
     @GetMapping("v1/getStoreProvinceByStoreNoList")
-    ComResponse<List<SplitStoreProvinceNamesDTO>> getStoreProvinceByStoreNoList(@RequestParam("storeNoList") List<String> storeNoList);
+    ComResponse<List<SplitStoreProvinceNamesDTO>> getStoreProvinceByStoreNoList(@RequestParam List<String> storeNoList);
 }
