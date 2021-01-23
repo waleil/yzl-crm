@@ -41,9 +41,9 @@ public class OrderSeachController {
 
     @ApiOperation(value = "查询订单基本信息")
     @GetMapping("v1/selectOrderInfo")
-    public ComResponse<OrderInfoVO> selectOrderInfo(@RequestParam("orderNo")
+    public ComResponse<OrderInfoVO> selectOrderInfo(@RequestParam
                                                         @NotNull(message = "订单编号不能为空")
-                                                        @ApiParam(name="orderNo",value="免审规则类型",required=true)String orderNo) {
+                                                        @ApiParam(value="免审规则类型",required=true)String orderNo) {
 
         return  orderSearchService.selectOrderInfo(orderNo);
     }
@@ -51,18 +51,18 @@ public class OrderSeachController {
 
     @ApiOperation(value = "查询订单商品列表")
     @GetMapping("v1/selectOrderProductDetail")
-    public  ComResponse<List<OrderProductDTO>> selectOrderProductDetail(@RequestParam("orderNo")
+    public  ComResponse<OrderProductListVo> selectOrderProductDetail(@RequestParam
                                                                         @NotNull(message = "订单编号不能为空")
-                                                                        @ApiParam(name="orderNo",value="订单编号",required=true)String orderNo) {
+                                                                        @ApiParam(value="订单编号",required=true)String orderNo) {
 
         return  orderSearchClient.selectOrderProductDetail(orderNo);
     }
 
     @ApiOperation(value = "查询订单操作日志")
     @GetMapping("v1/selectOrderLogList")
-    public  ComResponse<List<OrderUpdateLogDTO>> selectOrderLogList(@RequestParam("orderNo")
+    public  ComResponse<List<OrderUpdateLogDTO>> selectOrderLogList(@RequestParam
                                                                     @NotNull(message = "订单编号不能为空")
-                                                                    @ApiParam(name="orderNo",value="订单编号",required=true)String orderNo) {
+                                                                    @ApiParam(value="订单编号",required=true)String orderNo) {
 
         return  orderSearchClient.selectOrderLogList(orderNo);
     }

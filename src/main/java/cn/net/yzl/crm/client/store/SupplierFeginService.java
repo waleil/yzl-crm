@@ -66,9 +66,9 @@ public interface SupplierFeginService {
     @RequestMapping(value = "supplier/v1/deleteList", method = RequestMethod.POST)
     public ComResponse<Integer> deleteSupplierList(@RequestBody List<Integer> ids);
 
-    @ApiOperation(value = "验证供应商编码/简称", notes = "验证供应商编码/简称")
-    @RequestMapping(value = "supplier/v1/insertCheck", method = RequestMethod.GET)
-    public ComResponse<Integer> insertCheck(@RequestParam(value = "no",required = false)String no, @RequestParam(value = "shortName",required = false)String shortName);
+//    @ApiOperation(value = "验证供应商编码/简称", notes = "验证供应商编码/简称")
+//    @RequestMapping(value = "supplier/v1/insertCheck", method = RequestMethod.GET)
+//    public ComResponse<Integer> insertCheck(@RequestParam(value = "no",required = false)String no, @RequestParam(value = "shortName",required = false)String shortName);
 
     @ApiOperation(value = "供应商营业执照下载", notes = "供应商营业执照下载")
     @RequestMapping(value = "supplier/v1/filedownload", method = RequestMethod.GET)

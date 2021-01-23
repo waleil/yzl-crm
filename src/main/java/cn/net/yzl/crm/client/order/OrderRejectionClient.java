@@ -17,19 +17,19 @@ import java.util.List;
  *
  * @author zhouchangsong
  */
-@FeignClient(name = "orderRejection", url = "localhost:4455/orderRejection")
+@FeignClient(name = "orderRejection", url = "${api.gateway.url}/orderService/orderRejection")
 public interface OrderRejectionClient {
 
     /**
      * 查询拒收单分页
      *
      * @param orderNo
-     * @param pageNum
+     * @param pageNo
      * @param pageSize
      * @return
      */
     @GetMapping("v1/getOrderRejectionList")
-    ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@RequestParam(value = "orderNo") String orderNo, @RequestParam(value = "pageNum") Integer pageNum, @RequestParam(value = "pageSize") Integer pageSize);
+    ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@RequestParam String orderNo, @RequestParam Integer pageNo, @RequestParam Integer pageSize);
 
     /**
      * 新增拒收单
@@ -47,12 +47,12 @@ public interface OrderRejectionClient {
      * @return
      */
     @GetMapping("v1/getCouponListByOrderNo")
-    ComResponse<List<OrderCouponDTO>> getListByOrderNo(@RequestParam(value = "orderNo") String orderNo);
+    ComResponse<List<OrderCouponDTO>> getListByOrderNo(@RequestParam String orderNo);
 
 
     @GetMapping("v1/getOrderList")
     @ApiOperation(value = "查询已发货、待发货订单")
-    ComResponse<Page<OderListResDTO>> selectOrderList(@RequestParam(value = "pageNum") Integer pageNum, @RequestParam(value = "pageSize") Integer pageSize, @RequestParam(value = "orderNo") String orderNo);
+    ComResponse<Page<OderListResDTO>> selectOrderList(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam String orderNo);
 
     /**
      * 查询拒收单详情
@@ -62,5 +62,5 @@ public interface OrderRejectionClient {
      */
     @GetMapping("v1/getOrderRejectionDetail")
     @ApiOperation(value = "查询拒收单详情")
-    ComResponse<OrderRejectionDetailDTO> getOrderRejectionDetail(@RequestParam(value = "orderNo") String orderNo);
+    ComResponse<OrderRejectionDetailDTO> getOrderRejectionDetail(@RequestParam String orderNo);
 }

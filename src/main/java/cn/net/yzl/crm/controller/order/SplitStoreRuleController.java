@@ -52,8 +52,8 @@ public class SplitStoreRuleController {
     @PostMapping("v1/updateRuleStatus")
     @ApiOperation(value = "变更分仓规则状态")
     ComResponse<Boolean> updateRuleStatus(HttpServletRequest request,
-                                          @ApiParam(value = "仓库状态，0停用，1启用", name = "storeStatus") @RequestParam("storeStatus") Integer storeStatus,
-                                          @ApiParam(value = "仓库编号", name = "storeNo") @RequestParam("storeNo") String storeNo) {
+                                          @ApiParam(value = "仓库状态，0停用，1启用") @RequestParam Integer storeStatus,
+                                          @ApiParam(value = "仓库编号") @RequestParam String storeNo) {
         String userNo = request.getHeader("userNo");
         return splitStoreRuleClient.updateRuleStatus(userNo, storeNo, storeStatus);
     }
@@ -66,7 +66,7 @@ public class SplitStoreRuleController {
      */
     @GetMapping("v1/getStoreProvinceList")
     @ApiOperation(value = "查询仓库覆盖省市")
-    ComResponse<List<SplitStoreProvinceDTO>> getStoreProvinceList(@ApiParam(value = "仓库编号", name = "storeNo") @RequestParam("storeNo") String storeNo) {
+    ComResponse<List<SplitStoreProvinceDTO>> getStoreProvinceList(@ApiParam(value = "仓库编号") @RequestParam String storeNo) {
         return splitStoreRuleClient.getStoreProvinceList(storeNo);
     }
 
@@ -74,14 +74,14 @@ public class SplitStoreRuleController {
     /**
      * 订单分仓规则分页查询
      *
-     * @param pageNum
+     * @param pageNo
      * @param pageSize
      * @return
      */
     @GetMapping("v1/getSplitStoreRuleList")
     @ApiOperation(value = "订单分仓规则分页查询")
-    ComResponse<Page<SplitStoreRulePageDTO>> getSplitStoreRuleList(@ApiParam(name = "pageNum", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNum,
-                                                                  @ApiParam(name = "pageSize", value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        return splitStoreRuleService.getSplitStoreRuleList(pageSize, pageNum);
+    ComResponse<Page<SplitStoreRulePageDTO>> getSplitStoreRuleList(@ApiParam(value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+                                                                  @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        return splitStoreRuleService.getSplitStoreRuleList(pageSize, pageNo);
     }
 }
