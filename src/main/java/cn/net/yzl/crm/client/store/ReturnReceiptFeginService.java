@@ -27,7 +27,7 @@ public interface ReturnReceiptFeginService {
      * @return
      */
     @ApiOperation(value = "确认收货", notes = "确认收货")
-    @PostMapping("v1/confirm/receipt")
+    @PostMapping("returnReceipt/v1/confirm/receipt")
     ComResponse confirmReceipt(@RequestBody List<ReturnToStoreAddDto> addList);
 
     /**
@@ -36,7 +36,7 @@ public interface ReturnReceiptFeginService {
      * @return
      */
     @ApiOperation(value = "拒绝收货", notes = "拒绝收货")
-    @PostMapping("v1/refuse/return")
+    @PostMapping("returnReceipt/v1/refuse/return")
     ComResponse refuseReturn(@RequestBody RefuseReturnDto refuseReturnDto);
 
 
@@ -47,7 +47,7 @@ public interface ReturnReceiptFeginService {
      */
     @ApiOperation(value = "退货入库单详情", notes = "退货入库单详情")
     @ApiImplicitParam(name = "id", value = "退货入库单id", required = true, dataType = "Int", paramType = "query")
-    @GetMapping("v1/detail")
+    @GetMapping("returnReceipt/v1/detail")
     ComResponse<ReturnReceiptDetailDto> detail(@RequestParam("id") Integer id);
 
 
@@ -58,10 +58,10 @@ public interface ReturnReceiptFeginService {
      * @return
      */
     @ApiOperation(value = "退货入库单列表", notes = "退货入库单列表")
-    @PostMapping("v1/page")
+    @PostMapping("returnReceipt/v1/page")
     ComResponse<Page<ReturnReceiptPageDto>> page(@RequestBody ReturnReceiptCondition returnReceiptCondition);
 
     @ApiOperation(value = "退货入库单类型列表")
-    @GetMapping("v1/type/list")
+    @GetMapping("returnReceipt/v1/type/list")
     ComResponse<List<Map<String,Object>>> returnTypeList();
 }

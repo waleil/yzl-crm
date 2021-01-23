@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Api(value = "仓储中心心心心心-退货入库管理", tags = {"仓储中心心心心心-退货入库管理"})
-@RequestMapping("ReturnReceipt")
+@RequestMapping("returnReceipt")
 @RestController
 public class ReturnReceiptController {
 
