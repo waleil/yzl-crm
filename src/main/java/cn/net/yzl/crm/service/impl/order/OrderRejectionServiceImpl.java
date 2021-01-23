@@ -52,7 +52,7 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
         dto.setRejectType(orderRejectionAddDTO.getRejectType());
         dto.setDepartId(departId);
         dto.setRejectionNo(seqNo);
-        dto.setStoreNo(orderRejectionAddDTO.getStoreNo());
+        dto.setStoreNo(String.valueOf(orderRejectionAddDTO.getStoreNo()));
 //        dto.setStoreName();
         dto.setUserNo(userNo);
         dto.setUserName(detailsByNo.getData().getName());

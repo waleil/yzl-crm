@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
+import cn.net.yzl.order.util.MathUtils;
 
 /**
  * 单元测试类
@@ -22,6 +24,24 @@ import cn.net.yzl.order.model.vo.order.OrderDetailIn;
  * @date 2021年1月18日,下午7:10:59
  */
 public class SimpleTests {
+	@Test
+	public void testBigDecimal() {
+		System.err.println(BigDecimal.valueOf(999.99).multiply(BigDecimal.valueOf(100))
+				.setScale(0, RoundingMode.HALF_UP).toEngineeringString());
+		System.err.println(BigDecimal.valueOf(999.99).multiply(BigDecimal.valueOf(100))
+				.setScale(0, RoundingMode.HALF_UP).toPlainString());
+		System.err.println(BigDecimal.valueOf(999.99).multiply(BigDecimal.valueOf(100))
+				.setScale(0, RoundingMode.HALF_UP).toString());
+		System.err.println(Integer.valueOf(BigDecimal.valueOf(999.99).multiply(BigDecimal.valueOf(100))
+				.setScale(0, RoundingMode.HALF_UP).toString()));
+//		System.err.println(20.01 * 10.0);
+//		System.err.println(20.01 * 10);
+//		System.err.println(20.01 - 10.0);
+//		System.err.println(20.01 - 10);
+//		System.err.println(20.01 / 10);
+//		System.err.println(20.01 / 10.0);
+	}
+
 	@Test
 	public void testJoining() {
 		OrderDetailIn od1 = new OrderDetailIn();

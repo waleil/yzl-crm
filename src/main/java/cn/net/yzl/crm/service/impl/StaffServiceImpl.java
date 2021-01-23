@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *  员工业务层业务层实现
+ * 员工业务层业务层实现
  */
 @Service
 @Slf4j
@@ -39,51 +39,35 @@ public class StaffServiceImpl implements StaffService {
     private CrmStaffClient crmStaffClient;
 
     @Autowired
-    private  OrderSearchClient orderSearchClient;
+    private OrderSearchClient orderSearchClient;
 
     @Override
     public StaffImageBaseInfoDto getStaffImageBaseInfoByStaffNo(String staffNo) {
         ComResponse<StaffImageBaseInfoDto> ehrBaseInfoResponse = ehrStaffClient.getDetailsByNo(staffNo);
-        if (ehrBaseInfoResponse==null||ehrBaseInfoResponse.getCode()!=200){
+        if (ehrBaseInfoResponse == null || ehrBaseInfoResponse.getCode() != 200) {
             log.info(".......StaffServiceImpl.getStaffImageBaseInfoByStaffNo()调用ehr获取员工详情接口错误.....");
             throw new BizException(ResponseCodeEnums.API_ERROR_CODE);
         }
         StaffImageBaseInfoDto data = ehrBaseInfoResponse.getData();
         // 获取商品优势
         ComResponse<List<String>> basicProductAdvance = crmStaffClient.getBasicProductAdvance(staffNo);
-        if (null != basicProductAdvance && basicProductAdvance.getCode()==200){
+        if (null != basicProductAdvance && basicProductAdvance.getCode() == 200) {
             data.setProductAdvanced(basicProductAdvance.getData());
         }
 
         // 获取病症优势
         ComResponse<List<JSONObject>> basicDiseaseAdvance = crmStaffClient.getBasicDiseaseAdvance(staffNo);
-        if (null != basicDiseaseAdvance && basicDiseaseAdvance.getCode()==200){
+        if (null != basicDiseaseAdvance && basicDiseaseAdvance.getCode() == 200) {
             data.setDiseaseAdvanced(basicDiseaseAdvance.getData());
         }
 
         ComResponse<List<JSONObject>> trainProductRes = ehrStaffClient.selectStaffTrainProduct(staffNo, 5);
-        if (trainProductRes.getCode()==200 && trainProductRes.getData()!=null){
+        if (trainProductRes.getCode() == 200 && trainProductRes.getData() != null) {
             List<String> trainProductHistory = trainProductRes.getData().stream().map(x -> {
                 String productName = x.getStr("productName");
-                Integer grade = x.getInt("grade");
-                if (grade == null) {
-                    return productName;
-                } else {
-                    String gradeStr = "不合格";
-                    switch (grade) {
-                        case 0:
-                            gradeStr = "不合格";
-                            break;
-                        case 1:
-                            gradeStr = "合格";
-                            break;
-                        case 2:
-                            gradeStr = "优秀";
-                            break;
-                        default:
-                    }
-                    return productName + ":" + gradeStr;
-                }
+                String gradeName = x.getStr("gradeName");
+                return productName + ":" + gradeName;
+
             }).collect(Collectors.toList());
             data.setTrainProductHistory(trainProductHistory);
         }
@@ -94,8 +78,8 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public Page<StaffProdcutTravelDto> getStaffProductTravel(String staffNo, Integer pageNo, Integer pageSize) {
         ComResponse<Page<StaffProdcutTravelDto>> response = crmStaffClient.getStaffProductTravelList(staffNo, pageNo, pageSize);
-        if (response.getCode()!=200){
-            log.info("......员工画像 获取员工商品旅程信息错误: code=[{}],msg=[{}]",response.getCode(),response.getMessage());
+        if (response.getCode() != 200) {
+            log.info("......员工画像 获取员工商品旅程信息错误: code=[{}],msg=[{}]", response.getCode(), response.getMessage());
             throw new BizException(ResponseCodeEnums.BIZ_ERROR_CODE);
         }
         return response.getData();
@@ -105,8 +89,8 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public Page<CustomerDto> getCustomerListByStaffNo(String staffNo, Integer pageNo, Integer pageSize) {
         ComResponse<Page<CustomerDto>> response = crmStaffClient.getCustomerList(staffNo, pageNo, pageSize);
-        if (response.getCode()!=200){
-            log.info("......员工画像 获取员工顾客列表错误: code=[{}],msg=[{}]",response.getCode(),response.getMessage());
+        if (response.getCode() != 200) {
+            log.info("......员工画像 获取员工顾客列表错误: code=[{}],msg=[{}]", response.getCode(), response.getMessage());
             throw new BizException(ResponseCodeEnums.BIZ_ERROR_CODE);
         }
         return response.getData();
@@ -118,7 +102,8 @@ public class StaffServiceImpl implements StaffService {
         reqDTO.setPageNo(req.getPageNo());
         reqDTO.setPageSize(req.getPageSize());
         reqDTO.setStaffCode(req.getStaffNo());
-        switch (req.getTimeType()){
+        reqDTO.setOrderStatus(req.getStatus());
+        switch (req.getTimeType()) {
             case 1:
                 reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(1)), DatePattern.NORM_DATETIME_FORMATTER));
                 break;
@@ -132,7 +117,6 @@ public class StaffServiceImpl implements StaffService {
                 reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(30)), DatePattern.NORM_DATETIME_FORMATTER));
                 break;
             default:
-                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now()), DatePattern.NORM_DATETIME_FORMATTER));
         }
         ComResponse<Page<OderListResDTO>> response = orderSearchClient.selectOrderList(reqDTO);
         return response;

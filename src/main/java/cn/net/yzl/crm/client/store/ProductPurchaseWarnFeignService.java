@@ -34,7 +34,7 @@ public interface ProductPurchaseWarnFeignService {
     @ApiOperation("修改预警通知设置")
     public ComResponse updateProductPurchaseWarnSet(@RequestBody ProductPurchaseWarnSetVO productPurchaseWarnSetVO);
 
-    @GetMapping(value = "productPurchaseWarn/v1/selectProductPurchaseWarnList")
+    @PostMapping(value = "productPurchaseWarn/v1/selectProductPurchaseWarnList")
     @ApiOperation("采购商品预警列表分页查询")
     public ComResponse<Page<ProductPurchaseWarnDTO>> selectProductPurchaseWarnList(@RequestBody ProductPurchaseWarnVO productPurchaseWarnVO);
 

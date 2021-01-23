@@ -23,7 +23,7 @@ public interface OrderSettingClient {
      * @return
      */
     @RequestMapping(path="v1/findAllNonCheckSettings",method = RequestMethod.GET)
-    public ComResponse<List<OrderCheckSettingDTO>> findAllNonCheckSettings(@RequestParam("enableFlag") Integer enableFlag);
+    public ComResponse<List<OrderCheckSettingDTO>> findAllNonCheckSettings(@RequestParam Integer enableFlag);
 
 
     /**
@@ -56,9 +56,9 @@ public interface OrderSettingClient {
      * @return
      */
     @RequestMapping(path="v1/selectSettingedProducts",method = RequestMethod.GET)
-    public ComResponse<Page<OrderCheckSettingProduct>> selectSettingedProducts(@RequestParam(required = false,defaultValue = "1",value = "pageNo")Integer pageNo,
-                                                                               @RequestParam(required = false,defaultValue = "15",value = "pageSize")  Integer pageSize,
-                                                                               @RequestParam (required = false,value = "settingType")  Integer settingType) ;
+    public ComResponse<Page<OrderCheckSettingProduct>> selectSettingedProducts(@RequestParam(required = false,defaultValue = "1")Integer pageNo,
+                                                                               @RequestParam(required = false,defaultValue = "15")  Integer pageSize,
+                                                                               @RequestParam (required = false)  Integer settingType) ;
 
 
 

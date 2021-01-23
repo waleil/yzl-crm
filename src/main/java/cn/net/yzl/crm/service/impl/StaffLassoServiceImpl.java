@@ -47,8 +47,17 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         if (null == calculationDto) {
             return Collections.emptyList();
         }
+        if (CollectionUtils.isEmpty(calculationDto.getPostIdList())) {
+            return Collections.emptyList();
+        }
         //获取原线程的请求参数
         RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+
+        //岗位相关条件查询
+        CompletableFuture<List<String>> postIdCompletable = CompletableFuture.supplyAsync(() -> {
+            RequestContextHolder.setRequestAttributes(attributes);
+            return ehrStaffClient.getPostIdList(calculationDto.getPostIdList());
+        });
 
         //基础信息相关条件查询
         CompletableFuture<List<String>> baseCompletable = CompletableFuture.supplyAsync(() -> {
@@ -156,7 +165,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             return CollectionUtils.isNotEmpty(all.get()) ? all.get() : Collections.emptyList();
         }
         AtomicReference<List<String>> newStaffNo = new AtomicReference<>();
-        collect.forEach(staffList-> newStaffNo.set(CollUtil.subtractToList(staffNoList, staffList)));
+        collect.forEach(staffList -> newStaffNo.set(CollUtil.subtractToList(staffNoList, staffList)));
         return newStaffNo.get();
     }
 

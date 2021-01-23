@@ -33,18 +33,18 @@ public class OrderRejectionController {
 
     @GetMapping("v1/getOrderRejectionList")
     @ApiOperation(value = "查询拒收订单分页")
-    public ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@ApiParam(name = "orderNo", value = "订单号") @RequestParam("orderNo") String orderNo,
-                                                                          @ApiParam(name = "pageNum", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNum,
-                                                                          @ApiParam(name = "pageSize", value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        return orderRejectionClient.getOrderRejectionList(orderNo, pageNum, pageSize);
+    public ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@ApiParam(value = "订单号") @RequestParam String orderNo,
+                                                                          @ApiParam(value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+                                                                          @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        return orderRejectionClient.getOrderRejectionList(orderNo, pageNo, pageSize);
     }
 
     @GetMapping("v1/getOrderList")
     @ApiOperation(value = "查询已发货、待发货订单")
-    public ComResponse<Page<OderListResDTO>> selectOrderList(@ApiParam(name = "orderNo", value = "订单号") @RequestParam("orderNo") String orderNo,
-                                                             @ApiParam(name = "pageNum", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNum,
-                                                             @ApiParam(name = "pageSize", value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        return orderRejectionClient.selectOrderList(pageNum, pageSize, orderNo);
+    public ComResponse<Page<OderListResDTO>> selectOrderList(@ApiParam(value = "订单号") @RequestParam String orderNo,
+                                                             @ApiParam(value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+                                                             @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        return orderRejectionClient.selectOrderList(pageNo, pageSize, orderNo);
     }
 
     /**
@@ -55,7 +55,7 @@ public class OrderRejectionController {
      */
     @GetMapping("v1/getOrderRejectionDetail")
     @ApiOperation(value = "查询拒收单详情")
-    public ComResponse<OrderRejectionDetailDTO> getOrderRejectionDetail(@ApiParam(name = "orderNo", value = "订单号") @RequestParam("orderNo") String orderNo) {
+    public ComResponse<OrderRejectionDetailDTO> getOrderRejectionDetail(@ApiParam(value = "订单号") @RequestParam String orderNo) {
         return orderRejectionClient.getOrderRejectionDetail(orderNo);
     }
 
