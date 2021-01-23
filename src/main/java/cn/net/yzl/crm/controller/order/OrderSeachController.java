@@ -51,7 +51,7 @@ public class OrderSeachController {
 
     @ApiOperation(value = "查询订单商品列表")
     @GetMapping("v1/selectOrderProductDetail")
-    public  ComResponse<List<OrderProductDTO>> selectOrderProductDetail(@RequestParam
+    public  ComResponse<OrderProductListVo> selectOrderProductDetail(@RequestParam
                                                                         @NotNull(message = "订单编号不能为空")
                                                                         @ApiParam(value="订单编号",required=true)String orderNo) {
 

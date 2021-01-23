@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @ApiModel(
         value = "订单详情查询输出参数类",
         description = "参数类"
@@ -14,7 +16,7 @@ import lombok.Data;
 @Data
 public class OrderInfoVO {
     @ApiModelProperty("订单基础信息")
-    private OrderInfoResDTO orderInfoResDTO ;
+    private List<OrderInfoResDTO> orderInfoResDTOList ;
 
     @ApiModelProperty("购买人信息")
     private Member member ;
