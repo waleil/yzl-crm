@@ -74,14 +74,14 @@ public class SplitStoreRuleController {
     /**
      * 订单分仓规则分页查询
      *
-     * @param pageNum
+     * @param pageNo
      * @param pageSize
      * @return
      */
     @GetMapping("v1/getSplitStoreRuleList")
     @ApiOperation(value = "订单分仓规则分页查询")
-    ComResponse<Page<SplitStoreRulePageDTO>> getSplitStoreRuleList(@ApiParam(name = "pageNum", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+    ComResponse<Page<SplitStoreRulePageDTO>> getSplitStoreRuleList(@ApiParam(name = "pageNo", value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
                                                                   @ApiParam(name = "pageSize", value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        return splitStoreRuleService.getSplitStoreRuleList(pageSize, pageNum);
+        return splitStoreRuleService.getSplitStoreRuleList(pageSize, pageNo);
     }
 }

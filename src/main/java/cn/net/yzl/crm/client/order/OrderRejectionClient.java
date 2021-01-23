@@ -24,12 +24,12 @@ public interface OrderRejectionClient {
      * 查询拒收单分页
      *
      * @param orderNo
-     * @param pageNum
+     * @param pageNo
      * @param pageSize
      * @return
      */
     @GetMapping("v1/getOrderRejectionList")
-    ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@RequestParam(value = "orderNo") String orderNo, @RequestParam(value = "pageNum") Integer pageNum, @RequestParam(value = "pageSize") Integer pageSize);
+    ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@RequestParam(value = "orderNo") String orderNo, @RequestParam(value = "pageNo") Integer pageNo, @RequestParam(value = "pageSize") Integer pageSize);
 
     /**
      * 新增拒收单

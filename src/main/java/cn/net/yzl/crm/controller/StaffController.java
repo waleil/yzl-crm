@@ -49,6 +49,7 @@ public class StaffController {
     @PostMapping("/getStaffScheduleInfo")
    public ComResponse<StaffScheduleInfoDto> getStaffScheduleInfo(@RequestBody StaffScheduleQueryDto staffScheduleQueryDto){
         log.info("......StaffController.getStaffScheduleInfo()开始,请求参数:{}......", JsonUtil.toJsonStr(staffScheduleQueryDto));
+
         if (null==staffScheduleQueryDto||staffScheduleQueryDto.getPageSize()==null||staffScheduleQueryDto.getPageNo()==null){
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
