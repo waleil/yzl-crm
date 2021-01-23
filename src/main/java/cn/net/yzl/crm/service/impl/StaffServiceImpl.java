@@ -117,7 +117,6 @@ public class StaffServiceImpl implements StaffService {
                 reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(30)), DatePattern.NORM_DATETIME_FORMATTER));
                 break;
             default:
-                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now()), DatePattern.NORM_DATETIME_FORMATTER));
         }
         ComResponse<Page<OderListResDTO>> response = orderSearchClient.selectOrderList(reqDTO);
         return response;
