@@ -7,32 +7,38 @@ import cn.net.yzl.common.util.SnowFlakeUtil;
 import cn.net.yzl.crm.client.order.NewOrderClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.StaffService;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.crm.service.order.INewOrderService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
-
+import cn.net.yzl.order.model.db.order.OrderTemp;
+import cn.net.yzl.order.model.db.order.OrderTempProduct;
 import cn.net.yzl.order.model.vo.order.CustomerGroup;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
-
 import cn.net.yzl.order.model.vo.order.Product4OrderDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductDTO;
+import cn.net.yzl.product.model.vo.product.vo.BatchProductVO;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
+import io.swagger.models.auth.In;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class NewOrderService implements INewOrderService {
-    private static final Logger log = LoggerFactory.getLogger( NewOrderService.class );
+public class NewOrderServiceImpl implements INewOrderService {
+    private static final Logger log = LoggerFactory.getLogger( NewOrderServiceImpl.class );
 
     @Value("${api.gateway.url}")
     private String path;
@@ -50,70 +56,89 @@ public class NewOrderService implements INewOrderService {
     @Autowired
     private ProductClient productClient;
     @Autowired
-    private MemberFien memberFien;
+    private MemberGroupFeign memberFien;
+
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
+
 
     /**
      * 新建订单
      */
-    public ComResponse<Boolean> newOrderTem(NewOrderDTO dto){
-        return null;
-    }
-    /**
-     * 导入
-     * @param list
-     */
-    @Override
-    public void oprData(List list) {
-//        local.set(new ArrayList<>());
-//        if(list == null || list.size()==0){
-//            return;
-//        }
-//        if(list.size() > 100){
-//            throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"导入数据不能大于100条");
-//        }
-//        List<NewOrderExcelInDTO> newOrderExcelInDTOS = list;
-//        //将excel表格数据格式化
-//        List<NewOrderDTO> newOrderDTOS = formateData(list);
-//        //格式化成最终的
-//        List<NewOrderDTO> finalList = new ArrayList<>();
-//        for (NewOrderDTO newOrderDTO : newOrderDTOS) {
-//            NewOrderDTO dto = mkFinalOrderInfo(newOrderDTO);
-//            finalList.add(dto);
-//        }
-//        //减库存
-//        finalList.forEach(map ->{
-//            OrderProductVO orderProductVO = caculateStackInfo(map);
-//            //调用扣减内存接口
-//            ComResponse orderRes = productClient.productReduce(orderProductVO);
-//            if(orderRes.getCode().compareTo(200) == 0){
-//                Map reduceMap = new HashMap();
-//                reduceMap.put("url",path + "/productServer/product/v1/increaseStock");
-//                reduceMap.put("parm",orderProductVO);
-//                local.get().add(reduceMap);
-//
-//            }
-//                } );
-//
-//         //调用订单服务，插入订单临时表
-//
-
-    }
-
-
     @Override
     public ComResponse<Boolean> newOrder(NewOrderDTO dto) {
         ComResponse  orderRes = null;
         try{
             local.set(new ArrayList<>());
+            //查询坐席时间
+            ComResponse<StaffImageBaseInfoDto> response = ehrStaffClient.getDetailsByNo(dto.getUserNo());
+            if(response.getCode().compareTo(Integer.valueOf(200))!=0){
+                throw new BizException(response.getCode(),response.getMessage());
+            }
+            Integer wordCode = response.getData().getWorkCode();
+            Integer departId = response.getData().getDepartId();
+            //todo 根据部门编号获取财务归属
+            //生成批次号
+            String batchNo = SnowFlakeUtil.getId() + "";
+            String productCodes = dto.getProducts().stream().map(Product4OrderDTO::getProductCode)
+                    .collect(Collectors.joining(","));
 
-            OrderProductVO vo = new OrderProductVO();
-            List<ProductReduceVO> reduceVOS = new ArrayList<>();
+            List<ProductDTO> productDTOS = searchProducts(productCodes,dto.getProducts().size());
+            Map<String, Product4OrderDTO> collect = dto.getProducts().stream()
+                    .collect(Collectors.toMap(Product4OrderDTO::getProductCode, product4OrderDTO -> product4OrderDTO));
+            //组织商品明细
+            List<OrderTempProduct> orderTempProducts = new ArrayList<>();
+            productDTOS.forEach(map ->{
+                OrderTempProduct product = new OrderTempProduct();
+
+                product.setOrderTempProductCode(SnowFlakeUtil.getId()+"");
+                product.setOrderTempCode(batchNo);
+                product.setProductCode(map.getProductCode());
+                product.setProductBarCode(map.getBarCode());
+                product.setProductName(map.getName());
+                product.setCount(collect.get(map.getProductCode()).getCount());
+                product.setPrice(map.getSalePrice());
+                product.setSpec(map.getTotalUseNum().toString());
+                product.setUnit(map.getUnit());
+                orderTempProducts.add(product);
+            });
 
             //查询群组信息
-            List<CustomerGroup> groups = searchGroups(dto.getCustomerGroupIds());
-            //人数
-            Integer count = groups.stream().mapToInt(CustomerGroup ::getGroupcount).sum();
+            List<CrowdGroup> groups = searchGroups(dto.getCustomerGroupIds());
+            //组织群组信息
+            List<OrderTemp> list = new ArrayList<>();
+            groups.forEach(map ->{
+                OrderTemp orderTemp = new OrderTemp();
+                orderTemp.setOrderTempCode(batchNo);
+                orderTemp.setGroupId(map.get_id());
+                orderTemp.setGroupCount(map.getPerson_count());
+                orderTemp.setOprCount(0);
+                orderTemp.setSuccessCount(0);
+                orderTemp.setFailCount(0);
+                orderTemp.setTotalAmt(dto.getTotalOrderAMT());
+                orderTemp.setDiscount(0.00);
+                orderTemp.setPfee(dto.getPfee());
+                orderTemp.setRemark(dto.getRemark());
+                orderTemp.setRelationOrder(dto.getRelationOrder());
+                orderTemp.setExpressFlag(dto.getAssignExpressFlag());
+                orderTemp.setExpressCode(dto.getExpressCode());
+                orderTemp.setOprStats(0);
+                orderTemp.setCreateCode(dto.getUserNo());
+                orderTemp.setCreateName(dto.getUserName());
+                orderTemp.setUpdateCode(dto.getUserNo());
+                orderTemp.setUpdateName(dto.getUserName());
+                orderTemp.setDepartId(departId);
+                orderTemp.setWorkCode(wordCode.toString());
+                //todo
+                orderTemp.setFinancialOwner(123);
 
+
+            });
+            //人数
+            Integer count = groups.stream().mapToInt(CrowdGroup ::getPerson_count).sum();
+            BatchProductVO vo = new BatchProductVO();
+            vo.setBatchNo(batchNo);
+            List<ProductReduceVO> reduceVOS = new ArrayList();
             dto.getProducts().forEach(map -> {
                 ProductReduceVO reduceVO = new ProductReduceVO();
                 reduceVO.setProductCode(map.getProductCode());
@@ -121,12 +146,12 @@ public class NewOrderService implements INewOrderService {
                 reduceVOS.add(reduceVO);
 
             });
-            vo.setProductReduceVOS(reduceVOS);
-            //计算各个商品所需要的库存量，并校验库存是否充足
-            vo = caculateStackInfo(dto);
+            //校验库存
 
-            //批次号
-            vo.setOrderNo(SnowFlakeUtil.getId() + "");
+            vo.setProductReduceVOS(reduceVOS);
+//            reduceVOS.forEach();
+
+
             //todo 调用扣减内存接口（根据批次号扣减库存）
             orderRes = productClient.productReduce(vo);
             if(orderRes.getCode().compareTo(200) == 0){
@@ -165,15 +190,15 @@ public class NewOrderService implements INewOrderService {
             throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"商品不能为空");
         }
         String products = dto.getProducts().stream().map(Product4OrderDTO::getProductCode).collect(Collectors.joining(","));
-        List<Product4OrderDTO> list = searchProducts(products,dto.getProducts());
-        dto.setProducts(list);
+//        List<Product4OrderDTO> list = searchProducts(products,dto.getProducts());
+//        dto.setProducts(list);
 
         //查询顾客群信息
         if(dto.getCustomerGroupIds() == null || dto.getCustomerGroupIds().size() == 0 ){
             throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"顾客群不能为空");
         }
 
-        List<CustomerGroup> groups = searchGroups(dto.getCustomerGroupIds());
+//        List<CustomerGroup> groups = searchGroups(dto.getCustomerGroupIds());
 
         //计算各各个商品所需所需数量
         //各个群组 累计人数
@@ -197,27 +222,26 @@ public class NewOrderService implements INewOrderService {
 
         return dto;
     }
-    /**
-     * 计算需要扣减的库存信息,并校验库存
-     */
-    public OrderProductVO caculateStackInfo(NewOrderDTO dto){
-        //各个群组 累计人数
-//        int count = dto.getGroups().stream().collect(Collectors.summingInt(CustomerGroup::getGroupcount));
-        OrderProductVO vo = new OrderProductVO();
-        List<ProductReduceVO> reduceVOS = new ArrayList<>();
-
-        dto.getProducts().forEach(map -> {
-            ProductReduceVO reduceVO = new ProductReduceVO();
-            reduceVO.setProductCode(map.getProductCode());
-//            reduceVO.setNum(map.getCount() * count);
-            reduceVOS.add(reduceVO);
-
-        });
-        vo.setProductReduceVOS(reduceVOS);
-        //校验库存
-        checkStore(reduceVOS,dto.getProducts());
-        return vo;
-    }
+//    /**
+//     * 计算需要扣减的库存信息,并校验库存
+//     */
+//    public BatchProductVO caculateStackInfo(List<OrderTempProduct> list){
+//
+//        OrderProductVO vo = new OrderProductVO();
+//        List<ProductReduceVO> reduceVOS = new ArrayList<>();
+//
+//        list.forEach(map -> {
+//            ProductReduceVO reduceVO = new ProductReduceVO();
+//            reduceVO.setProductCode(map.getProductCode());
+////            reduceVO.setNum(map.getCount() * count);
+//            reduceVOS.add(reduceVO);
+//
+//        });
+//        vo.setProductReduceVOS(reduceVOS);
+//        //校验库存
+////        checkStore(reduceVOS,dto.getProducts());
+//        return vo;
+//    }
 
 
 
@@ -227,20 +251,20 @@ public class NewOrderService implements INewOrderService {
      * @param products 商品列表，存储商品库存
      */
     private void checkStore(List<ProductReduceVO> reduceVOS, List<Product4OrderDTO> products) {
-        products.forEach(map ->{
-            reduceVOS.forEach(item ->{
-                if(map.getProductCode().equals(item.getProductCode())){
-                    //当库存为-1时，无需校验
-                    if(map.getStock() != -1){
-                        if(item.getNum()>map.getStock()){
-                            throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),"库存不足");
-                        }
-                    }
-                }
-
-
-            });
-        });
+//        products.forEach(map ->{
+//            reduceVOS.forEach(item ->{
+//                if(map.getProductCode().equals(item.getProductCode())){
+//                    //当库存为-1时，无需校验
+//                    if(map.getStock() != -1){
+//                        if(item.getNum()>map.getStock()){
+//                            throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),"库存不足");
+//                        }
+//                    }
+//                }
+//
+//
+//            });
+//        });
     }
 
     /**
@@ -270,59 +294,41 @@ public class NewOrderService implements INewOrderService {
      * @param groupCodes
      * @return
      */
-    protected List<CustomerGroup> searchGroups(List<String> groupCodes){
+    protected List<CrowdGroup> searchGroups(List<String> groupCodes){
         String groupsStr = groupCodes.stream().collect(Collectors.joining(","));
         //查询顾客群组接口
-//        ComResponse<List<CrowdGroup>> response = memberFien.getCrowdGroupList(groupsStr);
-//        if(response.getCode().compareTo(Integer.valueOf(200))!=0){
-//            throw new BizException(response.getCode(),response.getMessage());
-//        }
-//        if(response.getData() !=null && (groupCodes.size() != response.getData().size())){
-//            throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分群组已失效");
-//        }
-//        List<CustomerGroup> groups = new ArrayList<>();
-//        System.out.println(response.getData().get(0) instanceof CrowdGroup);
-//        response.getData().forEach(map ->{
-//            CustomerGroup customerGroup = new CustomerGroup();
-////            customerGroup.setGroupId(map.getCrowd_id());
-//            customerGroup.setGroupcount(map.getPerson_count());
-//            groups.add(customerGroup);
+        ComResponse<List<CrowdGroup>> response = memberFien.getCrowdGroupList(groupsStr);
+        if(response.getCode().compareTo(Integer.valueOf(200))!=0){
+            throw new BizException(response.getCode(),response.getMessage());
+        }
+        if(response.getData() !=null && (groupCodes.size() != response.getData().size())){
+            throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分群组已失效");
+        }
 
-//        });
-
-       return null;
+       return response.getData();
     }
 
     /**
      * 查询商品列表
      * @param productCodes
-     * @param list
+     * @param
      * @return
      */
-    protected List<Product4OrderDTO> searchProducts(String productCodes,List<Product4OrderDTO> list){
+    protected List<ProductDTO> searchProducts(String productCodes,int prodCnt){
         ComResponse<List<ProductDTO>> prd = productClient.queryByCodes(productCodes);
         if(prd.getCode().compareTo(200)!=0){
             throw new BizException(prd.getCode(),prd.getMessage());
         }
-        if(prd.getData() !=null && (list.size() != prd.getData().size())){
+        if(prd.getData() !=null && (prodCnt != prd.getData().size())){
             throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分商品已下架");
         }
 
-        list.forEach(map -> {
-            prd.getData().stream().map(item -> {
-                if (Objects.equals(item.getProductCode(), map.getProductCode())) {
-                    map.setName(item.getName());
-                    //价格前端上送，已前端上送为主
-                    if(map.getProductPrice() == null){
-                        map.setProductPrice(item.getSalePrice());
-                        map.setStock(item.getStock());
-                    }
+        return prd.getData();
+    }
 
-                }
-                return map;
-            }).distinct().collect(Collectors.toList());
-        });
-        return list;
+    @Override
+    public void oprData(List list) {
+
     }
 
 

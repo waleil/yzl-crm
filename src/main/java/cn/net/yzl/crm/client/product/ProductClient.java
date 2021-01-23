@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,17 @@ public interface ProductClient {
      */
     @PostMapping(value = "v1/productReduce")
     ComResponse productReduce(@RequestBody @Valid OrderProductVO orderProductVO);
+
+    /**
+     * 按批次扣减商品库存
+     * wangzhe
+     * 2021-01-19
+     * @param productVO
+     * @return
+     */
+    @ApiOperation("批量下单扣减库存")
+    @PostMapping(value = "v1/batchReduce")
+    public ComResponse productReduce(@RequestBody @Valid BatchProductVO productVO);
 
     @GetMapping(value = "v1/queryProducts")
     ComResponse<List<ProductMainInfoDTO>> queryProducts(@RequestParam(value = "ids",required = false) String ids);
