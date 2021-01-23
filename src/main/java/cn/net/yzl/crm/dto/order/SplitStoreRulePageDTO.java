@@ -18,9 +18,9 @@ public class SplitStoreRulePageDTO implements Serializable {
     private String storeNo;
     @ApiModelProperty("仓库名称")
     private String storeName;
-    @ApiModelProperty("仓库类型")
+    @ApiModelProperty("仓库类型(1:主仓,2:售后,3:残损仓)")
     private Integer sType;
-    @ApiModelProperty("仓库编号")
+    @ApiModelProperty("经营类型(1:自建仓库,2:租赁,3逻辑仓)")
     private Integer mType;
     @ApiModelProperty("覆盖省份")
     private String provinceNames;
