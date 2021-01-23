@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.net.yzl.crm.dao.OutStoreWarningMapper">
+
+
+    <select id="getRoleIdsByMenuPerms" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT DISTINCT b.role_id
+        FROM menu a,
+             role_menu b
+        WHERE a.id = b.menu_id
+          and a.perms = #{menuPerms}
+
+    </select>
+    <select id="getUserCodesByRoleIds" resultType="java.lang.String">
+
+        SELECT DISTINCT
+        ur.user_code
+        FROM
+        user_role ur
+        WHERE
+        ur.role_id in
+        <foreach collection="roleIdList" open=" (" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+
+    </select>
+</mapper>
