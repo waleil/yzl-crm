@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -34,6 +35,34 @@ public class SimpleTests {
 		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3, od4);
 		System.err.println(
 				detailIns.stream().map(OrderDetailIn::getProductCode).distinct().collect(Collectors.joining(",")));
+	}
+
+	@Test
+	public void testGroupingBy() {
+		OrderDetailIn od1 = new OrderDetailIn();
+		od1.setMealNo("11");
+		od1.setMealName("套餐11");
+		od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+		OrderDetailIn od2 = new OrderDetailIn();
+		od2.setProductCode("22");
+		od2.setProductName("商品22");
+		od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		OrderDetailIn od3 = new OrderDetailIn();
+		od3.setProductCode("33");
+		od3.setProductName("商品33");
+		od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		OrderDetailIn od4 = new OrderDetailIn();
+		od4.setProductCode("44");
+		od4.setProductName("商品44");
+		od4.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		OrderDetailIn od5 = new OrderDetailIn();
+		od5.setMealNo("55");
+		od5.setMealName("套餐55");
+		od5.setMealFlag(CommonConstant.MEAL_FLAG_1);
+		Map<Integer, List<OrderDetailIn>> odMap = Arrays.asList(od1, od2, od3, od4, od5).stream()
+				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
+		odMap.entrySet().stream()
+				.forEach(en -> System.err.println(String.format("%s\t%s", en.getKey(), en.getValue())));
 	}
 
 	@Test
@@ -81,9 +110,8 @@ public class SimpleTests {
 	@Test
 	public void testAtomicInteger() {
 		AtomicInteger ai = new AtomicInteger(0);
-		Arrays.asList("a", "b", "c").stream().forEach(s -> {
-			System.err.println(String.format("%s%s", s, ai.incrementAndGet()));
-		});
+		Arrays.asList("a", "b", "c").stream()
+				.forEach(s -> System.err.println(String.format("%s%s", s, ai.incrementAndGet())));
 	}
 
 	@Test
