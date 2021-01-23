@@ -96,11 +96,11 @@ public class SupplierController {
         return supplierFeginService.deleteSupplierList(ids);
     }
 
-    @ApiOperation(value = "验证供应商编码/简称", notes = "验证供应商编码/简称")
-    @RequestMapping(value = "/v1/insertCheck", method = RequestMethod.GET)
-    public ComResponse<Integer> insertCheck(@RequestParam(value = "no", required = false) String no, @RequestParam(value = "shortName", required = false) String shortName) {
-        return supplierFeginService.insertCheck(no, shortName);
-    }
+//    @ApiOperation(value = "验证供应商编码/简称", notes = "验证供应商编码/简称")
+//    @RequestMapping(value = "/v1/insertCheck", method = RequestMethod.GET)
+//    public ComResponse<Integer> insertCheck(@RequestParam(value = "no", required = false) String no, @RequestParam(value = "shortName", required = false) String shortName) {
+//        return supplierFeginService.insertCheck(no, shortName);
+//    }
 
 //    @ApiOperation(value = "供应商营业执照下载", notes = "供应商营业执照下载")
 //    @RequestMapping(value = "/v1/filedownload", method = RequestMethod.GET)
