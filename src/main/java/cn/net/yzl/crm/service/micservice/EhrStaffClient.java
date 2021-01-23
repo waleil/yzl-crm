@@ -174,7 +174,7 @@ public interface EhrStaffClient {
     @GetMapping(value = "/postLevel/getList")
     ComResponse<List<EhrPostLevelDto>> getPostLevelList();
 
-//   TODO @GetMapping(value = "/postLevel/getList")
+    @GetMapping(value = "/postLevel/getList2")
     ComResponse<List<String>> getPostIdListRemote(@RequestBody List<String> postIdList);
 
 
