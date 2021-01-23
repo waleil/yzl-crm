@@ -5,7 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.dispatchrule.DispatchRuleClient;
 import cn.net.yzl.workorder.model.db.DispatchRuleDetail;
-import cn.net.yzl.workorder.model.db.DistributionRuleSetUp;
+import cn.net.yzl.workorder.model.db.DispatchRuleSetUp;
 import cn.net.yzl.workorder.model.vo.DispatchRuleVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +40,6 @@ public class DispatchRuleController {
         return comResponse;
     }
 
-
     @ApiOperation(value = "启用/停用 智能派单分配规则")
     @GetMapping(value = "v1/updateDispatchRule")
     public ComResponse updateDispatchRule(@ApiParam(value = "id", required = true) @RequestParam(value = "id", required = true) String id,
@@ -74,13 +73,13 @@ public class DispatchRuleController {
 
     @PostMapping("v1/saveDispatchSetUp")
     @ApiOperation(value = "设置 [进线规则]", notes = "编辑智能派单规则 进线规则设置")
-    public ComResponse saveDispatchSetUp(@RequestBody DistributionRuleSetUp dispatchRuleSetUp) {
+    public ComResponse saveDispatchSetUp(@RequestBody DispatchRuleSetUp dispatchRuleSetUp) {
 
         ComResponse comResponse = null;
         try {
             comResponse = this.dispatchRuleClient.saveDispatchSetUp(dispatchRuleSetUp);
         } catch (Exception e) {
-            return ComResponse.fail(ComResponse.ERROR_STATUS, "更新异常");
+            return ComResponse.fail(ComResponse.ERROR_STATUS, "保存进线设置异常");
         }
         return comResponse;
     }

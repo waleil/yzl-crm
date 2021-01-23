@@ -2,7 +2,7 @@ package cn.net.yzl.crm.client.dispatchrule;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.workorder.model.db.DispatchRuleDetail;
-import cn.net.yzl.workorder.model.db.DistributionRuleSetUp;
+import cn.net.yzl.workorder.model.db.DispatchRuleSetUp;
 import cn.net.yzl.workorder.model.vo.DispatchRuleVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -61,7 +61,7 @@ public interface DispatchRuleClient {
      * @return
      */
     @PostMapping("v1/saveDispatchSetUp")
-    public ComResponse saveDispatchSetUp(@RequestBody DistributionRuleSetUp dispatchRuleSetUp);
+    public ComResponse saveDispatchSetUp(@RequestBody DispatchRuleSetUp dispatchRuleSetUp);
 
     /**
      * 查询 进线设置
