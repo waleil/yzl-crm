@@ -25,5 +25,5 @@ public class OrderRejectionAddDTO implements Serializable {
     private Integer rejectType;
 
     @ApiModelProperty("仓库号")
-    private Long storeNo;
+    private String storeNo;
 }
