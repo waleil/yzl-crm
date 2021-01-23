@@ -46,7 +46,7 @@ public interface ReturnReceiptFeginService {
      * @return
      */
     @ApiOperation(value = "退货入库单详情", notes = "退货入库单详情")
-    @ApiImplicitParam(name = "id", value = "采购订单id", required = true, dataType = "Int", paramType = "query")
+    @ApiImplicitParam(name = "id", value = "退货入库单id", required = true, dataType = "Int", paramType = "query")
     @GetMapping("v1/detail")
     ComResponse<ReturnReceiptDetailDto> detail(@RequestParam("id") Integer id);
 
