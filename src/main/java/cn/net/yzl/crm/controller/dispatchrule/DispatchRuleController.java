@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.dispatchrule.DispatchRuleClient;
 import cn.net.yzl.workorder.model.db.DispatchRuleDetail;
+import cn.net.yzl.workorder.model.db.DistributionRuleSetUp;
 import cn.net.yzl.workorder.model.vo.DispatchRuleVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,11 +30,12 @@ public class DispatchRuleController {
     @ApiOperation(value = "编辑智能派单分配规则", notes = "编辑智能派单规则")
     public ComResponse saveDispatch(@RequestBody DispatchRuleDetail detail) {
 
-        ComResponse comResponse = null ;
-        try{
+        ComResponse comResponse = null;
+        try {
             comResponse = dispatchRuleClient.saveDispatch(detail);
-        }catch (Exception e){
-            return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), ResponseCodeEnums.API_ERROR_CODE.getMessage());
+        } catch (Exception e) {
+            return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(),
+                    ResponseCodeEnums.API_ERROR_CODE.getMessage());
         }
         return comResponse;
     }
@@ -41,8 +43,8 @@ public class DispatchRuleController {
 
     @ApiOperation(value = "启用/停用 智能派单分配规则")
     @GetMapping(value = "v1/updateDispatchRule")
-    public ComResponse updateDispatchRule(@ApiParam(value = "id", required = true) @RequestParam(value = "id",required = true) String id,
-                                          @ApiParam(value = "status", required = true) @RequestParam(value = "status",required = true) Integer status) {
+    public ComResponse updateDispatchRule(@ApiParam(value = "id", required = true) @RequestParam(value = "id", required = true) String id,
+                                          @ApiParam(value = "status", required = true) @RequestParam(value = "status", required = true) Integer status) {
         ComResponse comResponse = null;
         try {
             comResponse = this.dispatchRuleClient.updateDispatchRule(id, status);
@@ -65,6 +67,34 @@ public class DispatchRuleController {
             comResponse = this.dispatchRuleClient.queryDispatchRules(dispatchRule);
         } catch (Exception e) {
             return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), ResponseCodeEnums.API_ERROR_CODE.getMessage());
+        }
+        return comResponse;
+    }
+
+
+    @PostMapping("v1/saveDispatchSetUp")
+    @ApiOperation(value = "设置 [进线规则]", notes = "编辑智能派单规则 进线规则设置")
+    public ComResponse saveDispatchSetUp(@RequestBody DistributionRuleSetUp dispatchRuleSetUp) {
+
+        ComResponse comResponse = null;
+        try {
+            comResponse = this.dispatchRuleClient.saveDispatchSetUp(dispatchRuleSetUp);
+        } catch (Exception e) {
+            return ComResponse.fail(ComResponse.ERROR_STATUS, "更新异常");
+        }
+        return comResponse;
+    }
+
+
+    @PostMapping("v1/getDispatchSetUp")
+    @ApiOperation(value = "查询 [进线规则]", notes = "编辑智能派单规则 进线规则设置")
+    public ComResponse getDispatchSetUp() {
+
+        ComResponse comResponse = null;
+        try {
+            comResponse = this.dispatchRuleClient.getDispatchSetUpOne();
+        } catch (Exception e) {
+            return ComResponse.fail(ComResponse.ERROR_STATUS, "查询进线配置异常 ");
         }
         return comResponse;
     }

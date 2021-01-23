@@ -2,6 +2,7 @@ package cn.net.yzl.crm.client.dispatchrule;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.workorder.model.db.DispatchRuleDetail;
+import cn.net.yzl.workorder.model.db.DistributionRuleSetUp;
 import cn.net.yzl.workorder.model.vo.DispatchRuleVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,7 +20,8 @@ import javax.validation.constraints.NotBlank;
  * <p>
  * 远程调用  规则接口
  */
-@FeignClient(name = "dispatchRuleClient", url = "${api.gateway.url}/workorderServer/dispatch_rule")
+//@FeignClient(name = "dispatchRuleClient", url = "${api.gateway.url}/workorderServer/dispatch_rule")
+@FeignClient(name = "dispatchRuleClient", url = "127.0.0.14602/workorderServer/dispatch_rule")
 @Service
 public interface DispatchRuleClient {
 
@@ -41,7 +43,7 @@ public interface DispatchRuleClient {
      * @return
      */
     @GetMapping("v1/updateDispatchRule")
-    public ComResponse updateDispatchRule(@RequestParam("id")     @NotBlank(message = "分配规则ID不能为空") String id,
+    public ComResponse updateDispatchRule(@RequestParam("id") @NotBlank(message = "分配规则ID不能为空") String id,
                                           @RequestParam("status") @NotBlank(message = "请选择操作") Integer status);
 
     /**
@@ -50,6 +52,24 @@ public interface DispatchRuleClient {
     @PostMapping("v1/queryDispatchRules")
     @ApiOperation("智能派单查询，按照条件查询分页查询")
     public ComResponse queryDispatchRules(@RequestBody DispatchRuleVO dispatchRule);
+
+
+    /**
+     * 保存 进线设置
+     *
+     * @param dispatchRuleSetUp
+     * @return
+     */
+    @PostMapping("v1/saveDispatchSetUp")
+    public ComResponse saveDispatchSetUp(@RequestBody DistributionRuleSetUp dispatchRuleSetUp);
+
+    /**
+     * 查询 进线设置
+     *
+     * @return
+     */
+    @PostMapping("v1/getDispatchSetUp")
+    public ComResponse getDispatchSetUpOne();
 
 
 }
