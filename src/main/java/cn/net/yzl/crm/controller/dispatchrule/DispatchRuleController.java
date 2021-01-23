@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
  * <p>
  * 智能派单分配规则 controller
  */
-@RestController(value = "crm_dispatch_rule")
+@RestController
+@RequestMapping(value = "crm_dispatch_rule")
 @Api(tags = "智能派单分配规则")
 public class DispatchRuleController {
 
@@ -85,7 +86,7 @@ public class DispatchRuleController {
     }
 
 
-    @PostMapping("v1/getDispatchSetUp")
+    @GetMapping("v1/getDispatchSetUp")
     @ApiOperation(value = "查询 [进线规则]", notes = "编辑智能派单规则 进线规则设置")
     public ComResponse getDispatchSetUp() {
 
@@ -93,7 +94,7 @@ public class DispatchRuleController {
         try {
             comResponse = this.dispatchRuleClient.getDispatchSetUpOne();
         } catch (Exception e) {
-            return ComResponse.fail(ComResponse.ERROR_STATUS, "查询进线配置异常 ");
+            return ComResponse.fail(ComResponse.ERROR_STATUS, "进线配置查询异常 ");
         }
         return comResponse;
     }

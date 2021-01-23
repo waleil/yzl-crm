@@ -20,8 +20,8 @@ import javax.validation.constraints.NotBlank;
  * <p>
  * 远程调用  规则接口
  */
-//@FeignClient(name = "dispatchRuleClient", url = "${api.gateway.url}/workorderServer/dispatch_rule")
-@FeignClient(name = "dispatchRuleClient", url = "127.0.0.14602/workorderServer/dispatch_rule")
+@FeignClient(name = "dispatchRuleClient", url = "${api.gateway.url}/workorderServer/dispatch_rule")
+//@FeignClient(name = "dispatchRuleClient", url = "localhost:4602/dispatch_rule")
 @Service
 public interface DispatchRuleClient {
 
@@ -68,7 +68,7 @@ public interface DispatchRuleClient {
      *
      * @return
      */
-    @PostMapping("v1/getDispatchSetUp")
+    @GetMapping("v1/getDispatchSetUp")
     public ComResponse getDispatchSetUpOne();
 
 
