@@ -11,6 +11,7 @@ import cn.net.yzl.workorder.model.db.WorkOrderFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
 import cn.net.yzl.workorder.model.enums.OperationTypeEnums;
+import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
@@ -220,5 +221,16 @@ public class WorkOrderController {
         updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
         updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
         return workOrderClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
+    }
+
+    /**
+     * 智能工单：我的热线工单-处理工单详情
+     * @param
+     * @return
+     */
+    @PostMapping("v1/findDWorkOrderHotlineDetails")
+    @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
+    public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+        return workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
     }
 }

@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.dto.*;
+import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
@@ -123,4 +124,12 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/updateAcceptStatusReceive")
     ComResponse<Void> updateAcceptStatusReceive(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
+
+    /**
+     * 我的热线工单-处理工单详情
+     * @param updateAcceptStatusReceiveDTO
+     * @return
+     */
+    @PostMapping("v1/findDWorkOrderHotlineDetails")
+    ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
 }
