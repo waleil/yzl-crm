@@ -41,7 +41,7 @@ public class OrderRestControllerTests {
 	public void testQueryByCodes() {
 		try {
 			String codes = "10000107,10000095,10000098";
-			this.productClient.queryByCodes(codes).getData().forEach(System.err::println);
+			this.productClient.queryByProductCodes(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
