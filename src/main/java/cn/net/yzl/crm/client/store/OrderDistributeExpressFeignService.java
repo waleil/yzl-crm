@@ -9,7 +9,6 @@ import cn.net.yzl.model.dto.OrderExpressDTO;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,6 +46,10 @@ public interface OrderDistributeExpressFeignService {
     @ApiOperation("智能分配快递规则状态修改")
     public ComResponse updateOrderDistributeExpressRuleStatus(@RequestBody OrderDistributeExpressRuleStatusVO vo);
 
+    @PostMapping(value = "orderDistributeExpress/v1/batchUpdateOrderDistributeExpressRuleStatus")
+    @ApiOperation("批量检测并修改规则状态")
+    public ComResponse batchUpdateOrderDistributeExpressRuleStatus();
+
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
     public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody List<OrderExpressDTO> orderExpressList);
@@ -63,8 +66,8 @@ public interface OrderDistributeExpressFeignService {
     @ApiOperation("人工分配")
     public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo);
 
-    @PostMapping(value = "orderDistributeExpress/v1/insertOrderDataToDistributeExpress")
-    @ApiOperation("获取订单服务数据并保存")
-    public ComResponse insertOrderDataToDistributeExpress();
+    @PostMapping(value = "orderDistributeExpress/v1/insertOrderDistributeExpress")
+    @ApiOperation("订单分配快递数据插入")
+    public ComResponse insertOrderDistributeExpress(@RequestBody List<OrderDistributeExpressVO> voList);
 
 }

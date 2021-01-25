@@ -11,16 +11,20 @@ import cn.net.yzl.workorder.model.db.WorkOrderFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
 import cn.net.yzl.workorder.model.enums.OperationTypeEnums;
+import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
+import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -137,7 +141,7 @@ public class WorkOrderController {
         updateSingleAdjustDTO.setStaffNo(QueryIds.userNo.get());
         updateSingleAdjustDTO.setOperator(QueryIds.userName.get());
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
+        updateSingleAdjustDTO.setAcceptStatus(2);//人工触发 改为已接受
         return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
     }
 
@@ -153,6 +157,21 @@ public class WorkOrderController {
     public ComResponse<List<ProductMainInfoDTO>> queryLastProduct() {
         String data = workOrderClient.queryLastProduct().getData();
         return productClient.queryProducts(data);
+    }
+
+    /**
+     * 智能工单：热线工单管理-多数据调整
+     * @param
+     * @return
+     */
+    @PostMapping("v1/updateMoreAdjust")
+    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
+    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
+        updateMoreAdjustDTO.setAcceptStatus(2);//人工触发 改为已接受
+        updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+        updateMoreAdjustDTO.setOperatorCode(QueryIds.userNo.get());
+        updateMoreAdjustDTO.setOperator(QueryIds.userName.get());
+        return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO);
     }
 
     @ApiOperation(value = "回访工单单条分配工单", notes = "回访工单单条分配工单")
@@ -178,5 +197,51 @@ public class WorkOrderController {
             return ComResponse.nodata("总线数必须和分配线数相等!");
         }
         return workOrderClient.batchAdjustment(updateBatchDTO);
+    }
+
+    @PostMapping("v1/findMyWorkOrderHotlinePageList")
+    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
+    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
+        String userId = QueryIds.userNo.get();
+        if(StringUtils.isEmpty(userId)){
+            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
+        }
+        myWorkOrderHotlineListDTO.setStaffNo(userId);
+        return workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+    }
+
+    /**
+     * 智能工单：我的热线工单-接收
+     * @param
+     * @return
+     */
+    @PostMapping("v1/updateAcceptStatusReceive")
+    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
+    public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+        updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+        updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
+        updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
+        return workOrderClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
+    }
+
+    /**
+     * 智能工单：我的热线工单-处理工单详情
+     * @param
+     * @return
+     */
+    @PostMapping("v1/findDWorkOrderHotlineDetails")
+    @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
+    public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+        return workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+    }
+
+    /**
+     * 智能工单：我的热线工单-被叫号码查询工单是否存在
+     * @return
+     */
+    @PostMapping("v1/findByCalledPhoneIsEmpty")
+    @ApiOperation(value = "智能工单：我的热线工单-被叫号码查询工单是否存在", notes = "智能工单：我的热线工单-被叫号码查询工单是否存在")
+    public ComResponse<Boolean> findByCalledPhoneIsEmpty(@Validated @RequestBody FindByCalledPhoneIsEmptyDTO findByCalledPhoneIsEmptyDTO){
+        return workOrderClient.findByCalledPhoneIsEmpty(findByCalledPhoneIsEmptyDTO);
     }
 }

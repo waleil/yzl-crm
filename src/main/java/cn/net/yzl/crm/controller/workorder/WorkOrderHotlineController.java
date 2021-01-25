@@ -77,42 +77,42 @@ public class WorkOrderHotlineController {
      * @param
      * @return
      */
-    @PostMapping("v1/updateMoreAdjust")
-//    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
-    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
-        updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
-        updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateMoreAdjustDTO.setOperatorCode(QueryIds.userNo.get());
-        updateMoreAdjustDTO.setOperator(QueryIds.userName.get());
-        return workOrderHotlineClient.updateMoreAdjust(updateMoreAdjustDTO);
-    }
+//    @PostMapping("v1/updateMoreAdjust")
+////    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
+//    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
+//        updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
+//        updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+//        updateMoreAdjustDTO.setOperatorCode(QueryIds.userNo.get());
+//        updateMoreAdjustDTO.setOperator(QueryIds.userName.get());
+//        return workOrderHotlineClient.updateMoreAdjust(updateMoreAdjustDTO);
+//    }
 
     /**
      * 智能工单：热线工单管理-列表
      * @param
      * @return
      */
-    @PostMapping("v1/findWorkOrderHotlinePageList")
-//    @ApiOperation(value = "智能工单：热线工单管理-列表", notes = "智能工单：热线工单管理-列表")
-    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO){
-        return workOrderHotlineClient.findWorkOrderHotlinePageList(findWorkOrderHotlinePageListDTO);
-    }
+//    @PostMapping("v1/findWorkOrderHotlinePageList")
+////    @ApiOperation(value = "智能工单：热线工单管理-列表", notes = "智能工单：热线工单管理-列表")
+//    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO){
+//        return workOrderHotlineClient.findWorkOrderHotlinePageList(findWorkOrderHotlinePageListDTO);
+//    }
 
     /**
      * 智能工单：我的热线工单-列表
      * @param
      * @return
      */
-    @PostMapping("v1/findMyWorkOrderHotlinePageList")
-//    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
-    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
-        String userId = QueryIds.userNo.get();
-        if(StringUtils.isEmpty(userId)){
-            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
-        }
-        myWorkOrderHotlineListDTO.setStaffNo(userId);
-        return workOrderHotlineClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
-    }
+//    @PostMapping("v1/findMyWorkOrderHotlinePageList")
+////    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
+//    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
+//        String userId = QueryIds.userNo.get();
+//        if(StringUtils.isEmpty(userId)){
+//            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
+//        }
+//        myWorkOrderHotlineListDTO.setStaffNo(userId);
+//        return workOrderHotlineClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+//    }
 
     /**
      * 智能工单：热线工单管理-可分配员工
@@ -135,25 +135,25 @@ public class WorkOrderHotlineController {
      * @param
      * @return
      */
-    @PostMapping("v1/updateAcceptStatusReceive")
-//    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
-    public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
-        updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
-        updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
-        return workOrderHotlineClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
-    }
+//    @PostMapping("v1/updateAcceptStatusReceive")
+////    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
+//    public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+//        updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+//        updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
+//        updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
+//        return workOrderHotlineClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
+//    }
 
     /**
      * 智能工单：我的热线工单-处理工单详情
      * @param
      * @return
      */
-    @PostMapping("v1/findDWorkOrderHotlineDetails")
-//    @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
-    public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
-        return workOrderHotlineClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
-    }
+//    @PostMapping("v1/findDWorkOrderHotlineDetails")
+////    @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
+//    public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+//        return workOrderHotlineClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+//    }
 
     /**
      * 智能工单：我的热线工单-处理工单提交
