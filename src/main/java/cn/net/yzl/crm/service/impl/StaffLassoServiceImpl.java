@@ -9,6 +9,7 @@ import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.service.micservice.OrderClient;
 import cn.net.yzl.crm.staff.dto.lasso.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class StaffLassoServiceImpl implements StaffLassoService {
     @Autowired
     private CrmStaffClient crmStaffClient;
 
+    @Autowired
+    private OrderClient orderClient;
+
 
     @Override
     public List<String> calculationDto(CalculationDto calculationDto) throws Exception {
@@ -70,11 +74,11 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         });
         //工单类型条件查询
         CompletableFuture<List<String>> workOrderTypeCompletable = CompletableFuture.supplyAsync(() -> {
-//            List<WorkOrderTypeDto> workOrderType = calculationDto.getWorkOrderTypeList();
-//            if (CollectionUtils.isNotEmpty(workOrderType)) {
-//                RequestContextHolder.setRequestAttributes(attributes);
-//                return ehrStaffClient.getStaffWorkOrderTypeList(workOrderType);
-//            }
+            List<WorkOrderTypeDto> workOrderType = calculationDto.getWorkOrderType();
+            if (CollectionUtils.isNotEmpty(workOrderType)) {
+                RequestContextHolder.setRequestAttributes(attributes);
+                return ehrStaffClient.getStaffWorkOrderTypeList(workOrderType);
+            }
             return null;
         });
         //广告相关条件查询
@@ -82,7 +86,9 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             List<AdvertDto> advertList = calculationDto.getAdvertList();
             if (CollectionUtils.isNotEmpty(advertList)) {
                 RequestContextHolder.setRequestAttributes(attributes);
-                return null;
+                OrderCalculationDto orderCalculationDto = new OrderCalculationDto();
+                orderCalculationDto.setAdverts(advertList);
+                return orderClient.getStaffOrderList(orderCalculationDto);
             }
             return null;
         });
@@ -91,7 +97,9 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             List<MediaDto> mediaList = calculationDto.getMediaList();
             if (CollectionUtils.isNotEmpty(mediaList)) {
                 RequestContextHolder.setRequestAttributes(attributes);
-                return null;
+                OrderCalculationDto orderCalculationDto = new OrderCalculationDto();
+                orderCalculationDto.setMedias(mediaList);
+                return orderClient.getStaffOrderList(orderCalculationDto);
             }
             return null;
         });
@@ -100,7 +108,9 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             List<SaleProductDto> saleProductList = calculationDto.getSaleProductList();
             if (CollectionUtils.isNotEmpty(saleProductList)) {
                 RequestContextHolder.setRequestAttributes(attributes);
-                return null;
+                OrderCalculationDto orderCalculationDto = new OrderCalculationDto();
+                orderCalculationDto.setProducts(saleProductList);
+                return orderClient.getStaffOrderList(orderCalculationDto);
             }
             return null;
         });
@@ -109,7 +119,9 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             List<DiseaseDto> diseaseDtoList = calculationDto.getDiseaseList();
             if (CollectionUtils.isNotEmpty(diseaseDtoList)) {
                 RequestContextHolder.setRequestAttributes(attributes);
-                return null;
+                OrderCalculationDto orderCalculationDto = new OrderCalculationDto();
+                orderCalculationDto.setDiseases(diseaseDtoList);
+                return orderClient.getStaffOrderList(orderCalculationDto);
             }
             return null;
         });
@@ -141,11 +153,11 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             return null;
         });
 
-        CompletableFuture<List<String>> all = CompletableFuture.allOf(postIdCompletable,baseCompletable, workOrderTypeCompletable
+        CompletableFuture<List<String>> all = CompletableFuture.allOf(postIdCompletable, baseCompletable, workOrderTypeCompletable
                 , advertCompletable, mediaCompletable, saleProductCompletable, diseaseCompletable, scheduleCompletable
                 , trainProductCompletable, indicatorCompletable).thenApply(x -> {
             try {
-                return (List<String>) intersection(postIdCompletable.get(),baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
+                return (List<String>) intersection(postIdCompletable.get(), baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
                         , mediaCompletable.get(), saleProductCompletable.get(), diseaseCompletable.get(), scheduleCompletable.get()
                         , trainProductCompletable.get(), indicatorCompletable.get());
             } catch (Exception e) {
