@@ -190,7 +190,7 @@ public interface EhrStaffClient {
 	 * @date 2021年1月25日,下午1:04:20
 	 */
 	@GetMapping("/depart/getById")
-	ComResponse<DepartDto> departGetById(@RequestParam @NotNull Integer departId);
+	ComResponse<DepartDto> getDepartById(@RequestParam @NotNull Integer departId);
 
 
     default List<String> getStaffBaseInfoList(Base base) {
