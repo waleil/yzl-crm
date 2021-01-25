@@ -98,8 +98,28 @@ public class WorkOrderController {
     @ApiOperation(value = "回访工单管理列表",notes = "回访工单管理列表")
     @PostMapping(value = "v1/listPage")
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO){
-        workOrderVisitVO.setStaffNo(QueryIds.userNo.get());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
-        return listPage;
+        Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
+        if(null == pageWorkOrderBean){
+            return ComResponse.success();
+        }
+        List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
+        String productNames = new String();
+        for(WorkOrderBean workOrderBean : workOrderBeans){
+            productNames +=","+workOrderBean.getProductCode();
+        }
+        productNames = productNames.substring(1);
+        List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
+        if(!CollectionUtils.isEmpty(data)){
+            Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
+            workOrderBeans.stream().forEach(workOrderBean -> {
+                if(workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())){
+                    workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+                }
+            });
+        }
+        pageWorkOrderBean.setItems(workOrderBeans);
+
+        return ComResponse.success(pageWorkOrderBean);
     }
 }
