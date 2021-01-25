@@ -93,9 +93,9 @@ public class OrderSaleController {
 				orderSaleMemberInfo.setMemberCityCode(member.getCity_code());
 				orderSaleMemberInfo.setMemberRegionCode(member.getRegion_code());
 				orderSaleMemberInfo.setMemberEmail(member.getEmail());
-				orderSaleMemberInfo.setMemberBalance(member.getMember_amount().getTotal_money());
-				orderSaleMemberInfo.setMemberRedPacket(member.getMember_amount().getLast_red_bag());
-				orderSaleMemberInfo.setMemberCoupon(member.getMember_amount().getLast_coupon());
+				orderSaleMemberInfo.setMemberBalance(member.getMember_amount().getTotalMoney());
+				orderSaleMemberInfo.setMemberRedPacket(member.getMember_amount().getLastRedBag());
+				orderSaleMemberInfo.setMemberCoupon(member.getMember_amount().getLastCoupon());
 				orderSaleCheckDetailVO.setOrderSaleMemberInfo(orderSaleMemberInfo);
 				comResponse.setData(orderSaleCheckDetailVO);
 			}
