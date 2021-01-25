@@ -21,6 +21,7 @@ import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -232,5 +233,15 @@ public class WorkOrderController {
     @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
         return workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+    }
+
+    /**
+     * 智能工单：我的热线工单-被叫号码查询工单是否存在
+     * @return
+     */
+    @PostMapping("v1/findByCalledPhoneIsEmpty")
+    @ApiOperation(value = "智能工单：我的热线工单-被叫号码查询工单是否存在", notes = "智能工单：我的热线工单-被叫号码查询工单是否存在")
+    public ComResponse<Boolean> findByCalledPhoneIsEmpty(@Validated @RequestBody FindByCalledPhoneIsEmptyDTO findByCalledPhoneIsEmptyDTO){
+        return workOrderClient.findByCalledPhoneIsEmpty(findByCalledPhoneIsEmptyDTO);
     }
 }

@@ -132,4 +132,12 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
+
+    /**
+     * 智能工单：我的热线工单-被叫号码查询工单是否存在
+     * @param findByCalledPhoneIsEmptyDTO
+     * @return
+     */
+    @PostMapping("v1/findByCalledPhoneIsEmpty")
+    ComResponse<Boolean> findByCalledPhoneIsEmpty(FindByCalledPhoneIsEmptyDTO findByCalledPhoneIsEmptyDTO);
 }
