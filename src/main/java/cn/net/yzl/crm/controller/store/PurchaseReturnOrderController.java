@@ -12,7 +12,6 @@ import cn.net.yzl.model.vo.PurchaseReturnCondition;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +25,6 @@ import java.util.List;
 @Api(value = "仓储中心心心心心-采购退货单管理", tags = {"仓储中心心心心心-采购退货单管理"})
 @RequestMapping("purchaseReturn")
 @RestController
-@Slf4j
 public class PurchaseReturnOrderController {
 
 

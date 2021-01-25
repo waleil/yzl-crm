@@ -3,7 +3,8 @@ package cn.net.yzl.crm.controller.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.service.product.DiseaseService;
+import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.RedisConfig;
 import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
@@ -29,6 +30,8 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
     /**
      * @param
      * @Author: lichanghong
@@ -173,7 +176,7 @@ public class ProductController {
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(),"非法的id/pid参数！");
             }
         }
-        return productService.queryProductListAtlas(productName,id,pid);
+        return productService.queryProductListAtlas(productName,id,pid).setMessage(fastDFSConfig.getUrl());
     }
 
     @PostMapping(value = "v1/updateTime")

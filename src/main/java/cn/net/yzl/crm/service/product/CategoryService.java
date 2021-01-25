@@ -11,7 +11,7 @@ import java.util.List;
 
 
 public interface CategoryService {
-    ComResponse getCategoryById(Integer id);
+    ComResponse<Category> getCategoryById(Integer id);
 
     ComResponse<Category> insertCategory(CategoryTO categoryTO);
 
@@ -27,5 +27,5 @@ public interface CategoryService {
 
     ComResponse<Page<CategoryTO>> selectAll(Integer pid, Integer pageNo, Integer pageSize);
 
-    ComResponse<List<CategorySelectTO>> selectForOptions(Integer pid);
+    ComResponse<List<CategorySelectTO>> selectForOptions(Integer pid,String type);
 }

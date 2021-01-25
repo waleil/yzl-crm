@@ -12,7 +12,7 @@ public class OrderCriteriaDto {
     @ApiModelProperty(name = "staffNo", value = "员工工号")
     private String staffNo;
     @ApiModelProperty(name = "timeType", value = "时间类型 1昨日 2近七天 3近15天  4近一个月")
-    private Integer timeType=1;
+    private Integer timeType;
     @ApiModelProperty(name = "status", value = "订单状态：0.话务待审核 1.话务未通过 2. 物流部待审核 3.物流部审核未通过  4..物流已审核 5.已退 6.部分退 7.订单已取消 8.订单已完成 9.拒收")
     private Byte status;
     @ApiModelProperty(name = "pageNo", value = "当前页")
