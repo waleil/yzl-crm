@@ -30,8 +30,8 @@ public class OrderRestControllerTests {
 	@Test
 	public void testQueryListProductMealByCodes() {
 		try {
-//			String codes = "T0000145,T0000142";
-//			this.mealClient.queryListProductMealByCodes(codes).getData().forEach(System.err::println);
+			String codes = "T0000145,T0000142";
+			this.mealClient.queryByIds(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
