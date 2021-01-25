@@ -62,7 +62,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         //基础信息相关条件查询
         CompletableFuture<List<String>> baseCompletable = CompletableFuture.supplyAsync(() -> {
             Base base = calculationDto.getBase();
-            if (null != base && (null != base.getSex() || null != base.getNature() || CollectionUtils.isNotEmpty(base.getWorkplaceList()))) {
+            if (null != base && (null != base.getEmployedInterval() || null != base.getSex() || null != base.getNature() || CollectionUtils.isNotEmpty(base.getWorkplaceList()))) {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return ehrStaffClient.getStaffBaseInfoList(base);
             }
@@ -141,7 +141,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             return null;
         });
 
-        CompletableFuture<List<String>> all = CompletableFuture.allOf(baseCompletable, workOrderTypeCompletable
+        CompletableFuture<List<String>> all = CompletableFuture.allOf(postIdCompletable,baseCompletable, workOrderTypeCompletable
                 , advertCompletable, mediaCompletable, saleProductCompletable, diseaseCompletable, scheduleCompletable
                 , trainProductCompletable, indicatorCompletable).thenApply(x -> {
             try {
