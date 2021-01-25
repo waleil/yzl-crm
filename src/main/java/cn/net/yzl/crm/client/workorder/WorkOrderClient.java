@@ -52,5 +52,6 @@ public interface WorkOrderClient {
      * @param workOrderVisitVO
      * @return
      */
+    @PostMapping(value = "v1/listPage")
     ComResponse<Page<WorkOrderBean>> listPage(WorkOrderVisitVO workOrderVisitVO);
 }
