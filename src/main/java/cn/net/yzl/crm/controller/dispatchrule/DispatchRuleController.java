@@ -64,7 +64,19 @@ public class DispatchRuleController {
 
         ComResponse<Page> comResponse = null;
         try {
-            comResponse = this.dispatchRuleClient.queryDispatchRules(dispatchRule);
+            comResponse = this.dispatchRuleClient.queryDispatchRulesVO(dispatchRule);
+        } catch (Exception e) {
+            return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), ResponseCodeEnums.API_ERROR_CODE.getMessage());
+        }
+        return comResponse;
+    }
+
+    @ApiOperation(value = "查询，通过Id或者Type 查询智能派单[分配规则]")
+    @PostMapping(value = "v1/queryDispathRuleDetailsByIdOrType")
+    public ComResponse queryDispathRuleDetailsByTypeOrId(@RequestBody DispatchRuleVO dispatchRuleVO) {
+        ComResponse<Page> comResponse = null;
+        try {
+            comResponse = this.dispatchRuleClient.queryDispathRuleDetails(dispatchRuleVO);
         } catch (Exception e) {
             return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), ResponseCodeEnums.API_ERROR_CODE.getMessage());
         }

@@ -51,7 +51,13 @@ public interface DispatchRuleClient {
      */
     @PostMapping("v1/queryDispatchRules")
     @ApiOperation("智能派单查询，按照条件查询分页查询")
-    public ComResponse queryDispatchRules(@RequestBody DispatchRuleVO dispatchRule);
+    public ComResponse queryDispatchRulesVO(@RequestBody DispatchRuleVO dispatchRule);
+
+
+
+    @ApiOperation(value = "查询，通过Id或者Type 查询智能派单[分配规则]")
+    @PostMapping(value = "v1/queryDispathRuleDetailsByIdOrType")
+    public ComResponse queryDispathRuleDetails(@RequestBody DispatchRuleVO dispatchRuleVO);
 
 
     /**
