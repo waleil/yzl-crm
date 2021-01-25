@@ -20,6 +20,6 @@ public class WorkOrderController {
     @PostMapping(value = "v1/isListPage")
     public ComResponse<WorkOrderBean> isListPage(@RequestBody IsListPageDTO isListPageDTO){
         workOrderClient.isListPage(isListPageDTO);
-
+        return null;
     }
 }
