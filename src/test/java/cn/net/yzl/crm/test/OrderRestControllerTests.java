@@ -66,4 +66,14 @@ public class OrderRestControllerTests {
 			e.printStackTrace();
 		}
 	}
+
+	@Test
+	public void testGetDepartById() {
+		try {
+			Integer departid = 1;
+			System.err.println(this.ehrStaffClient.getDepartById(departid));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,7 +1,5 @@
 package cn.net.yzl.crm.client.order;
 
-import java.util.List;
-
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,70 +10,112 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.order.model.vo.order.OrderSaleCheckDetailVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleCheckListVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleDetailVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleListVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleVO;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @FeignClient(name = "orderSale", url = "${api.gateway.url}/orderService/orderSale")
 public interface OrderSaleClient {
-	// 新建售后订单
+	/**
+	 * @param orderSalem
+	 * @return 新建售后订单
+	 * @author zhangweiwei
+	 * @date 2021年1月25日,下午1:27:55
+	 */
 	@PostMapping("/v1/saveOrderSale")
 	public ComResponse<Boolean> saveOrderSale(@RequestBody @Validated OrderSaleVO orderSalem);
 
 	@PostMapping("/v1/updateOrderSale")
 	public ComResponse<Boolean> updateOrderSale(@RequestBody @Validated OrderSaleVO orderSalem);
 
-	@ApiOperation(value = "查询售后单列表")
+	/**
+	 * @param orderNo
+	 * @param saleOrderType
+	 * @param refundType
+	 * @param memberName
+	 * @param createStartTime
+	 * @param createEndTime
+	 * @param pageSize
+	 * @param pageNo
+	 * @return 查询售后单列表
+	 * @author zhangweiwei
+	 * @date 2021年1月25日,下午1:25:01
+	 */
 	@GetMapping("/v1/selectOrderSaleList")
-	public ComResponse<List<OrderSaleListVO>> selectOrderSaleList(
-			@RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
-			@RequestParam(required = false) @ApiParam(value = "售后类型") Integer saleOrderType,
-			@RequestParam(required = false) @ApiParam(value = "返货类型") Integer refundType,
-			@RequestParam(required = false) @ApiParam(value = "顾客名称") String memberName,
-			@RequestParam(required = false) @ApiParam(value = "开始时间") String createStartTime,
-			@RequestParam(required = false) @ApiParam(value = "结束时间") String createEndTime,
-			@RequestParam(required = false) @ApiParam(value = "页数") Integer pageSize,
-			@RequestParam(required = false) @ApiParam(value = "条数") Integer pageNo);
+	public ComResponse<Page<OrderSaleListVO>> selectOrderSaleList(@RequestParam(required = false) String orderNo,
+			@RequestParam(required = false) Integer saleOrderType, @RequestParam(required = false) Integer refundType,
+			@RequestParam(required = false) String memberName, @RequestParam(required = false) String createStartTime,
+			@RequestParam(required = false) String createEndTime, @RequestParam(required = false) Integer pageSize,
+			@RequestParam(required = false) Integer pageNo);
 
-	@ApiOperation(value = "查询售后单详情")
+	/**
+	 * @param orderNo
+	 * @param saleOrderNo
+	 * @return 查询售后单详情
+	 * @author zhangweiwei
+	 * @date 2021年1月25日,下午1:27:39
+	 */
 	@GetMapping("/v1/selectOrderSaleInfo")
-	public ComResponse<OrderSaleDetailVO> selectOrderSaleInfo(
-			@RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
-			@RequestParam @NotBlank(message = "售后单号不能为空") @ApiParam(value = "售后单号", required = true) String saleOrderNo);
+	public ComResponse<OrderSaleDetailVO> selectOrderSaleInfo(@RequestParam(required = false) String orderNo,
+			@RequestParam @NotBlank(message = "售后单号不能为空") String saleOrderNo);
 
-	@ApiOperation(value = "查询售后顶单审核详情")
+	/**
+	 * @param saleOrderNo
+	 * @return 查询售后顶单审核详情
+	 * @author zhangweiwei
+	 * @date 2021年1月25日,下午1:27:21
+	 */
 	@GetMapping("/v1/selectOrderSaleCheckInfo")
 	public ComResponse<OrderSaleCheckDetailVO> selectOrderSaleCheckInfo(
-			@RequestParam @NotBlank(message = "售后订单不能为空") @ApiParam(value = "售后单号") String saleOrderNo);
+			@RequestParam @NotBlank(message = "售后订单不能为空") String saleOrderNo);
 
-	@ApiOperation(value = "根据订单号查询订单信息")
+	/**
+	 * @param orderNo
+	 * @return 根据订单号查询订单信息
+	 * @author zhangweiwei
+	 * @date 2021年1月25日,下午1:27:07
+	 */
 	@GetMapping("/v1/selectOrderSaleProductInfoByOrderNo")
-	public ComResponse<OrderSaleDetailVO> selectOrderSaleProductInfoByOrderNo(
-			@RequestParam @ApiParam(value = "订单编号") String orderNo);
+	public ComResponse<OrderSaleDetailVO> selectOrderSaleProductInfoByOrderNo(@RequestParam String orderNo);
 
-	@ApiOperation(value = "查询售后订单审批列表")
+	/**
+	 * @param orderNo
+	 * @param memberName
+	 * @param createStartTime
+	 * @param createEndTime
+	 * @param pageSize
+	 * @param pageNo
+	 * @param state
+	 * @return 查询售后订单审批列表
+	 * @author zhangweiwei
+	 * @date 2021年1月25日,下午1:26:48
+	 */
 	@GetMapping("/v1/selectOrderSaleCheckList")
-	public ComResponse<List<OrderSaleCheckListVO>> selectOrderSaleCheckList(
-			@RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
-			@RequestParam(required = false) @ApiParam(value = "顾客姓名") String memberName,
-			@RequestParam(required = false) @ApiParam(value = "开始时间") String createStartTime,
-			@RequestParam(required = false) @ApiParam(value = "结束时间") String createEndTime,
-			@RequestParam(required = false) @ApiParam(value = "页数") Integer pageSize,
-			@RequestParam(required = false) @ApiParam(value = "条数") Integer pageNo,
-			@RequestParam @NotBlank(message = "售后单状态不能为空") @ApiParam(value = "售后单状态 1:未审核,其他:已审核", required = true) Integer state);
+	public ComResponse<Page<OrderSaleCheckListVO>> selectOrderSaleCheckList(
+			@RequestParam(required = false) String orderNo, @RequestParam(required = false) String memberName,
+			@RequestParam(required = false) String createStartTime,
+			@RequestParam(required = false) String createEndTime, @RequestParam(required = false) Integer pageSize,
+			@RequestParam(required = false) Integer pageNo,
+			@RequestParam @NotBlank(message = "售后单状态不能为空") Integer state);
 
-	@ApiOperation(value = "售后订单审批")
+	/**
+	 * @param orderSaleNo
+	 * @param checkStatus
+	 * @param userNo
+	 * @param userWorkInfo
+	 * @param remark
+	 * @param checkType
+	 * @return 售后订单审批
+	 * @author zhangweiwei
+	 * @date 2021年1月25日,下午1:26:32
+	 */
 	@GetMapping("/v1/updateOrderSaleState")
-	public ComResponse<Boolean> updateOrderSaleState(
-			@RequestParam @NotBlank(message = "售后单状态不能为空") @ApiParam(value = "售后单号", required = true) String orderSaleNo,
-			@RequestParam @NotBlank(message = "审批状态不能为空") @ApiParam(value = "审批状态 0:不通过,其他:通过", required = true) Integer checkStatus,
-			@RequestParam(required = false) @ApiParam(value = "用户ID") String userNo,
-			@RequestParam(required = false) @ApiParam(value = "用户岗位") Integer userWorkInfo,
-			@RequestParam(required = false) @ApiParam(value = "备注") String remark,
-			@RequestParam(required = false) @ApiParam(value = "售后类型") String checkType);
+	public ComResponse<Boolean> updateOrderSaleState(@RequestParam @NotBlank(message = "售后单状态不能为空") String orderSaleNo,
+			@RequestParam @NotBlank(message = "审批状态不能为空") Integer checkStatus,
+			@RequestParam(required = false) String userNo, @RequestParam(required = false) Integer userWorkInfo,
+			@RequestParam(required = false) String remark, @RequestParam(required = false) String checkType);
 
 }

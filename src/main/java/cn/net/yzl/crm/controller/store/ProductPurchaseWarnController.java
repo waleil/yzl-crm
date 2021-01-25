@@ -9,12 +9,10 @@ import cn.net.yzl.model.dto.ProductPurchaseWarnSetDTO;
 import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.model.vo.ProductPurchaseWarnSetVO;
 import cn.net.yzl.model.vo.ProductPurchaseWarnVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +22,8 @@ import java.util.List;
  * @date 2021/1/22 16:00
  */
 @RestController
+@Api(value = "仓储中心-商品采购预警", tags = {"仓储中心-商品采购预警"})
+@RequestMapping("productPurchaseWarn")
 public class ProductPurchaseWarnController {
 
     @Autowired
