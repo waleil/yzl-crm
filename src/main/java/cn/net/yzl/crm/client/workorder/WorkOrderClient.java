@@ -6,11 +6,15 @@ import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
+import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import javax.sound.midi.SoundbankResource;
 
 /**
  * 智能工单
@@ -54,4 +58,29 @@ public interface WorkOrderClient {
      */
     @PostMapping(value = "v1/listPage")
     ComResponse<Page<WorkOrderBean>> listPage(WorkOrderVisitVO workOrderVisitVO);
+
+    /**
+     * 智能工单：热线工单管理-单数据调整
+     *
+     * @param updateSingleAdjustDTO
+     * @return
+     */
+    @PostMapping(value = "v1/updateSingleAdjust")
+    ComResponse<Void> updateSingleAdjust(UpdateSingleAdjustDTO updateSingleAdjustDTO);
+
+    /**
+     * 智能工单:回访工单管理-查询所有用户首次购买商品
+     *
+     * @return
+     */
+    @GetMapping(value = "v1/queryFirstProduct")
+    ComResponse<String> queryFirstProduct();
+
+    /**
+     * 智能工单:回访工单管理-查询所有用户最后一次购买商品
+     *
+     * @return
+     */
+    @GetMapping(value = "v1/queryLastProduct")
+    ComResponse<String> queryLastProduct();
 }

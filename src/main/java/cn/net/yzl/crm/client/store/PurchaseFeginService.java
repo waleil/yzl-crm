@@ -118,4 +118,9 @@ public interface PurchaseFeginService {
     @GetMapping("purchase/v1/computer/expect/date")
     ComResponse<String> computerExpectDate(@RequestParam(value = "supplierNo") String supplierNo);
 
+
+    @ApiOperation(value = "采购单号查找退货信息", notes = "采购单号查找退货信息")
+    @ApiImplicitParam(name = "orderNo", value = "采购订单号", required = true, dataType = "String", paramType = "query")
+    @GetMapping("purchase/v1/detail/by/order/no")
+    ComResponse<PurchaseReturnResDto> detailByOrderNo(@RequestParam("orderNo") String orderNo);
 }

@@ -136,16 +136,19 @@ public class ProductController {
     public String checkParams(ProductVO vo) {
         List<ProductImageVO> images = vo.getImages();
 
-        int[] count = {0};
-        images.forEach(image ->{
-            if (image.getMainFlag()==1){
-                count[0]++;
+        if (images.size() != 0) {
+
+            int[] count = {0};
+
+            images.forEach(image ->{
+                if (image.getMainFlag()==1){
+                    count[0]++;
+                }
+            });
+            if (count[0] > 1){
+                return "只能存在一张主图，当前设置了"+count[0]+"张！";
             }
-        });
-        if (count[0] > 1){
-            return "只能存在一张主图，当前设置了"+count[0]+"张！";
         }
-        
         if (vo.getCostPriceD() == null) {
             return "市场价价格不能为空";
         }

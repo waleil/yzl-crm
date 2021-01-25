@@ -78,7 +78,7 @@ public class StaffLassoController {
     }
 
     @ApiOperation(value = "获取圈选详情")
-    @GetMapping("v1/getStaffCrowdGroup")
+    @PostMapping("v1/getStaffCrowdGroup")
     public ComResponse<StaffCrowdGroup> getStaffCrowdGroupDTO(
             @RequestParam("groupId") long groupId) {
 
@@ -87,7 +87,7 @@ public class StaffLassoController {
     }
 
     @ApiOperation(value = "定时任务跑-试算")
-    @GetMapping("v1/task/calculation")
+    @PostMapping("v1/task/calculation")
     public ComResponse<Boolean> taskCalculation() {
         staffLassoService.taskCalculation();
         return ComResponse.success(Boolean.TRUE);
