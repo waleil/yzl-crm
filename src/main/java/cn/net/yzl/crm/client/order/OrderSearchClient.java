@@ -58,6 +58,6 @@ public interface OrderSearchClient {
 
     @ApiOperation(value = "查询订单信息服务层,为取消订单售后单提供的接口")
     @PostMapping("v1/selectOrderInfo4Opr")
-    public  ComResponse<OrderInfoVo> selectOrderInfo4Opr(String orderNo);
+    public  ComResponse<OrderInfoVo> selectOrderInfo4Opr(@RequestParam("orderNo") String orderNo);
 
 }

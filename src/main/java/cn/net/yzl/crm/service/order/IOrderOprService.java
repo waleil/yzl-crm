@@ -8,5 +8,5 @@ public interface IOrderOprService {
      * @param orderNo
      * @return
      */
-    ComResponse<Integer> cancleOrder(String orderNo);
+    ComResponse<Boolean> cancleOrder(String orderNo);
 }

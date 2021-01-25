@@ -33,14 +33,7 @@ public class OrderOprController {
     public ComResponse cancleOrderM(@RequestParam("orderNo")
                                     @NotBlank(message = "订单号不能为空")
                                     @ApiParam(name = "orderNo", value = "订单号", required = true) String orderNo) {
-        ComResponse<Integer> comResponse = null;
-        try {
-            comResponse = this.orderOprService.cancleOrder(orderNo);
-        } catch (Exception e) {
-            comResponse = new ComResponse<>();
-            comResponse.setStatus(ComResponse.ERROR_STATUS);
-            comResponse.setMessage("该订单[" + orderNo + "]取消失败");
-        }
-        return comResponse;
+
+        return this.orderOprService.cancleOrder(orderNo);
     }
 }
