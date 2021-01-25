@@ -6,6 +6,8 @@ import cn.net.yzl.crm.client.store.PurchaseReturnFeginService;
 import cn.net.yzl.model.dto.PurchaseReturnResDto;
 import cn.net.yzl.model.dto.PurchaseReturnReviewDto;
 import cn.net.yzl.model.dto.PurchaseReturnWaybillDto;
+import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnOrderAddDto;
+import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnUpdateDto;
 import cn.net.yzl.model.vo.PurReturnOrderAddVo;
 import cn.net.yzl.model.vo.PurReturnOrderUpdateVo;
 import cn.net.yzl.model.vo.PurchaseReturnCondition;
@@ -44,14 +46,14 @@ public class PurchaseReturnOrderController {
 
     @ApiOperation(value = "采购退货单新增")
     @PostMapping("v1/add")
-    public ComResponse add(@RequestBody PurReturnOrderAddVo purReturnOrderAddVo){
-        return purchaseReturnFeginService.add(purReturnOrderAddVo);
+    public ComResponse add(@RequestBody PurchaseReturnOrderAddDto purchaseReturnOrderAddDto){
+        return purchaseReturnFeginService.add(purchaseReturnOrderAddDto);
     }
 
     @ApiOperation(value = "采购退货单更新")
     @PostMapping("v1/update")
-    public ComResponse update(@RequestBody PurReturnOrderUpdateVo returnOrderUpdateVo){
-        return purchaseReturnFeginService.update(returnOrderUpdateVo);
+    public ComResponse update(@RequestBody PurchaseReturnUpdateDto purchaseReturnUpdateDto){
+        return purchaseReturnFeginService.update(purchaseReturnUpdateDto);
     }
 
     @ApiOperation(value = "采购退货单审核")
@@ -92,12 +94,12 @@ public class PurchaseReturnOrderController {
     }
     /**
      * 采购退货单审核列表
-     * @param returnWaybillDtos
+     * @param returnWaybillDto
      * @return
      */
     @ApiOperation(value = "采购退货单退回添加货运单号")
     @PostMapping("v1/back/waybill/")
-    public ComResponse backWayBill(@RequestBody List<PurchaseReturnWaybillDto> returnWaybillDtos){
-        return purchaseReturnFeginService.backWayBill(returnWaybillDtos);
+    public ComResponse backWayBill(@RequestBody PurchaseReturnWaybillDto returnWaybillDto){
+        return purchaseReturnFeginService.backWayBill(returnWaybillDto);
     }
 }
