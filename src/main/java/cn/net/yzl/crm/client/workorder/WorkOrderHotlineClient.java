@@ -40,8 +40,8 @@ public interface WorkOrderHotlineClient {
      * @param updateSingleAdjustDTO
      * @return
      */
-    @RequestMapping(value = "v1/updateSingleAdjust",method = RequestMethod.POST)
-    ComResponse<Void> updateSingleAdjust(@RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO);
+//    @RequestMapping(value = "v1/updateSingleAdjust",method = RequestMethod.POST)
+//    ComResponse<Void> updateSingleAdjust(@RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO);
 
     /**
      * 智能工单：热线工单管理-多数据调整
