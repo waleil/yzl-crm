@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/workorder/workOrderHotline")
-@Api(tags = "智能工单-热线工单管理相关接口开发")
+//@Api(tags = "智能工单-热线工单管理相关接口开发")
 public class WorkOrderHotlineController {
 
     @Autowired
@@ -48,7 +48,7 @@ public class WorkOrderHotlineController {
      * @param updateRecyclingDTO
      * @return
      */
-    @ApiOperation(value = "智能工单：热线工单管理-回收",notes = "智能工单：热线工单管理-回收")
+//    @ApiOperation(value = "智能工单：热线工单管理-回收",notes = "智能工单：热线工单管理-回收")
     @PostMapping("v1/updateRecycling")
     public ComResponse<Void> updateRecycling(@Validated  @RequestBody UpdateRecyclingDTO updateRecyclingDTO){
         updateRecyclingDTO.setStaffNo(QueryIds.userNo.get());
@@ -63,7 +63,7 @@ public class WorkOrderHotlineController {
      * @return
      */
     @PostMapping("v1/updateSingleAdjust")
-    @ApiOperation(value = "智能工单：热线工单管理-单数据调整", notes = "智能工单：热线工单管理-单数据调整")
+//    @ApiOperation(value = "智能工单：热线工单管理-单数据调整", notes = "智能工单：热线工单管理-单数据调整")
     public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO){
         updateSingleAdjustDTO.setStaffNo(QueryIds.userNo.get());
         updateSingleAdjustDTO.setOperator(QueryIds.userName.get());
@@ -78,7 +78,7 @@ public class WorkOrderHotlineController {
      * @return
      */
     @PostMapping("v1/updateMoreAdjust")
-    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
+//    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
     public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
         updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
         updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
@@ -93,7 +93,7 @@ public class WorkOrderHotlineController {
      * @return
      */
     @PostMapping("v1/findWorkOrderHotlinePageList")
-    @ApiOperation(value = "智能工单：热线工单管理-列表", notes = "智能工单：热线工单管理-列表")
+//    @ApiOperation(value = "智能工单：热线工单管理-列表", notes = "智能工单：热线工单管理-列表")
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO){
         return workOrderHotlineClient.findWorkOrderHotlinePageList(findWorkOrderHotlinePageListDTO);
     }
@@ -104,7 +104,7 @@ public class WorkOrderHotlineController {
      * @return
      */
     @PostMapping("v1/findMyWorkOrderHotlinePageList")
-    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
+//    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
     public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
         String userId = QueryIds.userNo.get();
         if(StringUtils.isEmpty(userId)){
@@ -120,7 +120,7 @@ public class WorkOrderHotlineController {
      * @return
      */
     @PostMapping("v1/getDistributionStaff")
-    @ApiOperation(value = "智能工单：热线工单管理-可分配员工", notes = "智能工单：热线工单管理-可分配员工")
+//    @ApiOperation(value = "智能工单：热线工单管理-可分配员工", notes = "智能工单：热线工单管理-可分配员工")
     public ComResponse<Page<EhrStaff>> getDistributionStaff(@RequestBody GetDistributionStaffDTO getDistributionStaffDTO){
         String userId = QueryIds.userNo.get();
         if(StringUtils.isEmpty(userId)){
@@ -136,7 +136,7 @@ public class WorkOrderHotlineController {
      * @return
      */
     @PostMapping("v1/updateAcceptStatusReceive")
-    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
+//    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
     public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
         updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
@@ -150,7 +150,7 @@ public class WorkOrderHotlineController {
      * @return
      */
     @PostMapping("v1/findDWorkOrderHotlineDetails")
-    @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
+//    @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
         return workOrderHotlineClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
     }
@@ -160,7 +160,7 @@ public class WorkOrderHotlineController {
      * @return
      */
     @PostMapping("v1/updateDisposeWorkOrderCommit")
-    @ApiOperation(value = "智能工单：我的热线工单-处理工单提交", notes = "智能工单：我的热线工单-处理工单提交")
+//    @ApiOperation(value = "智能工单：我的热线工单-处理工单提交", notes = "智能工单：我的热线工单-处理工单提交")
     public ComResponse<Void> updateDisposeWorkOrderCommit(@Validated @RequestBody UpdateDisposeWorkOrderCommit updateDisposeWorkOrderCommit){
         return workOrderHotlineClient.updateDisposeWorkOrderCommit(updateDisposeWorkOrderCommit);
     }
