@@ -92,27 +92,27 @@ public class WorkOrderHotlineController {
      * @param
      * @return
      */
-    @PostMapping("v1/findWorkOrderHotlinePageList")
-//    @ApiOperation(value = "智能工单：热线工单管理-列表", notes = "智能工单：热线工单管理-列表")
-    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO){
-        return workOrderHotlineClient.findWorkOrderHotlinePageList(findWorkOrderHotlinePageListDTO);
-    }
+//    @PostMapping("v1/findWorkOrderHotlinePageList")
+////    @ApiOperation(value = "智能工单：热线工单管理-列表", notes = "智能工单：热线工单管理-列表")
+//    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> findWorkOrderHotlinePageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO){
+//        return workOrderHotlineClient.findWorkOrderHotlinePageList(findWorkOrderHotlinePageListDTO);
+//    }
 
     /**
      * 智能工单：我的热线工单-列表
      * @param
      * @return
      */
-    @PostMapping("v1/findMyWorkOrderHotlinePageList")
-//    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
-    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
-        String userId = QueryIds.userNo.get();
-        if(StringUtils.isEmpty(userId)){
-            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
-        }
-        myWorkOrderHotlineListDTO.setStaffNo(userId);
-        return workOrderHotlineClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
-    }
+//    @PostMapping("v1/findMyWorkOrderHotlinePageList")
+////    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
+//    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
+//        String userId = QueryIds.userNo.get();
+//        if(StringUtils.isEmpty(userId)){
+//            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
+//        }
+//        myWorkOrderHotlineListDTO.setStaffNo(userId);
+//        return workOrderHotlineClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+//    }
 
     /**
      * 智能工单：热线工单管理-可分配员工

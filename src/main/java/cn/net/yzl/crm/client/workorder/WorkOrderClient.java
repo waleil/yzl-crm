@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
+import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -106,4 +107,12 @@ public interface WorkOrderClient {
      */
     @PostMapping(value = "v1/batchAdjustment")
     ComResponse<Void> batchAdjustment(UpdateBatchDTO updateBatchDTO);
+
+    /**
+     * 智能工单：我的热线工单-列表
+     * @param myWorkOrderHotlineListDTO
+     * @return
+     */
+    @PostMapping(value = "v1/findMyWorkOrderHotlinePageList")
+    ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO);
 }

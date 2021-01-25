@@ -15,12 +15,14 @@ import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
+import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -193,5 +195,16 @@ public class WorkOrderController {
             return ComResponse.nodata("总线数必须和分配线数相等!");
         }
         return workOrderClient.batchAdjustment(updateBatchDTO);
+    }
+
+    @PostMapping("v1/findMyWorkOrderHotlinePageList")
+    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
+    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
+        String userId = QueryIds.userNo.get();
+        if(StringUtils.isEmpty(userId)){
+            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
+        }
+        myWorkOrderHotlineListDTO.setStaffNo(userId);
+        return workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
     }
 }
