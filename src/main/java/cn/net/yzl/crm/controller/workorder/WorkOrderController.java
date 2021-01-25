@@ -137,7 +137,7 @@ public class WorkOrderController {
         updateSingleAdjustDTO.setStaffNo(QueryIds.userNo.get());
         updateSingleAdjustDTO.setOperator(QueryIds.userName.get());
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
+        updateSingleAdjustDTO.setAcceptStatus(2);//人工触发 改为已接受
         return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
     }
 
@@ -153,6 +153,21 @@ public class WorkOrderController {
     public ComResponse<List<ProductMainInfoDTO>> queryLastProduct() {
         String data = workOrderClient.queryLastProduct().getData();
         return productClient.queryProducts(data);
+    }
+
+    /**
+     * 智能工单：热线工单管理-多数据调整
+     * @param
+     * @return
+     */
+    @PostMapping("v1/updateMoreAdjust")
+    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
+    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
+        updateMoreAdjustDTO.setAcceptStatus(2);//人工触发 改为已接受
+        updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+        updateMoreAdjustDTO.setOperatorCode(QueryIds.userNo.get());
+        updateMoreAdjustDTO.setOperator(QueryIds.userName.get());
+        return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO);
     }
 
     @ApiOperation(value = "回访工单单条分配工单", notes = "回访工单单条分配工单")

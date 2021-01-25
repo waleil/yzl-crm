@@ -82,6 +82,14 @@ public interface WorkOrderClient {
     ComResponse<String> queryLastProduct();
 
     /**
+     * 智能工单：热线工单管理-多数据调整
+     * @param updateMoreAdjustDTO
+     * @return
+     */
+    @PostMapping(value = "v1/updateMoreAdjust")
+    ComResponse<Void> updateMoreAdjust(UpdateMoreAdjustDTO updateMoreAdjustDTO);
+
+    /**
      * 智能工单-单条调整
      *
      * @param updateWorkOrderVisitDTO

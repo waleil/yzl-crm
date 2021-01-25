@@ -48,8 +48,8 @@ public interface WorkOrderHotlineClient {
      * @param updateMoreAdjustDTO
      * @return
      */
-    @RequestMapping(value = "v1/updateMoreAdjust",method = RequestMethod.POST)
-    ComResponse<Void> updateMoreAdjust(@RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO);
+//    @RequestMapping(value = "v1/updateMoreAdjust",method = RequestMethod.POST)
+//    ComResponse<Void> updateMoreAdjust(@RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO);
 
     /**
      * 智能工单：热线工单管理-列表
