@@ -103,20 +103,22 @@ public class StaffServiceImpl implements StaffService {
         reqDTO.setPageSize(req.getPageSize());
         reqDTO.setStaffCode(req.getStaffNo());
         reqDTO.setOrderStatus(req.getStatus());
-        switch (req.getTimeType()) {
-            case 1:
-                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(1)), DatePattern.NORM_DATETIME_FORMATTER));
-                break;
-            case 2:
-                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(7)), DatePattern.NORM_DATETIME_FORMATTER));
-                break;
-            case 3:
-                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(15)), DatePattern.NORM_DATETIME_FORMATTER));
-                break;
-            case 4:
-                reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(30)), DatePattern.NORM_DATETIME_FORMATTER));
-                break;
-            default:
+        if(null!=req.getTimeType()){
+            switch (req.getTimeType()) {
+                case 1:
+                    reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(1)), DatePattern.NORM_DATETIME_FORMATTER));
+                    break;
+                case 2:
+                    reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(7)), DatePattern.NORM_DATETIME_FORMATTER));
+                    break;
+                case 3:
+                    reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(15)), DatePattern.NORM_DATETIME_FORMATTER));
+                    break;
+                case 4:
+                    reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(30)), DatePattern.NORM_DATETIME_FORMATTER));
+                    break;
+                default:
+            }
         }
         ComResponse<Page<OderListResDTO>> response = orderSearchClient.selectOrderList(reqDTO);
         return response;
