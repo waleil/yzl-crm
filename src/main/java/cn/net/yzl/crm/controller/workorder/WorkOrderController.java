@@ -2,18 +2,27 @@ package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import io.swagger.annotations.Api;
+import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
+import io.swagger.annotations.Api;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("workOrder")
@@ -23,10 +32,41 @@ public class WorkOrderController {
     @Autowired
     private WorkOrderClient workOrderClient;
 
+    @Autowired
+    private ProductClient productClient;
+
+    /**
+     * 查询我的回访分页列表
+     * @param isListPageDTO
+     * @return
+     */
     @PostMapping(value = "v1/isListPage")
+    @ApiOperation(value = "查询我的回访分页列表",notes = "查询我的回访分页列表")
     public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO){
+        isListPageDTO.setStaffNO(QueryIds.userNo.get());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isListPage(isListPageDTO);
-        return listPage;
+        Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
+        if(null == pageWorkOrderBean){
+            return ComResponse.success();
+        }
+        List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
+        String productNames = new String();
+        for(WorkOrderBean workOrderBean : workOrderBeans){
+            productNames +=","+workOrderBean.getProductCode();
+        }
+        productNames = productNames.substring(1);
+        List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
+        if(!CollectionUtils.isEmpty(data)){
+            Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
+            workOrderBeans.stream().forEach(workOrderBean -> {
+                if(workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())){
+                    workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+                }
+            });
+        }
+        pageWorkOrderBean.setItems(workOrderBeans);
+
+        return ComResponse.success(pageWorkOrderBean);
     }
 
     @PostMapping("v1/pageList")
