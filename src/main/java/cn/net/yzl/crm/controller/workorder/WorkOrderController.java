@@ -4,7 +4,10 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
+import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
+import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
@@ -14,6 +17,7 @@ import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,5 +78,19 @@ public class WorkOrderController {
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
         ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
+    }
+
+    /**
+     * 智能工单：热线工单管理-回收
+     * @param updateRecyclingDTO
+     * @return
+     */
+    @ApiOperation(value = "智能工单：热线工单管理-回收",notes = "智能工单：热线工单管理-回收")
+    @PostMapping("v1/updateRecycling")
+    public ComResponse<Void> updateRecycling(@Validated @RequestBody UpdateRecyclingDTO updateRecyclingDTO){
+        updateRecyclingDTO.setStaffNo(QueryIds.userNo.get());
+        updateRecyclingDTO.setOperator(QueryIds.userName.get());
+        updateRecyclingDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+        return workOrderClient.updateRecycling(updateRecyclingDTO);
     }
 }

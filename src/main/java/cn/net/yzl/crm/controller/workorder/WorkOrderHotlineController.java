@@ -49,13 +49,13 @@ public class WorkOrderHotlineController {
      * @return
      */
 //    @ApiOperation(value = "智能工单：热线工单管理-回收",notes = "智能工单：热线工单管理-回收")
-    @PostMapping("v1/updateRecycling")
-    public ComResponse<Void> updateRecycling(@Validated  @RequestBody UpdateRecyclingDTO updateRecyclingDTO){
-        updateRecyclingDTO.setStaffNo(QueryIds.userNo.get());
-        updateRecyclingDTO.setOperator(QueryIds.userName.get());
-        updateRecyclingDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-       return workOrderHotlineClient.updateRecycling(updateRecyclingDTO);
-    }
+//    @PostMapping("v1/updateRecycling")
+//    public ComResponse<Void> updateRecycling(@Validated  @RequestBody UpdateRecyclingDTO updateRecyclingDTO){
+//        updateRecyclingDTO.setStaffNo(QueryIds.userNo.get());
+//        updateRecyclingDTO.setOperator(QueryIds.userName.get());
+//        updateRecyclingDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+//       return workOrderHotlineClient.updateRecycling(updateRecyclingDTO);
+//    }
 
     /**
      * 智能工单：热线工单管理-单数据调整

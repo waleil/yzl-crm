@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
+import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -27,4 +28,12 @@ public interface WorkOrderClient {
      */
     @PostMapping(value = "v1/pageList")
     ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
+
+    /**
+     * 智能工单：热线工单管理-回收
+     * @param updateRecyclingDTO
+     * @return
+     */
+    @PostMapping(value = "v1/updateRecycling")
+    ComResponse<Void> updateRecycling(UpdateRecyclingDTO updateRecyclingDTO);
 }
