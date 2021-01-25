@@ -76,14 +76,14 @@ public class OrderDistributeExpressController {
 
     @PostMapping(value = "v1/updateOrderDistributeExpressStatus")
     @ApiOperation("取消订单")
-    public ComResponse updateOrderDistributeExpressStatus(@RequestBody List<OrderDistributeExpressStatusVO> voList) {
-        return orderDistributeExpressFeignService.updateOrderDistributeExpressStatus(voList);
+    public ComResponse updateOrderDistributeExpressStatus(@RequestBody OrderDistributeExpressStatusVO vo) {
+        return orderDistributeExpressFeignService.updateOrderDistributeExpressStatus(vo);
     }
 
     @PostMapping(value = "v1/updateOrderDistributeExpressByMan")
     @ApiOperation("人工分配")
-    public ComResponse updateOrderDistributeExpressByMan(@RequestBody List<OrderDistributeExpressByManVO> voList) {
-        return orderDistributeExpressFeignService.updateOrderDistributeExpressByMan(voList);
+    public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo) {
+        return orderDistributeExpressFeignService.updateOrderDistributeExpressByMan(vo);
     }
 
     @PostMapping(value = "v1/insertOrderDataToDistributeExpress")

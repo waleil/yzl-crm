@@ -57,11 +57,11 @@ public interface OrderDistributeExpressFeignService {
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressStatus")
     @ApiOperation("取消订单")
-    public ComResponse updateOrderDistributeExpressStatus(@RequestBody List<OrderDistributeExpressStatusVO> voList);
+    public ComResponse updateOrderDistributeExpressStatus(@RequestBody OrderDistributeExpressStatusVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressByMan")
     @ApiOperation("人工分配")
-    public ComResponse updateOrderDistributeExpressByMan(@RequestBody List<OrderDistributeExpressByManVO> voList);
+    public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/insertOrderDataToDistributeExpress")
     @ApiOperation("获取订单服务数据并保存")
