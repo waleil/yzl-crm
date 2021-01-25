@@ -1,4 +1,4 @@
-package cn.net.yzl.crm.service.impl;
+package cn.net.yzl.crm.service.impl.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
@@ -7,6 +7,7 @@ import cn.net.yzl.crm.client.order.SplitStoreRuleClient;
 import cn.net.yzl.crm.client.store.StoreFeginService;
 import cn.net.yzl.crm.dto.order.SplitStoreRulePageDTO;
 import cn.net.yzl.crm.service.SplitStoreRuleService;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.utils.BeanCopyUtils;
 import cn.net.yzl.model.pojo.StorePo;
 import cn.net.yzl.order.model.vo.order.SplitStoreProvinceNamesDTO;
@@ -27,6 +28,7 @@ public class SplitStoreRuleServiceImpl implements SplitStoreRuleService {
 
     @Autowired
     private StoreFeginService storeFeginService;
+
     @Autowired
     private SplitStoreRuleClient splitStoreRuleClient;
 
