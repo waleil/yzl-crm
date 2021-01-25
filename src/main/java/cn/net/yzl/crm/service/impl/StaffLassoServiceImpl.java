@@ -234,4 +234,21 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         });
         return groupListByPage;
     }
+
+    @Override
+    public void taskCalculation() {
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup();
+        staffCrowdGroup.forEach(staffGroup -> {
+            try {
+                List<String> staffs = this.calculationDto(staffGroup.getCalculationDto());
+                if (!CollectionUtils.isEmpty(staffs)) {
+                    staffGroup.setStaffCodeList(staffs);
+                    staffGroup.setPersonCount(staffs.size());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
 }
