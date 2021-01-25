@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.customer.model.MemberBaseAttr;
@@ -45,7 +46,7 @@ public interface MemberGroupFeign {
 
     @ApiOperation("分页获取顾客圈选列表")
     @GetMapping("/v1/getCrowdGroupByPage")
-    ComResponse getCrowdGroupByPage(@SpringQueryMap CrowdGroupDTO crowdGroupDTO);
+    ComResponse<Page<member_crowd_group>> getCrowdGroupByPage(@SpringQueryMap CrowdGroupDTO crowdGroupDTO);
 
     @ApiOperation("删除顾客圈选")
     @GetMapping("/v1/delMemberCrowdGroup")

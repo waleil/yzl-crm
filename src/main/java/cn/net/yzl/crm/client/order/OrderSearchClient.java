@@ -4,21 +4,13 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import cn.net.yzl.order.model.vo.order.*;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.order.model.vo.order.OderListReqDTO;
-import cn.net.yzl.order.model.vo.order.OderListResDTO;
-import cn.net.yzl.order.model.vo.order.OrderInfoResDTO;
-import cn.net.yzl.order.model.vo.order.OrderList4CheckReqDTO;
-import cn.net.yzl.order.model.vo.order.OrderProductListVo;
-import cn.net.yzl.order.model.vo.order.OrderUpdateLogDTO;
 
 @FeignClient(name = "orderSerch", url = "${api.gateway.url}/orderService/orderSearch")
 public interface OrderSearchClient {
@@ -63,5 +55,9 @@ public interface OrderSearchClient {
 	 */
 	@RequestMapping(path = "v1/selectOrderList4Check", method = RequestMethod.POST)
 	public ComResponse<Page<OderListResDTO>> selectOrderList4Check(@RequestBody OrderList4CheckReqDTO dto);
+
+    @ApiOperation(value = "查询订单信息服务层,为取消订单售后单提供的接口")
+    @PostMapping("v1/selectOrderInfo4Opr")
+    public  ComResponse<OrderInfoVo> selectOrderInfo4Opr(String orderNo);
 
 }
