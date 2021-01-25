@@ -12,6 +12,7 @@ import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
+import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import io.swagger.annotations.ApiOperation;
@@ -92,5 +93,13 @@ public class WorkOrderController {
         updateRecyclingDTO.setOperator(QueryIds.userName.get());
         updateRecyclingDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         return workOrderClient.updateRecycling(updateRecyclingDTO);
+    }
+
+    @ApiOperation(value = "回访工单管理列表",notes = "回访工单管理列表")
+    @PostMapping(value = "v1/listPage")
+    public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO){
+        workOrderVisitVO.setStaffNo(QueryIds.userNo.get());
+        ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
+        return listPage;
     }
 }
