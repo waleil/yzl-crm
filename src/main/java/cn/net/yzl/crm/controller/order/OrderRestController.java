@@ -85,15 +85,17 @@ public class OrderRestController {
 		if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresult.getCode())) {
 			Member member = mresult.getData();
 			if (member != null) {
-				orderm.setMediaChannel(member.getSource());// 媒介渠道
-				orderm.setMediaName(member.getMedia_name());// 媒介名称
-				orderm.setMediaNo(member.getMedia_type_code());// 媒介唯一标识
-				orderm.setMediaType(member.getMedia_type_code());// 媒介类型
+				orderm.setMediaChannel(orderin.getMediaChannel());// 媒介渠道
+				orderm.setMediaName(orderin.getMediaName());// 媒介名称
+				orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
+				orderm.setMediaType(orderin.getMediaType());// 媒介类型
 				orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 				orderm.setMemberName(member.getMember_name());// 顾客姓名
 				MemberAmount account = member.getMember_amount();// 顾客账户
 				if (account != null) {
-					//
+					// 找顾客确认
+					orderm.setMemberLevelBefor(null);// 单前顾客级别
+					orderm.setMemberTypeBefor(null);// 单前顾客类型
 				}
 			}
 		} else {
@@ -119,21 +121,33 @@ public class OrderRestController {
 				DepartDto depart = dresponse.getData();
 				orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
 				orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
+			} else {
+				log.error("热线工单-购物车-提交订单>>找不到该坐席的财务归属>>{}", dresponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
 			}
 		} else {
 			log.error("热线工单-购物车-提交订单>>找不到该坐席信息>>{}", sresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
+		orderm.setWorkBatchNo(orderin.getWorkBatchNo());// 工单流水号
 		orderm.setPayType(orderin.getPayType());// 支付方式
+		// 如果是款到发货
+		if (String.valueOf(orderin.getPayType()).equals(String.valueOf(CommonConstant.PAY_TYPE_1))) {
+			orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非面审
+			orderm.setPayStatus(CommonConstant.PAY_STATUS_1);// 已收款
+		}
 		orderm.setRemark(orderin.getRemark());// 订单备注
 		orderm.setReveiverAddressNo(orderin.getReveiverAddressNo());// 配送地址唯一标识
 		orderm.setReveiverAddress(orderin.getReveiverAddress());// 收货人地址
 		orderm.setReveiverName(orderin.getReveiverName());// 收货人姓名
 		orderm.setReveiverTelphoneNo(orderin.getReveiverTelphoneNo());// 收货人电话
 		orderm.setReveiverProvince(orderin.getReveiverProvince());// 省份编码
+		orderm.setReveiverProvinceName(orderin.getReveiverProvinceName());// 省份名称
 		orderm.setReveiverCity(orderin.getReveiverCity());// 城市编码
+		orderm.setReveiverCityName(orderin.getReveiverCityName());// 城市名称
 		orderm.setReveiverArea(orderin.getReveiverArea());// 区县编码
+		orderm.setReveiverAreaName(orderin.getReveiverAreaName());// 区县名称
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
 				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
@@ -284,6 +298,7 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品库存不足。");
 			}
 		}
+
 		// 调用锁定库存接口
 		// 创建订单
 		//
