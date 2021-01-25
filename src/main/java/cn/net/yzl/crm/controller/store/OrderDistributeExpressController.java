@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @Slf4j
-@Api(value = "仓储中心心心心心-库存流水", tags = {"仓储中心心心心心-库存流水"})
+@Api(value = "仓储中心-订单分配快递", tags = {"仓储中心-订单分配快递"})
 @RequestMapping("orderDistributeExpress")
 public class OrderDistributeExpressController {
 
