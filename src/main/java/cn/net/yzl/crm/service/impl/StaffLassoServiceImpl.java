@@ -70,11 +70,11 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         });
         //工单类型条件查询
         CompletableFuture<List<String>> workOrderTypeCompletable = CompletableFuture.supplyAsync(() -> {
-            List<WorkOrderTypeDto> workOrderType = calculationDto.getWorkOrderTypeList();
-            if (CollectionUtils.isNotEmpty(workOrderType)) {
-                RequestContextHolder.setRequestAttributes(attributes);
-                return ehrStaffClient.getStaffWorkOrderTypeList(workOrderType);
-            }
+//            List<WorkOrderTypeDto> workOrderType = calculationDto.getWorkOrderTypeList();
+//            if (CollectionUtils.isNotEmpty(workOrderType)) {
+//                RequestContextHolder.setRequestAttributes(attributes);
+//                return ehrStaffClient.getStaffWorkOrderTypeList(workOrderType);
+//            }
             return null;
         });
         //广告相关条件查询

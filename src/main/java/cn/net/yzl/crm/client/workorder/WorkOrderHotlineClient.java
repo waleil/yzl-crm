@@ -72,8 +72,8 @@ public interface WorkOrderHotlineClient {
      * @param updateAcceptStatusReceiveDTO
      * @return
      */
-    @RequestMapping(value = "v1/updateAcceptStatusReceive",method = RequestMethod.POST)
-    ComResponse<Void> updateAcceptStatusReceive(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
+//    @RequestMapping(value = "v1/updateAcceptStatusReceive",method = RequestMethod.POST)
+//    ComResponse<Void> updateAcceptStatusReceive(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
 
     /**
      * 智能工单：我的热线工单-处理工单详情

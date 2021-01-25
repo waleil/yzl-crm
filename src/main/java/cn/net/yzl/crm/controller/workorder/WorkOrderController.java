@@ -207,4 +207,18 @@ public class WorkOrderController {
         myWorkOrderHotlineListDTO.setStaffNo(userId);
         return workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
     }
+
+    /**
+     * 智能工单：我的热线工单-接收
+     * @param
+     * @return
+     */
+    @PostMapping("v1/updateAcceptStatusReceive")
+    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
+    public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+        updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+        updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
+        updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
+        return workOrderClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
+    }
 }

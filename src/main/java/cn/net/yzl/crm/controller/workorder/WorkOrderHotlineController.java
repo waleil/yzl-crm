@@ -135,14 +135,14 @@ public class WorkOrderHotlineController {
      * @param
      * @return
      */
-    @PostMapping("v1/updateAcceptStatusReceive")
-//    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
-    public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
-        updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
-        updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
-        return workOrderHotlineClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
-    }
+//    @PostMapping("v1/updateAcceptStatusReceive")
+////    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
+//    public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+//        updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+//        updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
+//        updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
+//        return workOrderHotlineClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
+//    }
 
     /**
      * 智能工单：我的热线工单-处理工单详情

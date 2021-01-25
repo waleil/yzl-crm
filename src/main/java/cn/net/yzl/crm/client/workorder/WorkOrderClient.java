@@ -115,4 +115,12 @@ public interface WorkOrderClient {
      */
     @PostMapping(value = "v1/findMyWorkOrderHotlinePageList")
     ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO);
+
+    /**
+     * 智能工单：我的热线工单-接收
+     * @param updateAcceptStatusReceiveDTO
+     * @return
+     */
+    @PostMapping("v1/updateAcceptStatusReceive")
+    ComResponse<Void> updateAcceptStatusReceive(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
 }
