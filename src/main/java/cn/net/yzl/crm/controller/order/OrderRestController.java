@@ -2,7 +2,6 @@ package cn.net.yzl.crm.controller.order;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,12 +74,18 @@ public class OrderRestController {
 	public ComResponse<Object> submitOrder(@RequestBody OrderIn orderin) {
 		// TODO zww 热线工单-购物车-提交订单
 		OrderM orderm = new OrderM();// 订单信息
+		orderm.setTotal(0);// 实收金额=应收金额+预存
+		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
+		orderm.setTotalAll(0);// 订单总额
+		orderm.setCash1(0);// 预存金额
+		orderm.setSpend(0);// 消费金额=订单总额-优惠
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
 		}
 		// 按顾客号查询顾客信息
 		GeneralResult<Member> mresult = this.memberFien.getMember(orderin.getMemberCardNo());
+		MemberAmount account = null;
 		// 如果存在该顾客
 		if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresult.getCode())) {
 			Member member = mresult.getData();
@@ -91,12 +96,14 @@ public class OrderRestController {
 				orderm.setMediaType(orderin.getMediaType());// 媒介类型
 				orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 				orderm.setMemberName(member.getMember_name());// 顾客姓名
-				MemberAmount account = member.getMember_amount();// 顾客账户
-				if (account != null) {
-					// 找顾客确认
-					orderm.setMemberLevelBefor(null);// 单前顾客级别
-					orderm.setMemberTypeBefor(null);// 单前顾客类型
+				account = member.getMember_amount();// 顾客账户
+				if (account == null) {
+					log.error("热线工单-购物车-提交订单>>找不到该顾客账号>>{}", account);
+					return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 				}
+				// 找顾客确认
+				orderm.setMemberLevelBefor(null);// 单前顾客级别
+				orderm.setMemberTypeBefor(null);// 单前顾客类型
 			}
 		} else {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客信息>>{}", mresult);
@@ -129,25 +136,6 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该坐席信息>>{}", sresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
-		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
-		orderm.setWorkBatchNo(orderin.getWorkBatchNo());// 工单流水号
-		orderm.setPayType(orderin.getPayType());// 支付方式
-		// 如果是款到发货
-		if (String.valueOf(orderin.getPayType()).equals(String.valueOf(CommonConstant.PAY_TYPE_1))) {
-			orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非面审
-			orderm.setPayStatus(CommonConstant.PAY_STATUS_1);// 已收款
-		}
-		orderm.setRemark(orderin.getRemark());// 订单备注
-		orderm.setReveiverAddressNo(orderin.getReveiverAddressNo());// 配送地址唯一标识
-		orderm.setReveiverAddress(orderin.getReveiverAddress());// 收货人地址
-		orderm.setReveiverName(orderin.getReveiverName());// 收货人姓名
-		orderm.setReveiverTelphoneNo(orderin.getReveiverTelphoneNo());// 收货人电话
-		orderm.setReveiverProvince(orderin.getReveiverProvince());// 省份编码
-		orderm.setReveiverProvinceName(orderin.getReveiverProvinceName());// 省份名称
-		orderm.setReveiverCity(orderin.getReveiverCity());// 城市编码
-		orderm.setReveiverCityName(orderin.getReveiverCityName());// 城市名称
-		orderm.setReveiverArea(orderin.getReveiverArea());// 区县编码
-		orderm.setReveiverAreaName(orderin.getReveiverAreaName());// 区县名称
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
 				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
@@ -184,7 +172,7 @@ public class OrderRestController {
 			Map<String, ProductMainDTO> pmap = plist.stream()
 					.collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
 			// 组装订单明细信息
-			orderdetailList.addAll(orderProductList.stream().map(in -> {
+			List<OrderDetail> result = orderProductList.stream().map(in -> {
 				OrderDetail od = new OrderDetail();
 				// 按主订单号生成订单明细编号
 				od.setOrderDetailCode(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
@@ -215,7 +203,10 @@ public class OrderRestController {
 					od.setCash(0);// 应收金额，单位分
 				}
 				return od;
-			}).collect(Collectors.toList()));
+			}).collect(Collectors.toList());
+			orderdetailList.addAll(result);
+			orderm.setTotal(orderm.getTotal() + result.stream().mapToInt(OrderDetail::getTotal).sum());
+			orderm.setCash(orderm.getCash() + result.stream().mapToInt(OrderDetail::getCash).sum());
 		}
 		// 获取套餐
 		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
@@ -281,6 +272,14 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
+			orderm.setTotal(orderm.getTotal() + mlist.stream().mapToInt(ProductMealListDTO::getPrice).sum());
+			orderm.setCash(orderm.getCash() + mlist.stream().mapToInt(ProductMealListDTO::getPrice).sum());
+		}
+		orderm.setTotalAll(orderm.getTotal());
+		orderm.setSpend(orderm.getCash());
+		if (orderm.getTotal() > account.getTotalMoney()) {
+			log.error("热线工单-购物车-提交订单>>订单总金额[{}]大于账户剩余金额[{}]", orderm.getTotal(), account.getTotalMoney());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
 		}
 		// 将订单明细按商品编码进行分组，key为商品编码，value为订单明细集合
 		Map<String, List<OrderDetail>> productMap = orderdetailList.stream()
@@ -298,11 +297,29 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品库存不足。");
 			}
 		}
-
+		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
+		orderm.setWorkBatchNo(orderin.getWorkBatchNo());// 工单流水号
+		orderm.setPayType(orderin.getPayType());// 支付方式
+		// 如果是款到发货
+		if (String.valueOf(orderin.getPayType()).equals(String.valueOf(CommonConstant.PAY_TYPE_1))) {
+			orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非面审
+			orderm.setPayStatus(CommonConstant.PAY_STATUS_1);// 已收款
+		}
+		orderm.setRemark(orderin.getRemark());// 订单备注
+		orderm.setReveiverAddressNo(orderin.getReveiverAddressNo());// 配送地址唯一标识
+		orderm.setReveiverAddress(orderin.getReveiverAddress());// 收货人地址
+		orderm.setReveiverName(orderin.getReveiverName());// 收货人姓名
+		orderm.setReveiverTelphoneNo(orderin.getReveiverTelphoneNo());// 收货人电话
+		orderm.setReveiverProvince(orderin.getReveiverProvince());// 省份编码
+		orderm.setReveiverProvinceName(orderin.getReveiverProvinceName());// 省份名称
+		orderm.setReveiverCity(orderin.getReveiverCity());// 城市编码
+		orderm.setReveiverCityName(orderin.getReveiverCityName());// 城市名称
+		orderm.setReveiverArea(orderin.getReveiverArea());// 区县编码
+		orderm.setReveiverAreaName(orderin.getReveiverAreaName());// 区县名称
 		// 调用锁定库存接口
 		// 创建订单
 		//
-		return ComResponse.success(Arrays.asList("hello", "world"));
+		return ComResponse.success(orderm);
 	}
 
 }
