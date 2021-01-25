@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,7 @@ public class SplitStoreRuleServiceImpl implements SplitStoreRuleService {
             return ComResponse.success(page);
         }
         Map<String, SplitStoreProvinceNamesDTO> provinceDTOMap = province.getData().stream().collect(Collectors.toMap(SplitStoreProvinceNamesDTO::getStoreNo, Function.identity()));
-        dtos.forEach(dto -> dto.setProvinceNames(provinceDTOMap.get(dto.getStoreNo()).getProvinceNames()));
+        dtos.forEach(dto -> dto.setProvinceNames(Optional.ofNullable(provinceDTOMap.get(dto.getStoreNo())).map(SplitStoreProvinceNamesDTO::getProvinceNames).orElse(null)));
         page.setItems(dtos);
         return ComResponse.success(page);
     }
