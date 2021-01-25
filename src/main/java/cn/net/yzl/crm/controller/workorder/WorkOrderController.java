@@ -8,9 +8,7 @@ import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderFlowBean;
-import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
-import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
-import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
 import cn.net.yzl.workorder.model.enums.OperationTypeEnums;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
@@ -19,7 +17,7 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
-import cn.net.yzl.workorder.model.dto.IsListPageDTO;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -154,5 +152,17 @@ public class WorkOrderController {
     public ComResponse<List<ProductMainInfoDTO>> queryLastProduct() {
         String data = workOrderClient.queryLastProduct().getData();
         return productClient.queryProducts(data);
+    }
+
+    @ApiModelProperty(value = "回访工单单条分配工单",notes = "回访工单单条分配工单")
+    @PostMapping(value = "v1/adjustment")
+    public  ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO){
+        return workOrderClient.adjustment(updateWorkOrderVisitDTO);
+    }
+
+    @ApiModelProperty(value = "回访工单多条分配工单",notes = "回访工单多条分配工单")
+    @PostMapping(value = "v1/batchAdjustment")
+    public  ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO){
+        return workOrderClient.batchAdjustment(updateBatchDTO);
     }
 }
