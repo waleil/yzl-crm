@@ -53,7 +53,7 @@ public interface OrderDistributeExpressFeignService {
 
     @PostMapping(value = "orderDistributeExpress/v1/selectOrderDistributeExpressList")
     @ApiOperation("订单分配快递列表分页查询")
-    public ComResponse<Page<OrderDistributeExpressDTO>> selectOrderDistributeExpressList(@RequestBody OrderDistributeExpressVO orderDistributeExpressVO);
+    public ComResponse<Page<OrderDistributeExpressDTO>> selectOrderDistributeExpressList(@RequestBody OrderDistributeExpressListVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressStatus")
     @ApiOperation("取消订单")

@@ -70,7 +70,7 @@ public class OrderDistributeExpressController {
 
     @PostMapping(value = "v1/selectOrderDistributeExpressList")
     @ApiOperation("订单分配快递列表分页查询")
-    public ComResponse<Page<OrderDistributeExpressDTO>> selectOrderDistributeExpressList(@RequestBody OrderDistributeExpressVO vo) {
+    public ComResponse<Page<OrderDistributeExpressDTO>> selectOrderDistributeExpressList(@RequestBody OrderDistributeExpressListVO vo) {
         return orderDistributeExpressFeignService.selectOrderDistributeExpressList(vo);
     }
 
