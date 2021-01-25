@@ -11,8 +11,11 @@ import cn.net.yzl.order.util.SmsSendUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author zhouchangsong
@@ -31,8 +34,8 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
     public ComResponse<Boolean> sendOutStoreWarningMsg() {
         ComResponse<OutStoreWarningDTO> detail = outStoreWarningClient.getOutStoreWarningDetail();
         if (Optional.ofNullable(detail.getData()).isPresent()) {
-            StringBuffer mobile = new StringBuffer();
-            StringBuffer email = new StringBuffer();
+            List<String> mobile = new ArrayList<>();
+            List<String> email = new ArrayList<>();
             //角色ID
             List<Integer> ids = outStoreWarningMapper.getRoleIdsByMenuPerms("");
             if (ids.size() > 0) {
@@ -40,18 +43,18 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
                 List<String> userCodes = outStoreWarningMapper.getUserCodesByRoleIds(ids);
                 //用户信息
                 ComResponse<List<StaffDetailDto>> staffNos = ehrStaffClient.getByStaffNos(userCodes);
-                if (Optional.ofNullable(staffNos.getData()).map(List::isEmpty).isPresent()) {
+                if (Optional.ofNullable(staffNos.getData()).map(List::isEmpty).isPresent() ) {
                     staffNos.getData().forEach(entity -> {
-                        email.append(entity.getEmail());
-                        mobile.append(entity.getPhone());
+                        email.add(entity.getEmail());
+                        mobile.add(entity.getPhone());
                     });
                 }
             }
             OutStoreWarningDTO dto = detail.getData();
             //短信
             if (dto.getSendType().equals(1) || dto.getSendType().equals(3)) {
-                SmsSendUtils.batchSend(String.valueOf(mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()));
-                SmsSendUtils.batchSend(String.valueOf(mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastShippingTimeWarning()));
+                SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()));
+                SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastShippingTimeWarning()));
             }
             //TODO 邮件，没有员工邮件地址
             if (dto.getSendType().equals(2) || dto.getSendType().equals(3)) {
