@@ -68,7 +68,7 @@ public class OrderRestControllerTests {
 	}
 
 	@Test
-	public void testDepartGetById() {
+	public void testGetDepartById() {
 		try {
 			Integer departid = 1;
 			System.err.println(this.ehrStaffClient.getDepartById(departid));
