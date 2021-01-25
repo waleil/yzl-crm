@@ -22,7 +22,7 @@ public interface WorkOrderClient {
     /**
      * 获取通话记录
      * @param callInfoDTO
-     * @return
+     * @returnR
      */
     @PostMapping("/callinfo/v2/list")
     ComResponse<Page<StaffCallRecord>> getCallRecord(CallInfoDTO callInfoDTO);
