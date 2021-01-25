@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
-import cn.net.yzl.order.util.MathUtils;
 
 /**
  * 单元测试类

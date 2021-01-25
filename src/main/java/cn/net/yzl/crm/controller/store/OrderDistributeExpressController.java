@@ -25,20 +25,20 @@ import java.util.List;
  */
 @RestController
 @Slf4j
-@Api(value = "仓储中心心心心心-库存流水", tags = {"仓储中心心心心心-库存流水"})
+@Api(value = "仓储中心-订单分配快递", tags = {"仓储中心-订单分配快递"})
 @RequestMapping("orderDistributeExpress")
 public class OrderDistributeExpressController {
 
     @Autowired
     private OrderDistributeExpressFeignService orderDistributeExpressFeignService;
 
-    @GetMapping(value = "v1/selectOrderDistributeExpressRuleList")
+    @PostMapping(value = "v1/selectOrderDistributeExpressRuleList")
     @ApiOperation("智能分配快递规则列表查询")
     public ComResponse<List<OrderDistributeExpressRuleListDTO>> selectOrderDistributeExpressRuleList() {
         return orderDistributeExpressFeignService.selectOrderDistributeExpressRuleList();
     }
 
-    @GetMapping(value = "v1/selectOrderDistributeExpressRuleDetail")
+    @PostMapping(value = "v1/selectOrderDistributeExpressRuleDetail")
     @ApiOperation("智能分配快递规则详情查询")
     public ComResponse<OrderDistributeExpressRuleDetailDTO> selectOrderDistributeExpressRuleDetail(@RequestParam("id") Integer id) {
         return orderDistributeExpressFeignService.selectOrderDistributeExpressRuleDetail(id);
@@ -68,7 +68,7 @@ public class OrderDistributeExpressController {
         return orderDistributeExpressFeignService.updateOrderDistributeExpressRuleResult(orderExpressList);
     }
 
-    @GetMapping(value = "v1/selectOrderDistributeExpressList")
+    @PostMapping(value = "v1/selectOrderDistributeExpressList")
     @ApiOperation("订单分配快递列表分页查询")
     public ComResponse<Page<OrderDistributeExpressDTO>> selectOrderDistributeExpressList(@RequestBody OrderDistributeExpressVO vo) {
         return orderDistributeExpressFeignService.selectOrderDistributeExpressList(vo);

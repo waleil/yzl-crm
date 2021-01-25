@@ -77,63 +77,40 @@ public class NewOrderServiceImpl implements INewOrderService {
             }
             Integer wordCode = response.getData().getWorkCode();
             Integer departId = response.getData().getDepartId();
+
             //todo 根据部门编号获取财务归属
+            Integer financialOwner = 123;
             //生成批次号
             String batchNo = SnowFlakeUtil.getId() + "";
             String productCodes = dto.getProducts().stream().map(Product4OrderDTO::getProductCode)
                     .collect(Collectors.joining(","));
 
             List<ProductDTO> productDTOS = searchProducts(productCodes,dto.getProducts().size());
-            Map<String, Product4OrderDTO> collect = dto.getProducts().stream()
-                    .collect(Collectors.toMap(Product4OrderDTO::getProductCode, product4OrderDTO -> product4OrderDTO));
+            Map<String, ProductDTO> collect = productDTOS.stream()
+                    .collect(Collectors.toMap(ProductDTO::getProductCode, product4OrderDTO -> product4OrderDTO));
             //组织商品明细
             List<OrderTempProduct> orderTempProducts = new ArrayList<>();
-            productDTOS.forEach(map ->{
+            dto.getProducts().forEach(map ->{
+                ProductDTO productDTO = collect.get(map.getProductCode());
                 OrderTempProduct product = new OrderTempProduct();
 
                 product.setOrderTempProductCode(SnowFlakeUtil.getId()+"");
                 product.setOrderTempCode(batchNo);
                 product.setProductCode(map.getProductCode());
-                product.setProductBarCode(map.getBarCode());
-                product.setProductName(map.getName());
-                product.setCount(collect.get(map.getProductCode()).getCount());
-                product.setPrice(map.getSalePrice());
-                product.setSpec(map.getTotalUseNum().toString());
-                product.setUnit(map.getUnit());
+                product.setProductBarCode(productDTO.getBarCode());
+                product.setProductName(productDTO.getName());
+                product.setCount(map.getCount());
+                product.setPrice(productDTO.getSalePrice());
+                product.setSpec(productDTO.getTotalUseNum().toString());
+                product.setUnit(productDTO.getUnit());
                 orderTempProducts.add(product);
             });
 
             //查询群组信息
             List<CrowdGroup> groups = searchGroups(dto.getCustomerGroupIds());
             //组织群组信息
-            List<OrderTemp> list = new ArrayList<>();
-            groups.forEach(map ->{
-                OrderTemp orderTemp = new OrderTemp();
-                orderTemp.setOrderTempCode(batchNo);
-                orderTemp.setGroupId(map.get_id());
-                orderTemp.setGroupCount(map.getPerson_count());
-                orderTemp.setOprCount(0);
-                orderTemp.setSuccessCount(0);
-                orderTemp.setFailCount(0);
-                orderTemp.setTotalAmt(dto.getTotalOrderAMT());
-                orderTemp.setDiscount(0.00);
-                orderTemp.setPfee(dto.getPfee());
-                orderTemp.setRemark(dto.getRemark());
-                orderTemp.setRelationOrder(dto.getRelationOrder());
-                orderTemp.setExpressFlag(dto.getAssignExpressFlag());
-                orderTemp.setExpressCode(dto.getExpressCode());
-                orderTemp.setOprStats(0);
-                orderTemp.setCreateCode(dto.getUserNo());
-                orderTemp.setCreateName(dto.getUserName());
-                orderTemp.setUpdateCode(dto.getUserNo());
-                orderTemp.setUpdateName(dto.getUserName());
-                orderTemp.setDepartId(departId);
-                orderTemp.setWorkCode(wordCode.toString());
-                //todo
-                orderTemp.setFinancialOwner(123);
+            List<OrderTemp> list = mkOrderTemp(groups,batchNo,dto,departId,wordCode,financialOwner);
 
-
-            });
             //人数
             Integer count = groups.stream().mapToInt(CrowdGroup ::getPerson_count).sum();
             BatchProductVO vo = new BatchProductVO();
@@ -147,12 +124,17 @@ public class NewOrderServiceImpl implements INewOrderService {
 
             });
             //校验库存
+            reduceVOS.forEach(map ->{
+                ProductDTO productDTO = collect.get(map.getProductCode());
+                if(map.getNum() >productDTO.getStock()){
+                    throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),"库存不足，商品名称：" + productDTO.getName());
+                }
 
+            });
             vo.setProductReduceVOS(reduceVOS);
-//            reduceVOS.forEach();
 
 
-            //todo 调用扣减内存接口（根据批次号扣减库存）
+            //调用扣减内存接口（根据批次号扣减库存）
             orderRes = productClient.productReduce(vo);
             if(orderRes.getCode().compareTo(200) == 0){
                 Map map = new HashMap();
@@ -178,7 +160,7 @@ public class NewOrderServiceImpl implements INewOrderService {
         }
 
 
-        return null;
+        return ComResponse.success(true);
     }
 
     /**
@@ -307,6 +289,37 @@ public class NewOrderServiceImpl implements INewOrderService {
 
        return response.getData();
     }
+    List<OrderTemp> mkOrderTemp(List<CrowdGroup> groups,String batchNo ,NewOrderDTO dto,int departId,Integer wordCode,Integer financialOwner){
+        List<OrderTemp> list = new ArrayList<>();
+        groups.forEach(map ->{
+            OrderTemp orderTemp = new OrderTemp();
+            orderTemp.setOrderTempCode(batchNo);
+            orderTemp.setGroupId(map.get_id());
+            orderTemp.setGroupCount(map.getPerson_count());
+            orderTemp.setOprCount(0);
+            orderTemp.setSuccessCount(0);
+            orderTemp.setFailCount(0);
+            orderTemp.setTotalAmt(dto.getTotalOrderAMT());
+            orderTemp.setDiscount(0.00);
+            orderTemp.setPfee(dto.getPfee());
+            orderTemp.setRemark(dto.getRemark());
+            orderTemp.setRelationOrder(dto.getRelationOrder());
+            orderTemp.setExpressFlag(dto.getAssignExpressFlag());
+            orderTemp.setExpressCode(dto.getExpressCode());
+            orderTemp.setOprStats(0);
+            orderTemp.setCreateCode(dto.getUserNo());
+            orderTemp.setCreateName(dto.getUserName());
+            orderTemp.setUpdateCode(dto.getUserNo());
+            orderTemp.setUpdateName(dto.getUserName());
+            orderTemp.setDepartId(departId);
+            orderTemp.setWorkCode(wordCode.toString());
+            orderTemp.setFinancialOwner(financialOwner);
+            list.add(orderTemp);
+
+
+        });
+        return list;
+    }
 
     /**
      * 查询商品列表
@@ -332,83 +345,4 @@ public class NewOrderServiceImpl implements INewOrderService {
     }
 
 
-    /**
-     * excel数据格式化
-     * @param newOrderExcelInDTOS
-     * @return
-     */
-//    protected List<NewOrderDTO> formateData(List<NewOrderExcelInDTO> newOrderExcelInDTOS) {
-//        List<NewOrderDTO> result = new ArrayList<>();
-//        for (NewOrderExcelInDTO newOrderExcelInDTO : newOrderExcelInDTOS) {
-//            NewOrderDTO newOrderDTO = new NewOrderDTO();
-//            List<CustomerGroup> groups = new ArrayList<>();
-//            List<Product4OrderDTO> products = new ArrayList<>();
-//            List<String> groupids = new ArrayList<>();
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getGroupid1())) {
-//                groupids.add(newOrderExcelInDTO.getGroupid1());
-//            }
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getGroupid2())) {
-//                groupids.add(newOrderExcelInDTO.getGroupid2());
-//            }
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getGroupid3())) {
-//                groupids.add(newOrderExcelInDTO.getGroupid3());
-//            }
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getGroupid4())) {
-//                groupids.add(newOrderExcelInDTO.getGroupid4());
-//            }
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getGroupid5())) {
-//                groupids.add(newOrderExcelInDTO.getGroupid5());
-//            }
-//
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getProductNo1())) {
-//                if (newOrderExcelInDTO.getProductCont1() != null) {
-//                    throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "商品编号和商品数量必须成对出现");
-//                }
-//                Product4OrderDTO product = new Product4OrderDTO();
-//                product.setProductCode(newOrderExcelInDTO.getProductNo1());
-//                product.setCount(newOrderExcelInDTO.getProductCont1());
-//                products.add(product);
-//            }
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getProductNo2())) {
-//                if (newOrderExcelInDTO.getProductCont2() != null) {
-//                    throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "商品编号和商品数量必须成对出现");
-//                }
-//                Product4OrderDTO product = new Product4OrderDTO();
-//                product.setProductCode(newOrderExcelInDTO.getProductNo2());
-//                product.setCount(newOrderExcelInDTO.getProductCont2());
-//                products.add(product);
-//            }
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getProductNo3())) {
-//                if (newOrderExcelInDTO.getProductCont3() != null) {
-//                    throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "商品编号和商品数量必须成对出现");
-//                }
-//                Product4OrderDTO product = new Product4OrderDTO();
-//                product.setProductCode(newOrderExcelInDTO.getProductNo3());
-//                product.setCount(newOrderExcelInDTO.getProductCont3());
-//                products.add(product);
-//            }
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getProductNo4())) {
-//                if (newOrderExcelInDTO.getProductCont4() != null) {
-//                    throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "商品编号和商品数量必须成对出现");
-//                }
-//                Product4OrderDTO product = new Product4OrderDTO();
-//                product.setProductCode(newOrderExcelInDTO.getProductNo4());
-//                product.setCount(newOrderExcelInDTO.getProductCont4());
-//                products.add(product);
-//            }
-//            if (!StringUtils.isEmpty(newOrderExcelInDTO.getProductNo5())) {
-//                if (newOrderExcelInDTO.getProductCont5() != null) {
-//                    throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "商品编号和商品数量必须成对出现");
-//                }
-//                Product4OrderDTO product = new Product4OrderDTO();
-//                product.setProductCode(newOrderExcelInDTO.getProductNo5());
-//                product.setCount(newOrderExcelInDTO.getProductCont5());
-//                products.add(product);
-//            }
-//            newOrderDTO.setGroups(groups);
-//            newOrderDTO.setProducts(products);
-//            result.add(newOrderDTO);
-//        }
-//        return result;
-//    }
 }

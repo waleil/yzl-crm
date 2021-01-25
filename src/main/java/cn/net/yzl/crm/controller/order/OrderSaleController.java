@@ -1,7 +1,5 @@
 package cn.net.yzl.crm.controller.order;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.OrderSaleClient;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
@@ -65,7 +64,7 @@ public class OrderSaleController {
 
 	@ApiOperation(value = "查询售后单列表")
 	@GetMapping("/v1/selectOrderSaleList")
-	public ComResponse<List<OrderSaleListVO>> selectOrderSaleList(
+	public ComResponse<Page<OrderSaleListVO>> selectOrderSaleList(
 			@RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
 			@RequestParam(required = false) @ApiParam(value = "售后方式：0=退货，1=换货 2=拒收") Integer saleOrderType,
 			@RequestParam(required = false) @ApiParam(value = "退款方式：0=快递代办，1=微信转账，2=支付宝转账，3=银行卡转账，4=退回账户余款") Integer refundType,
@@ -141,7 +140,7 @@ public class OrderSaleController {
 
 	@ApiOperation(value = "查询售后订单审批列表")
 	@GetMapping("/v1/selectOrderSaleCheckList")
-	public ComResponse<List<OrderSaleCheckListVO>> selectOrderSaleCheckList(
+	public ComResponse<Page<OrderSaleCheckListVO>> selectOrderSaleCheckList(
 			@RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
 			@RequestParam(required = false) @ApiParam(value = "顾客姓名") String memberName,
 			@RequestParam(required = false) @ApiParam(value = "开始时间") String createStartTime,

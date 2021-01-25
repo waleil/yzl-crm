@@ -10,7 +10,6 @@ import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +24,6 @@ import java.util.Map;
 @Api(value = "仓储中心心心心心-采购订单管理", tags = {"仓储中心心心心心-采购订单管理"})
 @RequestMapping("purchase")
 @RestController
-@Slf4j
 public class PurchaseOrderController {
 
 

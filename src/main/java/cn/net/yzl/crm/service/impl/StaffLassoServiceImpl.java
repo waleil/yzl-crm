@@ -145,7 +145,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                 , advertCompletable, mediaCompletable, saleProductCompletable, diseaseCompletable, scheduleCompletable
                 , trainProductCompletable, indicatorCompletable).thenApply(x -> {
             try {
-                return (List<String>) intersection(baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
+                return (List<String>) intersection(postIdCompletable.get(),baseCompletable.get(), workOrderTypeCompletable.get(), advertCompletable.get()
                         , mediaCompletable.get(), saleProductCompletable.get(), diseaseCompletable.get(), scheduleCompletable.get()
                         , trainProductCompletable.get(), indicatorCompletable.get());
             } catch (Exception e) {
@@ -233,5 +233,22 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             }
         });
         return groupListByPage;
+    }
+
+    @Override
+    public void taskCalculation() {
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup();
+        staffCrowdGroup.forEach(staffGroup -> {
+            try {
+                List<String> staffs = this.calculationDto(staffGroup.getCalculationDto());
+                if (!CollectionUtils.isEmpty(staffs)) {
+                    staffGroup.setStaffCodeList(staffs);
+                    staffGroup.setPersonCount(staffs.size());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 }

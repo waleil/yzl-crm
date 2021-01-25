@@ -17,7 +17,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 @Api(tags = "员工圈选服务")
 @RestController
@@ -46,7 +45,6 @@ public class StaffLassoController {
     public ComResponse<Integer> trialStaffNo(@RequestParam("groupId") long groupId) throws Exception {
         return staffLassoService.trialStaffNo(groupId);
     }
-
 
 
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
@@ -85,6 +83,14 @@ public class StaffLassoController {
             @RequestParam("groupId") long groupId) {
 
         return crmStaffClient.getStaffCrowdGroup(groupId);
+
+    }
+
+    @ApiOperation(value = "定时任务跑-试算")
+    @GetMapping("v1/task/calculation")
+    public ComResponse<Boolean> taskCalculation() {
+        staffLassoService.taskCalculation();
+        return ComResponse.success(Boolean.TRUE);
 
     }
 }

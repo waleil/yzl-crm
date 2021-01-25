@@ -2,7 +2,6 @@ package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.ProductPurchaseWarnFeignService;
 import cn.net.yzl.model.dto.ProductPurchaseWarnDTO;
 import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
@@ -10,12 +9,10 @@ import cn.net.yzl.model.dto.ProductPurchaseWarnSetDTO;
 import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.model.vo.ProductPurchaseWarnSetVO;
 import cn.net.yzl.model.vo.ProductPurchaseWarnVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +22,8 @@ import java.util.List;
  * @date 2021/1/22 16:00
  */
 @RestController
+@Api(value = "仓储中心-商品采购预警", tags = {"仓储中心-商品采购预警"})
+@RequestMapping("productPurchaseWarn")
 public class ProductPurchaseWarnController {
 
     @Autowired
@@ -42,7 +41,7 @@ public class ProductPurchaseWarnController {
         return feignService.updateProductPurchaseWarnSet(productPurchaseWarnSetVO);
     }
 
-    @GetMapping(value = "v1/selectProductPurchaseWarnList")
+    @PostMapping(value = "v1/selectProductPurchaseWarnList")
     @ApiOperation("采购商品预警列表分页查询")
     public ComResponse<Page<ProductPurchaseWarnDTO>> selectProductPurchaseWarnList(@RequestBody ProductPurchaseWarnVO productPurchaseWarnVO) {
         return feignService.selectProductPurchaseWarnList(productPurchaseWarnVO);
