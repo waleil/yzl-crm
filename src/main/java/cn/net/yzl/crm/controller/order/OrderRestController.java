@@ -30,7 +30,6 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.model.MemberAmount;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
-import cn.net.yzl.crm.model.meal.MealProductVO;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.utils.RedisUtil;
@@ -41,7 +40,8 @@ import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
-import cn.net.yzl.product.model.vo.product.dto.ProductDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -118,6 +118,7 @@ public class OrderRestController {
 			if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
 				DepartDto depart = dresponse.getData();
 				orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
+				orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
 			}
 		} else {
 			log.error("热线工单-购物车-提交订单>>找不到该坐席信息>>{}", sresponse);
@@ -151,12 +152,12 @@ public class OrderRestController {
 			// 用,拼接商品编码
 			String productCodes = productCodeList.stream().collect(Collectors.joining(","));
 			// 根据拼接后的商品编码查询商品列表
-			ComResponse<List<ProductDTO>> presponse = this.productClient.queryByCodes(productCodes);
+			ComResponse<List<ProductMainDTO>> presponse = this.productClient.queryByProductCodes(productCodes);
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(presponse.getCode())) {
 				log.error("热线工单-购物车-提交订单>>找不到商品信息>>{}", presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			List<ProductDTO> plist = presponse.getData();
+			List<ProductMainDTO> plist = presponse.getData();
 			if (CollectionUtils.isEmpty(plist)) {
 				log.error("热线工单-购物车-提交订单>>找不到商品信息>>{}", presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
@@ -166,8 +167,8 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
 			// 将商品编码作为key，商品对象作为value
-			Map<String, ProductDTO> pmap = plist.stream()
-					.collect(Collectors.toMap(ProductDTO::getProductCode, Function.identity()));
+			Map<String, ProductMainDTO> pmap = plist.stream()
+					.collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
 			// 组装订单明细信息
 			orderdetailList.addAll(orderProductList.stream().map(in -> {
 				OrderDetail od = new OrderDetail();
@@ -181,15 +182,16 @@ public class OrderRestController {
 				od.setDepartId(orderm.getDepartId());// 部门表唯一标识
 				od.setGiftFlag(in.getGiftFlag());// 是否赠品
 				od.setMealFlag(CommonConstant.MEAL_FLAG_0);// 不是套餐
-				ProductDTO p = pmap.get(in.getProductCode());
+				ProductMainDTO p = pmap.get(in.getProductCode());
 				od.setProductCode(p.getProductCode());// 商品唯一标识
 				od.setProductName(p.getName());// 商品名称
 				od.setProductBarCode(p.getBarCode());// 产品条形码
-				od.setProductUnitPrice(
-						BigDecimal.valueOf(p.getSalePriceD()).multiply(BigDecimal.valueOf(100)).intValue());// 商品单价
+				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice()))
+						.multiply(BigDecimal.valueOf(100)).intValue());// 商品单价
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
 				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
+				od.setPackageunit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				if (CommonConstant.GIFT_FLAG_0 == od.getGiftFlag()) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
@@ -211,12 +213,12 @@ public class OrderRestController {
 			// 用,拼接套餐编码
 			String mealNos = mealNoList.stream().collect(Collectors.joining(","));
 			// 根据拼接后的套餐编码查询套餐列表
-			ComResponse<List<MealProductVO>> mresponse = this.queryListProductMealByCodes(mealNos);
+			ComResponse<List<ProductMealListDTO>> mresponse = this.mealClient.queryByIds(mealNos);
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
 				log.error("热线工单-购物车-提交订单>>找不到套餐信息>>{}", mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			List<MealProductVO> mlist = mresponse.getData();
+			List<ProductMealListDTO> mlist = mresponse.getData();
 			if (CollectionUtils.isEmpty(mlist)) {
 				log.error("热线工单-购物车-提交订单>>找不到套餐信息>>{}", mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
@@ -225,12 +227,12 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
-			for (MealProductVO meal : mlist) {
-				if (CollectionUtils.isEmpty(meal.getProductVOS())) {
+			for (ProductMealListDTO meal : mlist) {
+				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
 					log.error("热线工单-购物车-提交订单>>该套餐没有包含商品信息>>{}", meal);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐没有包含商品信息。");
 				}
-				orderdetailList.addAll(meal.getProductVOS().stream().map(in -> {
+				orderdetailList.addAll(meal.getMealProductList().stream().map(in -> {
 					OrderDetail od = new OrderDetail();
 					// 按主订单号生成订单明细编号
 					od.setOrderDetailCode(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
@@ -240,18 +242,18 @@ public class OrderRestController {
 					od.setMemberCardNo(orderm.getMemberCardNo());// 顾客卡号
 					od.setMemberName(orderm.getMemberName());// 顾客姓名
 					od.setDepartId(orderm.getDepartId());// 部门表唯一标识
-					od.setGiftFlag(in.getGiftFlag());// 是否赠品
+					od.setGiftFlag(in.getMealGiftFlag());// 是否赠品
 					od.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是套餐
 					od.setMealName(meal.getName());// 套餐名称
 					od.setMealNo(meal.getMealNo());// 套餐唯一标识
-					od.setMealCount(in.getNum());// 套餐数量
+					od.setMealCount(in.getProductNum());// 套餐数量
 					od.setMealPrice(null);// 套餐价格
 					od.setProductCode(in.getProductCode());// 商品唯一标识
 					od.setProductName(in.getName());// 商品名称
 					od.setProductBarCode(in.getBarCode());// 产品条形码
 					od.setProductUnitPrice(
-							BigDecimal.valueOf(in.getSalePriceD()).multiply(BigDecimal.valueOf(100)).intValue());// 商品单价
-					od.setProductCount(in.getNum());// 商品数量
+							BigDecimal.valueOf(in.getSalePrice()).multiply(BigDecimal.valueOf(100)).intValue());// 商品单价
+					od.setProductCount(in.getProductNum());// 商品数量
 					od.setUnit(in.getUnit());// 单位
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
@@ -288,7 +290,4 @@ public class OrderRestController {
 		return ComResponse.success(Arrays.asList("hello", "world"));
 	}
 
-	private ComResponse<List<MealProductVO>> queryListProductMealByCodes(String codes) {
-		return ComResponse.success();
-	}
 }
