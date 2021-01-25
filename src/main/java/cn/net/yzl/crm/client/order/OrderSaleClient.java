@@ -1,7 +1,5 @@
 package cn.net.yzl.crm.client.order;
 
-import java.util.List;
-
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.order.model.vo.order.OrderSaleCheckDetailVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleCheckListVO;
 import cn.net.yzl.order.model.vo.order.OrderSaleDetailVO;
@@ -31,7 +30,7 @@ public interface OrderSaleClient {
 
 	@ApiOperation(value = "查询售后单列表")
 	@GetMapping("/v1/selectOrderSaleList")
-	public ComResponse<List<OrderSaleListVO>> selectOrderSaleList(
+	public ComResponse<Page<OrderSaleListVO>> selectOrderSaleList(
 			@RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
 			@RequestParam(required = false) @ApiParam(value = "售后类型") Integer saleOrderType,
 			@RequestParam(required = false) @ApiParam(value = "返货类型") Integer refundType,
@@ -59,7 +58,7 @@ public interface OrderSaleClient {
 
 	@ApiOperation(value = "查询售后订单审批列表")
 	@GetMapping("/v1/selectOrderSaleCheckList")
-	public ComResponse<List<OrderSaleCheckListVO>> selectOrderSaleCheckList(
+	public ComResponse<Page<OrderSaleCheckListVO>> selectOrderSaleCheckList(
 			@RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
 			@RequestParam(required = false) @ApiParam(value = "顾客姓名") String memberName,
 			@RequestParam(required = false) @ApiParam(value = "开始时间") String createStartTime,
