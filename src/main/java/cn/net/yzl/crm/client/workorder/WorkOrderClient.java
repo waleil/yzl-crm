@@ -6,6 +6,7 @@ import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
+import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,4 +55,12 @@ public interface WorkOrderClient {
      */
     @PostMapping(value = "v1/listPage")
     ComResponse<Page<WorkOrderBean>> listPage(WorkOrderVisitVO workOrderVisitVO);
+
+    /**
+     * 智能工单：热线工单管理-单数据调整
+     * @param updateSingleAdjustDTO
+     * @return
+     */
+    @PostMapping(value = "v1/updateSingleAdjust")
+    ComResponse<Void> updateSingleAdjust(UpdateSingleAdjustDTO updateSingleAdjustDTO);
 }

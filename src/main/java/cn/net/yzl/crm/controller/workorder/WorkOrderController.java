@@ -2,12 +2,17 @@ package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.workorder.common.Constant;
+import cn.net.yzl.workorder.model.db.WorkOrderFlowBean;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
+import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
+import cn.net.yzl.workorder.model.enums.OperationTypeEnums;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
@@ -121,5 +126,20 @@ public class WorkOrderController {
         pageWorkOrderBean.setItems(workOrderBeans);
 
         return ComResponse.success(pageWorkOrderBean);
+    }
+
+    /**
+     * 智能工单：热线工单管理-单数据调整
+     * @param
+     * @return
+     */
+    @PostMapping("v1/updateSingleAdjust")
+    @ApiOperation(value = "智能工单：热线工单管理-单数据调整", notes = "智能工单：热线工单管理-单数据调整")
+    public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO){
+        updateSingleAdjustDTO.setStaffNo(QueryIds.userNo.get());
+        updateSingleAdjustDTO.setOperator(QueryIds.userName.get());
+        updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+        updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
+        return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
     }
 }
