@@ -3,10 +3,7 @@ package cn.net.yzl.crm.client.workorder;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
-import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
-import cn.net.yzl.workorder.model.dto.IsListPageDTO;
-import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
-import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,7 @@ import javax.sound.midi.SoundbankResource;
  * 智能工单
  */
 @FeignClient(name = "workOrder", url = "${api.gateway.url}/workorderServer/workOrder")
-//@FeignClient(name = "workOrder",url = "127.0.0.1:4602/workOrder")
+//@FeignClient(name = "workOrder", url = "127.0.0.1:4602/workOrder")
 public interface WorkOrderClient {
 
     /**
@@ -83,4 +80,22 @@ public interface WorkOrderClient {
      */
     @GetMapping(value = "v1/queryLastProduct")
     ComResponse<String> queryLastProduct();
+
+    /**
+     * 智能工单-单条调整
+     *
+     * @param updateWorkOrderVisitDTO
+     * @return
+     */
+    @PostMapping(value = "v1/adjustment")
+    ComResponse<Void> adjustment(UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO);
+
+    /**
+     * 智能工单-批量调整
+     *
+     * @param updateBatchDTO
+     * @return
+     */
+    @PostMapping(value = "v1/batchAdjustment")
+    ComResponse<Void> batchAdjustment(UpdateBatchDTO updateBatchDTO);
 }

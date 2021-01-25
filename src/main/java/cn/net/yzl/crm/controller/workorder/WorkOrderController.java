@@ -8,9 +8,7 @@ import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderFlowBean;
-import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
-import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
-import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
 import cn.net.yzl.workorder.model.enums.OperationTypeEnums;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
@@ -19,7 +17,7 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
-import cn.net.yzl.workorder.model.dto.IsListPageDTO;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -129,12 +127,13 @@ public class WorkOrderController {
 
     /**
      * 智能工单：热线工单管理-单数据调整
+     *
      * @param
      * @return
      */
     @PostMapping("v1/updateSingleAdjust")
     @ApiOperation(value = "智能工单：热线工单管理-单数据调整", notes = "智能工单：热线工单管理-单数据调整")
-    public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO){
+    public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO) {
         updateSingleAdjustDTO.setStaffNo(QueryIds.userNo.get());
         updateSingleAdjustDTO.setOperator(QueryIds.userName.get());
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
@@ -154,5 +153,30 @@ public class WorkOrderController {
     public ComResponse<List<ProductMainInfoDTO>> queryLastProduct() {
         String data = workOrderClient.queryLastProduct().getData();
         return productClient.queryProducts(data);
+    }
+
+    @ApiOperation(value = "回访工单单条分配工单", notes = "回访工单单条分配工单")
+    @PostMapping(value = "v1/adjustment")
+    public ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO) {
+        updateWorkOrderVisitDTO.setCreateId(QueryIds.userNo.get());
+        updateWorkOrderVisitDTO.setCreateName(QueryIds.userName.get());
+        return workOrderClient.adjustment(updateWorkOrderVisitDTO);
+    }
+
+    @ApiOperation(value = "回访工单多条分配工单", notes = "回访工单多条分配工单")
+    @PostMapping(value = "v1/batchAdjustment")
+    public ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO) {
+        updateBatchDTO.setCreateId(QueryIds.userNo.get());
+        updateBatchDTO.setCreateName(QueryIds.userName.get());
+        List<UpdateBatchWorkOrderDTO> updateBatchWorkOrderDTOS = updateBatchDTO.getUpdateBatchWorkOrderDTOS();
+        int count = 0;
+        for(UpdateBatchWorkOrderDTO updateBatchWorkOrderDTO : updateBatchWorkOrderDTOS){
+            count +=updateBatchWorkOrderDTO.getCount();
+        }
+
+        if(count != updateBatchDTO.getCount()){
+            return ComResponse.nodata("总线数必须和分配线数相等!");
+        }
+        return workOrderClient.batchAdjustment(updateBatchDTO);
     }
 }
