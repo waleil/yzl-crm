@@ -104,7 +104,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=stockWarn" + sysDate+".xlsx");
 
         //向前端写入文件流流
-        EasyExcel.write(httpServletResponse.getOutputStream(), ProductStockExcelVo.class)
+        EasyExcel.write(httpServletResponse.getOutputStream(), ProductPurchaseWarnExcelDTO.class)
                 .sheet("商品库存预警").doWrite(listComResponseData);
     }
 }

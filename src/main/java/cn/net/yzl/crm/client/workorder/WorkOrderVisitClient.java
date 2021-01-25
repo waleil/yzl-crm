@@ -58,7 +58,7 @@ public interface WorkOrderVisitClient {
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
     ComResponse<String> queryFirstProduct();
 
-    @GetMapping("v1/queryLastProduct")
+    @GetMapping("v1/查询所有用户最后一次购买商品")
     @ApiOperation(value = "查询所有用户最后一次购买商品", notes = "查询所有用户最后一次购买商品")
     ComResponse<String> queryLastProduct();
 }

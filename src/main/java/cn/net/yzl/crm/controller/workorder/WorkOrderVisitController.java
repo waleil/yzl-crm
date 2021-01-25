@@ -39,7 +39,7 @@ public class WorkOrderVisitController {
     private ProductClient productClient;
 
 
-    @ApiOperation(value = "商品下拉列表（首单、最后一次购买商品）")
+//    @ApiOperation(value = "商品下拉列表（首单、最后一次购买商品）")
     @GetMapping("v1/listProduct")
     public ComResponse<Page<ProductListDTO>> listProduct(ProductSelectVO productSelectVO){
         return productClient.queryListProduct(productSelectVO);
@@ -51,7 +51,7 @@ public class WorkOrderVisitController {
      * @return
      */
     @PostMapping("v1/list")
-    @ApiOperation(value = "分页查询回访工单管理列表", notes = "分页查询回访工单管理列表")
+//    @ApiOperation(value = "分页查询回访工单管理列表", notes = "分页查询回访工单管理列表")
     public ComResponse<Page<WorkOrderVisitBean>> listByCriteriaTO(@RequestBody WorkOrderVisitVO workOrderVisitVO){
         ComResponse<Page<WorkOrderVisitBean>> result = workOrderVisitClient.listPage(workOrderVisitVO);
         return result;
@@ -63,7 +63,7 @@ public class WorkOrderVisitController {
      * @return
      */
     @GetMapping("v1/getByCode")
-    @ApiOperation(value = "根据CODE查询回访工单", notes = "根据CODE查询回访工单")
+//    @ApiOperation(value = "根据CODE查询回访工单", notes = "根据CODE查询回访工单")
     public ComResponse<WorkOrderVisitBean> getByCode(@RequestParam("code") @ApiParam(value = "回访工单标识",name = "code") Integer code){
         ComResponse<WorkOrderVisitBean> result = workOrderVisitClient.getByCode(code);
         return result;
@@ -75,27 +75,27 @@ public class WorkOrderVisitController {
      * @return
      */
     @PostMapping("v1/add")
-    @ApiOperation(value = "新增回访工单", notes = "新增回访工")
+//    @ApiOperation(value = "新增回访工单", notes = "新增回访工")
     public ComResponse<Void> add(@RequestBody WorkOrderVisitBean workOrderVisitBean){
         ComResponse<Void> result = workOrderVisitClient.add(workOrderVisitBean);
         return result;
     }
 
     @PostMapping("v1/isListPage")
-    @ApiOperation(value = "查询我的回访工单列表",notes = "查询我的回访工单列表")
+//    @ApiOperation(value = "查询我的回访工单列表",notes = "查询我的回访工单列表")
     public ComResponse<Page<WorkOrderVisitBean>> isListPage(@RequestBody IsListPageDTO isListPage){
         isListPage.setStaffNO(QueryIds.userNo.get());
         return workOrderVisitClient.isListPage(isListPage);
     }
 
-    @ApiOperation(value = "查询所有用户首次购买商品",notes = "查询所有用户首次购买商品")
+//    @ApiOperation(value = "查询所有用户首次购买商品",notes = "查询所有用户首次购买商品")
     @GetMapping("v1/queryFirstProduct")
     public ComResponse<List<ProductMainInfoDTO>> queryFirstProduct(){
         String data = workOrderVisitClient.queryFirstProduct().getData();
         return  productClient.queryProducts(data);
     }
 
-    @ApiOperation(value = "查询所有用户最后一次购买商品",notes = "查询所有用户最后一次购买商品")
+//    @ApiOperation(value = "查询所有用户最后一次购买商品",notes = "查询所有用户最后一次购买商品")
     @GetMapping("v1/queryLastProduct")
     public ComResponse<List<ProductMainInfoDTO>> queryLastProduct(){
         String data = workOrderVisitClient.queryLastProduct().getData();

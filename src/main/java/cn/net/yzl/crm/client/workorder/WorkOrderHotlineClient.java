@@ -31,8 +31,8 @@ public interface WorkOrderHotlineClient {
      * @param updateRecyclingDTO
      * @return
      */
-    @RequestMapping(value = "v1/updateRecycling",method = RequestMethod.POST)
-    ComResponse<Void> updateRecycling(@RequestBody UpdateRecyclingDTO updateRecyclingDTO);
+//    @RequestMapping(value = "v1/updateRecycling",method = RequestMethod.POST)
+//    ComResponse<Void> updateRecycling(@RequestBody UpdateRecyclingDTO updateRecyclingDTO);
 
 
     /**
