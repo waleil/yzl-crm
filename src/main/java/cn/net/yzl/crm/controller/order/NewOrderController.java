@@ -1,7 +1,9 @@
 package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
+import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.crm.service.order.INewOrderService;
 import cn.net.yzl.crm.sys.BizException;
@@ -46,6 +48,11 @@ public class NewOrderController {
         return response;
     }
 
+    @ApiOperation(value = "查询群组列表",httpMethod = "POST")
+    @PostMapping(value = "v1/getCrowdGroupByPaget")
+    public ComResponse<Page<member_crowd_group>> getCrowdGroupByPaget(@RequestBody CrowdGroupDTO crowdGroupDTO) {
 
+        return memberFien.getCrowdGroupByPage(crowdGroupDTO);
+    }
 
 }

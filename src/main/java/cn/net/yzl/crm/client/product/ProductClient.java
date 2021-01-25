@@ -68,4 +68,8 @@ public interface ProductClient {
     @GetMapping(value = "v1/queryProducts")
     ComResponse<List<ProductMainInfoDTO>> queryProducts(@RequestParam(value = "ids",required = false) String ids);
 
+    @ApiOperation("取消单增加库存")
+    @PostMapping(value = "v1/increaseStock")
+    public ComResponse increaseStock(@RequestBody @Valid OrderProductVO orderProductVO);
+
 }
