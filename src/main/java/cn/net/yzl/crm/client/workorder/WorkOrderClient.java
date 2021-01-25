@@ -73,7 +73,7 @@ public interface WorkOrderClient {
      *
      * @return
      */
-    @GetMapping(value = "queryFirstProduct")
+    @GetMapping(value = "v1/queryFirstProduct")
     ComResponse<String> queryFirstProduct();
 
     /**
@@ -81,6 +81,6 @@ public interface WorkOrderClient {
      *
      * @return
      */
-    @GetMapping(value = "queryLastProduct")
+    @GetMapping(value = "v1/queryLastProduct")
     ComResponse<String> queryLastProduct();
 }
