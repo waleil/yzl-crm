@@ -77,15 +77,15 @@ public class WorkOrderHotlineController {
      * @param
      * @return
      */
-    @PostMapping("v1/updateMoreAdjust")
-//    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
-    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
-        updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
-        updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateMoreAdjustDTO.setOperatorCode(QueryIds.userNo.get());
-        updateMoreAdjustDTO.setOperator(QueryIds.userName.get());
-        return workOrderHotlineClient.updateMoreAdjust(updateMoreAdjustDTO);
-    }
+//    @PostMapping("v1/updateMoreAdjust")
+////    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
+//    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
+//        updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为已接受
+//        updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+//        updateMoreAdjustDTO.setOperatorCode(QueryIds.userNo.get());
+//        updateMoreAdjustDTO.setOperator(QueryIds.userName.get());
+//        return workOrderHotlineClient.updateMoreAdjust(updateMoreAdjustDTO);
+//    }
 
     /**
      * 智能工单：热线工单管理-列表
