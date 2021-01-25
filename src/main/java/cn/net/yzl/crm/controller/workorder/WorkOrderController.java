@@ -127,12 +127,13 @@ public class WorkOrderController {
 
     /**
      * 智能工单：热线工单管理-单数据调整
+     *
      * @param
      * @return
      */
     @PostMapping("v1/updateSingleAdjust")
     @ApiOperation(value = "智能工单：热线工单管理-单数据调整", notes = "智能工单：热线工单管理-单数据调整")
-    public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO){
+    public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO) {
         updateSingleAdjustDTO.setStaffNo(QueryIds.userNo.get());
         updateSingleAdjustDTO.setOperator(QueryIds.userName.get());
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
@@ -154,15 +155,28 @@ public class WorkOrderController {
         return productClient.queryProducts(data);
     }
 
-    @ApiModelProperty(value = "回访工单单条分配工单",notes = "回访工单单条分配工单")
+    @ApiOperation(value = "回访工单单条分配工单", notes = "回访工单单条分配工单")
     @PostMapping(value = "v1/adjustment")
-    public  ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO){
+    public ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO) {
+        updateWorkOrderVisitDTO.setCreateId(QueryIds.userNo.get());
+        updateWorkOrderVisitDTO.setCreateName(QueryIds.userName.get());
         return workOrderClient.adjustment(updateWorkOrderVisitDTO);
     }
 
-    @ApiModelProperty(value = "回访工单多条分配工单",notes = "回访工单多条分配工单")
+    @ApiOperation(value = "回访工单多条分配工单", notes = "回访工单多条分配工单")
     @PostMapping(value = "v1/batchAdjustment")
-    public  ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO){
+    public ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO) {
+        updateBatchDTO.setCreateId(QueryIds.userNo.get());
+        updateBatchDTO.setCreateName(QueryIds.userName.get());
+        List<UpdateBatchWorkOrderDTO> updateBatchWorkOrderDTOS = updateBatchDTO.getUpdateBatchWorkOrderDTOS();
+        int count = 0;
+        for(UpdateBatchWorkOrderDTO updateBatchWorkOrderDTO : updateBatchWorkOrderDTOS){
+            count +=updateBatchWorkOrderDTO.getCount();
+        }
+
+        if(count != updateBatchDTO.getCount()){
+            return ComResponse.nodata("总线数必须和分配线数相等!");
+        }
         return workOrderClient.batchAdjustment(updateBatchDTO);
     }
 }

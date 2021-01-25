@@ -16,8 +16,8 @@ import javax.sound.midi.SoundbankResource;
 /**
  * 智能工单
  */
-//@FeignClient(name = "workOrder", url = "${api.gateway.url}/workorderServer/workOrder")
-@FeignClient(name = "workOrder", url = "127.0.0.1:4602/workOrder")
+@FeignClient(name = "workOrder", url = "${api.gateway.url}/workorderServer/workOrder")
+//@FeignClient(name = "workOrder", url = "127.0.0.1:4602/workOrder")
 public interface WorkOrderClient {
 
     /**
