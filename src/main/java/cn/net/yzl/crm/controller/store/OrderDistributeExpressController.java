@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @Slf4j
-@Api(value = "仓储中心-订单分配快递", tags = {"仓储中心-订单分配快递"})
+@Api(value = "仓储中心心心心心-订单分配快递", tags = {"仓储中心心心心心-订单分配快递"})
 @RequestMapping("orderDistributeExpress")
 public class OrderDistributeExpressController {
 
@@ -62,6 +62,12 @@ public class OrderDistributeExpressController {
         return orderDistributeExpressFeignService.updateOrderDistributeExpressRuleStatus(vo);
     }
 
+    @PostMapping(value = "v1/batchUpdateOrderDistributeExpressRuleStatus")
+    @ApiOperation("批量检测并修改规则状态")
+    public ComResponse batchUpdateOrderDistributeExpressRuleStatus() {
+        return orderDistributeExpressFeignService.batchUpdateOrderDistributeExpressRuleStatus();
+    }
+
     @PostMapping(value = "v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
     public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody List<OrderExpressDTO> orderExpressList) {
@@ -70,26 +76,26 @@ public class OrderDistributeExpressController {
 
     @PostMapping(value = "v1/selectOrderDistributeExpressList")
     @ApiOperation("订单分配快递列表分页查询")
-    public ComResponse<Page<OrderDistributeExpressDTO>> selectOrderDistributeExpressList(@RequestBody OrderDistributeExpressVO vo) {
+    public ComResponse<Page<OrderDistributeExpressDTO>> selectOrderDistributeExpressList(@RequestBody OrderDistributeExpressListVO vo) {
         return orderDistributeExpressFeignService.selectOrderDistributeExpressList(vo);
     }
 
     @PostMapping(value = "v1/updateOrderDistributeExpressStatus")
     @ApiOperation("取消订单")
-    public ComResponse updateOrderDistributeExpressStatus(@RequestBody List<OrderDistributeExpressStatusVO> voList) {
-        return orderDistributeExpressFeignService.updateOrderDistributeExpressStatus(voList);
+    public ComResponse updateOrderDistributeExpressStatus(@RequestBody OrderDistributeExpressStatusVO vo) {
+        return orderDistributeExpressFeignService.updateOrderDistributeExpressStatus(vo);
     }
 
     @PostMapping(value = "v1/updateOrderDistributeExpressByMan")
     @ApiOperation("人工分配")
-    public ComResponse updateOrderDistributeExpressByMan(@RequestBody List<OrderDistributeExpressByManVO> voList) {
-        return orderDistributeExpressFeignService.updateOrderDistributeExpressByMan(voList);
+    public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo) {
+        return orderDistributeExpressFeignService.updateOrderDistributeExpressByMan(vo);
     }
 
-    @PostMapping(value = "v1/insertOrderDataToDistributeExpress")
-    @ApiOperation("获取订单服务数据并保存")
-    public ComResponse insertOrderDataToDistributeExpress() {
-        return orderDistributeExpressFeignService.insertOrderDataToDistributeExpress();
+    @PostMapping(value = "v1/insertOrderDistributeExpress")
+    @ApiOperation("订单分配快递数据插入")
+    public ComResponse insertOrderDistributeExpress(@RequestBody List<OrderDistributeExpressVO> voList){
+        return orderDistributeExpressFeignService.insertOrderDistributeExpress(voList);
     }
 
 }

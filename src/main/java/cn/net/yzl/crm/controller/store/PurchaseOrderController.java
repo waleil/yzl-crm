@@ -99,5 +99,15 @@ public class PurchaseOrderController {
     public ComResponse<String> computerExpectDate(@RequestParam(value = "supplierNo") String supplierNo){
         return purchaseFeginService.computerExpectDate(supplierNo);
     }
-
+    /**
+     * 查看采购订单
+     * @param orderNo
+     * @return
+     */
+    @ApiOperation(value = "采购单号查找退货信息", notes = "采购单号查找退货信息")
+    @ApiImplicitParam(name = "orderNo", value = "采购订单号", required = true, dataType = "String", paramType = "query")
+    @GetMapping("v1/detail/by/order/no")
+    public ComResponse<PurchaseReturnResDto> detailByOrderNo(@RequestParam("orderNo") String orderNo){
+        return purchaseFeginService.detailByOrderNo(orderNo);
+    }
 }

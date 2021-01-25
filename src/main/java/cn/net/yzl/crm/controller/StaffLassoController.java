@@ -1,7 +1,10 @@
 package cn.net.yzl.crm.controller;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
@@ -50,6 +53,12 @@ public class StaffLassoController {
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
     @PostMapping("v1/saveStaffCrowdGroup")
     public ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
+        if (DateUtil.between(staffCrowdGroup.getEffectiveDate(), new Date(), DateUnit.DAY) < 0) {
+            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE,"时间不能小于当前时间！");
+        }
+        if (DateUtil.between(staffCrowdGroup.getEffectiveDate(),staffCrowdGroup.getExpireDate(), DateUnit.DAY) <= 0) {
+            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE,"有效时间差最小1天时间！");
+        }
         staffCrowdGroup.setCreateCode(QueryIds.userNo.get());
         staffCrowdGroup.setUpdateCode(QueryIds.userNo.get());
         return crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
@@ -78,7 +87,7 @@ public class StaffLassoController {
     }
 
     @ApiOperation(value = "获取圈选详情")
-    @PostMapping("v1/getStaffCrowdGroup")
+    @GetMapping("v1/getStaffCrowdGroup")
     public ComResponse<StaffCrowdGroup> getStaffCrowdGroupDTO(
             @RequestParam("groupId") long groupId) {
 

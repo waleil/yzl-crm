@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -21,9 +22,9 @@ public class OrderRejectionAddDTO implements Serializable {
     private String orderNo;
 
     @ApiModelProperty("退库方式：1.返回原仓，2.其他仓库")
-    @NotBlank(message = "退库方式不可为空")
+    @NotNull(message = "退库方式不可为空")
     private Integer rejectType;
 
     @ApiModelProperty("仓库号")
-    private Long storeNo;
+    private String storeNo;
 }

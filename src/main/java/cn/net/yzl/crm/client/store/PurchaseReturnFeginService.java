@@ -2,12 +2,11 @@ package cn.net.yzl.crm.client.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.model.dto.PurchaseReturnOrderDto;
 import cn.net.yzl.model.dto.PurchaseReturnResDto;
 import cn.net.yzl.model.dto.PurchaseReturnReviewDto;
 import cn.net.yzl.model.dto.PurchaseReturnWaybillDto;
-import cn.net.yzl.model.vo.PurReturnOrderAddVo;
-import cn.net.yzl.model.vo.PurReturnOrderUpdateVo;
+import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnOrderAddDto;
+import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnUpdateDto;
 import cn.net.yzl.model.vo.PurchaseReturnCondition;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 /**
  * @author wangshuaidong
@@ -37,11 +34,11 @@ public interface PurchaseReturnFeginService {
 
     @ApiOperation(value = "采购退货单新增")
     @PostMapping("purchaseReturn/v1/add")
-    ComResponse add(@RequestBody PurReturnOrderAddVo purReturnOrderAddVo);
+    ComResponse add(@RequestBody PurchaseReturnOrderAddDto purchaseReturnOrderAddDto);
 
     @ApiOperation(value = "采购退货单更新")
     @PostMapping("purchaseReturn/v1/update")
-    ComResponse update(@RequestBody PurReturnOrderUpdateVo purReturnOrderUpdateVo);
+    ComResponse update(@RequestBody PurchaseReturnUpdateDto purchaseReturnUpdateDto);
 
     @ApiOperation(value = "采购退货单审核")
     @PostMapping("purchaseReturn/v1/review")
@@ -74,10 +71,10 @@ public interface PurchaseReturnFeginService {
 
     /**
      * 采购退货单审核列表
-     * @param returnWaybillDtos
+     * @param returnWaybillDto
      * @return
      */
     @ApiOperation(value = "采购退货单退回添加货运单号")
     @PostMapping("purchaseReturn/v1/back/waybill/")
-    ComResponse backWayBill(@RequestBody List<PurchaseReturnWaybillDto> returnWaybillDtos);
+    ComResponse backWayBill(@RequestBody PurchaseReturnWaybillDto returnWaybillDto);
 }
