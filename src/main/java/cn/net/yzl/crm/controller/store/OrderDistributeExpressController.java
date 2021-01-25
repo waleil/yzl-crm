@@ -62,6 +62,12 @@ public class OrderDistributeExpressController {
         return orderDistributeExpressFeignService.updateOrderDistributeExpressRuleStatus(vo);
     }
 
+    @PostMapping(value = "v1/batchUpdateOrderDistributeExpressRuleStatus")
+    @ApiOperation("批量检测并修改规则状态")
+    public ComResponse batchUpdateOrderDistributeExpressRuleStatus() {
+        return orderDistributeExpressFeignService.batchUpdateOrderDistributeExpressRuleStatus();
+    }
+
     @PostMapping(value = "v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
     public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody List<OrderExpressDTO> orderExpressList) {
@@ -86,10 +92,10 @@ public class OrderDistributeExpressController {
         return orderDistributeExpressFeignService.updateOrderDistributeExpressByMan(vo);
     }
 
-    @PostMapping(value = "v1/insertOrderDataToDistributeExpress")
-    @ApiOperation("获取订单服务数据并保存")
-    public ComResponse insertOrderDataToDistributeExpress() {
-        return orderDistributeExpressFeignService.insertOrderDataToDistributeExpress();
+    @PostMapping(value = "v1/insertOrderDistributeExpress")
+    @ApiOperation("订单分配快递数据插入")
+    public ComResponse insertOrderDistributeExpress(@RequestBody List<OrderDistributeExpressVO> voList){
+        return orderDistributeExpressFeignService.insertOrderDistributeExpress(voList);
     }
 
 }
