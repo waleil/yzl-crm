@@ -6,7 +6,7 @@ import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.biTask.Indicators;
 import cn.net.yzl.crm.dto.dmc.CoopCompanyMediaDto;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
-import cn.net.yzl.crm.dto.ehr.EhrPostLevelDto;
+import cn.net.yzl.crm.dto.ehr.CommonPostDto;
 import cn.net.yzl.crm.dto.ehr.StaffStatusDto;
 import cn.net.yzl.crm.dto.product.ProduceDto;
 import cn.net.yzl.crm.service.CommonService;
@@ -17,9 +17,11 @@ import cn.net.yzl.crm.service.micservice.LaunchManageClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -50,9 +52,9 @@ public class CommonController {
     private BiTaskClient biTaskClient;
 
     @ApiOperation(value = "获取岗位列表")
-    @GetMapping("/v1/getPostLevelList")
-    public ComResponse<List<EhrPostLevelDto>> getPostLevelList() {
-        return ehrStaffClient.getPostLevelList();
+    @GetMapping("/v1/getPostList")
+    public ComResponse<List<CommonPostDto>> getPostList() {
+        return ehrStaffClient.getPostList();
     }
 
     @ApiOperation(value = "获取媒体列表")
@@ -90,7 +92,7 @@ public class CommonController {
     public ComResponse<Page<Indicators>> getBiIndicatorsSettingList(@RequestParam("pageNum") Integer pageNum,
                                                                     @RequestParam("pageSize") Integer pageSize,
                                                                     @RequestParam("indicatorsDomainType") Integer indicatorsDomainType) {
-        return biTaskClient.getBiIndicatorsSettingList(pageNum,pageSize,indicatorsDomainType);
+        return biTaskClient.getBiIndicatorsSettingList(pageNum, pageSize, indicatorsDomainType);
     }
 
 
