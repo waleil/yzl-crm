@@ -227,37 +227,44 @@ public class SimpleTests {
 	public void testOrderRule3() {
 		System.err.println("计算规则三：");
 		OrderDetailIn taocan = new OrderDetailIn();
-		taocan.setMealPrice(400);// 套餐价
+		taocan.setMealPrice(4686900);// 套餐价
 		taocan.setMealName("套餐");
 
 		OrderDetailIn d1 = new OrderDetailIn();
-		d1.setProductUnitPrice(100);// 商品单价
-		d1.setProductCount(2);// 商品数量
+		d1.setProductUnitPrice(321300);// 商品单价
+		d1.setProductCount(1);// 商品数量
 		d1.setTotal(d1.getProductUnitPrice() * d1.getProductCount());// 商品总价=商品单价*商品数量
 		d1.setProductCode("AAA");
 		d1.setProductName("商品A");
 
 		OrderDetailIn d2 = new OrderDetailIn();
-		d2.setProductUnitPrice(50);// 商品单价
-		d2.setProductCount(3);// 商品数量
+		d2.setProductUnitPrice(4343400);// 商品单价
+		d2.setProductCount(1);// 商品数量
 		d2.setTotal(d2.getProductUnitPrice() * d2.getProductCount());
 		d2.setProductCode("BBB");
 		d2.setProductName("商品B");
 
 		OrderDetailIn d3 = new OrderDetailIn();
-		d3.setProductUnitPrice(60);// 商品单价
-		d3.setProductCount(3);// 商品数量
+		d3.setProductUnitPrice(9900);// 商品单价
+		d3.setProductCount(1);// 商品数量
 		d3.setTotal(d3.getProductUnitPrice() * d3.getProductCount());
 		d3.setProductCode("CCC");
 		d3.setProductName("商品C");
 
-		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
+		OrderDetailIn d4 = new OrderDetailIn();
+		d4.setProductUnitPrice(9900);// 商品单价
+		d4.setProductCount(1);// 商品数量
+		d4.setTotal(d4.getProductUnitPrice() * d4.getProductCount());
+		d4.setProductCode("DDD");
+		d4.setProductName("商品D");
+
+		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3, d4);
 		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
 		BigDecimal b1 = BigDecimal.valueOf(taocan.getMealPrice());
 		BigDecimal b2 = BigDecimal.valueOf(orderTotal);
 		orderList.stream().map(m -> {
 			BigDecimal b3 = BigDecimal.valueOf(m.getProductUnitPrice());
-			BigDecimal b4 = b1.multiply(b3).divide(b2, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
+			BigDecimal b4 = b1.multiply(b3).divide(b2, 2, BigDecimal.ROUND_HALF_UP);
 //			System.err.println(String.format("%s: %s", m.getProductName(), b4.intValue()));
 			m.setProductUnitPrice(b4.intValue());
 			return m;
