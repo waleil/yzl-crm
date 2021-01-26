@@ -295,6 +295,10 @@ public class WorkOrderController {
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     @ApiOperation(value = "智能工单：我的热线工单-创建处理工单流水", notes = "智能工单：我的热线工单-创建处理工单流水")
     public ComResponse<String> insertWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
+        workOrderDisposeFlowBean.setCreateId(QueryIds.userNo.get());
+        workOrderDisposeFlowBean.setCreateName(QueryIds.userName.get());
+        workOrderDisposeFlowBean.setUpdateId(QueryIds.userNo.get());
+        workOrderDisposeFlowBean.setUpdateName(QueryIds.userName.get());
         return workOrderClient.insertWorkOrderDisposeFlow(workOrderDisposeFlowBean);
     }
 
@@ -307,6 +311,8 @@ public class WorkOrderController {
     @ApiOperation(value = "回访工单管理-回收", notes = "回访工单管理-回收")
     @PostMapping(value = "v1/recovery")
     public ComResponse<Void> recovery(@RequestBody RecoveryDTO recoveryDTO) {
+        recoveryDTO.setStaffNo(QueryIds.userNo.get());
+        recoveryDTO.setStaffName(QueryIds.userName.get());
         return workOrderClient.recovery(recoveryDTO);
     }
 
@@ -319,7 +325,9 @@ public class WorkOrderController {
     @ApiOperation(value = "回访工单管理-上交", notes = "回访工单管理-上交")
     @PostMapping(value = "v1/handIn")
     public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
-        return workOrderClient.handIn(recoveryDTO);
+        recoveryDTO.setStaffNo(QueryIds.userNo.get());
+        recoveryDTO.setStaffName(QueryIds.userName.get());
+    return workOrderClient.handIn(recoveryDTO);
     }
 
 }
