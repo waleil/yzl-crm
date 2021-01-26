@@ -4,11 +4,14 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
+import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.*;
 
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
+import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
+import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
 
@@ -26,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 顾客服务接口
  */
-//@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/member")
-@FeignClient(value = "yzl-crm-customer-api")
+@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/member")
+//@FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
     @RequestMapping(method = RequestMethod.GET, value = "/v1/getMemberListByPage")
@@ -73,18 +76,7 @@ public interface MemberFien {
     @GetMapping("/v1/getMemberDisease")
     GeneralResult<List<MemberDisease>> getMemberDisease(@RequestParam("member_card") String member_card);
 
-    @ApiOperation("新增收货地址")
-    @GetMapping("/v1/addReveiverAddress")
-    GeneralResult addReveiverAddress(@RequestBody ReveiverAddress reveiverAddress);
 
-
-    @ApiOperation("修改收货地址")
-    @GetMapping("/v1/updateReveiverAddress")
-    GeneralResult updateReveiverAddress(@RequestBody ReveiverAddress reveiverAddress);
-
-    @ApiOperation("获取收获地址")
-    @GetMapping("/v1/getReveiverAddress")
-    GeneralResult<List<ReveiverAddress>> getReveiverAddress(@RequestParam("member_card") String member_card);
 
     @ApiOperation("获取购买能力")
     @GetMapping("/v1/getMemberOrderStat")
@@ -118,4 +110,12 @@ public interface MemberFien {
     ComResponse<MemberAmountDto> getMemberAmount(@RequestParam("memberCard") String memberCard);
     @GetMapping("/customerAmount/getMemberAmountDetailList")
     ComResponse<List<MemberAmountDetailDto>> getMemberAmountDetailList(@RequestParam("memberCard")String memberCard,@RequestParam("timeFlag") Integer timeFlag);
+
+   // 顾客收货地址
+    @PostMapping("/memberAddress/v1/addReveiverAddress")
+    ComResponse<String> addReveiverAddress(@RequestBody ReveiverAddressInsertVO reveiverAddressInsertVO);
+    @PostMapping("/memberAddress/v1/updateReveiverAddress")
+    ComResponse<String> updateReveiverAddress(@RequestBody ReveiverAddressUpdateVO reveiverAddressUpdateVO);
+    @GetMapping("/memberAddress/v1/getReveiverAddress")
+    ComResponse<List<ReveiverAddressDto>> getReveiverAddress(@RequestParam("memberCard") String memberCard);
 }

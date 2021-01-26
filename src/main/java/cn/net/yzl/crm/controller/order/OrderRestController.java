@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
@@ -279,7 +281,7 @@ public class OrderRestController {
 		}
 		orderm.setTotalAll(orderm.getTotal());
 		orderm.setSpend(orderm.getCash());
-		// 如果订单总金额大于账户剩余金额
+		// 如果订单总金额大于账户剩余金额，单位分
 		if (orderm.getTotal() > account.getTotalMoney()) {
 			log.error("热线工单-购物车-提交订单>>订单总金额[{}]大于账户剩余金额[{}]", orderm.getTotal(), account.getTotalMoney());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
@@ -300,6 +302,7 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品库存不足。");
 			}
 		}
+		System.err.println(JSON.toJSONString(orderdetailList, true));
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
 		orderm.setWorkBatchNo(orderin.getWorkBatchNo());// 工单流水号
 		orderm.setPayType(orderin.getPayType());// 支付方式

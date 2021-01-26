@@ -4,12 +4,13 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.common.util.DateHelper;
-import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
+
+import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.*;
-import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
+import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
+import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.member.MemberCrowdGroupDTO;
@@ -21,6 +22,7 @@ import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
@@ -192,31 +194,30 @@ public class MemberController {
         return result;
     }
 
-    @ApiOperation("保存收货地址")
-    @PostMapping("/v1/saveReveiverAddress")
-    public GeneralResult saveReveiverAddress(@RequestBody ReveiverAddress reveiverAddress) {
-        if (reveiverAddress == null) throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        if (StringUtil.isNullOrEmpty(reveiverAddress.getMember_card())) {
-            // todo 获取code码
-            memberFien.addReveiverAddress(reveiverAddress);
-        } else {
-            memberFien.updateReveiverAddress(reveiverAddress);
-        }
 
-        return GeneralResult.success();
+
+    @ApiOperation(value = "顾客收货地址-添加顾客收货地址", notes = "顾客收货地址-添加顾客收货地址")
+    @RequestMapping(value = "/v1/addReveiverAddress", method = RequestMethod.POST)
+    public ComResponse<String> addReveiverAddress(@RequestBody  @Validated ReveiverAddressInsertVO reveiverAddressInsertVO) throws IllegalAccessException {
+        return memberFien.addReveiverAddress(reveiverAddressInsertVO);
     }
 
-    @ApiOperation("获取收货地址")
-    @GetMapping("/v1/getReveiverAddress")
-    public GeneralResult getReveiverAddress(
-            @RequestParam("member_card")
-            @NotBlank(message = "member_card不能为空")
-            @ApiParam(name = "member_card", value = "会员卡号", required = true)
-                    String member_card
-    ) {
-        GeneralResult<List<ReveiverAddress>> result = memberFien.getReveiverAddress(member_card);
-        return result;
+    @ApiOperation(value = "顾客收货地址-更新收货地址", notes = "顾客收货地址-更新收货地址")
+    @RequestMapping(value = "/v1/updateReveiverAddress", method = RequestMethod.POST)
+    public ComResponse<String> updateReveiverAddress(@RequestBody @Validated ReveiverAddressUpdateVO reveiverAddressUpdateVO) throws IllegalAccessException {
+        return memberFien.updateReveiverAddress(reveiverAddressUpdateVO);
     }
+
+    @ApiOperation(value = "顾客收货地址-获取顾客收货地址", notes = "顾客收货地址-获取顾客收货地址")
+    @RequestMapping(value = "/v1/getReveiverAddress", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+    })
+    public ComResponse<List<ReveiverAddressDto>> getReveiverAddress(String memberCard) {
+        return memberFien.getReveiverAddress(memberCard);
+    }
+
+
 
     @ApiOperation("保存顾客购买能力")
     @PostMapping("/v1/saveMemberOrderStat")
