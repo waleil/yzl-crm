@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -29,5 +30,5 @@ public interface OutStoreWarningClient {
     ComResponse<JSONObject> getByBusinessType(@RequestParam String businessType);
 
     @PostMapping("v1/saveSysConfig")
-    ComResponse<Integer> saveSysConfig(@RequestParam String businessValue);
+    ComResponse<Integer> saveSysConfig(@RequestBody String businessValue);
 }

@@ -40,7 +40,7 @@ public class OrderWarningOutStoreController {
     }
 	@PostMapping("v1/saveSysConfig")
 	@ApiOperation(value = "添加出库预警配置", notes = "格式：{'delay':1,'noticeType':1}，delay预警时间，noticeType预警方式：1短信，2邮件，3短信+邮件")
-	public ComResponse<Integer> saveSysConfig(@RequestParam @ApiParam(name = "配置信息", required = true) String businessValue){
+	public ComResponse<Integer> saveSysConfig(@RequestBody @ApiParam(name = "配置信息", required = true) String businessValue){
     	return outStoreWarningClient.saveSysConfig(businessValue);
 	}
 }
