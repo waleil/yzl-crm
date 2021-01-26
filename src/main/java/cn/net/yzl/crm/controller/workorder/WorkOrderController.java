@@ -307,6 +307,8 @@ public class WorkOrderController {
     @ApiOperation(value = "回访工单管理-回收", notes = "回访工单管理-回收")
     @PostMapping(value = "v1/recovery")
     public ComResponse<Void> recovery(@RequestBody RecoveryDTO recoveryDTO) {
+        recoveryDTO.setStaffNo(QueryIds.userNo.get());
+        recoveryDTO.setStaffName(QueryIds.userName.get());
         return workOrderClient.recovery(recoveryDTO);
     }
 
@@ -319,7 +321,9 @@ public class WorkOrderController {
     @ApiOperation(value = "回访工单管理-上交", notes = "回访工单管理-上交")
     @PostMapping(value = "v1/handIn")
     public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
-        return workOrderClient.handIn(recoveryDTO);
+        recoveryDTO.setStaffNo(QueryIds.userNo.get());
+        recoveryDTO.setStaffName(QueryIds.userName.get());
+    return workOrderClient.handIn(recoveryDTO);
     }
 
 }
