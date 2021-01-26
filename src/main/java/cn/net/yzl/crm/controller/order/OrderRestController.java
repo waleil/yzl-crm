@@ -316,14 +316,13 @@ public class OrderRestController {
 		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
 		orderm.setMediaType(orderin.getMediaType());// 媒介类型
 		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
-		orderm.setMemberName(member.getMember_name());// 顾客姓名
-		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
-		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
 		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
 		orderm.setUpdateName(orderm.getStaffName());// 更新人姓名
-		// 找顾客确认
-		orderm.setMemberLevelBefor(null);// 单前顾客级别
-		orderm.setMemberTypeBefor(null);// 单前顾客类型
+		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
+		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
+		orderm.setMemberName(member.getMember_name());// 顾客姓名
+		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
+		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
 		// 调用锁定库存接口
 		// 创建订单
 		//
