@@ -2,36 +2,45 @@ package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.dto.ehr.EhrStaff;
+import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
+import cn.net.yzl.crm.service.workorder.WorkOrderService;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.common.Constant;
-import cn.net.yzl.workorder.model.db.WorkOrderFlowBean;
-import cn.net.yzl.workorder.model.dto.*;
-import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
-import cn.net.yzl.workorder.model.enums.OperationTypeEnums;
+import cn.net.yzl.workorder.model.db.WorkOrderBean;
+import cn.net.yzl.workorder.model.dto.FindByCalledPhoneIsEmptyDTO;
+import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
+import cn.net.yzl.workorder.model.dto.IsListPageDTO;
+import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
+import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
+import cn.net.yzl.workorder.model.dto.UpdateBatchDTO;
+import cn.net.yzl.workorder.model.dto.UpdateBatchWorkOrderDTO;
+import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
+import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
+import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.dto.UpdateWorkOrderVisitDTO;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.crm.config.QueryIds;
-import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
-import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("workOrder")
@@ -43,6 +52,10 @@ public class WorkOrderController {
 
     @Autowired
     private ProductClient productClient;
+
+    @Autowired
+    private WorkOrderService workOrderService;
+
 
     /**
      * 查询我的回访分页列表
@@ -244,4 +257,21 @@ public class WorkOrderController {
     public ComResponse<Boolean> findByCalledPhoneIsEmpty(@Validated @RequestBody FindByCalledPhoneIsEmptyDTO findByCalledPhoneIsEmptyDTO){
         return workOrderClient.findByCalledPhoneIsEmpty(findByCalledPhoneIsEmptyDTO);
     }
+
+    /**
+     * 智能工单：热线工单管理-可分配员工
+     * @param
+     * @return
+     */
+    @PostMapping("v1/getDistributionStaff")
+    @ApiOperation(value = "智能工单：热线工单管理-可分配员工", notes = "智能工单：热线工单管理-可分配员工")
+    public ComResponse<Page<EhrStaff>> getDistributionStaff(@RequestBody GetDistributionStaffDTO getDistributionStaffDTO){
+        String userId = QueryIds.userNo.get();
+        if(StringUtils.isEmpty(userId)){
+            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
+        }
+        getDistributionStaffDTO.setStaffNo(userId);
+        return workOrderService.getDistributionStaff(getDistributionStaffDTO);
+    }
+
 }
