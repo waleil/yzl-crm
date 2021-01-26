@@ -2,7 +2,7 @@ package cn.net.yzl.crm.controller.logistics;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
-import cn.net.yzl.logistics.model.vo.logistics.ExpressCodeVo;
+import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

@@ -121,7 +121,7 @@ public class OrderRestControllerTests {
 		try {
 			OrderIn order = new OrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
-			od1.setMealNo("T0000148");
+			od1.setMealNo("T0000147");
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od2 = new OrderDetailIn();
