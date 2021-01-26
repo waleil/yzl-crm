@@ -255,10 +255,13 @@ public class SimpleTests {
 		int orderTotal = orderList.stream().mapToInt(OrderDetailIn::getTotal).sum();
 		BigDecimal b1 = BigDecimal.valueOf(taocan.getMealPrice());
 		BigDecimal b2 = BigDecimal.valueOf(orderTotal);
-		orderList.stream().forEach(m -> {
+		orderList.stream().map(m -> {
 			BigDecimal b3 = BigDecimal.valueOf(m.getProductUnitPrice());
-			System.err.println(String.format("%s: %s", m.getProductName(),
-					b1.multiply(b3).divide(b2, 2, BigDecimal.ROUND_HALF_UP)));
-		});
+			BigDecimal b4 = b1.multiply(b3).divide(b2, 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
+//			System.err.println(String.format("%s: %s", m.getProductName(), b4.intValue()));
+			m.setProductUnitPrice(b4.intValue());
+			return m;
+		}).collect(Collectors.toList()).forEach(
+				od -> System.err.println(String.format("%s: %s", od.getProductName(), od.getProductUnitPrice())));
 	}
 }
