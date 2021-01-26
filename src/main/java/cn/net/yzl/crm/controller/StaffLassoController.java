@@ -53,12 +53,6 @@ public class StaffLassoController {
     @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
     @PostMapping("v1/saveStaffCrowdGroup")
     public ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
-        if (DateUtil.between(staffCrowdGroup.getEffectiveDate(), new Date(), DateUnit.DAY, false) <= 0) {
-            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE, "时间不能小于当前时间！");
-        }
-        if (DateUtil.between(staffCrowdGroup.getEffectiveDate(), staffCrowdGroup.getExpireDate(), DateUnit.DAY, false) <= 0) {
-            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE, "有效时间差最小1天时间！");
-        }
         staffCrowdGroup.setCreateCode(QueryIds.userNo.get());
         staffCrowdGroup.setUpdateCode(QueryIds.userNo.get());
         return crmStaffClient.saveStaffCrowdGroupDTO(staffCrowdGroup);
