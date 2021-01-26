@@ -2,15 +2,14 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.service.order.IOrderOprService;
+import cn.net.yzl.order.model.vo.order.OrderOprDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @RestController
@@ -30,10 +29,8 @@ public class OrderOprController {
      */
     @ApiOperation(value = "取消订单")
     @PostMapping("v1/cancleOrderM")
-    public ComResponse cancleOrderM(@RequestParam("orderNo")
-                                    @NotBlank(message = "订单号不能为空")
-                                    @ApiParam(name = "orderNo", value = "订单号", required = true) String orderNo) {
+    public ComResponse cancleOrderM(@RequestBody @Valid OrderOprDTO dto) {
 
-        return this.orderOprService.cancleOrder(orderNo);
+        return this.orderOprService.cancleOrder(dto.getOrderNo());
     }
 }

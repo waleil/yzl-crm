@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.controller.order;
 
+import cn.net.yzl.crm.dto.order.OutStoreWarningConfigDTO;
+import cn.net.yzl.crm.utils.BeanCopyUtils;
 import cn.net.yzl.order.enums.BusinessType;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import cn.net.yzl.order.model.vo.order.OrderWarningOutStorePageDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import javax.validation.Valid;
 
 /**
  * @author zhouchangsong
@@ -40,7 +44,10 @@ public class OrderWarningOutStoreController {
     }
 	@PostMapping("v1/saveSysConfig")
 	@ApiOperation(value = "添加出库预警配置", notes = "格式：{'delay':1,'noticeType':1}，delay预警时间，noticeType预警方式：1短信，2邮件，3短信+邮件")
-	public ComResponse<Integer> saveSysConfig(@RequestParam @ApiParam(name = "配置信息", required = true) String businessValue){
-    	return outStoreWarningClient.saveSysConfig(businessValue);
+	public ComResponse<Integer> saveSysConfig(@RequestBody @Valid OutStoreWarningConfigDTO dto){
+        JSONObject obj = new JSONObject();
+        obj.put("noticeType",dto.getNoticeType());
+        obj.put("delay",dto.getDelay());
+    	return outStoreWarningClient.saveSysConfig(String.valueOf(obj));
 	}
 }

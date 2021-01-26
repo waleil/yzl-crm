@@ -72,7 +72,6 @@ public class OrderRestController {
 	@PostMapping("/v1/submitorder")
 	@ApiOperation(value = "热线工单-购物车-提交订单")
 	public ComResponse<Object> submitOrder(@RequestBody OrderIn orderin) {
-		// TODO zww 热线工单-购物车-提交订单
 		OrderM orderm = new OrderM();// 订单信息
 		orderm.setTotal(0);// 实收金额=应收金额+预存
 		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
@@ -183,7 +182,7 @@ public class OrderRestController {
 				od.setPackageunit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				// 如果是非赠品
-				if (CommonConstant.GIFT_FLAG_0 == od.getGiftFlag()) {
+				if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				} else {// 如果是赠品，将金额设置为0
@@ -247,14 +246,13 @@ public class OrderRestController {
 					od.setProductCode(in.getProductCode());// 商品唯一标识
 					od.setProductName(in.getName());// 商品名称
 					od.setProductBarCode(in.getBarCode());// 产品条形码
-					od.setProductUnitPrice(
-							BigDecimal.valueOf(in.getSalePrice()).multiply(BigDecimal.valueOf(100)).intValue());// 商品单价
+					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分=元*100
 					od.setProductCount(in.getProductNum());// 商品数量
 					od.setUnit(in.getUnit());// 单位
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					// 如果是非赠品
-					if (CommonConstant.GIFT_FLAG_0 == od.getGiftFlag()) {
+					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
@@ -263,8 +261,18 @@ public class OrderRestController {
 					}
 					return od;
 				}).collect(Collectors.toList());
-
-				orderdetailList.addAll(result);
+				// 套餐商品总金额
+				int orderdetailTotal = result.stream().mapToInt(OrderDetail::getTotal).sum();
+				// 套餐价
+				int mealPrice = meal.getPrice();
+				orderdetailList.addAll(result.stream().map(od -> {
+					int price = mealPrice * od.getProductUnitPrice() / orderdetailTotal;
+					System.err.println(String.format(
+							"orderdetailTotal=%s, mealPrice=%s, ProductCode=%s, ProductUnitPrice=%s, ProductCount=%s",
+							orderdetailTotal, mealPrice, od.getProductCode(), price, od.getProductCount()));
+					od.setProductUnitPrice(price);
+					return od;
+				}).collect(Collectors.toList()));
 			}
 			orderm.setTotal(orderm.getTotal() + mlist.stream().mapToInt(ProductMealListDTO::getPrice).sum());
 			orderm.setCash(orderm.getCash() + mlist.stream().mapToInt(ProductMealListDTO::getPrice).sum());
