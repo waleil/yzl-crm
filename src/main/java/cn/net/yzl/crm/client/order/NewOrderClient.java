@@ -1,23 +1,16 @@
 package cn.net.yzl.crm.client.order;
 
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.order.model.vo.order.*;
-import com.alibaba.excel.EasyExcel;
-import io.swagger.annotations.ApiOperation;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.order.model.vo.order.NewOrderDTO;
 
 @FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/newOrdder")
 public interface NewOrderClient {

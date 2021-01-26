@@ -30,8 +30,8 @@ public class OrderRestControllerTests {
 	@Test
 	public void testQueryListProductMealByCodes() {
 		try {
-//			String codes = "T0000145,T0000142";
-//			this.mealClient.queryListProductMealByCodes(codes).getData().forEach(System.err::println);
+			String codes = "T0000145,T0000142";
+			this.mealClient.queryByIds(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -41,7 +41,7 @@ public class OrderRestControllerTests {
 	public void testQueryByCodes() {
 		try {
 			String codes = "10000107,10000095,10000098";
-			this.productClient.queryByCodes(codes).getData().forEach(System.err::println);
+			this.productClient.queryByProductCodes(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -62,6 +62,16 @@ public class OrderRestControllerTests {
 		try {
 			String staffno = "6666";
 			System.err.println(this.ehrStaffClient.getDetailsByNo(staffno).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetDepartById() {
+		try {
+			Integer departid = 1;
+			System.err.println(this.ehrStaffClient.getDepartById(departid));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

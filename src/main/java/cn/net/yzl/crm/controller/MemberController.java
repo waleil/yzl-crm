@@ -68,10 +68,10 @@ public class MemberController {
     }
 
     @ApiOperation(value = "修改顾客信息")
-    @PostMapping("v1/updateByMemberCart")
+    @PostMapping("v1/updateByMemberCard")
     public GeneralResult<Boolean> updateByMemberCard(@RequestBody Member dto) {
-        memberFien.updateByMemberCard(dto);
-        return GeneralResult.success();
+        GeneralResult<Boolean> result = memberFien.updateByMemberCard(dto);
+        return result;
     }
 
     @ApiOperation(value = "获取顾客信息")

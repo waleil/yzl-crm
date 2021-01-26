@@ -22,7 +22,7 @@ import java.util.List;
  * @date 2021/1/22 16:00
  */
 @RestController
-@Api(value = "仓储中心-商品采购预警", tags = {"仓储中心-商品采购预警"})
+@Api(value = "仓储中心心心心心-商品采购预警", tags = {"仓储中心心心心心-商品采购预警"})
 @RequestMapping("productPurchaseWarn")
 public class ProductPurchaseWarnController {
 

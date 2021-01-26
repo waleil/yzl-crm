@@ -31,8 +31,8 @@ public interface WorkOrderHotlineClient {
      * @param updateRecyclingDTO
      * @return
      */
-    @RequestMapping(value = "v1/updateRecycling",method = RequestMethod.POST)
-    ComResponse<Void> updateRecycling(@RequestBody UpdateRecyclingDTO updateRecyclingDTO);
+//    @RequestMapping(value = "v1/updateRecycling",method = RequestMethod.POST)
+//    ComResponse<Void> updateRecycling(@RequestBody UpdateRecyclingDTO updateRecyclingDTO);
 
 
     /**
@@ -40,16 +40,16 @@ public interface WorkOrderHotlineClient {
      * @param updateSingleAdjustDTO
      * @return
      */
-    @RequestMapping(value = "v1/updateSingleAdjust",method = RequestMethod.POST)
-    ComResponse<Void> updateSingleAdjust(@RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO);
+//    @RequestMapping(value = "v1/updateSingleAdjust",method = RequestMethod.POST)
+//    ComResponse<Void> updateSingleAdjust(@RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO);
 
     /**
      * 智能工单：热线工单管理-多数据调整
      * @param updateMoreAdjustDTO
      * @return
      */
-    @RequestMapping(value = "v1/updateMoreAdjust",method = RequestMethod.POST)
-    ComResponse<Void> updateMoreAdjust(@RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO);
+//    @RequestMapping(value = "v1/updateMoreAdjust",method = RequestMethod.POST)
+//    ComResponse<Void> updateMoreAdjust(@RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO);
 
     /**
      * 智能工单：热线工单管理-列表
@@ -72,8 +72,8 @@ public interface WorkOrderHotlineClient {
      * @param updateAcceptStatusReceiveDTO
      * @return
      */
-    @RequestMapping(value = "v1/updateAcceptStatusReceive",method = RequestMethod.POST)
-    ComResponse<Void> updateAcceptStatusReceive(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
+//    @RequestMapping(value = "v1/updateAcceptStatusReceive",method = RequestMethod.POST)
+//    ComResponse<Void> updateAcceptStatusReceive(UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO);
 
     /**
      * 智能工单：我的热线工单-处理工单详情
