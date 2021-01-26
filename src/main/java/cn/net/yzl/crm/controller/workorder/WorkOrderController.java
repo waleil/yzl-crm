@@ -13,10 +13,7 @@ import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
-import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
-import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
+import cn.net.yzl.workorder.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -106,6 +103,13 @@ public class WorkOrderController {
         updateRecyclingDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         return workOrderClient.updateRecycling(updateRecyclingDTO);
     }
+
+    @ApiOperation(value = "查询待领取顾客池", notes = "待领取顾客池")
+    @PostMapping("v1/queryUnclaimedUsers")
+    public ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(@RequestBody   WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO){
+        return workOrderClient.queryUnclaimedUsers(workOrderUnclaimedUserDTO);
+    }
+
 
     @ApiOperation(value = "待领取顾客池-领取", notes = "待领取顾客池-领取")
     @PostMapping("v1/receiveUsers")

@@ -110,4 +110,17 @@ public class PurchaseOrderController {
     public ComResponse<PurchaseReturnResDto> detailByOrderNo(@RequestParam("orderNo") String orderNo){
         return purchaseFeginService.detailByOrderNo(orderNo);
     }
+
+    /**
+     * 采购订单改为已发货
+     * @param purchaseOrderWaybillDto
+     * @return
+     */
+    @ApiOperation(value = "采购订单改为已发货", notes = "采购订单改为已发货")
+    @PostMapping("v1/delivered")
+    public ComResponse delivered(@RequestBody PurchaseOrderWaybillDto purchaseOrderWaybillDto){
+        return purchaseFeginService.delivered(purchaseOrderWaybillDto);
+    }
+
+
 }

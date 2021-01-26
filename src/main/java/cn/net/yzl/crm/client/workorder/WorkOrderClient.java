@@ -5,14 +5,11 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
-import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
+import cn.net.yzl.workorder.model.vo.*;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
-import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -161,6 +158,9 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     ComResponse<String> insertWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+
+    @PostMapping(value = "v1/queryUnclaimedUsers")
+    ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO);
 
     @PostMapping(value = "v1/receiveUsers")
     ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list);
