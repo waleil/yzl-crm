@@ -6,6 +6,8 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateHelper;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
+import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
+import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
@@ -16,14 +18,13 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.sys.BizException;
 import io.netty.util.internal.StringUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.text.ParseException;
 import java.util.*;
 
 @Api(tags = "顾客管理")
@@ -284,4 +285,22 @@ public class MemberController {
     }
 
 
+
+    @ApiOperation(value = "顾客账户-获取顾客账户信息", notes = "顾客账户-获取顾客账户信息")
+    @RequestMapping(value = "/getMemberAmount", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberCard", value = "顾客卡号", required = true, dataType = "string", paramType = "query"),
+    })
+    ComResponse<MemberAmountDto> getMemberAmount(@RequestParam("memberCard") String  memberCard) {
+        return memberFien.getMemberAmount(memberCard);
+    }
+    @ApiOperation(value = "顾客账户-获取余额明细", notes = "顾客账户-获取余额明细")
+    @RequestMapping(value = "/getMemberAmountDetailList", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberCard", value = "顾客卡号", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "timeFlag", value = "时间标识(1:最近三个月,2:三个月以前的)", required = true, dataType = "Int", paramType = "query"),
+    })
+    ComResponse<List<MemberAmountDetailDto>> getMemberAmountDetailList(@RequestParam("memberCard") String  memberCard, @RequestParam("timeFlag") Integer timeFlag) throws ParseException {
+        return memberFien.getMemberAmountDetailList(memberCard,timeFlag);
+    }
 }
