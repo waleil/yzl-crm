@@ -2,11 +2,10 @@ package cn.net.yzl.crm.service.micservice;
 
 import java.util.List;
 
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.logistics.model.vo.logistics.ExpressCodeVo;
 import io.swagger.annotations.ApiOperation;
 
 /**
