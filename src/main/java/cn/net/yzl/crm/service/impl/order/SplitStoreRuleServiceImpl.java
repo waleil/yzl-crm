@@ -64,9 +64,41 @@ public class SplitStoreRuleServiceImpl implements SplitStoreRuleService {
             page.setItems(dtos);
             return ComResponse.success(page);
         }
-        Map<String, SplitStoreProvinceNamesDTO> provinceDTOMap = province.getData().stream().collect(Collectors.toMap(SplitStoreProvinceNamesDTO::getStoreNo, Function.identity()));
-        dtos.forEach(dto -> dto.setProvinceNames(Optional.ofNullable(provinceDTOMap.get(dto.getStoreNo())).map(SplitStoreProvinceNamesDTO::getProvinceNames).orElse(null)));
+        Map<String, List<SplitStoreProvinceNamesDTO>> provinceDTOMap = province.getData().stream().collect(Collectors.toMap(SplitStoreProvinceNamesDTO::getStoreNo, s->{
+            List<SplitStoreProvinceNamesDTO> list = new ArrayList<>();
+            list.add(s);
+            return list;
+        }));
+        dtos.forEach(dto -> dto.setProvinceNames(Optional.ofNullable(provinceDTOMap.get(dto.getStoreNo())).map(s-> s.stream().map(SplitStoreProvinceNamesDTO::getProvinceNames).distinct().collect(Collectors.joining(","))).orElse(null)));
         page.setItems(dtos);
         return ComResponse.success(page);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
