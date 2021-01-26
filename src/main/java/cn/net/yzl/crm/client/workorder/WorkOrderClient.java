@@ -5,14 +5,11 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
-import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
+import cn.net.yzl.workorder.model.vo.*;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
-import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -92,6 +89,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：热线工单管理-多数据调整
+     *
      * @param updateMoreAdjustDTO
      * @return
      */
@@ -118,6 +116,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-列表
+     *
      * @param myWorkOrderHotlineListDTO
      * @return
      */
@@ -126,6 +125,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-接收
+     *
      * @param updateAcceptStatusReceiveDTO
      * @return
      */
@@ -134,6 +134,7 @@ public interface WorkOrderClient {
 
     /**
      * 我的热线工单-处理工单详情
+     *
      * @param updateAcceptStatusReceiveDTO
      * @return
      */
@@ -142,6 +143,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-被叫号码查询工单是否存在
+     *
      * @param findByCalledPhoneIsEmptyDTO
      * @return
      */
@@ -150,11 +152,15 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-创建处理工单流水
+     *
      * @param workOrderDisposeFlowBean
      * @return
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     ComResponse<String> insertWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+
+    @PostMapping(value = "v1/queryUnclaimedUsers")
+    ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO);
 
     @PostMapping(value = "v1/receiveUsers")
     ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list);
@@ -177,4 +183,13 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/handIn")
     ComResponse<Void> handIn(RecoveryDTO recoveryDTO);
+
+    /**
+     * 智能工单-我的回访工单-接收
+     *
+     * @param receiveDTO
+     * @return
+     */
+    @PostMapping(value = "v1/receive")
+    ComResponse<Void> receive(ReceiveDTO receiveDTO);
 }

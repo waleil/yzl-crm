@@ -13,10 +13,7 @@ import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
-import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
-import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
+import cn.net.yzl.workorder.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -52,29 +49,30 @@ public class WorkOrderController {
 
     /**
      * 查询我的回访分页列表
+     *
      * @param isListPageDTO
      * @return
      */
     @PostMapping(value = "v1/isListPage")
-    @ApiOperation(value = "查询我的回访分页列表",notes = "查询我的回访分页列表")
-    public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO){
+    @ApiOperation(value = "查询我的回访分页列表", notes = "查询我的回访分页列表")
+    public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO) {
         isListPageDTO.setStaffNO(QueryIds.userNo.get());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isListPage(isListPageDTO);
         Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
-        if(null == pageWorkOrderBean){
+        if (null == pageWorkOrderBean) {
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
         String productNames = new String();
-        for(WorkOrderBean workOrderBean : workOrderBeans){
-            productNames +=","+workOrderBean.getProductCode();
+        for (WorkOrderBean workOrderBean : workOrderBeans) {
+            productNames += "," + workOrderBean.getProductCode();
         }
         productNames = productNames.substring(1);
         List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
-        if(!CollectionUtils.isEmpty(data)){
+        if (!CollectionUtils.isEmpty(data)) {
             Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
-                if(workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())){
+                if (workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())) {
                     workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
                 }
             });
@@ -106,11 +104,18 @@ public class WorkOrderController {
         return workOrderClient.updateRecycling(updateRecyclingDTO);
     }
 
-    @ApiOperation(value = "待领取顾客池-领取",notes = "待领取顾客池-领取")
+    @ApiOperation(value = "查询待领取顾客池", notes = "待领取顾客池")
+    @PostMapping("v1/queryUnclaimedUsers")
+    public ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(@RequestBody   WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO){
+        return workOrderClient.queryUnclaimedUsers(workOrderUnclaimedUserDTO);
+    }
+
+
+    @ApiOperation(value = "待领取顾客池-领取", notes = "待领取顾客池-领取")
     @PostMapping("v1/receiveUsers")
-    public ComResponse<Void> receiveUsers(@RequestBody  List<WorkOrderFlowDTO> list){
-        if(null != list && list.size()>0){
-            for(WorkOrderFlowDTO workOrderFlowDTO : list){
+    public ComResponse<Void> receiveUsers(@RequestBody List<WorkOrderFlowDTO> list) {
+        if (null != list && list.size() > 0) {
+            for (WorkOrderFlowDTO workOrderFlowDTO : list) {
                 workOrderFlowDTO.setCreateId(QueryIds.userNo.get());
                 workOrderFlowDTO.setCreateName(QueryIds.userName.get());
                 workOrderFlowDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
@@ -118,7 +123,6 @@ public class WorkOrderController {
         }
         return workOrderClient.receiveUsers(list);
     }
-
 
 
     @ApiOperation(value = "回访工单管理列表", notes = "回访工单管理列表")
@@ -187,7 +191,7 @@ public class WorkOrderController {
      */
     @PostMapping("v1/updateMoreAdjust")
     @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
-    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO){
+    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO) {
         updateMoreAdjustDTO.setAcceptStatus(2);//人工触发 改为已接受
         updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         updateMoreAdjustDTO.setOperatorCode(QueryIds.userNo.get());
@@ -210,11 +214,11 @@ public class WorkOrderController {
         updateBatchDTO.setCreateName(QueryIds.userName.get());
         List<UpdateBatchWorkOrderDTO> updateBatchWorkOrderDTOS = updateBatchDTO.getUpdateBatchWorkOrderDTOS();
         int count = 0;
-        for(UpdateBatchWorkOrderDTO updateBatchWorkOrderDTO : updateBatchWorkOrderDTOS){
-            count +=updateBatchWorkOrderDTO.getCount();
+        for (UpdateBatchWorkOrderDTO updateBatchWorkOrderDTO : updateBatchWorkOrderDTOS) {
+            count += updateBatchWorkOrderDTO.getCount();
         }
 
-        if(count != updateBatchDTO.getCount()){
+        if (count != updateBatchDTO.getCount()) {
             return ComResponse.nodata("总线数必须和分配线数相等!");
         }
         return workOrderClient.batchAdjustment(updateBatchDTO);
@@ -222,10 +226,10 @@ public class WorkOrderController {
 
     @PostMapping("v1/findMyWorkOrderHotlinePageList")
     @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
-    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO){
+    public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO) {
         String userId = QueryIds.userNo.get();
-        if(StringUtils.isEmpty(userId)){
-            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
+        if (StringUtils.isEmpty(userId)) {
+            ComResponse.fail(ComResponse.ERROR_STATUS, "用户校验失败");
         }
         myWorkOrderHotlineListDTO.setStaffNo(userId);
         return workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
@@ -239,7 +243,7 @@ public class WorkOrderController {
      */
     @PostMapping("v1/updateAcceptStatusReceive")
     @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
-    public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+    public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
         updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
         updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
@@ -254,7 +258,7 @@ public class WorkOrderController {
      */
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
-    public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO){
+    public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
         return workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
     }
 
@@ -265,7 +269,7 @@ public class WorkOrderController {
      */
     @PostMapping("v1/findByCalledPhoneIsEmpty")
     @ApiOperation(value = "智能工单：我的热线工单-被叫号码查询工单是否存在", notes = "智能工单：我的热线工单-被叫号码查询工单是否存在")
-    public ComResponse<Boolean> findByCalledPhoneIsEmpty(@Validated @RequestBody FindByCalledPhoneIsEmptyDTO findByCalledPhoneIsEmptyDTO){
+    public ComResponse<Boolean> findByCalledPhoneIsEmpty(@Validated @RequestBody FindByCalledPhoneIsEmptyDTO findByCalledPhoneIsEmptyDTO) {
         return workOrderClient.findByCalledPhoneIsEmpty(findByCalledPhoneIsEmptyDTO);
     }
 
@@ -277,10 +281,10 @@ public class WorkOrderController {
      */
     @PostMapping("v1/getDistributionStaff")
     @ApiOperation(value = "智能工单：热线工单管理-可分配员工", notes = "智能工单：热线工单管理-可分配员工")
-    public ComResponse<Page<EhrStaff>> getDistributionStaff(@RequestBody GetDistributionStaffDTO getDistributionStaffDTO){
+    public ComResponse<Page<EhrStaff>> getDistributionStaff(@RequestBody GetDistributionStaffDTO getDistributionStaffDTO) {
         String userId = QueryIds.userNo.get();
-        if(StringUtils.isEmpty(userId)){
-            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
+        if (StringUtils.isEmpty(userId)) {
+            ComResponse.fail(ComResponse.ERROR_STATUS, "用户校验失败");
         }
         getDistributionStaffDTO.setStaffNo(userId);
         return workOrderService.getDistributionStaff(getDistributionStaffDTO);
@@ -294,7 +298,7 @@ public class WorkOrderController {
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     @ApiOperation(value = "智能工单：我的热线工单-创建处理工单流水", notes = "智能工单：我的热线工单-创建处理工单流水")
-    public ComResponse<String> insertWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
+    public ComResponse<String> insertWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean) {
         workOrderDisposeFlowBean.setCreateId(QueryIds.userNo.get());
         workOrderDisposeFlowBean.setCreateName(QueryIds.userName.get());
         workOrderDisposeFlowBean.setUpdateId(QueryIds.userNo.get());
@@ -327,7 +331,19 @@ public class WorkOrderController {
     public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
         recoveryDTO.setStaffName(QueryIds.userName.get());
-    return workOrderClient.handIn(recoveryDTO);
+        return workOrderClient.handIn(recoveryDTO);
+    }
+
+    /**
+     * 智能工单-我的回访工单-接收
+     *
+     * @param receiveDTO
+     * @return
+     */
+    @ApiOperation(value = "智能工单-我的回访工单-接收", notes = "智能工单-我的回访工单-接收")
+    @PostMapping(value = "v1/receive")
+    public ComResponse<Void> receive(@RequestBody ReceiveDTO receiveDTO) {
+        return workOrderClient.receive(receiveDTO);
     }
 
 }

@@ -98,7 +98,7 @@ public class PurchaseReturnOrderController {
      * @return
      */
     @ApiOperation(value = "采购退货单退回添加货运单号")
-    @PostMapping("v1/back/waybill/")
+    @PostMapping("v1/back/waybill")
     public ComResponse backWayBill(@RequestBody PurchaseReturnWaybillDto returnWaybillDto){
         return purchaseReturnFeginService.backWayBill(returnWaybillDto);
     }
