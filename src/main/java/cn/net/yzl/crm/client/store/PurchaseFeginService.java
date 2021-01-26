@@ -123,4 +123,14 @@ public interface PurchaseFeginService {
     @ApiImplicitParam(name = "orderNo", value = "采购订单号", required = true, dataType = "String", paramType = "query")
     @GetMapping("purchase/v1/detail/by/order/no")
     ComResponse<PurchaseReturnResDto> detailByOrderNo(@RequestParam("orderNo") String orderNo);
+
+
+    /**
+     * 采购订单改为已发货
+     * @param purchaseOrderWaybillDto
+     * @return
+     */
+    @ApiOperation(value = "采购订单改为已发货", notes = "采购订单改为已发货")
+    @PostMapping("purchase/v1/delivered")
+    ComResponse delivered(@RequestBody PurchaseOrderWaybillDto purchaseOrderWaybillDto);
 }
