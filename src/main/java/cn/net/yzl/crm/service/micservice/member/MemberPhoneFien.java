@@ -7,8 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "crmCustomerPhone", url = "localhost:2070/memberPhone")
-//@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/memberPhone")
+@FeignClient(name = "crmCustomerPhone", url = "${api.gateway.url}/crmCustomer/memberPhone")
 public interface MemberPhoneFien {
 
 
