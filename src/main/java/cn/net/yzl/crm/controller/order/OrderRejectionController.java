@@ -33,10 +33,10 @@ public class OrderRejectionController {
 
     @GetMapping("v1/getOrderRejectionList")
     @ApiOperation(value = "查询拒收订单分页")
-    public ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(@ApiParam(value = "订单号") @RequestParam String orderNo,
-                                                                          @ApiParam(value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
-                                                                          @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
-        return orderRejectionClient.getOrderRejectionList(orderNo, pageNo, pageSize);
+    public ComResponse<Page<OrderRejectionPageDTO>> getOrderRejectionList(
+            @ApiParam(value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+            @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        return orderRejectionClient.getOrderRejectionList(null, pageNo, pageSize);
     }
 
     @GetMapping("v1/getOrderList")
