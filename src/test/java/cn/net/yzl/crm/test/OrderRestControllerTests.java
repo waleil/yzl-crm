@@ -5,10 +5,17 @@ import javax.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.controller.order.OrderRestController;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.order.constant.CommonConstant;
+import cn.net.yzl.order.model.vo.order.OrderDetailIn;
+import cn.net.yzl.order.model.vo.order.OrderIn;
 
 /**
  * 单元测试类
@@ -26,6 +33,8 @@ public class OrderRestControllerTests {
 	private MemberFien memberFien;
 	@Resource
 	private EhrStaffClient ehrStaffClient;
+	@Resource
+	private OrderRestController orderRestController;
 
 	@Test
 	public void testQueryListProductMealByCodes() {
@@ -72,6 +81,30 @@ public class OrderRestControllerTests {
 		try {
 			Integer departid = 1;
 			System.err.println(this.ehrStaffClient.getDepartById(departid));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testSubmitOrder() {
+		try {
+			OrderIn order = new OrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("10000107");
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			OrderDetailIn od2 = new OrderDetailIn();
+			od2.setProductCode("10000095");
+			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			OrderDetailIn od3 = new OrderDetailIn();
+			od3.setProductCode("10000098");
+			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			order.getOrderDetailIns().add(od1);
+			order.getOrderDetailIns().add(od2);
+			order.getOrderDetailIns().add(od3);
+			order.setMemberCardNo("100000002");
+			QueryIds.userNo.set("14020");
+			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
