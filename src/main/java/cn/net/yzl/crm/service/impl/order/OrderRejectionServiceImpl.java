@@ -12,6 +12,7 @@ import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.order.enums.RedisKeys;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import java.util.Optional;
  * @author zhouchangsong
  */
 @Service
+@Slf4j
 public class OrderRejectionServiceImpl implements OrderRejectionService {
 
     @Autowired
@@ -41,11 +43,13 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
     public ComResponse addOrderRejection(OrderRejectionAddDTO orderRejectionAddDTO, String userNo) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(userNo);
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(detailsByNo.getCode())) {
+            log.error("拒收单-添加拒收单>>找不到该坐席信息>>{}", detailsByNo);
             return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
         }
         Integer departId = Optional.ofNullable(detailsByNo.getData()).map(StaffImageBaseInfoDto::getDepartId).orElse(0);
         ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(departId);
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
+            log.error("拒收单-添加拒收单>>找不到该坐席的财务归属>>{}", dresponse);
             return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
         }
 //        storeFeginService.selectStore(orderRejectionAddDTO.getStoreNo())
