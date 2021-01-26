@@ -23,7 +23,7 @@ import cn.net.yzl.order.model.vo.order.OrderRejectionPageDTO;
  *
  * @author zhouchangsong
  */
-@FeignClient(name = "orderRejection", url = "${api.gateway.url}/orderService/orderRejection")
+@FeignClient(name = "orderRejection", url = "localhost:4455/orderRejection")
 public interface OrderRejectionClient {
 
     /**

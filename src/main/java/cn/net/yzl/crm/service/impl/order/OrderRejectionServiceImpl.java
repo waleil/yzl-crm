@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author zhouchangsong
@@ -55,7 +56,7 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
         dto.setStoreNo(String.valueOf(orderRejectionAddDTO.getStoreNo()));
 //        dto.setStoreName();
         dto.setUserNo(userNo);
-        dto.setUserName(detailsByNo.getData().getName());
+        dto.setUserName(Optional.ofNullable(detailsByNo.getData()).map(StaffImageBaseInfoDto::getName).orElse(null));
         return orderRejectionClient.addOrderRejection(dto);
     }
 }
