@@ -3,6 +3,7 @@ package cn.net.yzl.crm.client.workorder;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
+import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
@@ -140,4 +141,12 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/findByCalledPhoneIsEmpty")
     ComResponse<Boolean> findByCalledPhoneIsEmpty(FindByCalledPhoneIsEmptyDTO findByCalledPhoneIsEmptyDTO);
+
+    /**
+     * 智能工单：我的热线工单-创建处理工单流水
+     * @param workOrderDisposeFlowBean
+     * @return
+     */
+    @PostMapping("v1/insertWorkOrderDisposeFlow")
+    ComResponse<String> insertWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
 }

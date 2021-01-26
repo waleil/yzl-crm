@@ -119,16 +119,16 @@ public class WorkOrderHotlineController {
      * @param
      * @return
      */
-    @PostMapping("v1/getDistributionStaff")
-//    @ApiOperation(value = "智能工单：热线工单管理-可分配员工", notes = "智能工单：热线工单管理-可分配员工")
-    public ComResponse<Page<EhrStaff>> getDistributionStaff(@RequestBody GetDistributionStaffDTO getDistributionStaffDTO){
-        String userId = QueryIds.userNo.get();
-        if(StringUtils.isEmpty(userId)){
-            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
-        }
-        getDistributionStaffDTO.setStaffNo(userId);
-        return workOrderHotlineService.getDistributionStaff(getDistributionStaffDTO);
-    }
+//    @PostMapping("v1/getDistributionStaff")
+////    @ApiOperation(value = "智能工单：热线工单管理-可分配员工", notes = "智能工单：热线工单管理-可分配员工")
+//    public ComResponse<Page<EhrStaff>> getDistributionStaff(@RequestBody GetDistributionStaffDTO getDistributionStaffDTO){
+//        String userId = QueryIds.userNo.get();
+//        if(StringUtils.isEmpty(userId)){
+//            ComResponse.fail(ComResponse.ERROR_STATUS,"用户校验失败");
+//        }
+//        getDistributionStaffDTO.setStaffNo(userId);
+//        return workOrderHotlineService.getDistributionStaff(getDistributionStaffDTO);
+//    }
 
     /**
      * 智能工单：我的热线工单-接收

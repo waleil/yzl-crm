@@ -15,5 +15,5 @@ public interface WorkOrderHotlineService {
      * 智能工单：热线工单管理-可分配员工
      * @param getDistributionStaffDTO
      */
-    ComResponse<Page<EhrStaff>> getDistributionStaff(GetDistributionStaffDTO getDistributionStaffDTO);
+//    ComResponse<Page<EhrStaff>> getDistributionStaff(GetDistributionStaffDTO getDistributionStaffDTO);
 }
