@@ -257,6 +257,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
                     staffGroup.setStaffCodeList(staffs);
                     staffGroup.setPersonCount(staffs.size());
                 }
+                crmStaffClient.saveStaffCrowdGroupDTO(staffGroup);
             } catch (Exception e) {
                 e.printStackTrace();
             }
