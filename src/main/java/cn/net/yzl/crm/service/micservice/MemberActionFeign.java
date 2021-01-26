@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * 顾客综合行为服务
  */
-@FeignClient(name = "memberActionFeign", url = "${api.gateway.url}/member/memberAction")
+@FeignClient(name = "memberActionFeign", url = "${api.gateway.url}/crmCustomer/member/memberAction")
 //@FeignClient(name = "crmCustomer", url = "localhost:2070/member/memberAction")
 public interface MemberActionFeign {
 
