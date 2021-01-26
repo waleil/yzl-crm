@@ -92,6 +92,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：热线工单管理-多数据调整
+     *
      * @param updateMoreAdjustDTO
      * @return
      */
@@ -118,6 +119,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-列表
+     *
      * @param myWorkOrderHotlineListDTO
      * @return
      */
@@ -126,6 +128,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-接收
+     *
      * @param updateAcceptStatusReceiveDTO
      * @return
      */
@@ -134,6 +137,7 @@ public interface WorkOrderClient {
 
     /**
      * 我的热线工单-处理工单详情
+     *
      * @param updateAcceptStatusReceiveDTO
      * @return
      */
@@ -142,6 +146,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-被叫号码查询工单是否存在
+     *
      * @param findByCalledPhoneIsEmptyDTO
      * @return
      */
@@ -150,6 +155,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-创建处理工单流水
+     *
      * @param workOrderDisposeFlowBean
      * @return
      */
@@ -177,4 +183,13 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/handIn")
     ComResponse<Void> handIn(RecoveryDTO recoveryDTO);
+
+    /**
+     * 智能工单-我的回访工单-接收
+     *
+     * @param receiveDTO
+     * @return
+     */
+    @PostMapping(value = "v1/receive")
+    ComResponse<Void> receive(ReceiveDTO receiveDTO);
 }
