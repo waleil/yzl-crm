@@ -112,10 +112,10 @@ public interface MemberFien {
     ComResponse<List<MemberAmountDetailDto>> getMemberAmountDetailList(@RequestParam("memberCard")String memberCard,@RequestParam("timeFlag") Integer timeFlag);
 
    // 顾客收货地址
-    @PostMapping("/v1/addReveiverAddress")
+    @PostMapping("/memberAddress/v1/addReveiverAddress")
     ComResponse<String> addReveiverAddress(@RequestBody ReveiverAddressInsertVO reveiverAddressInsertVO);
-    @PostMapping("/v1/updateReveiverAddress")
+    @PostMapping("/memberAddress/v1/updateReveiverAddress")
     ComResponse<String> updateReveiverAddress(@RequestBody ReveiverAddressUpdateVO reveiverAddressUpdateVO);
-    @GetMapping("/v1/getReveiverAddress")
+    @GetMapping("/memberAddress/v1/getReveiverAddress")
     ComResponse<List<ReveiverAddressDto>> getReveiverAddress(@RequestParam("memberCard") String memberCard);
 }
