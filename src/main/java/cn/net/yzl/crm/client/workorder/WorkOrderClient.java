@@ -6,6 +6,10 @@ import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
+import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
+import cn.net.yzl.workorder.model.dto.IsListPageDTO;
+import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
+import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.sound.midi.SoundbankResource;
+
+import java.util.List;
 
 /**
  * 智能工单
@@ -149,4 +155,26 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     ComResponse<String> insertWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+
+    @PostMapping(value = "v1/receiveUsers")
+    ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list);
+
+
+    /**
+     * 智能工单:回访工单管理-回收
+     *
+     * @param recoveryDTO
+     * @return
+     */
+    @PostMapping("v1/recovery")
+    ComResponse<Void> recovery(RecoveryDTO recoveryDTO);
+
+    /**
+     * 智能工单:回访工单管理-上交
+     *
+     * @param recoveryDTO
+     * @return
+     */
+    @PostMapping("v1/handIn")
+    ComResponse<Void> handIn(RecoveryDTO recoveryDTO);
 }

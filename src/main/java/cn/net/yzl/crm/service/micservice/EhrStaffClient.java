@@ -4,7 +4,6 @@ package cn.net.yzl.crm.service.micservice;
 import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.staff.dto.lasso.Base;
@@ -12,7 +11,6 @@ import cn.net.yzl.crm.staff.dto.lasso.ScheduleDto;
 import cn.net.yzl.crm.staff.dto.lasso.TrainProductDto;
 import cn.net.yzl.crm.staff.dto.lasso.WorkOrderTypeDto;
 import cn.net.yzl.model.dto.DepartDto;
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,13 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.validation.constraints.NotNull;
 
 @FeignClient(name = "ehr-staff-api", url = "${api.gateway.url}/staffDB")
 public interface EhrStaffClient {
@@ -176,22 +173,22 @@ public interface EhrStaffClient {
     @PostMapping("/staff/getByStaffNos")
     ComResponse<List<StaffDetailDto>> getByStaffNos(@RequestBody List<String> staffNos);
 
-    @GetMapping(value = "/postLevel/getList")
-    ComResponse<List<EhrPostLevelDto>> getPostLevelList();
+    @GetMapping(value = "/post/getPostList")
+    ComResponse<List<CommonPostDto>> getPostList();
 
     @GetMapping(value = "/staff/getStaffByPostIds")
     ComResponse<List<String>> getPostIdListRemote(@RequestBody List<String> postIdList);
 
-	/**
-	 * 根据id获取部门信息
-	 * 
-	 * @param departId 部门id
-	 * @return 部门信息
-	 * @author zhangweiwei
-	 * @date 2021年1月25日,下午1:04:20
-	 */
-	@GetMapping("/depart/getById")
-	ComResponse<DepartDto> getDepartById(@RequestParam @NotNull Integer departId);
+    /**
+     * 根据id获取部门信息
+     *
+     * @param departId 部门id
+     * @return 部门信息
+     * @author zhangweiwei
+     * @date 2021年1月25日, 下午1:04:20
+     */
+    @GetMapping("/depart/getById")
+    ComResponse<DepartDto> getDepartById(@RequestParam @NotNull Integer departId);
 
 
     default List<String> getStaffBaseInfoList(Base base) {
