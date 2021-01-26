@@ -12,36 +12,23 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
-import cn.net.yzl.workorder.model.dto.FindByCalledPhoneIsEmptyDTO;
-import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
-import cn.net.yzl.workorder.model.dto.IsListPageDTO;
-import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
-import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
-import cn.net.yzl.workorder.model.dto.UpdateBatchDTO;
-import cn.net.yzl.workorder.model.dto.UpdateBatchWorkOrderDTO;
-import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
-import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
-import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
-import cn.net.yzl.workorder.model.dto.UpdateWorkOrderVisitDTO;
+import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("workOrder")
@@ -57,33 +44,31 @@ public class WorkOrderController {
     @Autowired
     private WorkOrderService workOrderService;
 
-
     /**
      * 查询我的回访分页列表
-     *
      * @param isListPageDTO
      * @return
      */
     @PostMapping(value = "v1/isListPage")
-    @ApiOperation(value = "查询我的回访分页列表", notes = "查询我的回访分页列表")
-    public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO) {
+    @ApiOperation(value = "查询我的回访分页列表",notes = "查询我的回访分页列表")
+    public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO){
         isListPageDTO.setStaffNO(QueryIds.userNo.get());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isListPage(isListPageDTO);
         Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
-        if (null == pageWorkOrderBean) {
+        if(null == pageWorkOrderBean){
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
         String productNames = new String();
-        for (WorkOrderBean workOrderBean : workOrderBeans) {
-            productNames += "," + workOrderBean.getProductCode();
+        for(WorkOrderBean workOrderBean : workOrderBeans){
+            productNames +=","+workOrderBean.getProductCode();
         }
         productNames = productNames.substring(1);
         List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
-        if (!CollectionUtils.isEmpty(data)) {
+        if(!CollectionUtils.isEmpty(data)){
             Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())) {
+                if(workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())){
                     workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
                 }
             });
@@ -114,6 +99,21 @@ public class WorkOrderController {
         updateRecyclingDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         return workOrderClient.updateRecycling(updateRecyclingDTO);
     }
+
+    @ApiOperation(value = "待领取顾客池-领取",notes = "待领取顾客池-领取")
+    @PostMapping("v1/receiveUsers")
+    public ComResponse<Void> receiveUsers(@RequestBody  List<WorkOrderFlowDTO> list){
+        if(null != list && list.size()>0){
+            for(WorkOrderFlowDTO workOrderFlowDTO : list){
+                workOrderFlowDTO.setCreateId(QueryIds.userNo.get());
+                workOrderFlowDTO.setCreateName(QueryIds.userName.get());
+                workOrderFlowDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+            }
+        }
+        return workOrderClient.receiveUsers(list);
+    }
+
+
 
     @ApiOperation(value = "回访工单管理列表", notes = "回访工单管理列表")
     @PostMapping(value = "v1/listPage")
