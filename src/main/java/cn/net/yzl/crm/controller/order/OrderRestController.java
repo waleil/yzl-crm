@@ -244,7 +244,7 @@ public class OrderRestController {
 					od.setMealName(meal.getName());// 套餐名称
 					od.setMealNo(meal.getMealNo());// 套餐唯一标识
 					od.setMealCount(in.getProductNum());// 套餐数量
-					od.setMealPrice(BigDecimal.valueOf(meal.getPriceD() * 100).intValue());// 套餐价格
+					od.setMealPrice(meal.getPrice());// 套餐价格
 					od.setProductCode(in.getProductCode());// 商品唯一标识
 					od.setProductName(in.getName());// 商品名称
 					od.setProductBarCode(in.getBarCode());// 产品条形码

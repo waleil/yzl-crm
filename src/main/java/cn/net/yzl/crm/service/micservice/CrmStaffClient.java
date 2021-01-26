@@ -118,4 +118,6 @@ public interface CrmStaffClient {
         return staffCrowdGroupList.getData();
     }
 
+    @PostMapping("/staff/v1/updateResult")
+    void updateResult(@RequestBody StaffCrowdGroup staffGroup);
 }
