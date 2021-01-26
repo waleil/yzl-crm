@@ -17,6 +17,7 @@ import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.order.model.db.order.OrderTemp;
 import cn.net.yzl.order.model.db.order.OrderTempProduct;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
+import cn.net.yzl.order.model.vo.order.OrderTempVO;
 import cn.net.yzl.order.model.vo.order.Product4OrderDTO;
 import cn.net.yzl.order.util.MathUtils;
 import cn.net.yzl.product.model.vo.product.dto.ProductDTO;
@@ -152,9 +153,12 @@ public class NewOrderServiceImpl implements INewOrderService {
                 local.get().add(map);
 
             }
+            OrderTempVO orderTempVO = new OrderTempVO();
+            orderTempVO.setList(list);
+            orderTempVO.setProducts(productDTOS);
 
             //调用新建订单接口
-            orderRes = newOrderClient.newOrder(dto);
+            orderRes = newOrderClient.newOrderTemp(orderTempVO);
 
            if( orderRes.getCode().compareTo(Integer.valueOf(200))!=0){
                throw new BizException(orderRes.getCode(),orderRes.getMessage());
@@ -348,7 +352,7 @@ public class NewOrderServiceImpl implements INewOrderService {
         }
         List<OrderTempProduct> list = prd.getData().stream().map(m ->{
             OrderTempProduct product = new OrderTempProduct();
-            product.setOrderTempProductCode(SnowFlakeUtil.get() + "");
+            product.setOrderTempProductCode(SnowFlakeUtil.getId() + "");
             product.setOrderTempCode(tempCode);
             product.setProductCode(m.getProductCode());
             product.setProductBarCode(m.getBarCode());

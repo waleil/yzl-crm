@@ -2,6 +2,7 @@ package cn.net.yzl.crm.client.order;
 
 import javax.servlet.http.HttpServletResponse;
 
+import cn.net.yzl.order.model.vo.order.OrderTempVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
 
 @FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/newOrdder")
+//@FeignClient(name = "newOrder",url = "localhost:4455/newOrdder")
 public interface NewOrderClient {
 
 
@@ -20,7 +22,7 @@ public interface NewOrderClient {
      * 新建订单（会刊）
      */
     @PostMapping("v1/newOrder")
-    public ComResponse<Boolean> newOrder(@RequestBody NewOrderDTO dto);
+    public ComResponse<Boolean> newOrderTemp(@RequestBody OrderTempVO dto);
 
 
     /**
