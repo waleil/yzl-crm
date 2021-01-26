@@ -8,24 +8,22 @@ import cn.net.yzl.crm.client.order.NewOrderClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
-import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.crm.service.order.INewOrderService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
+import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.order.model.db.order.OrderTemp;
 import cn.net.yzl.order.model.db.order.OrderTempProduct;
-import cn.net.yzl.order.model.vo.order.CustomerGroup;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
+import cn.net.yzl.order.model.vo.order.OrderTempVO;
 import cn.net.yzl.order.model.vo.order.Product4OrderDTO;
+import cn.net.yzl.order.util.MathUtils;
 import cn.net.yzl.product.model.vo.product.dto.ProductDTO;
 import cn.net.yzl.product.model.vo.product.vo.BatchProductVO;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
-import io.swagger.models.auth.In;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,46 +75,58 @@ public class NewOrderServiceImpl implements INewOrderService {
             }
             Integer wordCode = response.getData().getWorkCode();
             Integer departId = response.getData().getDepartId();
-
-            //todo 根据部门编号获取财务归属
-            Integer financialOwner = 123;
+            Integer financialOwner = null;
+            String financialOwnerName = "";
             //生成批次号
             String batchNo = SnowFlakeUtil.getId() + "";
+
+            // 根据部门编号获取财务归属
+            ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(departId);
+            // 如果存在该部门
+            if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
+                DepartDto depart = dresponse.getData();
+                financialOwner = depart.getFinanceDepartId();
+                financialOwnerName = depart.getFinanceDepartName();
+            }else{
+                throw new BizException(dresponse.getCode(),dresponse.getMessage());
+            }
+
+            
             String productCodes = dto.getProducts().stream().map(Product4OrderDTO::getProductCode)
                     .collect(Collectors.joining(","));
 
-            List<ProductDTO> productDTOS = searchProducts(productCodes,dto.getProducts().size());
-            Map<String, ProductDTO> collect = productDTOS.stream()
-                    .collect(Collectors.toMap(ProductDTO::getProductCode, product4OrderDTO -> product4OrderDTO));
-            //组织商品明细
-            List<OrderTempProduct> orderTempProducts = new ArrayList<>();
-            dto.getProducts().forEach(map ->{
-                ProductDTO productDTO = collect.get(map.getProductCode());
-                OrderTempProduct product = new OrderTempProduct();
+            List<OrderTempProduct> productDTOS = searchProducts(productCodes,dto.getProducts().size(),batchNo);
+            Map<String, Product4OrderDTO> collect = dto.getProducts().stream()
+                    .collect(Collectors.toMap(Product4OrderDTO::getProductCode, product4OrderDTO -> product4OrderDTO));
+            Map<String, OrderTempProduct> product4OrderDTOMap = productDTOS.stream()
+                    .collect(Collectors.toMap(OrderTempProduct::getProductCode, orderTempProduct -> orderTempProduct));
 
-                product.setOrderTempProductCode(SnowFlakeUtil.getId()+"");
-                product.setOrderTempCode(batchNo);
-                product.setProductCode(map.getProductCode());
-                product.setProductBarCode(productDTO.getBarCode());
-                product.setProductName(productDTO.getName());
-                product.setCount(map.getCount());
-                product.setPrice(productDTO.getSalePrice());
-                product.setSpec(productDTO.getTotalUseNum().toString());
-                product.setUnit(productDTO.getUnit());
-                orderTempProducts.add(product);
+
+            //组织商品明细
+            productDTOS.stream().forEach(map ->{
+                Product4OrderDTO product4OrderDTO = collect.get(map.getProductCode());
+                map.setCount(product4OrderDTO.getCount());
             });
+
+            //计算总额  校验上送金额与计算商品总额是否一致
+            int total=productDTOS.stream().mapToInt(m->m.getCount()*m.getPrice()).sum();
+            if(Integer.valueOf(MathUtils.priceFenConvertYun(total)).compareTo(dto.getTotalAllAMT())!=0 ){
+                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"商品总金额计算不正确");
+            }
+
 
             //查询群组信息
             List<CrowdGroup> groups = searchGroups(dto.getCustomerGroupIds());
             //组织群组信息
-            List<OrderTemp> list = mkOrderTemp(groups,batchNo,dto,departId,wordCode,financialOwner);
+            List<OrderTemp> list = mkOrderTemp(groups,batchNo,dto,departId,wordCode,financialOwner,financialOwnerName);
 
-            //人数
-            Integer count = groups.stream().mapToInt(CrowdGroup ::getPerson_count).sum();
+            //todo 人数
+//            Integer count = groups.stream().mapToInt(CrowdGroup ::getPerson_count).sum();
+            Integer count =2;
             BatchProductVO vo = new BatchProductVO();
             vo.setBatchNo(batchNo);
             List<ProductReduceVO> reduceVOS = new ArrayList();
-            dto.getProducts().forEach(map -> {
+            productDTOS.forEach(map -> {
                 ProductReduceVO reduceVO = new ProductReduceVO();
                 reduceVO.setProductCode(map.getProductCode());
                 reduceVO.setNum(map.getCount() * count);
@@ -125,9 +135,9 @@ public class NewOrderServiceImpl implements INewOrderService {
             });
             //校验库存
             reduceVOS.forEach(map ->{
-                ProductDTO productDTO = collect.get(map.getProductCode());
-                if(map.getNum() >productDTO.getStock()){
-                    throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),"库存不足，商品名称：" + productDTO.getName());
+                OrderTempProduct product = product4OrderDTOMap.get(map.getProductCode());
+                if(map.getNum() >product.getStock()){
+                    throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),"库存不足，商品名称：" + product.getProductName());
                 }
 
             });
@@ -143,9 +153,12 @@ public class NewOrderServiceImpl implements INewOrderService {
                 local.get().add(map);
 
             }
+            OrderTempVO orderTempVO = new OrderTempVO();
+            orderTempVO.setList(list);
+            orderTempVO.setProducts(productDTOS);
 
             //调用新建订单接口
-            orderRes = newOrderClient.newOrder(dto);
+            orderRes = newOrderClient.newOrderTemp(orderTempVO);
 
            if( orderRes.getCode().compareTo(Integer.valueOf(200))!=0){
                throw new BizException(orderRes.getCode(),orderRes.getMessage());
@@ -289,19 +302,20 @@ public class NewOrderServiceImpl implements INewOrderService {
 
        return response.getData();
     }
-    List<OrderTemp> mkOrderTemp(List<CrowdGroup> groups,String batchNo ,NewOrderDTO dto,int departId,Integer wordCode,Integer financialOwner){
+    List<OrderTemp> mkOrderTemp(List<CrowdGroup> groups, String batchNo, NewOrderDTO dto, int departId, Integer wordCode, Integer financialOwner, String financialOwnerName){
         List<OrderTemp> list = new ArrayList<>();
         groups.forEach(map ->{
             OrderTemp orderTemp = new OrderTemp();
             orderTemp.setOrderTempCode(batchNo);
             orderTemp.setGroupId(map.get_id());
-            orderTemp.setGroupCount(map.getPerson_count());
+            //todo
+//            orderTemp.setGroupCount(map.getPerson_count());
+            orderTemp.setGroupCount(2);
             orderTemp.setOprCount(0);
             orderTemp.setSuccessCount(0);
             orderTemp.setFailCount(0);
-            orderTemp.setTotalAmt(dto.getTotalOrderAMT());
-            orderTemp.setDiscount(0.00);
-            orderTemp.setPfee(dto.getPfee());
+            orderTemp.setTotalAmt(dto.getTotalAMT());
+            orderTemp.setTotalAllAmt(dto.getTotalAllAMT());
             orderTemp.setRemark(dto.getRemark());
             orderTemp.setRelationOrder(dto.getRelationOrder());
             orderTemp.setExpressFlag(dto.getAssignExpressFlag());
@@ -314,6 +328,7 @@ public class NewOrderServiceImpl implements INewOrderService {
             orderTemp.setDepartId(departId);
             orderTemp.setWorkCode(wordCode.toString());
             orderTemp.setFinancialOwner(financialOwner);
+            orderTemp.setFinancialOwnerName(financialOwnerName);
             list.add(orderTemp);
 
 
@@ -327,7 +342,7 @@ public class NewOrderServiceImpl implements INewOrderService {
      * @param
      * @return
      */
-    protected List<ProductDTO> searchProducts(String productCodes,int prodCnt){
+    protected List<OrderTempProduct> searchProducts(String productCodes,int prodCnt,String tempCode){
         ComResponse<List<ProductDTO>> prd = productClient.queryByCodes(productCodes);
         if(prd.getCode().compareTo(200)!=0){
             throw new BizException(prd.getCode(),prd.getMessage());
@@ -335,8 +350,21 @@ public class NewOrderServiceImpl implements INewOrderService {
         if(prd.getData() !=null && (prodCnt != prd.getData().size())){
             throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(),"部分商品已下架");
         }
+        List<OrderTempProduct> list = prd.getData().stream().map(m ->{
+            OrderTempProduct product = new OrderTempProduct();
+            product.setOrderTempProductCode(SnowFlakeUtil.getId() + "");
+            product.setOrderTempCode(tempCode);
+            product.setProductCode(m.getProductCode());
+            product.setProductBarCode(m.getBarCode());
+            product.setProductName(m.getName());
+            product.setPrice(MathUtils.strPriceToLong(String.valueOf(m.getSalePriceD())));
+            product.setSpec(m.getTotalUseNum() + "");
+            product.setUnit(m.getUnit());
+            product.setStock(m.getStock());
+            return product;
+        }).collect(Collectors.toList());
 
-        return prd.getData();
+        return list;
     }
 
     @Override
