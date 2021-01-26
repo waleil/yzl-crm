@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/member")
-//@FeignClient(value = "yzl-crm-customer-api")
+//@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/member")
+@FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
     @RequestMapping(method = RequestMethod.GET, value = "/v1/getMemberListByPage")
@@ -99,7 +99,7 @@ public interface MemberFien {
     @GetMapping("/v1/updateMemberOrderStat")
     GeneralResult updateMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
 
-    //    @ApiOperation("添加顾客行为偏好")
+//    @ApiOperation("添加顾客行为偏好")
 //    @GetMapping("/v1/addMemberAction")
 //    GeneralResult addMemberAction(@RequestBody MemberAction memberAction);
 //
@@ -110,6 +110,7 @@ public interface MemberFien {
 //    @ApiOperation("获取顾客行为偏好")
 //    @GetMapping("/v1/getMemberAction")
 //    GeneralResult<MemberAction> getMemberAction(@RequestParam("member_card") String member_card);
+
     @ApiOperation("获取顾客行为偏好字典数据")
     @GetMapping("/v1/getMemberActions")
     ComResponse<List<MemberBaseAttr>> getMemberActions();
