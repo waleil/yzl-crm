@@ -81,9 +81,15 @@ public class OrderDistributeExpressController {
     }
 
     @PostMapping(value = "v1/updateOrderDistributeExpressStatus")
-    @ApiOperation("取消订单")
+    @ApiOperation("修改订单状态")
     public ComResponse updateOrderDistributeExpressStatus(@RequestBody OrderDistributeExpressStatusVO vo) {
         return orderDistributeExpressFeignService.updateOrderDistributeExpressStatus(vo);
+    }
+
+    @PostMapping(value = "v1/updateOrderDistributeExpressRegisterInfo")
+    @ApiOperation("异常登记")
+    public ComResponse updateOrderDistributeExpressRegisterInfo(@RequestBody OrderDistributeExpressRegisterVO vo){
+        return orderDistributeExpressFeignService.updateOrderDistributeExpressRegisterInfo(vo);
     }
 
     @PostMapping(value = "v1/updateOrderDistributeExpressByMan")
@@ -96,6 +102,12 @@ public class OrderDistributeExpressController {
     @ApiOperation("订单分配快递数据插入")
     public ComResponse insertOrderDistributeExpress(@RequestBody List<OrderDistributeExpressVO> voList){
         return orderDistributeExpressFeignService.insertOrderDistributeExpress(voList);
+    }
+
+    @GetMapping(value = "v1/selectExpressCompanyList")
+    @ApiOperation("获取物流服务物流公司列表")
+    public ComResponse selectExpressCompanyList() {
+        return orderDistributeExpressFeignService.selectExpressCompanyList();
     }
 
 }
