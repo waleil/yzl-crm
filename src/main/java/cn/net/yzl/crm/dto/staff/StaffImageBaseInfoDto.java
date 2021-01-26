@@ -143,4 +143,38 @@ public class StaffImageBaseInfoDto {
     private List<JSONObject> diseaseAdvanced;
     @ApiModelProperty("培训商品历史")
     private List<String> trainProductHistory;
+
+    @ApiModelProperty(value = "省id", name = "provinceId")
+    private Integer provinceId;
+    @ApiModelProperty(value = "省名", name = "provinceName")
+    private String provinceName;
+    @ApiModelProperty(value = "市id", name = "cityId")
+    private Integer cityId;
+    @ApiModelProperty(value = "市名", name = "cityName")
+    private String cityName;
+    @ApiModelProperty(value = "区/县id", name = "countyId")
+    private Integer countyId;
+    @ApiModelProperty(value = "区/县名", name = "countyName")
+    private String countyName;
+    @ApiModelProperty(value = "街道id", name = "streetId")
+    private Integer streetId;
+    @ApiModelProperty(value = "街道名", name = "streetName")
+    private String streetName;
+    @ApiModelProperty(value = "户口省id", name = "registeredProvinceId")
+    private Integer registeredProvinceId;
+    @ApiModelProperty(value = "户口省名", name = "registeredProvinceName")
+    private String registeredProvinceName;
+    @ApiModelProperty(value = "户口市id", name = "registeredCityId")
+    private Integer registeredCityId;
+    @ApiModelProperty(value = "户口市名", name = "registeredCityName")
+    private  String registeredCityName;
+    @ApiModelProperty(value = "户口区/县id", name = "registeredCountyId")
+    private Integer registeredCountyId;
+    @ApiModelProperty(value = "户口区/县名", name = "registeredCountyName")
+    private  String  registeredCountyName;
+    @ApiModelProperty(value = "户口街道id", name = "registeredStreetId")
+    private Integer registeredStreetId;
+    @ApiModelProperty(value = "户口街道名", name = "registeredStreetName")
+    private  String registeredStreetName;
+
 }

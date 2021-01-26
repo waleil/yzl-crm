@@ -4,6 +4,8 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
+import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
+import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.*;
 
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
@@ -111,4 +113,8 @@ public interface MemberFien {
     @ApiOperation("获取顾客行为偏好字典数据")
     @GetMapping("/v1/getMemberActions")
     ComResponse<List<MemberBaseAttr>> getMemberActions();
+    @GetMapping("/customerAmount/getMemberAmount")
+    ComResponse<MemberAmountDto> getMemberAmount(@RequestParam("memberCard") String memberCard);
+    @GetMapping("/customerAmount/getMemberAmountDetailList")
+    ComResponse<List<MemberAmountDetailDto>> getMemberAmountDetailList(@RequestParam("memberCard")String memberCard,@RequestParam("timeFlag") Integer timeFlag);
 }

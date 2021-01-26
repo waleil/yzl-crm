@@ -11,6 +11,7 @@ import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
+import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.dto.FindByCalledPhoneIsEmptyDTO;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
@@ -273,5 +274,17 @@ public class WorkOrderController {
         getDistributionStaffDTO.setStaffNo(userId);
         return workOrderService.getDistributionStaff(getDistributionStaffDTO);
     }
+
+
+    /**
+     * 智能工单：我的热线工单-创建处理工单流水
+     * @return
+     */
+    @PostMapping("v1/insertWorkOrderDisposeFlow")
+    @ApiOperation(value = "智能工单：我的热线工单-创建处理工单流水", notes = "智能工单：我的热线工单-创建处理工单流水")
+    public ComResponse<String> insertWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
+        return workOrderClient.insertWorkOrderDisposeFlow(workOrderDisposeFlowBean);
+    }
+
 
 }
