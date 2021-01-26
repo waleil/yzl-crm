@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 顾客服务接口
  */
-//@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/member")
-@FeignClient(value = "yzl-crm-customer-api")
+@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/member")
+//@FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
     @RequestMapping(method = RequestMethod.GET, value = "/v1/getMemberListByPage")
