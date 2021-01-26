@@ -20,12 +20,11 @@ import java.util.List;
 /**
  * 顾客综合行为服务
  */
-//@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/member/actionDict")
-@FeignClient(name = "crmCustomer", url = "localhost:2070/member/actionDict")
-//@FeignClient(value = "yzl-crm-customer-api")
+@FeignClient(name = "memberActionFeign", url = "${api.gateway.url}/member/memberAction")
+//@FeignClient(name = "crmCustomer", url = "localhost:2070/member/memberAction")
 public interface MemberActionFeign {
 
-    @GetMapping("v1/getAgeDictList")
+    @GetMapping("v1/getActionDictList")
     public ComResponse<List<ActionDict>> getListByType(@RequestParam("type")  Integer type);
 
     @PostMapping("v1/saveUpdateActionDict")
