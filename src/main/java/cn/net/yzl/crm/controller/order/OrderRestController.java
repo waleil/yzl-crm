@@ -29,6 +29,7 @@ import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.ObtainType;
+import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.model.MemberAmount;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
@@ -396,12 +397,16 @@ public class OrderRestController {
 			}
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
-		Map<String, Object> retval=new HashMap<>();
+		// 组装返回数据
+		Map<String, Object> retval = new HashMap<>();
 		retval.put("reveiverAddress", orderm.getReveiverAddress());
 		retval.put("reveiverName", orderm.getReveiverName());
 		retval.put("reveiverTelphoneNo", orderm.getReveiverTelphoneNo());
-//		retval.put("", orderm.get)
-		return ComResponse.success(orderm);
+		retval.put("total", orderm.getTotal());
+		ComResponse<MemberAmountDto> mresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		BigDecimal totalMoney = BigDecimal.valueOf(mresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100));
+		retval.put("totalMoney", totalMoney.doubleValue());
+		return ComResponse.success(retval);
 	}
 
 }

@@ -33,12 +33,7 @@ public class SimpleTests {
 				.setScale(0, RoundingMode.HALF_UP).toString());
 		System.err.println(Integer.valueOf(BigDecimal.valueOf(999.99).multiply(BigDecimal.valueOf(100))
 				.setScale(0, RoundingMode.HALF_UP).toString()));
-//		System.err.println(20.01 * 10.0);
-//		System.err.println(20.01 * 10);
-//		System.err.println(20.01 - 10.0);
-//		System.err.println(20.01 - 10);
-//		System.err.println(20.01 / 10);
-//		System.err.println(20.01 / 10.0);
+		System.err.println(BigDecimal.valueOf(1137701198).divide(BigDecimal.valueOf(100)));
 	}
 
 	@Test
