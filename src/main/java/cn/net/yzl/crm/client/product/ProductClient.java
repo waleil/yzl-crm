@@ -74,7 +74,7 @@ public interface ProductClient {
 	 * @return
 	 */
 	@PostMapping(value = "v1/productReduce")
-	ComResponse productReduce(@RequestBody @Valid OrderProductVO orderProductVO);
+	ComResponse<?> productReduce(@RequestBody @Valid OrderProductVO orderProductVO);
 
 	/**
 	 * 按批次扣减商品库存 wangzhe 2021-01-19
