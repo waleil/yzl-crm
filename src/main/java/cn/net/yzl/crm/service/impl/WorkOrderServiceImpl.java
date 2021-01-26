@@ -9,7 +9,7 @@ import cn.net.yzl.crm.dto.ehr.StaffQueryDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.crm.service.workorder.WorkOrderHotlineService;
+import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * 热点工单
  */
 @Service
-public class WorkOrderServiceImpl implements WorkOrderHotlineService {
+public class WorkOrderServiceImpl implements WorkOrderService {
 
     @Autowired
     private EhrStaffClient EhrStaffClient;
