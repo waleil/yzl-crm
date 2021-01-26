@@ -159,4 +159,22 @@ public interface WorkOrderClient {
     @PostMapping(value = "v1/receiveUsers")
     ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list);
 
+
+    /**
+     * 智能工单:回访工单管理-回收
+     *
+     * @param recoveryDTO
+     * @return
+     */
+    @PostMapping("v1/recovery")
+    ComResponse<Void> recovery(RecoveryDTO recoveryDTO);
+
+    /**
+     * 智能工单:回访工单管理-上交
+     *
+     * @param recoveryDTO
+     * @return
+     */
+    @PostMapping("v1/handIn")
+    ComResponse<Void> handIn(RecoveryDTO recoveryDTO);
 }

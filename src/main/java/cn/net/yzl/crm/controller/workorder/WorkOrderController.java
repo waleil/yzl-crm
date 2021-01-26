@@ -19,6 +19,12 @@ import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -175,6 +181,7 @@ public class WorkOrderController {
 
     /**
      * 智能工单：热线工单管理-多数据调整
+     *
      * @param
      * @return
      */
@@ -226,6 +233,7 @@ public class WorkOrderController {
 
     /**
      * 智能工单：我的热线工单-接收
+     *
      * @param
      * @return
      */
@@ -240,6 +248,7 @@ public class WorkOrderController {
 
     /**
      * 智能工单：我的热线工单-处理工单详情
+     *
      * @param
      * @return
      */
@@ -251,6 +260,7 @@ public class WorkOrderController {
 
     /**
      * 智能工单：我的热线工单-被叫号码查询工单是否存在
+     *
      * @return
      */
     @PostMapping("v1/findByCalledPhoneIsEmpty")
@@ -261,6 +271,7 @@ public class WorkOrderController {
 
     /**
      * 智能工单：热线工单管理-可分配员工
+     *
      * @param
      * @return
      */
@@ -278,6 +289,7 @@ public class WorkOrderController {
 
     /**
      * 智能工单：我的热线工单-创建处理工单流水
+     *
      * @return
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
@@ -286,5 +298,28 @@ public class WorkOrderController {
         return workOrderClient.insertWorkOrderDisposeFlow(workOrderDisposeFlowBean);
     }
 
+    /**
+     * 智能工单:回访工单管理-回收
+     *
+     * @param recoveryDTO
+     * @return
+     */
+    @ApiOperation(value = "回访工单管理-回收", notes = "回访工单管理-回收")
+    @PostMapping(value = "v1/recovery")
+    public ComResponse<Void> recovery(@RequestBody RecoveryDTO recoveryDTO) {
+        return workOrderClient.recovery(recoveryDTO);
+    }
+
+    /**
+     * 智能工单:回访工单管理-上交
+     *
+     * @param recoveryDTO
+     * @return
+     */
+    @ApiOperation(value = "回访工单管理-上交", notes = "回访工单管理-上交")
+    @PostMapping(value = "v1/handIn")
+    public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
+        return workOrderClient.handIn(recoveryDTO);
+    }
 
 }
