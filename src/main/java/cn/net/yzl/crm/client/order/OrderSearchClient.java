@@ -15,6 +15,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 
 @FeignClient(name = "orderSerch", url = "${api.gateway.url}/orderService/orderSearch")
+//@FeignClient(name = "orderSerch", url = "localhost:4455/orderSearch")
 public interface OrderSearchClient {
 
     /**

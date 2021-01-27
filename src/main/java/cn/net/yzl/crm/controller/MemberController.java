@@ -20,6 +20,7 @@ import cn.net.yzl.crm.customer.vo.MemberProductEffectVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
+import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
@@ -166,8 +167,19 @@ public class MemberController {
         return result;
     }
 
+    @ApiOperation("顾客画像-服务旅程")
+    @GetMapping("v1/getMemberServiceJourney")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+    })
+    public ComResponse<MemberServiceJourneryDto> getMemberServiceJourney(String memberCard) {
+        // todo 等待 订单和工单提供接口
+        return ComResponse.success();
+    }
 
-    @ApiOperation("员工画像-获取顾客病症")
+
+
+    @ApiOperation("顾客画像-获取顾客病症(诊疗结果)")
     @GetMapping("v1/getMemberDisease")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
