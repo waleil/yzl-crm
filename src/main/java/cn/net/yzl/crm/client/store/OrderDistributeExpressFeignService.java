@@ -53,7 +53,7 @@ public interface OrderDistributeExpressFeignService {
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
-    public ComResponse<?> updateOrderDistributeExpressRuleResult(@RequestBody List<OrderExpressDTO> orderExpressList);
+    public ComResponse<?> updateOrderDistributeExpressRuleResult(@RequestBody DistributeExpressVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/selectOrderDistributeExpressList")
     @ApiOperation("订单分配快递列表分页查询")
@@ -78,5 +78,9 @@ public interface OrderDistributeExpressFeignService {
     @GetMapping(value = "orderDistributeExpress/v1/selectExpressCompanyList")
     @ApiOperation("获取物流服务物流公司列表")
     public ComResponse<?> selectExpressCompanyList();
+
+    @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressStatusToCancel")
+    @ApiOperation("取消订单")
+    public ComResponse<?> updateOrderDistributeExpressStatusToCancel(@RequestBody OrderCancelStatusVO vo);
 
 }
