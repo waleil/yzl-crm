@@ -7,6 +7,8 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class MealRequestVO extends BaseObject {
     private String mealNo;
 
     @ApiModelProperty(value = "套餐名称",name = "name",required = true)
+    @NotBlank(message = "套餐名称不能为空！")
     private String name;
 
     @ApiModelProperty(value = "套餐价,以分为单位",name = "price")
