@@ -86,7 +86,7 @@ public interface MemberFien {
 
 	@ApiOperation("获取顾客病症")
 	@GetMapping("/v1/getMemberDisease")
-	ComResponse<List<MemberDiseaseCustomerDto>> getMemberDisease(@RequestParam("member_card") String member_card);
+	ComResponse<List<MemberDiseaseCustomerDto>> getMemberDisease(@RequestParam("memberCard") String memberCard);
 
 	@ApiOperation("获取购买能力")
 	@GetMapping("/v1/getMemberOrderStat")

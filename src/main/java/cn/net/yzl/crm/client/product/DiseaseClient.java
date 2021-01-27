@@ -41,6 +41,6 @@ public interface DiseaseClient {
 
 
 
-    @GetMapping("v1/queryHierarchy")
+    @GetMapping("queryHierarchy")
     public  ComResponse<List<DiseaseMainInfo>> queryHierarchy(@RequestParam("ids") String ids);
 }
