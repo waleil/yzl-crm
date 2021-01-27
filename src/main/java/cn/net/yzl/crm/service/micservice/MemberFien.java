@@ -7,6 +7,7 @@ import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
+import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.*;
 
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
@@ -34,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface MemberFien {
 
     @RequestMapping(method = RequestMethod.GET, value = "/v1/getMemberListByPage")
-    GeneralResult<Page<Member>> listPage(@SpringQueryMap MemberSerchDTO dto);
+    GeneralResult<Page<Member>> listPage(@SpringQueryMap MemberSerchConditionDTO dto);
 
     @ApiOperation("保存会员信息")
     @PostMapping("/v1/save")

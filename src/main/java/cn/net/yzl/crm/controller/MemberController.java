@@ -5,9 +5,11 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
+import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
@@ -43,7 +45,7 @@ public class MemberController {
 
     @ApiOperation(value = "分页查询顾客列表")
     @PostMapping("v1/listPage")
-    public GeneralResult<Page<Member>> listPage( MemberSerchDTO dto) {
+    public GeneralResult<Page<Member>> listPage( MemberSerchConditionDTO dto) {
         GeneralResult<Page<Member>> result = memberFien.listPage(dto);
         return result;
     }
@@ -82,16 +84,13 @@ public class MemberController {
         return memberFien.getMember(memberCard);
     }
 
-    @ApiOperation(value = "获取顾客级别")
+    @ApiOperation(value = "顾客列表-查询条件-获取顾客级别列表")
     @GetMapping("v1/getMemberGrad")
     public GeneralResult getMemberGrad() {
         GeneralResult<List<MemberGrad>> result = memberFien.getMemberGrad();
         return result;
     }
-
-
-
-    @ApiOperation(value = "根据媒体id获取广告列表列表")
+    @ApiOperation(value = "顾客列表-查询条件-根据媒体id获取广告列表")
     @GetMapping("v1/getAdverList")
     public GeneralResult getAdverList(String media_code) {
         return GeneralResult.success();
@@ -199,12 +198,14 @@ public class MemberController {
     @ApiOperation(value = "顾客收货地址-添加顾客收货地址", notes = "顾客收货地址-添加顾客收货地址")
     @RequestMapping(value = "/v1/addReveiverAddress", method = RequestMethod.POST)
     public ComResponse<String> addReveiverAddress(@RequestBody  @Validated ReveiverAddressInsertVO reveiverAddressInsertVO) throws IllegalAccessException {
+        reveiverAddressInsertVO.setCreateCode(QueryIds.userNo.get());
         return memberFien.addReveiverAddress(reveiverAddressInsertVO);
     }
 
     @ApiOperation(value = "顾客收货地址-更新收货地址", notes = "顾客收货地址-更新收货地址")
     @RequestMapping(value = "/v1/updateReveiverAddress", method = RequestMethod.POST)
     public ComResponse<String> updateReveiverAddress(@RequestBody @Validated ReveiverAddressUpdateVO reveiverAddressUpdateVO) throws IllegalAccessException {
+        reveiverAddressUpdateVO.setUpdateCode(QueryIds.userNo.get());
         return memberFien.updateReveiverAddress(reveiverAddressUpdateVO);
     }
 
@@ -216,7 +217,6 @@ public class MemberController {
     public ComResponse<List<ReveiverAddressDto>> getReveiverAddress(String memberCard) {
         return memberFien.getReveiverAddress(memberCard);
     }
-
 
 
     @ApiOperation("保存顾客购买能力")

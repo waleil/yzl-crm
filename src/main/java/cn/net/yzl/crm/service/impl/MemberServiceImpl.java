@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.impl;
 
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.service.MemberService;
@@ -40,7 +41,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public GeneralResult<Page<Member>> listPage(MemberSerchDTO memberDto) {
+    public GeneralResult<Page<Member>> listPage(MemberSerchConditionDTO memberDto) {
         GeneralResult<Page<Member>> result = memberFien.listPage(memberDto);
         return result;
     }

@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service;
 
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 
@@ -14,5 +15,5 @@ public interface MemberService {
     //顾客列表查询病症分类
     List<Map<Integer,Object>>productClassiService(String pid);
     //查询顾客列表
-    GeneralResult<Page<Member>> listPage(MemberSerchDTO memberDto);
+    GeneralResult<Page<Member>> listPage(MemberSerchConditionDTO memberDto);
 }
