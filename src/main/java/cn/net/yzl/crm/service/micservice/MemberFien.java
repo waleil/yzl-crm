@@ -2,6 +2,8 @@ package cn.net.yzl.crm.service.micservice;
 
 import java.util.List;
 
+import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
+import cn.net.yzl.crm.staff.dto.MemberDiseaseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,7 +86,7 @@ public interface MemberFien {
 
 	@ApiOperation("获取顾客病症")
 	@GetMapping("/v1/getMemberDisease")
-	GeneralResult<List<MemberDisease>> getMemberDisease(@RequestParam("member_card") String member_card);
+	ComResponse<List<MemberDiseaseCustomerDto>> getMemberDisease(@RequestParam("member_card") String member_card);
 
 	@ApiOperation("获取购买能力")
 	@GetMapping("/v1/getMemberOrderStat")
