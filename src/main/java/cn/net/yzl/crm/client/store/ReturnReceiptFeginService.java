@@ -20,12 +20,12 @@ public interface ReturnReceiptFeginService {
 
     /**
      * 确认收货
-     * @param addList
+     * @param refuseReturnDto
      * @return
      */
     @ApiOperation(value = "确认收货", notes = "确认收货")
     @PostMapping("returnReceipt/v1/confirm/receipt")
-    ComResponse confirmReceipt(@RequestBody List<ReturnToStoreAddDto> addList);
+    ComResponse confirmReceipt(@RequestBody RefuseReturnDto refuseReturnDto);
 
     /**
      * 拒绝收货
