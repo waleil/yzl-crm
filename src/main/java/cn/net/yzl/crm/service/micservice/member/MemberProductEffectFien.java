@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "crmMemberProductEffect", url = "localhost:2070/memberProductEffect")
-//@FeignClient(name = "crmCustomerPhone", url = "${api.gateway.url}/crmCustomer/memberPhone")
+@FeignClient(name = "crmCustomerProductEffect", url = "${api.gateway.url}/crmCustomer/memberProductEffect")
 public interface MemberProductEffectFien {
 
     @ApiOperation("修改顾客服用效果记录")
