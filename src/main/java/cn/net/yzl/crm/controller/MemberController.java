@@ -184,7 +184,7 @@ public class MemberController {
             ComResponse<List<DiseaseMainInfo>> listComResponse = diseaseClient.queryHierarchy(diseaseId + "");
             if(listComResponse!=null && listComResponse.getData()!=null && listComResponse.getData().size()>0){
                 List<DiseaseMainInfo> data = listComResponse.getData();
-                datum.setDiseasePid(data.get(0).getPid());
+                datum.setDiseasePid(data.get(0).getId());
                 datum.setDiseasePname(data.get(0).getName());
             }
         }
