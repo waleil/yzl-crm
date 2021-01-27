@@ -218,6 +218,7 @@ public class MemberController {
     }
 
 
+
     @ApiOperation("保存顾客购买能力")
     @PostMapping("/v1/saveMemberOrderStat")
     public GeneralResult saveMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat) {
