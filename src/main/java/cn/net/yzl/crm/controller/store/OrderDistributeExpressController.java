@@ -38,7 +38,7 @@ public class OrderDistributeExpressController {
         return orderDistributeExpressFeignService.selectOrderDistributeExpressRuleList();
     }
 
-    @PostMapping(value = "v1/selectOrderDistributeExpressRuleDetail")
+    @GetMapping(value = "v1/selectOrderDistributeExpressRuleDetail")
     @ApiOperation("智能分配快递规则详情查询")
     public ComResponse<OrderDistributeExpressRuleDetailDTO> selectOrderDistributeExpressRuleDetail(@RequestParam("id") Integer id) {
         return orderDistributeExpressFeignService.selectOrderDistributeExpressRuleDetail(id);

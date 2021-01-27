@@ -31,7 +31,7 @@ public interface OrderDistributeExpressFeignService {
     @ApiOperation("智能分配快递规则列表查询")
     public ComResponse<List<OrderDistributeExpressRuleListDTO>> selectOrderDistributeExpressRuleList();
 
-    @PostMapping(value = "orderDistributeExpress/v1/selectOrderDistributeExpressRuleDetail")
+    @GetMapping(value = "orderDistributeExpress/v1/selectOrderDistributeExpressRuleDetail")
     @ApiOperation("智能分配快递规则详情查询")
     public ComResponse<OrderDistributeExpressRuleDetailDTO> selectOrderDistributeExpressRuleDetail(@RequestParam("id") Integer id);
 
