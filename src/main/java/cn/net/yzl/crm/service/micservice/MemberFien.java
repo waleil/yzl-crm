@@ -17,6 +17,10 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
+import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
+import cn.net.yzl.crm.customer.model.*;
+
+import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.model.MemberBaseAttr;
 import cn.net.yzl.crm.customer.model.MemberDisease;
@@ -130,7 +134,7 @@ public interface MemberFien {
 
 	/**
 	 * 顾客账户-账户操作(充值,消费,退回)
-	 * 
+	 *
 	 * @param memberAmountDetail 顾客账户信息记录实体
 	 * @return
 	 * @author zhangweiwei

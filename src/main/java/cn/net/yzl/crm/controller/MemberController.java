@@ -4,9 +4,12 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
+import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
@@ -82,16 +85,13 @@ public class MemberController {
         return memberFien.getMember(memberCard);
     }
 
-    @ApiOperation(value = "获取顾客级别")
+    @ApiOperation(value = "顾客列表-查询条件-获取顾客级别列表")
     @GetMapping("v1/getMemberGrad")
     public GeneralResult getMemberGrad() {
         GeneralResult<List<MemberGrad>> result = memberFien.getMemberGrad();
         return result;
     }
-
-
-
-    @ApiOperation(value = "根据媒体id获取广告列表列表")
+    @ApiOperation(value = "顾客列表-查询条件-根据媒体id获取广告列表")
     @GetMapping("v1/getAdverList")
     public GeneralResult getAdverList(String media_code) {
         return GeneralResult.success();

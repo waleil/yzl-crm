@@ -1,4 +1,4 @@
-package cn.net.yzl.crm.customer.dto.member;
+package cn.net.yzl.crm.dto.member;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
