@@ -47,7 +47,7 @@ public class BrandController {
             @ApiImplicitParam(name = "pageNo", paramType="query",value = "页码", dataType = "int",defaultValue = "1"),
             @ApiImplicitParam(name = "pageSize",paramType="query", value = "每页显示记录数", dataType = "int",defaultValue = "15")
     })
-    public ComResponse getAllBrands(@RequestParam(required = false,defaultValue = "1",value = "pageNo") Integer pageNo,
+    public ComResponse<?> getAllBrands(@RequestParam(required = false,defaultValue = "1",value = "pageNo") Integer pageNo,
                                     @RequestParam(required = false,defaultValue = "15",value = "pageSize") Integer pageSize,
                                     String keyword) {
         if (pageNo == null || pageNo < 0) {
@@ -66,7 +66,7 @@ public class BrandController {
     @GetMapping("selectById")
     @ApiImplicitParam(name = "id", value = "主键信息", required = true, dataType = "Integer",paramType = "query")
     public ComResponse<BrandBean> getBrandById(@RequestParam("id") Integer id) {
-        ComResponse comResponse = brandService.getBrandById(id);
+        ComResponse<?> comResponse = brandService.getBrandById(id);
         if (comResponse.getData() == null) {
             return ComResponse.nodata();
         }
@@ -100,7 +100,7 @@ public class BrandController {
             @ApiImplicitParam(name = "descri", paramType="query",value = "品牌故事", required = false, dataType = "String"),
             @ApiImplicitParam(name = "sort", paramType="query",value = "排序", required = false, dataType = "Integer") })
     @PostMapping("insert")
-    public ComResponse insertBrand(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request,
+    public ComResponse<?> insertBrand(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request,
                                    String name, @RequestParam(value = "descri",required = false) String descri,@RequestParam(value = "sort",required = false,defaultValue = "0") Integer sort) {
         try {
             BrandVO brandVO = new BrandVO();
@@ -135,7 +135,7 @@ public class BrandController {
     @ApiOperation("通过id删除品牌")
     @ApiImplicitParam(name = "id", value = "id",paramType = "query",required = true)
     @GetMapping("delete")
-    public ComResponse delete(@RequestParam("id") Integer id,HttpServletRequest request){
+    public ComResponse<?> delete(@RequestParam("id") Integer id,HttpServletRequest request){
         if(id == null){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getMessage());
         }
