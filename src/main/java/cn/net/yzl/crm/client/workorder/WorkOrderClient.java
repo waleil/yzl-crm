@@ -6,21 +6,9 @@ import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.*;
-import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
-import cn.net.yzl.workorder.model.dto.IsListPageDTO;
-import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
-import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
-import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import javax.sound.midi.SoundbankResource;
-
-import java.util.List;
 
 /**
  * 智能工单
@@ -160,8 +148,9 @@ public interface WorkOrderClient {
     @PostMapping(value = "v1/queryUnclaimedUsers")
     ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO);
 
+
     @PostMapping(value = "v1/receiveUsers")
-    ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list);
+    ComResponse<Void> receiveUsers(WorkOrderReceiveDTO workOrderReceiveDTO);
 
 
     /**

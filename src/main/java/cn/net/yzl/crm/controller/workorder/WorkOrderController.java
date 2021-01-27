@@ -129,14 +129,7 @@ public class WorkOrderController {
     @ApiOperation(value = "待领取顾客池-领取", notes = "待领取顾客池-领取")
     @PostMapping("v1/receiveUsers")
     public ComResponse<Void> receiveUsers(@RequestBody List<WorkOrderFlowDTO> list) {
-        if (null != list && list.size() > 0) {
-            for (WorkOrderFlowDTO workOrderFlowDTO : list) {
-                workOrderFlowDTO.setCreateId(QueryIds.userNo.get());
-                workOrderFlowDTO.setCreateName(QueryIds.userName.get());
-                workOrderFlowDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-            }
-        }
-        return workOrderClient.receiveUsers(list);
+        return workOrderService.receiveUsers(list);
     }
 
 
