@@ -178,7 +178,7 @@ public class OrderRestControllerTests {
 	public void testProductReduce() {
 		try {
 			OrderProductVO vo = new OrderProductVO();
-			vo.setOrderNo("ON1314020T202101271816500057");
+			vo.setOrderNo("ON1314020T202101271816500058");
 			ProductReduceVO p1 = new ProductReduceVO();
 			p1.setNum(2);
 			p1.setOrderNo(vo.getOrderNo());
@@ -195,7 +195,7 @@ public class OrderRestControllerTests {
 			p4.setNum(2);
 			p4.setOrderNo(vo.getOrderNo());
 			p4.setProductCode("10000136");
-			vo.setProductReduceVOS(Arrays.asList(p4));
+			vo.setProductReduceVOS(Arrays.asList(p1, p2, p3, p4));
 			System.err.println(this.productClient.productReduce(vo));
 		} catch (Exception e) {
 			e.printStackTrace();
