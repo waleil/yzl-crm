@@ -4,14 +4,23 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.common.util.YLoggerUtil;
+import cn.net.yzl.crm.client.workorder.WorkOrderClient;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.ehr.EhrStaff;
 import cn.net.yzl.crm.dto.ehr.StaffQueryDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
+import cn.net.yzl.workorder.common.Constant;
+import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
+import cn.net.yzl.workorder.model.dto.WorkOrderReceiveDTO;
+import cn.net.yzl.workorder.model.dto.WorkOrderReceiveUpdateDTO;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 热点工单
@@ -21,6 +30,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
     @Autowired
     private EhrStaffClient EhrStaffClient;
+
+    @Autowired
+    private WorkOrderClient workOrderClient;
     /**
      * 智能工单：热线工单管理-可分配员工
      * @param getDistributionStaffDTO
@@ -48,6 +60,32 @@ public class WorkOrderServiceImpl implements WorkOrderService {
         ComResponse<Page<EhrStaff>> ehrStaffPage = EhrStaffClient.getStaffListByPage(staffQueryDto);
         YLoggerUtil.infoLog("智能工单：热线工单管理-可分配员工Response",JsonUtil.toJsonStr(ehrStaffPage));
         return ehrStaffPage;
+    }
+
+    @Override
+    public ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list) {
+        WorkOrderReceiveDTO workOrderReceiveDTO = new WorkOrderReceiveDTO();
+        if (null != list && list.size() > 0) {
+            // 按员工号查询员工信息
+            WorkOrderReceiveUpdateDTO receiveUpdateDTO = new WorkOrderReceiveUpdateDTO();
+            String staffNo = QueryIds.userNo.get();
+            if(StringUtils.isNotEmpty(staffNo)){
+                ComResponse<StaffImageBaseInfoDto> sresponse = EhrStaffClient.getDetailsByNo(staffNo);
+                StaffImageBaseInfoDto staffInfo = sresponse.getData();
+                receiveUpdateDTO.setStaffNo(staffInfo.getStaffNo());
+                receiveUpdateDTO.setStaffName(staffInfo.getName());
+                receiveUpdateDTO.setDeptId(staffInfo.getDepartId());
+                receiveUpdateDTO.setStaffLevel(staffInfo.getPostLevelName());
+                workOrderReceiveDTO.setReceiveUpdateDTO(receiveUpdateDTO);
+            }
+            for (WorkOrderFlowDTO workOrderFlowDTO : list) {
+                workOrderFlowDTO.setCreateId(QueryIds.userNo.get());
+                workOrderFlowDTO.setCreateName(QueryIds.userName.get());
+                workOrderFlowDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
+            }
+            workOrderReceiveDTO.setWorkOrderFlows(list);
+        }
+        return workOrderClient.receiveUsers(workOrderReceiveDTO);
     }
 
 }
