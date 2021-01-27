@@ -7,6 +7,7 @@ import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
 import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
+import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +33,14 @@ public interface DiseaseClient {
     ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid);
 
     @GetMapping("changeName")
-    ComResponse changeName(@RequestParam("id") Integer id, @RequestParam("name") String name, @RequestParam("userId") String userId);
+    ComResponse<?> changeName(@RequestParam("id") Integer id, @RequestParam("name") String name, @RequestParam("userId") String userId);
 
     @GetMapping("queryDiseasePage")
     ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(@RequestParam(value = "pageNo") Integer pageNo,
                                                                @RequestParam(value = "pageSize") Integer pageSize);
+
+
+
+    @GetMapping("queryHierarchy")
+    public  ComResponse<List<DiseaseMainInfo>> queryHierarchy(@RequestParam("ids") String ids);
 }

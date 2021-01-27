@@ -46,7 +46,7 @@ public class CategoryController {
     }
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
-    public ComResponse insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+    public ComResponse<?> insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
         String userId = request.getHeader("userId");
         if (StringUtils.isBlank(userId)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
@@ -57,7 +57,7 @@ public class CategoryController {
 
     @ApiOperation(value = "修改分类信息")
     @PostMapping("updateCategory")
-    public ComResponse updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
+    public ComResponse<?> updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
         String userId = request.getHeader("userId");
         if (StringUtils.isBlank(userId)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
@@ -69,7 +69,7 @@ public class CategoryController {
     @ApiOperation(value = "删除分类信息")
     @GetMapping("deleteCategory")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
-    public ComResponse deleteCategory(@RequestParam("id") Integer id, HttpServletRequest request) {
+    public ComResponse<?> deleteCategory(@RequestParam("id") Integer id, HttpServletRequest request) {
         CategoryDelVO categoryDelVO = new CategoryDelVO();
         categoryDelVO.setUpdateNo(request.getHeader("userId"));
         categoryDelVO.setId(id);
@@ -82,7 +82,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
             @ApiImplicitParam(name = "flag", value = "是否展示（true：展示，false：不展示）",required = true,paramType = "query")
     })
-    public ComResponse changeCategoryStatus(@RequestParam("flag") Boolean flag,
+    public ComResponse<?> changeCategoryStatus(@RequestParam("flag") Boolean flag,
                                                           @RequestParam("id") Integer id,
                                                           HttpServletRequest request) {
             if (flag == null) {
@@ -104,7 +104,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "id", value = "id", paramType = "query", required = true),
             @ApiImplicitParam(name = "flag", value = "是否展示（true：展示，false：不展示）",required = true,paramType = "query")
     })
-    public ComResponse changeCategoryAppStatus(@RequestParam("flag") Boolean flag,
+    public ComResponse<?> changeCategoryAppStatus(@RequestParam("flag") Boolean flag,
                                                              @RequestParam("id") Integer id,
                                                              HttpServletRequest request) {
 
@@ -117,8 +117,8 @@ public class CategoryController {
     @ApiImplicitParam(name = "pid",value = "根据父类id查询该父类下所有子类，如果需要查询一级分类，则输入0",paramType = "query",required = true)
     public ComResponse<List<CategoryTO>> getCategoriesByPid( @RequestParam("pid") Integer pid) {
         ComResponse comResponse = categoryService.getCategoriesByPid(pid);
-        List list = new ArrayList<>();
-        if (comResponse.getData() == null||(list = (List) comResponse.getData()).size() == 0) {
+        List<?> list = new ArrayList<>();
+        if (comResponse.getData() == null||(list = (List<?>) comResponse.getData()).size() == 0) {
             return ComResponse.nodata();
         }
         return comResponse;
@@ -130,7 +130,7 @@ public class CategoryController {
             @ApiImplicitParam(name = "sourceId", value = "源id", paramType = "query", required = true),
             @ApiImplicitParam(name = "targetId", value = "目标id",required = true,paramType = "query")
     })
-    public ComResponse transferCategories(@RequestParam("sourceId")Integer sourceId, @RequestParam("targetId") Integer targetId) {
+    public ComResponse<?> transferCategories(@RequestParam("sourceId")Integer sourceId, @RequestParam("targetId") Integer targetId) {
         return null;
     }
 

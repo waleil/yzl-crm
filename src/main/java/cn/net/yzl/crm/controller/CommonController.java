@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.biTask.Indicators;
+import cn.net.yzl.crm.dto.dmc.ActivityDetailResponse;
 import cn.net.yzl.crm.dto.dmc.CoopCompanyMediaDto;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.ehr.CommonPostDto;
@@ -13,7 +14,7 @@ import cn.net.yzl.crm.service.CommonService;
 import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.crm.service.micservice.LaunchManageClient;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +38,13 @@ import java.util.List;
 public class CommonController {
 
     @Autowired
-    CoopCompanyMediaClient coopCompanyMediaClient;
+    private CoopCompanyMediaClient coopCompanyMediaClient;
 
     @Autowired
     private EhrStaffClient ehrStaffClient;
 
     @Autowired
-    private LaunchManageClient launchManageClient;
+    private ActivityClient activityClient;
 
     @Autowired
     private CommonService commonService;
@@ -72,13 +73,13 @@ public class CommonController {
     @ApiOperation(value = "查询媒体下所有投放的广告")
     @GetMapping("v1/getLaunchManageByRelationBusNo")
     public ComResponse<List<LaunchManageDto>> getLaunchManageByRelationBusNo(@RequestParam("relationBusNo") Long relationBusNo) {
-        return launchManageClient.getLaunchManageByRelationBusNo(relationBusNo);
+        return activityClient.getLaunchManageByRelationBusNo(relationBusNo);
     }
 
     @ApiOperation(value = "所有广告")
     @GetMapping("v1/getAllLaunchManage")
     public ComResponse<List<LaunchManageDto>> getAllLaunchManage() {
-        return launchManageClient.getAllLaunchManage();
+        return activityClient.getAllLaunchManage();
     }
 
     @ApiOperation(value = "培训过的商品")
@@ -94,6 +95,13 @@ public class CommonController {
                                                                     @RequestParam("indicatorsDomainType") Integer indicatorsDomainType) {
         return biTaskClient.getBiIndicatorsSettingList(pageNum, pageSize, indicatorsDomainType);
     }
+
+    @ApiOperation(value = "所有活动")
+    @GetMapping("v1/getAllActivity")
+    public ComResponse<List<ActivityDetailResponse>> getAllActivity() {
+        return activityClient.getActivityList();
+    }
+
 
 
 }

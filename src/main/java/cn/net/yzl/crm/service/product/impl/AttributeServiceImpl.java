@@ -8,27 +8,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class AttributeServiceImpl implements AttributeService {
     @Override
-    public ComResponse updateAttribute(AttributeBean attributeBean) {
+    public ComResponse<?> updateAttribute(AttributeBean attributeBean) {
         return null;
     }
 
     @Override
-    public ComResponse insertProductAttribute(AttributeBean attributeBean) {
+    public ComResponse<?> insertProductAttribute(AttributeBean attributeBean) {
         return null;
     }
 
     @Override
-    public ComResponse selectPageAttribute(int pageNo, int pageSize) {
+    public ComResponse<?> selectPageAttribute(int pageNo, int pageSize) {
         return null;
     }
 
     @Override
-    public ComResponse selectById(Integer id) {
+    public ComResponse<?> selectById(Integer id) {
         return null;
     }
 
     @Override
-    public ComResponse selectByclassifyIdAttribute(Integer id) {
+    public ComResponse<?> selectByclassifyIdAttribute(Integer id) {
         return null;
     }
 }

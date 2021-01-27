@@ -126,7 +126,7 @@ public class NewOrderServiceImpl implements INewOrderService {
             Integer count =2;
             BatchProductVO vo = new BatchProductVO();
             vo.setBatchNo(batchNo);
-            List<ProductReduceVO> reduceVOS = new ArrayList();
+            List<ProductReduceVO> reduceVOS = new ArrayList<>();
             productDTOS.forEach(map -> {
                 ProductReduceVO reduceVO = new ProductReduceVO();
                 reduceVO.setProductCode(map.getProductCode());

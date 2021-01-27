@@ -9,20 +9,20 @@ import org.springframework.web.bind.annotation.*;
 public interface AttributeClient {
 
     @PostMapping("insert")
-    ComResponse insertProductAttribute(@RequestBody AttributeBean attributeBean);
+    ComResponse<?> insertProductAttribute(@RequestBody AttributeBean attributeBean);
 
     @GetMapping("selectPage")
-    ComResponse selectPageAttribute(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize);
+    ComResponse<?> selectPageAttribute(@RequestParam("pageNo") int pageNo, @RequestParam("pageSize") int pageSize);
 
 
     @GetMapping("selectById")
-    ComResponse selectById(@RequestParam("id") Integer id);
+    ComResponse<?> selectById(@RequestParam("id") Integer id);
 
     @GetMapping("selectByCid")
-    ComResponse selectByclassifyIdAttribute(@RequestParam("id") Integer id);
+    ComResponse<?> selectByclassifyIdAttribute(@RequestParam("id") Integer id);
 
 
     @PutMapping("update")
-    ComResponse updateAttribute(@RequestBody AttributeBean attributeBean);
+    ComResponse<?> updateAttribute(@RequestBody AttributeBean attributeBean);
 
 }

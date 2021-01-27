@@ -42,7 +42,7 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         orderInfoVO.setOrderInfoResDTOList(list);
         GeneralResult<Member> member = memberFien.getMember(list.get(0).getMemberCardNo());
         if(member.getCode().compareTo(Integer.valueOf(200)) !=0){
-            throw new BizException(respons.getCode(),respons.getMessage());
+            throw new BizException(member.getCode(),member.getMessage());
         }
         if(member.getData() == null){
             throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(),"顾客信息不存在");

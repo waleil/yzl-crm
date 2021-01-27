@@ -51,7 +51,13 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -351,7 +357,9 @@ public class OrderRestController {
 		}
 		orderm.setRemark(orderin.getRemark());// 订单备注
 		orderm.setReveiverAddressNo(orderin.getReveiverAddressNo());// 配送地址唯一标识
-		orderm.setReveiverAddress(reveiverAddress.getMemberAddress());// 收货人地址
+		orderm.setReveiverAddress(String.format("%s %s %s %s", reveiverAddress.getMemberProvinceName(),
+				reveiverAddress.getMemberCityName(), reveiverAddress.getMemberCountyName(),
+				reveiverAddress.getMemberAddress()));// 收货人地址
 		orderm.setReveiverName(reveiverAddress.getMemberName());// 收货人姓名
 		orderm.setReveiverTelphoneNo(reveiverAddress.getMemberMobile());// 收货人电话
 		orderm.setReveiverProvince(String.valueOf(reveiverAddress.getMemberProvinceNo()));// 省份编码
@@ -428,18 +436,29 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
 		log.info("热线工单-购物车-提交订单>>创建订单成功");
-		// 组装返回数据
-		Map<String, Object> retval = new HashMap<>();
-		retval.put("reveiverAddress", orderm.getReveiverAddress());
-		retval.put("reveiverName", orderm.getReveiverName());
-		retval.put("reveiverTelphoneNo", orderm.getReveiverTelphoneNo());
-		retval.put("total", orderm.getTotal());
 		// 再次调用顾客账户余额
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
-		BigDecimal totalMoney = BigDecimal.valueOf(maresponse.getData().getTotalMoney())
-				.divide(BigDecimal.valueOf(100));
-		retval.put("totalMoney", totalMoney.doubleValue());
-		return ComResponse.success(retval);
+		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
+				orderm.getReveiverTelphoneNo(),
+				BigDecimal.valueOf(orderm.getTotal()).divide(BigDecimal.valueOf(100)).doubleValue(), BigDecimal
+						.valueOf(maresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100)).doubleValue()));
 	}
 
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@ApiModel(description = "订单")
+	public static class OrderOut {
+		@ApiModelProperty(value = "收货人地址")
+		private String reveiverAddress;
+		@ApiModelProperty(value = "收货人姓名")
+		private String reveiverName;
+		@ApiModelProperty(value = "收货人电话")
+		private String reveiverTelphoneNo;
+		@ApiModelProperty(value = "实收金额")
+		private double total;
+		@ApiModelProperty(value = "账户余额")
+		private double totalMoney;
+	}
 }

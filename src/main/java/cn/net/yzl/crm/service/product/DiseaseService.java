@@ -24,7 +24,7 @@ public interface DiseaseService {
 
     ComResponse<List<DiseaseBean>> selectAllDiseases();
 
-    ComResponse changeName(Integer id, String name, String userId);
+    ComResponse<?> changeName(Integer id, String name, String userId);
 
     ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(int pageNo, int pageSize);
 }

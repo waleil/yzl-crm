@@ -23,7 +23,7 @@ public interface CategoryService {
 
     ComResponse<Category> changeCategoryAppStatus(Boolean flag, Integer id,String uid);
 
-    ComResponse getCategoriesByPid(Integer pid);
+    ComResponse<?> getCategoriesByPid(Integer pid);
 
     ComResponse<Page<CategoryTO>> selectAll(Integer pid, Integer pageNo, Integer pageSize);
 
