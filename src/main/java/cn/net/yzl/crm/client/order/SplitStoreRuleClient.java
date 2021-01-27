@@ -13,7 +13,8 @@ import java.util.List;
 /**
  * @author zhouchangsong
  */
-@FeignClient(name = "splitStoreRuleClient", url = "${api.gateway.url}/orderService/splitStoreRule")
+@FeignClient(name = "splitStoreRuleClient", url = "localhost:4455/splitStoreRule")
+//@FeignClient(name = "splitStoreRuleClient", url = "${api.gateway.url}/orderService/splitStoreRule")
 public interface SplitStoreRuleClient {
 
     /**
