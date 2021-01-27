@@ -11,14 +11,11 @@ import cn.net.yzl.model.pojo.StorePo;
 import cn.net.yzl.model.pojo.SysDictDataPo;
 import cn.net.yzl.model.vo.StoreLocalVo;
 import cn.net.yzl.model.vo.StoreVO;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -128,9 +125,10 @@ public interface StoreFeginService {
 
     @ApiOperation(value = "下拉仓库列表",notes = "下拉仓库列表")
     @GetMapping("store/v1/selectStoreAny")
-    public ComResponse<List<StorePo>> selectStoreAny();
+    ComResponse<List<StorePo>> selectStoreAny();
 
-
-
+    @ApiOperation(value = "新增仓库的时候下拉库位的查询",notes = "新增仓库的时候下拉库位的查询")
+    @GetMapping("v1/StoreLocalPullDown")
+    ComResponse<List<StoreLocalVo>> storeLocalPullDown();
 
 }
