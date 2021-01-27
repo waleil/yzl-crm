@@ -115,5 +115,22 @@ public interface StoreFeginService {
     ComResponse<List<DepartDto>> getAllFinanceDepart();
 
 
+    @ApiOperation(value = "根据仓库状态查询仓库",notes = "根据仓库状态查询仓库")
+    @GetMapping("store/v1/selectOrderStatus")
+    ComResponse<List<StoreVO>> selectOrderStatus(@RequestParam("status") Integer status);
+
+
+
+    @ApiOperation(value = "下拉库位",notes = "下拉库位")
+    @GetMapping("store/v1/selectStoreLocalPullDown")
+    ComResponse<List<StoreLocalPo>> selectStoreLocalPullDown(@RequestParam("storeId") Integer storeId);
+
+
+    @ApiOperation(value = "下拉仓库列表",notes = "下拉仓库列表")
+    @GetMapping("store/v1/selectStoreAny")
+    public ComResponse<List<StorePo>> selectStoreAny();
+
+
+
 
 }

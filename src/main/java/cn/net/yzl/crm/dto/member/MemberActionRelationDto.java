@@ -3,16 +3,18 @@ package cn.net.yzl.crm.dto.member;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * member_action_relation
- * @author 
+ * @author
  */
 @Data
 @ApiModel(value = "顾客综合行为关联表",description = "memberActionRelation")
@@ -30,10 +32,12 @@ public class MemberActionRelationDto implements Serializable {
     @NotBlank
     private String memberCard;
 
-    @ApiModelProperty(value ="字典id",name="did")
-    @NotNull
+    @ApiModelProperty(value ="字典id(手动填写时可不填)",name="did")
     @Min(0)
     private Integer did;
+
+    @ApiModelProperty(value ="字典名称(手动填写时必填)",name="dname")
+    private String dname;
 
     @ApiModelProperty(value ="创建人",name="creator")
     @NotBlank

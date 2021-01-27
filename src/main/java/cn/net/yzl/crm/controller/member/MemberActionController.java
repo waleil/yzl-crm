@@ -2,8 +2,9 @@ package cn.net.yzl.crm.controller.member;
 
 import cn.net.yzl.common.entity.ComResponse;
 
+import cn.net.yzl.crm.customer.dto.member.MemberActionRelationDto;
+import cn.net.yzl.crm.customer.viewmodel.memberActionModel.MemberActionRelationList;
 import cn.net.yzl.crm.dto.member.ActionDictDto;
-import cn.net.yzl.crm.dto.member.MemberActionRelationDto;
 import cn.net.yzl.crm.model.customer.ActionDict;
 import cn.net.yzl.crm.model.customer.MemberActionRelation;
 import cn.net.yzl.crm.service.micservice.MemberActionFeign;
@@ -11,6 +12,7 @@ import cn.net.yzl.crm.utils.ValidList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +49,7 @@ public class MemberActionController {
 
     @ApiOperation(value = "顾客综合行为-获取顾客所有综合行为属性")
     @GetMapping("v1/getRelationByMemberCard")
-    public ComResponse<List<MemberActionRelation>> getRelationByMemberCard(@RequestParam("cardNo") @NotBlank String cardNo){
+    public ComResponse<List<MemberActionRelationList>> getRelationByMemberCard(@RequestParam("cardNo") @NotBlank String cardNo){
         return memberActionFeign.getRelationByMemberCard(cardNo);
     }
 
@@ -67,6 +69,13 @@ public class MemberActionController {
     @PostMapping("v1/addRelation")
     public ComResponse<Integer> addRelation(@RequestBody @Validated MemberActionRelationDto memberAgeRelationDtos){
         return memberActionFeign.addRelation(memberAgeRelationDtos);
+    }
+
+
+    @ApiOperation(value = "客户行为关联-客户综合行为手动新增录入关联")
+    @PostMapping("v1/addRelationWithDict")
+    public ComResponse<Integer> addRelationWithDict(@RequestBody @Validated MemberActionRelationDto memberAgeRelationDtos){
+        return memberActionFeign.addRelationWithDict(memberAgeRelationDtos);
     }
 
     @ApiOperation(value = "顾客综合行为-单条删除顾客综合行为")
