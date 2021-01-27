@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -110,7 +111,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
             //计算总额  校验上送金额与计算商品总额是否一致
             int total=productDTOS.stream().mapToInt(m->m.getCount()*m.getPrice()).sum();
-            if(Integer.valueOf(MathUtils.priceFenConvertYun(total)).compareTo(dto.getTotalAllAMT())!=0 ){
+            if(new BigDecimal(MathUtils.priceFenConvertYun(total)).compareTo(dto.getTotalAllAMT())!=0 ){
                 throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"商品总金额计算不正确");
             }
 
@@ -314,8 +315,8 @@ public class NewOrderServiceImpl implements INewOrderService {
             orderTemp.setOprCount(0);
             orderTemp.setSuccessCount(0);
             orderTemp.setFailCount(0);
-            orderTemp.setTotalAmt(dto.getTotalAMT());
-            orderTemp.setTotalAllAmt(dto.getTotalAllAMT());
+            orderTemp.setTotalAmt(MathUtils.strPriceToLong(dto.getTotalAMT().toString()));
+            orderTemp.setTotalAllAmt(MathUtils.strPriceToLong(dto.getTotalAllAMT().toString()));
             orderTemp.setRemark(dto.getRemark());
             orderTemp.setRelationOrder(dto.getRelationOrder());
             orderTemp.setExpressFlag(dto.getAssignExpressFlag());

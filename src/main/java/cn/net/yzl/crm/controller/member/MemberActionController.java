@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.member;
 import cn.net.yzl.common.entity.ComResponse;
 
 import cn.net.yzl.crm.customer.dto.member.MemberActionRelationDto;
+import cn.net.yzl.crm.customer.viewmodel.memberActionModel.MemberActionRelationList;
 import cn.net.yzl.crm.dto.member.ActionDictDto;
 import cn.net.yzl.crm.model.customer.ActionDict;
 import cn.net.yzl.crm.model.customer.MemberActionRelation;
@@ -11,6 +12,7 @@ import cn.net.yzl.crm.utils.ValidList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +49,7 @@ public class MemberActionController {
 
     @ApiOperation(value = "顾客综合行为-获取顾客所有综合行为属性")
     @GetMapping("v1/getRelationByMemberCard")
-    public ComResponse<List<MemberActionRelation>> getRelationByMemberCard(@RequestParam("cardNo") @NotBlank String cardNo){
+    public ComResponse<List<MemberActionRelationList>> getRelationByMemberCard(@RequestParam("cardNo") @NotBlank String cardNo){
         return memberActionFeign.getRelationByMemberCard(cardNo);
     }
 
