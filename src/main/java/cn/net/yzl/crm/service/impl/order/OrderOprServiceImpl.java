@@ -100,7 +100,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
             });
             productVO.setOrderNo(dto.getOrderNo());
             productVO.setProductReduceVOS(list);
-            ComResponse stockRes = productClient.increaseStock(productVO);
+            ComResponse<?> stockRes = productClient.increaseStock(productVO);
             if(stockRes.getCode().compareTo(Integer.valueOf(200))!=0){
                 throw new BizException(stockRes.getCode(),stockRes.getMessage());
             }
@@ -130,14 +130,14 @@ public class OrderOprServiceImpl implements IOrderOprService {
 
             }
             //更新订单状态
-            ComResponse res = orderOprClient.cancleOrderM(dto.getOrderNo());
+            ComResponse<?> res = orderOprClient.cancleOrderM(dto.getOrderNo());
 
             return ComResponse.success(true);
 
     }
 
     @Override
-    public ComResponse checkOrder(OrderCheckDetailDTO dto) {
+    public ComResponse<?> checkOrder(OrderCheckDetailDTO dto) {
         // 按员工号查询员工信息
         ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         // 如果服务调用异常
@@ -186,7 +186,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
 
 
         //调用订单服务 1、记录出库预警消息 2、更新订单状态及收货人信息 3、记录审批记录 4、记录操作日志
-        ComResponse orderRes = orderOprClient.checkOrder(dto);
+        ComResponse<?> orderRes = orderOprClient.checkOrder(dto);
         if(orderRes.getCode().compareTo(Integer.valueOf(200))!=0){
             throw new BizException(orderRes.getCode(),orderRes.getMessage());
         }
@@ -197,7 +197,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
         list.add(vo);
 
 
-        ComResponse response = orderDistributeExpressFeignService.insertOrderDistributeExpress(list);
+        ComResponse<?> response = orderDistributeExpressFeignService.insertOrderDistributeExpress(list);
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
             log.error(response.getClass()+":"+response.getMessage());
             //todo 记录状态，定时任务重新发送
@@ -223,7 +223,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
         });
         productVO.setOrderNo(vo.getOrder().getOrderNo());
         productVO.setProductReduceVOS(list);
-        ComResponse stockRes = productClient.increaseStock(productVO);
+        ComResponse<?> stockRes = productClient.increaseStock(productVO);
         if(stockRes.getCode().compareTo(Integer.valueOf(200))!=0){
             throw new BizException(stockRes.getCode(),stockRes.getMessage());
         }
@@ -255,7 +255,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
 
         //调用订单信息更新
         //调用订单服务 1、记录出库预警消息 2、更新订单状态及收货人信息 3、记录审批记录 4、记录操作日志
-        ComResponse orderRes = orderOprClient.checkOrder(dto);
+        ComResponse<?> orderRes = orderOprClient.checkOrder(dto);
         if(orderRes.getCode().compareTo(Integer.valueOf(200))!=0){
             throw new BizException(orderRes.getCode(),orderRes.getMessage());
         }
