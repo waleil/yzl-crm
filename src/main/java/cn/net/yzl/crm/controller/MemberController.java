@@ -50,6 +50,8 @@ public class MemberController {
     @Autowired
     MemberFien memberFien;
     @Autowired
+    DiseaseClient diseaseClient;
+    @Autowired
     MemberPhoneFien memberPhoneFien;
 
     @Autowired
@@ -165,7 +167,7 @@ public class MemberController {
     }
 
 
-    @ApiOperation("获取顾客病症")
+    @ApiOperation("员工画像-获取顾客病症")
     @GetMapping("v1/getMemberDisease")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
