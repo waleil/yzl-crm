@@ -178,7 +178,7 @@ public class OrderRestControllerTests {
 	public void testProductReduce() {
 		try {
 			OrderProductVO vo = new OrderProductVO();
-			vo.setOrderNo("ON1314020T202101271816500058");
+			vo.setOrderNo("ON1314020T202101271816500062");
 			ProductReduceVO p1 = new ProductReduceVO();
 			p1.setNum(2);
 			p1.setOrderNo(vo.getOrderNo());
