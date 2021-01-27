@@ -26,13 +26,13 @@ import java.util.List;
 /**
  *  回访工单相关接口
  */
-@RestController
-@RequestMapping("visit")
-@Api(tags = "回访工单相关接口")
-@Slf4j
+//@RestController
+//@RequestMapping("visit")
+//@Api(tags = "回访工单相关接口")
+//@Slf4j
 public class WorkOrderVisitController {
 
-    @Autowired
+   /* @Autowired
     private WorkOrderVisitClient workOrderVisitClient;
 
     @Autowired
@@ -45,11 +45,11 @@ public class WorkOrderVisitController {
         return productClient.queryListProduct(productSelectVO);
     }
 
-    /**
+    *//**
      *  分页查询回访工单管理列表
      * @param workOrderVisitVO
      * @return
-     */
+     *//*
     @PostMapping("v1/list")
 //    @ApiOperation(value = "分页查询回访工单管理列表", notes = "分页查询回访工单管理列表")
     public ComResponse<Page<WorkOrderVisitBean>> listByCriteriaTO(@RequestBody WorkOrderVisitVO workOrderVisitVO){
@@ -57,11 +57,11 @@ public class WorkOrderVisitController {
         return result;
     }
 
-    /**
+    *//**
      *  根据Code查询回访工单
      * @param code
      * @return
-     */
+     *//*
     @GetMapping("v1/getByCode")
 //    @ApiOperation(value = "根据CODE查询回访工单", notes = "根据CODE查询回访工单")
     public ComResponse<WorkOrderVisitBean> getByCode(@RequestParam("code") @ApiParam(value = "回访工单标识",name = "code") Integer code){
@@ -69,11 +69,11 @@ public class WorkOrderVisitController {
         return result;
     }
 
-    /**
+    *//**
      *  新增一条回访工单
      * @param workOrderVisitBean
      * @return
-     */
+     *//*
     @PostMapping("v1/add")
 //    @ApiOperation(value = "新增回访工单", notes = "新增回访工")
     public ComResponse<Void> add(@RequestBody WorkOrderVisitBean workOrderVisitBean){
@@ -100,5 +100,5 @@ public class WorkOrderVisitController {
     public ComResponse<List<ProductMainInfoDTO>> queryLastProduct(){
         String data = workOrderVisitClient.queryLastProduct().getData();
         return  productClient.queryProducts(data);
-    }
+    }*/
 }
