@@ -5,20 +5,21 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
+import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
-import cn.net.yzl.crm.dto.member.MemberCrowdGroupDTO;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
+import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
 import cn.net.yzl.crm.sys.BizException;
-import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
-import java.util.*;
+import java.util.List;
 
 @Api(tags = "顾客管理")
 @Slf4j
@@ -37,6 +38,8 @@ public class MemberController {
     public static final String PATH = "member";
     @Autowired
     MemberFien memberFien;
+    @Autowired
+    MemberPhoneFien memberPhoneFien;
 
     @Autowired
     WorkOrderClient workOrderClient;
@@ -82,16 +85,13 @@ public class MemberController {
         return memberFien.getMember(memberCard);
     }
 
-    @ApiOperation(value = "获取顾客级别")
+    @ApiOperation(value = "顾客列表-查询条件-获取顾客级别列表")
     @GetMapping("v1/getMemberGrad")
     public GeneralResult getMemberGrad() {
         GeneralResult<List<MemberGrad>> result = memberFien.getMemberGrad();
         return result;
     }
-
-
-
-    @ApiOperation(value = "根据媒体id获取广告列表列表")
+    @ApiOperation(value = "顾客列表-查询条件-根据媒体id获取广告列表")
     @GetMapping("v1/getAdverList")
     public GeneralResult getAdverList(String media_code) {
         return GeneralResult.success();
@@ -115,15 +115,15 @@ public class MemberController {
      * @return
      */
     @ApiOperation("根据手机号获取顾客信息（可用来判断手机号是否被注册，如果被注册则返回注册顾客实体）")
-    @GetMapping("/v1/getMemberByPhone")
-    public GeneralResult getMemberByPhone(
+    //@GetMapping("/v1/getMemberByPhone")
+    @GetMapping("/v1/getMemberByphoneNumber")
+    public ComResponse getMemberByPhone(
             @RequestParam("phone")
             @NotBlank(message = "phone不能为空")
             @ApiParam(name = "phone", value = "手机号", required = true)
                     String phone) {
-        GeneralResult<Member> result = memberFien.getMemberByPhone(phone);
-        if (result == null) return GeneralResult.errorWithMessage(101, "远程服务器无响应");
-        return GeneralResult.success(result);
+        ComResponse<Member> result = memberPhoneFien.getMemberByphoneNumber(phone);
+        return result;
     }
 
     /**
