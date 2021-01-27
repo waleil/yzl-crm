@@ -13,7 +13,6 @@ import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
-import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.service.micservice.MemberFien;
@@ -44,11 +43,10 @@ public class MemberController {
     @Autowired
     WorkOrderClient workOrderClient;
 
-    @ApiOperation(value = "分页查询顾客列表")
+    @ApiOperation(value = "顾客列表-分页查询顾客列表")
     @PostMapping("v1/listPage")
-    public GeneralResult<Page<Member>> listPage( MemberSerchDTO dto) {
-        GeneralResult<Page<Member>> result = memberFien.listPage(dto);
-        return result;
+    public ComResponse<Page<Member>> listPage( @RequestBody MemberSerchConditionDTO dto) {
+        return memberFien.listPage(dto);
     }
 
 //    @ApiOperation(value = "顾客列表查询病症分类")
@@ -83,18 +81,6 @@ public class MemberController {
     @GetMapping("v1/getMember")
     public GeneralResult<Member> getMember(@RequestParam("memberCard") String memberCard) {
         return memberFien.getMember(memberCard);
-    }
-
-    @ApiOperation(value = "顾客列表-查询条件-获取顾客级别列表")
-    @GetMapping("v1/getMemberGrad")
-    public GeneralResult getMemberGrad() {
-        GeneralResult<List<MemberGrad>> result = memberFien.getMemberGrad();
-        return result;
-    }
-    @ApiOperation(value = "顾客列表-查询条件-根据媒体id获取广告列表")
-    @GetMapping("v1/getAdverList")
-    public GeneralResult getAdverList(String media_code) {
-        return GeneralResult.success();
     }
 
     @ApiOperation("获取顾客联系方式信息，包括手机号，座机号")
