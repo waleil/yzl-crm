@@ -132,6 +132,7 @@ public class OrderRestControllerTests {
 			order.getOrderDetailIns().add(od2);
 			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
+			order.setReveiverAddressNo(482416);
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
@@ -161,6 +162,7 @@ public class OrderRestControllerTests {
 //			order.getOrderDetailIns().add(od2);
 //			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
+			order.setReveiverAddressNo(482416);
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
