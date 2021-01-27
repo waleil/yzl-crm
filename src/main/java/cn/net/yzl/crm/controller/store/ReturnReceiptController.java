@@ -24,13 +24,13 @@ public class ReturnReceiptController {
 
     /**
      * 确认收货
-     * @param addList
+     * @param refuseReturnDto
      * @return
      */
     @ApiOperation(value = "确认收货", notes = "确认收货")
     @PostMapping("v1/confirm/receipt")
-    public ComResponse confirmReceipt(@RequestBody List<ReturnToStoreAddDto> addList){
-        return returnReceiptFeginService.confirmReceipt(addList);
+    public ComResponse confirmReceipt(@RequestBody RefuseReturnDto refuseReturnDto){
+        return returnReceiptFeginService.confirmReceipt(refuseReturnDto);
     }
 
     /**
