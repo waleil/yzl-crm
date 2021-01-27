@@ -51,7 +51,7 @@ public class MemberCrowdGroupDTO {
     private Integer first_order_to_days;
 
     @ApiModelProperty(value = "真正首单金额")
-    private Integer first_order_am;
+    private Double first_order_am;
 
     @ApiModelProperty("最后一次下单时间距离今天多少天")
     private Integer last_order_to_days;
@@ -148,16 +148,16 @@ public class MemberCrowdGroupDTO {
     private Integer total_amount;
 
     @ApiModelProperty("订单总金额")
-    private Integer order_total_amount;
+    private Double order_total_amount;
 
     @ApiModelProperty("订单应收金额")
-    private Integer order_rec_amount;
+    private Double order_rec_amount;
 
     @ApiModelProperty("订单最高金额")
-    private Integer order_high_am;
+    private Double order_high_am;
 
     @ApiModelProperty("订单最低金额")
-    private Integer order_low_am;
+    private Double order_low_am;
 
     @ApiModelProperty("是否下单: 1是，0否，-1不做条件判断")
     private Integer have_order;
