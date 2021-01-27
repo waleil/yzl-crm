@@ -52,7 +52,7 @@ public class OrderRestControllerTests {
 	@Test
 	public void testQueryByCodes() {
 		try {
-			String codes = "10000107,10000095,10000098";
+			String codes = "10000130,10000114,10000106";
 			this.productClient.queryByProductCodes(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -114,17 +114,17 @@ public class OrderRestControllerTests {
 		try {
 			OrderIn order = new OrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
-			od1.setProductCode("10000142");
+			od1.setProductCode("10000130");
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(2);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_1);
 			OrderDetailIn od2 = new OrderDetailIn();
-			od2.setProductCode("10000140");
+			od2.setProductCode("10000114");
 			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
-			od2.setProductCount(3);
+			od2.setProductCount(2);
 			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od3 = new OrderDetailIn();
-			od3.setProductCode("10000139");
+			od3.setProductCode("10000106");
 			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od3.setProductCount(2);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);

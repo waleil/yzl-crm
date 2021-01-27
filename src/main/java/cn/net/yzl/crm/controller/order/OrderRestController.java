@@ -427,6 +427,7 @@ public class OrderRestController {
 			}
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
+		log.info("热线工单-购物车-提交订单>>创建订单成功");
 		// 组装返回数据
 		Map<String, Object> retval = new HashMap<>();
 		retval.put("reveiverAddress", orderm.getReveiverAddress());

@@ -128,7 +128,7 @@ public interface StoreFeginService {
     ComResponse<List<StorePo>> selectStoreAny();
 
     @ApiOperation(value = "新增仓库的时候下拉库位的查询",notes = "新增仓库的时候下拉库位的查询")
-    @GetMapping("v1/StoreLocalPullDown")
+    @GetMapping("store/v1/StoreLocalPullDown")
     ComResponse<List<StoreLocalVo>> storeLocalPullDown();
 
 }
