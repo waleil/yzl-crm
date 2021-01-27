@@ -14,10 +14,7 @@ import cn.net.yzl.order.model.vo.order.SplitStoreProvinceNamesDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,9 +61,45 @@ public class SplitStoreRuleServiceImpl implements SplitStoreRuleService {
             page.setItems(dtos);
             return ComResponse.success(page);
         }
-        Map<String, SplitStoreProvinceNamesDTO> provinceDTOMap = province.getData().stream().collect(Collectors.toMap(SplitStoreProvinceNamesDTO::getStoreNo, Function.identity()));
-        dtos.forEach(dto -> dto.setProvinceNames(Optional.ofNullable(provinceDTOMap.get(dto.getStoreNo())).map(SplitStoreProvinceNamesDTO::getProvinceNames).orElse(null)));
+        Map<String, List<String>> provinceDTOMap = province.getData().stream().collect(Collectors.toMap(SplitStoreProvinceNamesDTO::getStoreNo, s->{
+            List<String> list = new ArrayList<>();
+            list.add(s.getProvinceNames());
+            return list;
+        }));
+        dtos.forEach(dto -> dto.setProvinceNames(Optional.ofNullable(provinceDTOMap.get(dto.getStoreNo())).map(s-> {
+            List<String> strings = Arrays.asList(String.join(",", s).split(","));
+            return strings.stream().distinct().collect(Collectors.joining(","));
+//            s.stream().map(SplitStoreProvinceNamesDTO::getProvinceNames).distinct().collect(Collectors.joining(","));
+        }).orElse(null)));
         page.setItems(dtos);
         return ComResponse.success(page);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

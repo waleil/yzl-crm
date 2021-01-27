@@ -9,6 +9,7 @@ import cn.net.yzl.model.dto.OrderExpressDTO;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,8 +60,12 @@ public interface OrderDistributeExpressFeignService {
     public ComResponse<Page<OrderDistributeExpressDTO>> selectOrderDistributeExpressList(@RequestBody OrderDistributeExpressListVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressStatus")
-    @ApiOperation("取消订单")
+    @ApiOperation("修改订单状态")
     public ComResponse updateOrderDistributeExpressStatus(@RequestBody OrderDistributeExpressStatusVO vo);
+
+    @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressRegisterInfo")
+    @ApiOperation("异常登记")
+    public ComResponse updateOrderDistributeExpressRegisterInfo(@RequestBody OrderDistributeExpressRegisterVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressByMan")
     @ApiOperation("人工分配")
@@ -69,5 +74,9 @@ public interface OrderDistributeExpressFeignService {
     @PostMapping(value = "orderDistributeExpress/v1/insertOrderDistributeExpress")
     @ApiOperation("订单分配快递数据插入")
     public ComResponse insertOrderDistributeExpress(@RequestBody List<OrderDistributeExpressVO> voList);
+
+    @GetMapping(value = "orderDistributeExpress/v1/selectExpressCompanyList")
+    @ApiOperation("获取物流服务物流公司列表")
+    public ComResponse selectExpressCompanyList();
 
 }

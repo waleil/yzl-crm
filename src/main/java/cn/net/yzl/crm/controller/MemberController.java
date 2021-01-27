@@ -15,12 +15,11 @@ import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.MemberSerchDTO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
-import cn.net.yzl.crm.dto.member.MemberCrowdGroupDTO;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
+import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
 import cn.net.yzl.crm.sys.BizException;
-import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
-import java.util.*;
+import java.util.List;
 
 @Api(tags = "顾客管理")
 @Slf4j
@@ -39,13 +38,15 @@ public class MemberController {
     public static final String PATH = "member";
     @Autowired
     MemberFien memberFien;
+    @Autowired
+    MemberPhoneFien memberPhoneFien;
 
     @Autowired
     WorkOrderClient workOrderClient;
 
     @ApiOperation(value = "分页查询顾客列表")
     @PostMapping("v1/listPage")
-    public GeneralResult<Page<Member>> listPage( MemberSerchConditionDTO dto) {
+    public GeneralResult<Page<Member>> listPage( MemberSerchDTO dto) {
         GeneralResult<Page<Member>> result = memberFien.listPage(dto);
         return result;
     }
@@ -114,15 +115,15 @@ public class MemberController {
      * @return
      */
     @ApiOperation("根据手机号获取顾客信息（可用来判断手机号是否被注册，如果被注册则返回注册顾客实体）")
-    @GetMapping("/v1/getMemberByPhone")
-    public GeneralResult getMemberByPhone(
+    //@GetMapping("/v1/getMemberByPhone")
+    @GetMapping("/v1/getMemberByphoneNumber")
+    public ComResponse getMemberByPhone(
             @RequestParam("phone")
             @NotBlank(message = "phone不能为空")
             @ApiParam(name = "phone", value = "手机号", required = true)
                     String phone) {
-        GeneralResult<Member> result = memberFien.getMemberByPhone(phone);
-        if (result == null) return GeneralResult.errorWithMessage(101, "远程服务器无响应");
-        return GeneralResult.success(result);
+        ComResponse<Member> result = memberPhoneFien.getMemberByphoneNumber(phone);
+        return result;
     }
 
     /**
@@ -198,14 +199,12 @@ public class MemberController {
     @ApiOperation(value = "顾客收货地址-添加顾客收货地址", notes = "顾客收货地址-添加顾客收货地址")
     @RequestMapping(value = "/v1/addReveiverAddress", method = RequestMethod.POST)
     public ComResponse<String> addReveiverAddress(@RequestBody  @Validated ReveiverAddressInsertVO reveiverAddressInsertVO) throws IllegalAccessException {
-        reveiverAddressInsertVO.setCreateCode(QueryIds.userNo.get());
         return memberFien.addReveiverAddress(reveiverAddressInsertVO);
     }
 
     @ApiOperation(value = "顾客收货地址-更新收货地址", notes = "顾客收货地址-更新收货地址")
     @RequestMapping(value = "/v1/updateReveiverAddress", method = RequestMethod.POST)
     public ComResponse<String> updateReveiverAddress(@RequestBody @Validated ReveiverAddressUpdateVO reveiverAddressUpdateVO) throws IllegalAccessException {
-        reveiverAddressUpdateVO.setUpdateCode(QueryIds.userNo.get());
         return memberFien.updateReveiverAddress(reveiverAddressUpdateVO);
     }
 
