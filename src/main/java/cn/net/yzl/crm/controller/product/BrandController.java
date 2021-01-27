@@ -11,6 +11,7 @@ import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/product/v1/brand")
 @Api(tags = "商品品牌管理", description = "包含：增删改查")
+@Slf4j
 public class BrandController {
 
     @Autowired
@@ -188,8 +190,8 @@ public class BrandController {
                     }
                 }
             }else{
-                long size = file.getSize() / 1024; //kb
-                if (size > 50) { //判断图片大小 单位Kb
+                long size = file.getSize();
+                if (size > 50 << 10) { //判断图片大小 (50*1024)B
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片过大,保证在50Kb下");
                 }
                 String fileName = file.getOriginalFilename();
@@ -197,7 +199,11 @@ public class BrandController {
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png格式文件");
                 }
                 if(StringUtils.isNotEmpty(brand.getBrandUrl())){
-                    fastdfsUtils.delete(brand.getBrandUrl());
+                    try {
+                        fastdfsUtils.delete(brand.getBrandUrl());
+                    }catch (Exception e){
+                        log.warn("删除目标文件失败！");
+                    }
                 }
                 StorePath storePath = fastdfsUtils.upload(file);
                 String filePath = storePath.getFullPath();
