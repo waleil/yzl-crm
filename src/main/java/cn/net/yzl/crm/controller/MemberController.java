@@ -4,27 +4,24 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-
 import cn.net.yzl.crm.client.product.DiseaseClient;
-import cn.net.yzl.crm.client.product.ProductClient;
-import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
-import cn.net.yzl.crm.customer.dto.member.MemberProductEffectDTO;
 import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
+import cn.net.yzl.crm.customer.dto.member.MemberProductEffectDTO;
 import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
-import cn.net.yzl.crm.customer.vo.MemberProductEffectVO;
+import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
+import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
-import cn.net.yzl.crm.staff.dto.MemberDiseaseDto;
 import cn.net.yzl.crm.service.micservice.member.MemberProductEffectFien;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
@@ -58,6 +55,7 @@ public class MemberController {
     WorkOrderClient workOrderClient;
     @Autowired
     MemberProductEffectFien memberProductEffectFien;
+
 
     @ApiOperation(value = "顾客列表-分页查询顾客列表")
     @PostMapping("v1/listPage")
@@ -166,8 +164,19 @@ public class MemberController {
         return result;
     }
 
+    @ApiOperation("顾客画像-服务旅程")
+    @GetMapping("v1/getMemberServiceJourney")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+    })
+    public ComResponse<MemberServiceJourneryDto> getMemberServiceJourney(String memberCard) {
+        // todo 等待 订单和工单提供接口
+        return ComResponse.success();
+    }
 
-    @ApiOperation("员工画像-获取顾客病症")
+
+
+    @ApiOperation("顾客画像-获取顾客病症(诊疗结果)")
     @GetMapping("v1/getMemberDisease")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
@@ -320,7 +329,7 @@ public class MemberController {
     @ApiOperation(value = "修改顾客服用效果记录", notes = "修改顾客服用效果记录")
     @PostMapping(value = "/v1/batchModifyProductEffect")
     public ComResponse batchModifyProductEffect(
-            @RequestBody List<MemberProductEffectVO> productEffects) {
+            @RequestBody List<MemberProductEffectUpdateVO> productEffects) {
         ComResponse result = memberProductEffectFien.batchModifyProductEffect(productEffects);
         return result;
     }

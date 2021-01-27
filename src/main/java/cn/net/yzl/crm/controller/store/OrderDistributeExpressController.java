@@ -6,7 +6,6 @@ import cn.net.yzl.crm.client.store.OrderDistributeExpressFeignService;
 import cn.net.yzl.model.dto.OrderDistributeExpressDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleDetailDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleListDTO;
-import cn.net.yzl.model.dto.OrderExpressDTO;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -70,8 +69,8 @@ public class OrderDistributeExpressController {
 
     @PostMapping(value = "v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
-    public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody List<OrderExpressDTO> orderExpressList) {
-        return orderDistributeExpressFeignService.updateOrderDistributeExpressRuleResult(orderExpressList);
+    public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody DistributeExpressVO vo) {
+        return orderDistributeExpressFeignService.updateOrderDistributeExpressRuleResult(vo);
     }
 
     @PostMapping(value = "v1/selectOrderDistributeExpressList")
@@ -108,6 +107,12 @@ public class OrderDistributeExpressController {
     @ApiOperation("获取物流服务物流公司列表")
     public ComResponse selectExpressCompanyList() {
         return orderDistributeExpressFeignService.selectExpressCompanyList();
+    }
+
+    @PostMapping(value = "v1/updateOrderDistributeExpressStatusToCancel")
+    @ApiOperation("取消订单")
+    public ComResponse updateOrderDistributeExpressStatusToCancel(@RequestBody OrderCancelStatusVO vo) {
+        return orderDistributeExpressFeignService.updateOrderDistributeExpressStatusToCancel(vo);
     }
 
 }

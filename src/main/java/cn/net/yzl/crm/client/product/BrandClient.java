@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-@FeignClient(name = "brandClient",url = "localhost:2077/brand/v1")
+@FeignClient(name = "brandClient",url = "${api.gateway.url}/productServer/brand/v1")
 public interface BrandClient {
 
     @ApiOperation(value = "获取所有品牌信息")

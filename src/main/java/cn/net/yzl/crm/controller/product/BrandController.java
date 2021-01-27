@@ -103,7 +103,9 @@ public class BrandController {
             @ApiImplicitParam(name = "sort", paramType="query",value = "排序", required = false, dataType = "Integer") })
     @PostMapping("insert")
     public ComResponse<?> insertBrand(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request,
-                                   String name, @RequestParam(value = "descri",required = false) String descri,@RequestParam(value = "sort",required = false,defaultValue = "0") Integer sort) {
+                                      String name, @RequestParam(value = "descri",required = false) String descri,@RequestParam(value = "sort",required = false,defaultValue = "0") Integer sort) {
+        //新增失败的回滚url
+        String path = "";
         try {
             BrandVO brandVO = new BrandVO();
             if(file!=null){
@@ -117,6 +119,7 @@ public class BrandController {
                 }
                 StorePath storePath = fastdfsUtils.upload(file);
                 String filePath = storePath.getFullPath();
+                path = filePath;
                 brandVO.setBrandUrl(filePath);
             }
             String userId = request.getHeader("userId");
@@ -130,6 +133,9 @@ public class BrandController {
             return brandService.insertBrand(brandVO);
         } catch (IOException e) {
             e.printStackTrace();
+            if(!StringUtils.isBlank(path)){
+                fastdfsUtils.delete(path);
+            }
             return ComResponse.fail(0,"添加失败");
         }
     }
@@ -164,6 +170,8 @@ public class BrandController {
     public ComResponse<Void> updateBrand(MultipartFile file, HttpServletRequest request,
                                          String name, String descri, @RequestParam(defaultValue = "0")Integer sort, Integer brandId,String url) {
         String userId = request.getHeader("userId");
+        //修改失败的回滚url
+        String path = "";
         if (StringUtils.isBlank(userId)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆！");
         }
@@ -198,27 +206,26 @@ public class BrandController {
                 if(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")){
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png格式文件");
                 }
-                if(StringUtils.isNotEmpty(brand.getBrandUrl())){
-                    try {
-                        fastdfsUtils.delete(brand.getBrandUrl());
-                    }catch (Exception e){
-                        log.warn("删除目标文件失败！");
-                    }
-                }
                 StorePath storePath = fastdfsUtils.upload(file);
                 String filePath = storePath.getFullPath();
+                path = filePath;
                 brandVO.setBrandUrl(filePath);
-
             }
             brandVO.setUpdateNo(userId);
             brandVO.setName(name);
             brandVO.setDescri(descri);
             brandVO.setSort(sort);
             brandVO.setId(brandId);
+            if(StringUtils.isNotEmpty(brand.getBrandUrl())){
+                fastdfsUtils.delete(brand.getBrandUrl());
+            }
             return brandService.updateBrand(brandVO);
         } catch (IOException e) {
             e.printStackTrace();
-            return ComResponse.fail(0,"添加失败");
+            if(!StringUtils.isBlank(path)){
+                fastdfsUtils.delete(path);
+            }
+            return ComResponse.fail(0,"添加/修改失败失败");
         }
     }
 
