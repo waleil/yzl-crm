@@ -183,7 +183,19 @@ public class OrderRestControllerTests {
 			p1.setNum(2);
 			p1.setOrderNo(vo.getOrderNo());
 			p1.setProductCode("10000145");
-			vo.setProductReduceVOS(Arrays.asList(p1));
+			ProductReduceVO p2 = new ProductReduceVO();
+			p2.setNum(2);
+			p2.setOrderNo(vo.getOrderNo());
+			p2.setProductCode("10000139");
+			ProductReduceVO p3 = new ProductReduceVO();
+			p3.setNum(2);
+			p3.setOrderNo(vo.getOrderNo());
+			p3.setProductCode("10000138");
+			ProductReduceVO p4 = new ProductReduceVO();
+			p4.setNum(2);
+			p4.setOrderNo(vo.getOrderNo());
+			p4.setProductCode("10000136");
+			vo.setProductReduceVOS(Arrays.asList(p4));
 			System.err.println(this.productClient.productReduce(vo));
 		} catch (Exception e) {
 			e.printStackTrace();
