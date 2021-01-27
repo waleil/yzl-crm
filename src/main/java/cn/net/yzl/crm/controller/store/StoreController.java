@@ -186,11 +186,11 @@ public class StoreController {
     }
 
 
-    @ApiOperation(value = "根据仓库状态查询仓库",notes = "根据仓库状态查询仓库")
-    @GetMapping("v1/selectOrderStatus")
-    public ComResponse<List<StoreVO>> selectOrderStatus(@RequestParam("status") Integer status) {
-        return storeFeginService.selectOrderStatus(status);
-    }
+//    @ApiOperation(value = "根据仓库状态查询仓库",notes = "根据仓库状态查询仓库")
+//    @GetMapping("v1/selectOrderStatus")
+//    public ComResponse<List<StoreVO>> selectOrderStatus(@RequestParam("status") Integer status) {
+//        return storeFeginService.selectOrderStatus(status);
+//    }
 
 
     @ApiOperation(value = "下拉库位",notes = "下拉库位")
