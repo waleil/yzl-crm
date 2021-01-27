@@ -32,7 +32,6 @@ import cn.net.yzl.crm.customer.model.ProductConsultation;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
-import cn.net.yzl.crm.dto.MemberSerchDTO;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -42,8 +41,8 @@ import io.swagger.annotations.ApiOperation;
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface MemberFien {
 
-	@RequestMapping(method = RequestMethod.GET, value = "/v1/getMemberListByPage")
-	GeneralResult<Page<Member>> listPage(@SpringQueryMap MemberSerchDTO dto);
+	@RequestMapping(method = RequestMethod.POST, value = "/v1/getMemberListByPage")
+	ComResponse<Page<Member>> listPage(@RequestBody MemberSerchConditionDTO dto);
 
 	@ApiOperation("保存会员信息")
 	@PostMapping("/v1/save")

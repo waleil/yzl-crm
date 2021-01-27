@@ -2,9 +2,11 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.SplitStoreRuleClient;
 import cn.net.yzl.crm.dto.order.SplitStoreRulePageDTO;
 import cn.net.yzl.crm.service.SplitStoreRuleService;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.SplitStoreProvinceDTO;
 import cn.net.yzl.order.model.vo.order.SplitStoreRuleAddDTO;
 import io.swagger.annotations.Api;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author zhouchangsong
@@ -39,6 +42,9 @@ public class SplitStoreRuleController {
     @PostMapping("v1/addRule")
     @ApiOperation(value = "添加分仓规则", notes = "若选择全部，provinceId=0，provinceName=全部")
     ComResponse<Boolean> addRule(HttpServletRequest request, @Valid @RequestBody List<SplitStoreRuleAddDTO> list) {
+        if (list.size() == 0) {
+            throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
+        }
         String userNo = request.getHeader("userNo");
         return splitStoreRuleClient.addRule(list, userNo);
     }
@@ -81,7 +87,7 @@ public class SplitStoreRuleController {
     @GetMapping("v1/getSplitStoreRuleList")
     @ApiOperation(value = "订单分仓规则分页查询")
     ComResponse<Page<SplitStoreRulePageDTO>> getSplitStoreRuleList(@ApiParam(value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
-                                                                  @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+                                                                   @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
         return splitStoreRuleService.getSplitStoreRuleList(pageSize, pageNo);
     }
 }

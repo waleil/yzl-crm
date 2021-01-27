@@ -6,16 +6,16 @@ import cn.net.yzl.crm.dao.OutStoreWarningMapper;
 import cn.net.yzl.crm.dto.ehr.StaffDetailDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.order.OutStoreWarningService;
+import cn.net.yzl.order.model.vo.MailVo;
 import cn.net.yzl.order.model.vo.order.OutStoreWarningDTO;
+import cn.net.yzl.order.util.SendTask;
 import cn.net.yzl.order.util.SmsSendUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author zhouchangsong
@@ -43,7 +43,7 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
                 List<String> userCodes = outStoreWarningMapper.getUserCodesByRoleIds(ids);
                 //用户信息
                 ComResponse<List<StaffDetailDto>> staffNos = ehrStaffClient.getByStaffNos(userCodes);
-                if (Optional.ofNullable(staffNos.getData()).map(List::isEmpty).isPresent() ) {
+                if (Optional.ofNullable(staffNos.getData()).map(List::isEmpty).isPresent()) {
                     staffNos.getData().forEach(entity -> {
                         email.add(entity.getEmail());
                         mobile.add(entity.getPhone());
@@ -59,6 +59,25 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
             //TODO 邮件，没有员工邮件地址
             if (dto.getSendType().equals(2) || dto.getSendType().equals(3)) {
 
+                int size = email.size();
+                int unitNum = 400;
+                int startIndex = 0;
+                int endIndex = 0;
+                while (size > 0) {
+                    if (size > unitNum) {
+                        endIndex = startIndex + unitNum;
+                    } else {
+                        endIndex = startIndex + size;
+                    }
+                    List<String> insertData = email.subList(startIndex, endIndex);
+                    List<MailVo> mailVos = new ArrayList<>();
+                    insertData.forEach(m -> mailVos.add(new MailVo(m, "出库预警", SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()))));
+                    //发送400封
+                    SendTask.runTask(mailVos);
+
+                    size = size - unitNum;
+                    startIndex = endIndex;
+                }
             }
 
             return ComResponse.success();
