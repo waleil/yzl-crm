@@ -67,16 +67,18 @@ public class WorkOrderServiceImpl implements WorkOrderService {
         WorkOrderReceiveDTO workOrderReceiveDTO = new WorkOrderReceiveDTO();
         if (null != list && list.size() > 0) {
             // 按员工号查询员工信息
-            WorkOrderReceiveUpdateDTO receiveUpdateDTO = new WorkOrderReceiveUpdateDTO();
             String staffNo = QueryIds.userNo.get();
-            if(StringUtils.isNotEmpty(staffNo)){
+            if(StringUtils.isNotBlank(staffNo)){
                 ComResponse<StaffImageBaseInfoDto> sresponse = EhrStaffClient.getDetailsByNo(staffNo);
                 StaffImageBaseInfoDto staffInfo = sresponse.getData();
-                receiveUpdateDTO.setStaffNo(staffInfo.getStaffNo());
-                receiveUpdateDTO.setStaffName(staffInfo.getName());
-                receiveUpdateDTO.setDeptId(staffInfo.getDepartId());
-                receiveUpdateDTO.setStaffLevel(staffInfo.getPostLevelName());
-                workOrderReceiveDTO.setReceiveUpdateDTO(receiveUpdateDTO);
+                if(null != staffInfo){
+                    WorkOrderReceiveUpdateDTO receiveUpdateDTO = new WorkOrderReceiveUpdateDTO();
+                    receiveUpdateDTO.setStaffNo(staffInfo.getStaffNo());
+                    receiveUpdateDTO.setStaffName(staffInfo.getName());
+                    receiveUpdateDTO.setDeptId(staffInfo.getDepartId());
+                    receiveUpdateDTO.setStaffLevel(staffInfo.getPostLevelName());
+                    workOrderReceiveDTO.setReceiveUpdateDTO(receiveUpdateDTO);
+                }
             }
             for (WorkOrderFlowDTO workOrderFlowDTO : list) {
                 workOrderFlowDTO.setCreateId(QueryIds.userNo.get());

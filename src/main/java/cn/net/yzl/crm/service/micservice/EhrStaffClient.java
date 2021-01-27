@@ -208,6 +208,13 @@ public interface EhrStaffClient {
     }
 
     default List<String> getStaffWorkOrderTypeList(List<WorkOrderTypeDto> workOrderType) {
+        workOrderType.forEach(workOrderTypeDto -> {
+            if (0 == workOrderTypeDto.getWorkOrderType()) {
+                workOrderTypeDto.setWorkOrderType(41);
+            } else {
+                workOrderTypeDto.setWorkOrderType(42);
+            }
+        });
         ComResponse<List<String>> staffWorkOrderType = this.getStaffWorkOrderType(workOrderType);
         if (null != staffWorkOrderType && staffWorkOrderType.getCode() == 200) {
             return staffWorkOrderType.getData();

@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.net.yzl.crm.client.member.MemberAddressClient;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
@@ -31,6 +32,8 @@ public class OrderRestControllerTests {
 	private ProductClient productClient;
 	@Resource
 	private MemberFien memberFien;
+	@Resource
+	private MemberAddressClient memberAddressClient;
 	@Resource
 	private EhrStaffClient ehrStaffClient;
 	@Resource
@@ -67,6 +70,26 @@ public class OrderRestControllerTests {
 	}
 
 	@Test
+	public void testGetReveiverAddress() {
+		try {
+			String member = "100000002";
+			this.memberAddressClient.getReveiverAddress(member).getData().forEach(System.err::println);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetMemberAmount() {
+		try {
+			String member = "100000002";
+			System.err.println(this.memberFien.getMemberAmount(member).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
 	public void testGetDetailsByNo() {
 		try {
 			String staffno = "6666";
@@ -80,7 +103,7 @@ public class OrderRestControllerTests {
 	public void testGetDepartById() {
 		try {
 			Integer departid = 1;
-			System.err.println(this.ehrStaffClient.getDepartById(departid));
+			System.err.println(this.ehrStaffClient.getDepartById(departid).getData());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,13 +132,14 @@ public class OrderRestControllerTests {
 			order.getOrderDetailIns().add(od2);
 			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
+			order.setReveiverAddressNo(482416);
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	public void testSubmitOrderForMeal() {
 		try {
@@ -138,6 +162,7 @@ public class OrderRestControllerTests {
 //			order.getOrderDetailIns().add(od2);
 //			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
+			order.setReveiverAddressNo(482416);
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
