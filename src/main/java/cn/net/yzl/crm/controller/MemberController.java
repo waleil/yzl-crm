@@ -60,9 +60,6 @@ public class MemberController {
     @Autowired
     MemberProductEffectFien memberProductEffectFien;
 
-    @Autowired
-    DiseaseClient diseaseClient;
-
 
     @ApiOperation(value = "顾客列表-分页查询顾客列表")
     @PostMapping("v1/listPage")
