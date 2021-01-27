@@ -28,8 +28,11 @@ import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.constant.ObtainType;
+import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.model.MemberAmount;
+import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
@@ -41,8 +44,11 @@ import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
+import cn.net.yzl.order.model.vo.order.OrderRequest;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
+import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -264,15 +270,18 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList());
 				// 套餐商品总金额
-				int orderdetailTotal = result.stream().mapToInt(OrderDetail::getTotal).sum();
+				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				// 套餐价
-				int mealPrice = meal.getPrice();
+				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPrice());
 				orderdetailList.addAll(result.stream().map(od -> {
-					int price = mealPrice * od.getProductUnitPrice() / orderdetailTotal;
-					System.err.println(String.format(
-							"orderdetailTotal=%s, mealPrice=%s, ProductCode=%s, ProductUnitPrice=%s, ProductCount=%s",
-							orderdetailTotal, mealPrice, od.getProductCode(), price, od.getProductCount()));
-					od.setProductUnitPrice(price);
+					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+							.divide(orderdetailTotal, 2, BigDecimal.ROUND_HALF_UP);
+					// 如果是非赠品
+					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+						od.setProductUnitPrice(price.intValue());
+					} else {// 如果是赠品，将金额设置为0
+						od.setProductUnitPrice(0);
+					}
 					return od;
 				}).collect(Collectors.toList()));
 			}
@@ -334,10 +343,70 @@ public class OrderRestController {
 		orderm.setMemberName(member.getMember_name());// 顾客姓名
 		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
 		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
-		// 调用锁定库存接口
-		// 创建订单
-		//
-		return ComResponse.success(orderm);
+		// 组装扣减库存参数
+		OrderProductVO orderProduct = new OrderProductVO();
+		orderProduct.setOrderNo(orderm.getOrderNo());// 订单编号
+		orderProduct.setProductReduceVOS(entrySet.stream().map(m -> {
+			ProductReduceVO vo = new ProductReduceVO();
+			vo.setNum(m.getValue());// 商品数量
+			vo.setProductCode(m.getKey());// 商品编号
+			vo.setOrderNo(orderm.getOrderNo());// 订单编号
+			return vo;
+		}).collect(Collectors.toList()));
+		// 调用扣减库存服务接口
+		ComResponse<?> productReduce = this.productClient.productReduce(orderProduct);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
+			log.error("热线工单-购物车-提交订单>>调用扣减库存服务接口失败>>{}", productReduce);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
+		}
+		// 组装顾客账户消费参数
+		MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
+		memberAmountDetail.setDiscountMoney(orderm.getTotal());// 订单总金额，单位分
+		memberAmountDetail.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+		memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);// 消费
+		memberAmountDetail.setOrderNo(orderm.getOrderNo());// 订单编号
+		memberAmountDetail.setRemark("热线工单-购物车-提交订单:坐席下单");// 备注
+		// 调用顾客账户消费服务接口
+		ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
+			log.error("热线工单-购物车-提交订单>>调用顾客账户消费服务接口失败>>{}", customerAmountOperation);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
+		}
+		// 调用创建订单服务接口
+		ComResponse<?> submitOrder = this.orderFeignClient.submitOrder(new OrderRequest(orderm, orderdetailList));
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(submitOrder.getCode())) {
+			log.error("热线工单-购物车-提交订单>>创建订单失败>>{}", submitOrder);
+			// 恢复库存
+			ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
+			// 如果调用服务接口失败
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
+				log.error("热线工单-购物车-提交订单>>恢复库存失败>>{}", increaseStock);
+				// TODO zww 插入本地消息记录表
+			}
+			// 恢复账户
+			memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 退回
+			memberAmountDetail.setRemark("热线工单-购物车-提交订单:退回金额");// 备注
+			ComResponse<?> customerAmountOperation2 = this.memberFien.customerAmountOperation(memberAmountDetail);
+			// 如果调用服务接口失败
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation2.getCode())) {
+				log.error("热线工单-购物车-提交订单>>恢复账户失败>>{}", customerAmountOperation2);
+				// TODO zww 插入本地消息记录表
+			}
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
+		}
+		// 组装返回数据
+		Map<String, Object> retval = new HashMap<>();
+		retval.put("reveiverAddress", orderm.getReveiverAddress());
+		retval.put("reveiverName", orderm.getReveiverName());
+		retval.put("reveiverTelphoneNo", orderm.getReveiverTelphoneNo());
+		retval.put("total", orderm.getTotal());
+		ComResponse<MemberAmountDto> mresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		BigDecimal totalMoney = BigDecimal.valueOf(mresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100));
+		retval.put("totalMoney", totalMoney.doubleValue());
+		return ComResponse.success(retval);
 	}
 
 }

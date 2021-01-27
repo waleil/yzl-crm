@@ -186,4 +186,27 @@ public class StoreController {
         return storeFeginService.getAllFinanceDepart();
     }
 
+
+    @ApiOperation(value = "根据仓库状态查询仓库",notes = "根据仓库状态查询仓库")
+    @GetMapping("v1/selectOrderStatus")
+    public ComResponse<List<StoreVO>> selectOrderStatus(@RequestParam("status") Integer status) {
+        return storeFeginService.selectOrderStatus(status);
+    }
+
+
+    @ApiOperation(value = "下拉库位",notes = "下拉库位")
+    @GetMapping("v1/selectStoreLocalPullDown")
+    public ComResponse<List<StoreLocalPo>> selectStoreLocalPullDown(@RequestParam("storeId") Integer storeId) {
+        ComResponse<List<StoreLocalPo>> listComResponse = storeFeginService.selectStoreLocalPullDown(storeId);
+        return listComResponse;
+    }
+
+
+    @ApiOperation(value = "下拉仓库列表",notes = "下拉仓库列表")
+    @GetMapping("v1/selectStoreAny")
+    public ComResponse<List<StorePo>> selectStoreAny() {
+        return storeFeginService.selectStoreAny();
+    }
+
+
 }

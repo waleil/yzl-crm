@@ -3,10 +3,7 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.ReturnReceiptFeginService;
-import cn.net.yzl.model.dto.RefuseReturnDto;
-import cn.net.yzl.model.dto.ReturnReceiptDetailDto;
-import cn.net.yzl.model.dto.ReturnReceiptPageDto;
-import cn.net.yzl.model.dto.ReturnToStoreAddDto;
+import cn.net.yzl.model.dto.*;
 import cn.net.yzl.model.vo.ReturnReceiptCondition;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -83,4 +80,19 @@ public class ReturnReceiptController {
     public ComResponse<List<Map<String,Object>>> returnTypeList() {
         return returnReceiptFeginService.returnTypeList();
     }
+
+
+    /**
+     * 扫描商品
+     * @param returnGoodsScanDto
+     * @return
+     */
+    @ApiOperation(value = "扫描商品", notes = "扫描商品")
+    @PostMapping("v1/scanning/product")
+    public ComResponse<List<ReturnToStoreDto>> scanningProduct(@RequestBody ReturnGoodsScanDto returnGoodsScanDto){
+        return returnReceiptFeginService.scanningProduct(returnGoodsScanDto);
+    }
+
+
+
 }

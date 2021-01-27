@@ -30,7 +30,7 @@
         <dependency>
             <groupId>cn.net.yzl.logistics</groupId>
             <artifactId>yzl-logistics-common</artifactId>
-            <version>1.0-RELEASE</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--员工服务common依赖-->
         <dependency>
