@@ -7,26 +7,15 @@ import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.ehr.EhrStaff;
 import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
+import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
+import cn.net.yzl.crm.utils.HandInUtils;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
-import cn.net.yzl.workorder.model.dto.FindByCalledPhoneIsEmptyDTO;
-import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
-import cn.net.yzl.workorder.model.dto.IsListPageDTO;
-import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
-import cn.net.yzl.workorder.model.dto.ReceiveDTO;
-import cn.net.yzl.workorder.model.dto.RecoveryDTO;
-import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
-import cn.net.yzl.workorder.model.dto.UpdateBatchDTO;
-import cn.net.yzl.workorder.model.dto.UpdateBatchWorkOrderDTO;
-import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
-import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
-import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
-import cn.net.yzl.workorder.model.dto.UpdateWorkOrderVisitDTO;
-import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
-import cn.net.yzl.workorder.model.dto.WorkOrderUnclaimedUserDTO;
+import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
+import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
@@ -362,5 +351,19 @@ public class WorkOrderController {
     @ApiOperation(value = "智能工单：我的热线工单-修改处理工单流水", notes = "智能工单：我的热线工单-修改处理工单流水")
     public ComResponse<String> updateWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
         return workOrderClient.updateWorkOrderDisposeFlow(workOrderDisposeFlowBean);
+    }
+
+    @ApiOperation(value = "智能工单-我的回访工单-单条上交",notes = "智能工单-我的回访工单-单条上交")
+    @PostMapping(value = "v1/isHandIn")
+    public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
+        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = workOrderClient.submissionRules();
+        if(CollectionUtils.isEmpty(listComResponse.getData())){
+            return ComResponse.success(Boolean.TRUE);
+        }
+        HandInUtils handInUtils = new HandInUtils();
+        handInUtils.emptyNumberShutdown(isHandInDTO);
+        handInUtils.unableToContact(isHandInDTO,listComResponse.getData());
+        handInUtils.customerRefusedToVisit(isHandInDTO);
+        return ComResponse.success(Boolean.TRUE);
     }
 }
