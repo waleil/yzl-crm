@@ -2,8 +2,8 @@ package cn.net.yzl.crm.service.micservice;
 
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.crm.customer.dto.member.MemberActionRelationDto;
 import cn.net.yzl.crm.dto.member.ActionDictDto;
-import cn.net.yzl.crm.dto.member.MemberActionRelationDto;
 import cn.net.yzl.crm.model.customer.ActionDict;
 import cn.net.yzl.crm.model.customer.MemberActionRelation;
 import io.swagger.annotations.ApiOperation;
@@ -41,6 +41,9 @@ public interface MemberActionFeign {
 
     @PostMapping("v1/addRelation")
     public ComResponse<Integer> addRelation(@RequestBody @Validated MemberActionRelationDto memberAgeRelationDtos);
+
+    @PostMapping("v1/addRelationWithDict")
+    public ComResponse<Integer> addRelationWithDict(MemberActionRelationDto memberActionRelationDto);
 
     @GetMapping("v1/deleteRelation")
     public ComResponse<Integer> deleteRelation(@RequestParam("rid") Integer rid);
