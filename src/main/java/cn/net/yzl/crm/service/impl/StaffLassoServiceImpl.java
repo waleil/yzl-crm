@@ -19,7 +19,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static cn.hutool.core.collection.CollUtil.isEmpty;
@@ -47,7 +46,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
 
 
     @Override
-    public List<String> calculationDto(CalculationDto calculationDto) throws Exception {
+    public List<String> calculationDto(CalculationDto calculationDto, Date date) throws Exception {
         if (null == calculationDto) {
             return Collections.emptyList();
         }
@@ -165,7 +164,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             }
             return null;
         });
-        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup();
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup(date);
 
         List<String> staffNoList = all.get();
         if (CollectionUtils.isEmpty(staffNoList)) {
@@ -176,9 +175,10 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         if (CollectionUtils.isEmpty(collect)) {
             return CollectionUtils.isNotEmpty(all.get()) ? all.get() : Collections.emptyList();
         }
-        AtomicReference<List<String>> newStaffNo = new AtomicReference<>();
-        collect.forEach(staffList -> newStaffNo.set(CollUtil.subtractToList(staffNoList, staffList)));
-        return newStaffNo.get();
+        for (List<String> staffNo : collect) {
+            staffNoList = CollUtil.subtractToList(staffNoList, staffNo);
+        }
+        return staffNoList;
     }
 
     @SafeVarargs
@@ -219,7 +219,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         if (null == data) {
             return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE);
         }
-        return ComResponse.success(this.calculationDto(data.getCalculationDto()).size());
+        return ComResponse.success(this.calculationDto(data.getCalculationDto(), data.getCreateTime()).size());
     }
 
     @Override
@@ -249,14 +249,12 @@ public class StaffLassoServiceImpl implements StaffLassoService {
 
     @Override
     public void taskCalculation() {
-        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup();
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup(new Date());
         staffCrowdGroup.forEach(staffGroup -> {
             try {
-                List<String> staffs = this.calculationDto(staffGroup.getCalculationDto());
-                if (!CollectionUtils.isEmpty(staffs)) {
-                    staffGroup.setStaffCodeList(staffs);
-                    staffGroup.setPersonCount(staffs.size());
-                }
+                List<String> staffs = this.calculationDto(staffGroup.getCalculationDto(), staffGroup.getCreateTime());
+                staffGroup.setStaffCodeList(staffs);
+                staffGroup.setPersonCount(staffs.size());
                 crmStaffClient.updateResult(staffGroup);
             } catch (Exception e) {
                 e.printStackTrace();

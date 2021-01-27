@@ -1,10 +1,7 @@
 package cn.net.yzl.crm.controller;
 
-import cn.hutool.core.date.DateUnit;
-import cn.hutool.core.date.DateUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
@@ -38,7 +35,7 @@ public class StaffLassoController {
     @ApiOperation(value = "试算")
     @PostMapping("v1/calculationDto")
     public ComResponse<Integer> calculationDto(@RequestBody CalculationDto calculationDto) throws Exception {
-        Integer lassoCount = staffLassoService.calculationDto(calculationDto).size();
+        Integer lassoCount = staffLassoService.calculationDto(calculationDto, new Date()).size();
         return ComResponse.success(lassoCount);
     }
 
