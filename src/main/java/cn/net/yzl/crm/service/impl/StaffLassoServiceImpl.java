@@ -162,7 +162,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
+            return Collections.emptyList();
         });
         List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup(date);
 
