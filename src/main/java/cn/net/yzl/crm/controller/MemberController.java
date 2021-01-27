@@ -11,9 +11,12 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
+import cn.net.yzl.crm.customer.dto.member.MemberProductEffectDTO;
 import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
 import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.*;
+import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
+import cn.net.yzl.crm.customer.vo.MemberProductEffectVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
@@ -22,6 +25,7 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
 import cn.net.yzl.crm.staff.dto.MemberDiseaseDto;
+import cn.net.yzl.crm.service.micservice.member.MemberProductEffectFien;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
 import io.swagger.annotations.*;
@@ -51,7 +55,7 @@ public class MemberController {
     @Autowired
     WorkOrderClient workOrderClient;
     @Autowired
-    DiseaseClient diseaseClient;
+    MemberProductEffectFien memberProductEffectFien;
 
     @ApiOperation(value = "顾客列表-分页查询顾客列表")
     @PostMapping("v1/listPage")
@@ -304,4 +308,29 @@ public class MemberController {
     ComResponse<List<MemberAmountDetailDto>> getMemberAmountDetailList(@RequestParam("memberCard") String  memberCard, @RequestParam("timeFlag") Integer timeFlag) throws ParseException {
         return memberFien.getMemberAmountDetailList(memberCard,timeFlag);
     }
+
+    /**
+     * 修改顾客服用效果记录
+     *
+     * @param productEffects
+     * @return
+     */
+    @ApiOperation(value = "修改顾客服用效果记录", notes = "修改顾客服用效果记录")
+    @PostMapping(value = "/v1/batchModifyProductEffect")
+    public ComResponse batchModifyProductEffect(
+            @RequestBody List<MemberProductEffectVO> productEffects) {
+        ComResponse result = memberProductEffectFien.batchModifyProductEffect(productEffects);
+        return result;
+    }
+
+
+    @ApiOperation(value = "获取顾客服用效果记录", notes = "获取顾客服用效果记录")
+    @PostMapping(value = "/v1/getProductEffects")
+    public ComResponse getProductEffects(
+            @RequestBody MemberProductEffectSelectVO productEffect) {
+        ComResponse<List<MemberProductEffectDTO>> result = memberProductEffectFien.getProductEffects(productEffect);
+        return result;
+    }
+
+
 }

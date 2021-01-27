@@ -20,12 +20,12 @@ public class BrandServiceImpl implements BrandService {
 
 
     @Override
-    public ComResponse getAllBrands(Integer pageNo, Integer pageSize, String keyword) {
+    public ComResponse<?> getAllBrands(Integer pageNo, Integer pageSize, String keyword) {
         return ComResponse.success(brandClient.getAllBrands(pageNo, pageSize,keyword));
     }
 
     @Override
-    public ComResponse getBrandById(Integer id) {
+    public ComResponse<?> getBrandById(Integer id) {
         ComResponse<BrandBean> brands = brandClient.getBrandById(id);
         return brands;
     }
@@ -38,8 +38,8 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public ComResponse insertBrand(BrandVO brand) {
-        ComResponse comResponse = brandClient.editBrand(brand);
+    public ComResponse<?> insertBrand(BrandVO brand) {
+        ComResponse<?> comResponse = brandClient.editBrand(brand);
         return comResponse;
     }
 
@@ -50,7 +50,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public ComResponse deleteBrandById(BrandDelVO brandDelVO) {
+    public ComResponse<?> deleteBrandById(BrandDelVO brandDelVO) {
         return brandClient.deleteById(brandDelVO);
     }
 

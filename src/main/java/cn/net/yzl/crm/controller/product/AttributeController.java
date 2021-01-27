@@ -28,7 +28,7 @@ public class AttributeController {
 
     @ApiOperation(value = "添加属性")
     @PostMapping("insertAttribute")
-    public ComResponse insertProductAttribute(@NotNull(message = "数据不能为空！")@RequestBody AttributeBean attributeBean) {
+    public ComResponse<?> insertProductAttribute(@NotNull(message = "数据不能为空！")@RequestBody AttributeBean attributeBean) {
         if (attributeBean.getId() == null) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), ResponseCodeEnums.SYSTEM_ERROR_CODE.getMessage());
         }else {
@@ -38,7 +38,7 @@ public class AttributeController {
 
     @ApiOperation(value = "通过页码和每页条数查询属性")
     @GetMapping("selectPageAttribute")
-    public ComResponse selectPageAttribute(@RequestParam("pageNo") @NotNull(message = "页码信息不能为空！")  int pageNo, @RequestParam("pageSize") @NotNull(message = "每页条数不能为空！") int pageSize) {
+    public ComResponse<?> selectPageAttribute(@RequestParam("pageNo") @NotNull(message = "页码信息不能为空！")  int pageNo, @RequestParam("pageSize") @NotNull(message = "每页条数不能为空！") int pageSize) {
         if (pageSize>50) {
             pageSize=50;
         }
@@ -46,8 +46,8 @@ public class AttributeController {
     }
     @ApiOperation(value = "通过id查询属性")
     @GetMapping("selectById")
-    public ComResponse selectById(@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
-        ComResponse comResponse = attributeService.selectById(id);
+    public ComResponse<?> selectById(@RequestParam("id") @NotNull(message = "id不能为空！") Integer id) {
+        ComResponse<?> comResponse = attributeService.selectById(id);
         if (comResponse.getData() == null) {
             return ComResponse.nodata();
         }
@@ -56,10 +56,10 @@ public class AttributeController {
 
     @ApiOperation(value = "通过分类查询属性")
     @GetMapping("selectByclassifyIdAttribute")
-    public ComResponse selectByclassifyIdAttribute(@RequestParam("id") @ApiParam("分类id") @NotNull(message = "id不能为空！") Integer id) {
-        ComResponse comResponse = attributeService.selectByclassifyIdAttribute(id);
-        List list = new ArrayList<>();
-        if (comResponse.getData() == null||(list = (List) comResponse.getData()).size() == 0) {
+    public ComResponse<?> selectByclassifyIdAttribute(@RequestParam("id") @ApiParam("分类id") @NotNull(message = "id不能为空！") Integer id) {
+        ComResponse<?> comResponse = attributeService.selectByclassifyIdAttribute(id);
+        List<?> list = new ArrayList<>();
+        if (comResponse.getData() == null||(list = (List<?>) comResponse.getData()).size() == 0) {
             return ComResponse.nodata();
         }
         return comResponse;
@@ -67,7 +67,7 @@ public class AttributeController {
 
     @ApiOperation(value = "修改属性")
     @PostMapping("updateAttribute")
-    public ComResponse updateAttribute(@NotNull(message = "数据不能为空！")@RequestBody AttributeBean attributeBean) {
+    public ComResponse<?> updateAttribute(@NotNull(message = "数据不能为空！")@RequestBody AttributeBean attributeBean) {
         return attributeService.updateAttribute(attributeBean);
     }
 }

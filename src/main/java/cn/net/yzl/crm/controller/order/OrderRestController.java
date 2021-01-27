@@ -24,14 +24,15 @@ import com.alibaba.fastjson.JSON;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.client.member.MemberAddressClient;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.ObtainType;
+import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.customer.model.MemberAmount;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
@@ -73,6 +74,8 @@ public class OrderRestController {
 	@Resource
 	private MemberFien memberFien;
 	@Resource
+	private MemberAddressClient memberAddressClient;
+	@Resource
 	private EhrStaffClient ehrStaffClient;
 	@Resource
 	private RedisUtil redisUtil;
@@ -103,7 +106,33 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客信息>>{}", member);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
 		}
-		MemberAmount account = member.getMember_amount();// 顾客账户
+		// 按顾客号查询顾客收获地址
+		ComResponse<List<ReveiverAddressDto>> raresponse = this.memberAddressClient
+				.getReveiverAddress(orderin.getMemberCardNo());
+		// 如果调用服务异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(raresponse.getCode())) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客收货地址>>{}", raresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
+		}
+		List<ReveiverAddressDto> reveiverAddresses = raresponse.getData();
+		if (CollectionUtils.isEmpty(reveiverAddresses)) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客收货地址>>{}", raresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
+		}
+		ReveiverAddressDto reveiverAddress = reveiverAddresses.stream()
+				.filter(p -> p.getId().equals(orderin.getReveiverAddressNo())).findFirst().orElse(null);
+		if (reveiverAddress == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客收货地址>>{}", reveiverAddress);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
+		}
+		// 按顾客号查询顾客账号
+		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
+		// 如果调用服务异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客账号>>{}", maresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
+		}
+		MemberAmountDto account = maresponse.getData();
 		if (account == null) {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客账号>>{}", account);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
@@ -322,15 +351,15 @@ public class OrderRestController {
 		}
 		orderm.setRemark(orderin.getRemark());// 订单备注
 		orderm.setReveiverAddressNo(orderin.getReveiverAddressNo());// 配送地址唯一标识
-		orderm.setReveiverAddress(orderin.getReveiverAddress());// 收货人地址
-		orderm.setReveiverName(orderin.getReveiverName());// 收货人姓名
-		orderm.setReveiverTelphoneNo(orderin.getReveiverTelphoneNo());// 收货人电话
-		orderm.setReveiverProvince(orderin.getReveiverProvince());// 省份编码
-		orderm.setReveiverProvinceName(orderin.getReveiverProvinceName());// 省份名称
-		orderm.setReveiverCity(orderin.getReveiverCity());// 城市编码
-		orderm.setReveiverCityName(orderin.getReveiverCityName());// 城市名称
-		orderm.setReveiverArea(orderin.getReveiverArea());// 区县编码
-		orderm.setReveiverAreaName(orderin.getReveiverAreaName());// 区县名称
+		orderm.setReveiverAddress(reveiverAddress.getMemberAddress());// 收货人地址
+		orderm.setReveiverName(reveiverAddress.getMemberName());// 收货人姓名
+		orderm.setReveiverTelphoneNo(reveiverAddress.getMemberMobile());// 收货人电话
+		orderm.setReveiverProvince(String.valueOf(reveiverAddress.getMemberProvinceNo()));// 省份编码
+		orderm.setReveiverProvinceName(reveiverAddress.getMemberProvinceName());// 省份名称
+		orderm.setReveiverCity(String.valueOf(reveiverAddress.getMemberCityNo()));// 城市编码
+		orderm.setReveiverCityName(reveiverAddress.getMemberCityName());// 城市名称
+		orderm.setReveiverArea(String.valueOf(reveiverAddress.getMemberCountyNo()));// 区县编码
+		orderm.setReveiverAreaName(reveiverAddress.getMemberCountyName());// 区县名称
 		orderm.setMediaChannel(orderin.getMediaChannel());// 媒介渠道
 		orderm.setMediaName(orderin.getMediaName());// 媒介名称
 		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
@@ -340,7 +369,8 @@ public class OrderRestController {
 		orderm.setUpdateName(orderm.getStaffName());// 更新人姓名
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
 		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
-		orderm.setMemberName(member.getMember_name());// 顾客姓名
+		orderm.setMemberName(orderin.getMemberName());// 顾客姓名
+		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
 		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
 		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
 		// 组装扣减库存参数
@@ -397,14 +427,17 @@ public class OrderRestController {
 			}
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
+		log.info("热线工单-购物车-提交订单>>创建订单成功");
 		// 组装返回数据
 		Map<String, Object> retval = new HashMap<>();
 		retval.put("reveiverAddress", orderm.getReveiverAddress());
 		retval.put("reveiverName", orderm.getReveiverName());
 		retval.put("reveiverTelphoneNo", orderm.getReveiverTelphoneNo());
 		retval.put("total", orderm.getTotal());
-		ComResponse<MemberAmountDto> mresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
-		BigDecimal totalMoney = BigDecimal.valueOf(mresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100));
+		// 再次调用顾客账户余额
+		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		BigDecimal totalMoney = BigDecimal.valueOf(maresponse.getData().getTotalMoney())
+				.divide(BigDecimal.valueOf(100));
 		retval.put("totalMoney", totalMoney.doubleValue());
 		return ComResponse.success(retval);
 	}

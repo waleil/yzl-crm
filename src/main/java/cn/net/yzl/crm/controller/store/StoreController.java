@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -187,11 +186,11 @@ public class StoreController {
     }
 
 
-    @ApiOperation(value = "根据仓库状态查询仓库",notes = "根据仓库状态查询仓库")
-    @GetMapping("v1/selectOrderStatus")
-    public ComResponse<List<StoreVO>> selectOrderStatus(@RequestParam("status") Integer status) {
-        return storeFeginService.selectOrderStatus(status);
-    }
+//    @ApiOperation(value = "根据仓库状态查询仓库",notes = "根据仓库状态查询仓库")
+//    @GetMapping("v1/selectOrderStatus")
+//    public ComResponse<List<StoreVO>> selectOrderStatus(@RequestParam("status") Integer status) {
+//        return storeFeginService.selectOrderStatus(status);
+//    }
 
 
     @ApiOperation(value = "下拉库位",notes = "下拉库位")
@@ -208,5 +207,12 @@ public class StoreController {
         return storeFeginService.selectStoreAny();
     }
 
+
+
+    @ApiOperation(value = "新增仓库的时候下拉库位的查询",notes = "新增仓库的时候下拉库位的查询")
+    @GetMapping("v1/StoreLocalPullDown")
+    public ComResponse<List<StoreLocalVo>> StoreLocalPullDown() {
+        return storeFeginService.storeLocalPullDown();
+    }
 
 }

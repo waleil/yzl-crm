@@ -47,7 +47,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     @Override
-    public ComResponse changeName(Integer id, String name, String userId) {
+    public ComResponse<?> changeName(Integer id, String name, String userId) {
         return client.changeName(id, name, userId);
     }
 
