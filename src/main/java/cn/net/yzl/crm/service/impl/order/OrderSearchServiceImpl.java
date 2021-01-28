@@ -5,13 +5,15 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.model.order.ExpressTraceResDTO;
 import cn.net.yzl.crm.model.order.OrderInfoVO;
 import cn.net.yzl.crm.model.order.OrderLogistcInfo;
+import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
-import cn.net.yzl.crm.service.micservice.OrderLogisticsInfoClient;
+
 import cn.net.yzl.crm.service.order.IOrderSearchService;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
+import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.order.model.vo.order.OrderInfoResDTO;
 import cn.net.yzl.order.model.vo.order.OrderProductDTO;
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +33,7 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
     private MemberFien memberFien;
 
     @Autowired
-    private OrderLogisticsInfoClient logisticsFien;
+    private LogisticsFien logisticsFien;
 
     
     @Override
@@ -92,8 +94,10 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         orderLogistcInfo = new OrderLogistcInfo();
         orderLogistcInfo.setCompanyName(order.getExpressCompanyName());
         orderLogistcInfo.setMailId(order.getExpressNumber());
-
-        ComResponse<List<ExpressTraceResDTO>> logisticsTraces = logisticsFien.findLogisticsTraces(order.getExpressCompanyCode(), order.getExpressNumber());
+        ExpressFindTraceDTO dto = new ExpressFindTraceDTO();
+        dto.setMailId(order.getExpressNumber());
+        dto.setCompanyCode(order.getExpressCompanyCode());
+        GeneralResult<List<ExpressTraceResDTO>> logisticsTraces = logisticsFien.findLogisticsTraces(dto);
         if(logisticsTraces.getCode().compareTo(Integer.valueOf(200)) !=0){
             throw new BizException(logisticsTraces.getCode(),logisticsTraces.getMessage());
         }
