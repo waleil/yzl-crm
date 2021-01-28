@@ -27,6 +27,11 @@ public class LogisticsController {
     @Autowired
     LogisticsFien logisticsFien;
 
+    @ApiOperation(value="test")
+    @PostMapping("ee/22")
+    private String getTest(){
+        return  logisticsFien.getTest();
+    }
 
     @ApiOperation(value="物流公司编码和名称")
     @PostMapping("v1/express/company/list")
@@ -44,7 +49,7 @@ public class LogisticsController {
 //                = storeService.getStoreBasic();
     }
 
-    @ApiOperation("物流快递追踪轨迹信息")
+    @ApiOperation("快递公司编码信息")
     @GetMapping ("v1/selectExpressComponyCode")
     public ComResponse<List<ExpressCodeVo>> selectExpressComponyCode() {
         return logisticsFien.selectExpressComponyCode();
