@@ -65,13 +65,14 @@ public class WorkOrderController {
     public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO) {
         isListPageDTO.setStaffNO(QueryIds.userNo.get());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isListPage(isListPageDTO);
-        Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
+            Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
         String productNames = new String();
         for (WorkOrderBean workOrderBean : workOrderBeans) {
+            workOrderBean.setProductName("");
             productNames += "," + workOrderBean.getProductCode();
         }
         productNames = productNames.substring(1);
@@ -79,8 +80,12 @@ public class WorkOrderController {
         if (!CollectionUtils.isEmpty(data)) {
             Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())) {
-                    workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+                if (workOrderBean.getProductCode().contains(collect.get(workOrderBean.getProductCode()).getProductCode())) {
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getProductName())){
+                        workOrderBean.setProductName(workOrderBean.getProductName()+","+collect.get(workOrderBean.getProductCode()).getName());
+                    }else {
+                        workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+                    }
                 }
             });
         }
@@ -129,7 +134,7 @@ public class WorkOrderController {
     @PostMapping(value = "v1/listPage")
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
-        Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
+            Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
             return ComResponse.success();
         }
@@ -143,8 +148,12 @@ public class WorkOrderController {
         if (!CollectionUtils.isEmpty(data)) {
             Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())) {
-                    workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+                if (workOrderBean.getProductCode().contains(collect.get(workOrderBean.getProductCode()).getProductCode())) {
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getProductName())){
+                        workOrderBean.setProductName(workOrderBean.getProductName()+","+collect.get(workOrderBean.getProductCode()).getName());
+                    }else {
+                        workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+                    }
                 }
             });
         }
