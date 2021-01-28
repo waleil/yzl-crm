@@ -106,6 +106,8 @@ public class MemberGroupController {
             ComResponse result= memberGroupFeign.addCrowdGroup(member_group);
             return result;
         } else {
+            //设置vo的id
+            member_group.set_id(memberCrowdGroup.get_id());
             member_group.setUpdate_code(userId);
             ComResponse result= memberGroupFeign.updateCrowdGroup(member_group);
             return result;

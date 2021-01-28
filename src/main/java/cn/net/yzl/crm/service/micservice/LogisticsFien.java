@@ -28,6 +28,14 @@ import javax.validation.constraints.NotBlank;
 public interface LogisticsFien {
 
 
+    @ApiOperation(value = "物流公司编码和名称")
+    @PostMapping("v1/express/company/list")
+    public ComResponse viewExpressCompany();
+
+    @ApiOperation(value = "获取所有仓库和编码")
+    @GetMapping("v1/store/listPage")
+    public List<ObjectCommon> storeService();
+
     @ApiOperation("物流快递追踪轨迹信息")
     @GetMapping("/v1/selectExpressComponyCode")
     ComResponse<List<ExpressCodeVo>> selectExpressComponyCode();
