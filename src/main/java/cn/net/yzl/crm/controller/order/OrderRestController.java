@@ -124,6 +124,10 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息>>{}", orderin.getMemberCardNo(), member);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
 		}
+		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
+		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
+		orderm.setMemberName(member.getMember_name());// 顾客姓名
+		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 		// 按顾客号查询顾客收获地址
 		ComResponse<List<ReveiverAddressDto>> raresponse = this.memberAddressClient
 				.getReveiverAddress(orderin.getMemberCardNo());
@@ -165,6 +169,8 @@ public class OrderRestController {
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, staffInfo.getWorkCode(),
 				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis生成订单号
+		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
+		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
 		// 按部门id查询部门信息
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
@@ -385,15 +391,9 @@ public class OrderRestController {
 		orderm.setMediaName(orderin.getMediaName());// 媒介名称
 		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
 		orderm.setMediaType(orderin.getMediaType());// 媒介类型
-		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
 		orderm.setUpdateName(orderm.getStaffName());// 更新人姓名
-		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
-		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
-		orderm.setMemberName(orderin.getMemberName());// 顾客姓名
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
-		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
-		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
 		// 组装扣减库存参数
 		OrderProductVO orderProduct = new OrderProductVO();
 		orderProduct.setOrderNo(orderm.getOrderNo());// 订单编号
@@ -425,8 +425,8 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>调用顾客[{}]账户消费服务接口失败>>{}", orderm.getMemberCardNo(), customerAmountOperation);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
-		System.err.println(JSON.toJSONString(orderm, true));
-		System.err.println(JSON.toJSONString(orderdetailList, true));
+		log.info("订单: {}", JSON.toJSONString(orderm, true));
+		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
 		// 调用创建订单服务接口
 		ComResponse<?> submitOrder = this.orderFeignClient.submitOrder(new OrderRequest(orderm, orderdetailList));
 		// 如果调用服务接口失败
@@ -455,8 +455,9 @@ public class OrderRestController {
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
 				orderm.getReveiverTelphoneNo(),
-				BigDecimal.valueOf(orderm.getTotal()).divide(BigDecimal.valueOf(100)).doubleValue(), BigDecimal
-						.valueOf(maresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100)).doubleValue()));
+				BigDecimal.valueOf(orderm.getTotal()).divide(BigDecimal.valueOf(100)).doubleValue(),
+				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100)).doubleValue(),
+				orderm.getOrderNo()));
 	}
 
 	@Getter
@@ -475,5 +476,7 @@ public class OrderRestController {
 		private double total;
 		@ApiModelProperty(value = "账户余额")
 		private double totalMoney;
+		@ApiModelProperty(value = "订单号")
+		private String orderNo;
 	}
 }
