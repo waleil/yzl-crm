@@ -425,8 +425,8 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>调用顾客[{}]账户消费服务接口失败>>{}", orderm.getMemberCardNo(), customerAmountOperation);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
-		System.err.println(JSON.toJSONString(orderm, true));
-		System.err.println(JSON.toJSONString(orderdetailList, true));
+		log.info("订单: {}", JSON.toJSONString(orderm, true));
+		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
 		// 调用创建订单服务接口
 		ComResponse<?> submitOrder = this.orderFeignClient.submitOrder(new OrderRequest(orderm, orderdetailList));
 		// 如果调用服务接口失败
@@ -455,8 +455,9 @@ public class OrderRestController {
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
 				orderm.getReveiverTelphoneNo(),
-				BigDecimal.valueOf(orderm.getTotal()).divide(BigDecimal.valueOf(100)).doubleValue(), BigDecimal
-						.valueOf(maresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100)).doubleValue()));
+				BigDecimal.valueOf(orderm.getTotal()).divide(BigDecimal.valueOf(100)).doubleValue(),
+				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100)).doubleValue(),
+				orderm.getOrderNo()));
 	}
 
 	@Getter
@@ -475,5 +476,7 @@ public class OrderRestController {
 		private double total;
 		@ApiModelProperty(value = "账户余额")
 		private double totalMoney;
+		@ApiModelProperty(value = "订单号")
+		private String orderNo;
 	}
 }
