@@ -17,6 +17,7 @@ import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
+import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.service.micservice.MemberFien;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -171,7 +173,18 @@ public class MemberController {
     })
     public ComResponse<MemberServiceJourneryDto> getMemberServiceJourney(String memberCard) {
         // todo 等待 订单和工单提供接口
-        return ComResponse.success();
+
+        MemberServiceJourneryDto memberServiceJourneryDto = new MemberServiceJourneryDto();
+        memberServiceJourneryDto.setStaffNum(1);
+        MemberServiceJournery memberServiceJournery = new MemberServiceJournery();
+        memberServiceJournery.setEndTime(new Date());
+        memberServiceJournery.setStaffNo("14020");
+        memberServiceJournery.setStartTime(new Date());
+        memberServiceJournery.setTotalPrice(112.0);
+        List list = new ArrayList<MemberServiceJournery>();
+        list.add(memberServiceJournery);
+        memberServiceJourneryDto.setMemberServiceJourneryList(list);
+        return ComResponse.success(memberServiceJourneryDto);
     }
 
 
