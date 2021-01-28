@@ -44,7 +44,7 @@ public class PurchaseReturnOrderController {
     @ApiOperation(value = "采购退货单分页列表", notes = "采购退货单分页列表")
 
     @PostMapping("v1/page")
-    public ComResponse<Page<PurReturnPageDto>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
+    public ComResponse<Page<PurReturnNotMerge>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
         return purchaseReturnFeginService.page(purchaseReturnCondition);
     }
 
