@@ -239,4 +239,13 @@ public interface WorkOrderClient {
      */
     @PostMapping(value = "v1/overtimeReturnVisit")
     ComResponse<Boolean> overtimeReturnVisit(IsHandInDTO isHandInDTO);
+
+    /**
+     * 智能工单-我的回访工单-自取规则上交
+     *
+     * @param isHandInDTO
+     * @return
+     */
+    @PostMapping("v1/rulesHandedIn")
+    ComResponse<Void> rulesHandedIn(IsHandInDTO isHandInDTO);
 }
