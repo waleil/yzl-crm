@@ -72,7 +72,7 @@ public class MemberGroupController {
         member_group.setTotal_amount(memberCrowdGroup.getTotal_amount());
         member_group.setTicket(memberCrowdGroup.getTicket());
         member_group.setLast_order_to_days(memberCrowdGroup.getLast_order_to_days());
-        member_group.setLogistics_company_id(memberCrowdGroup.getLogistics_company());
+        member_group.setLogistics_company_id(memberCrowdGroup.getLogistics_company_id());
         member_group.setLogistics_state(memberCrowdGroup.getLogistics_state());
         member_group.setMediaList(memberCrowdGroup.getMediaList());
         member_group.setIntegral(memberCrowdGroup.getIntegral());
@@ -95,11 +95,12 @@ public class MemberGroupController {
         member_group.setSign_date_to_days(memberCrowdGroup.getSign_date_to_days());
         member_group.setStaff_sex(memberCrowdGroup.getStaff_sex());
         member_group.setVip(memberCrowdGroup.getVip());
-        member_group.setActiveCodeList(memberCrowdGroup.getActiveList());
+        member_group.setActiveCodeList(memberCrowdGroup.getActiveCodeList());
+        member_group.setActiveTypeList(memberCrowdGroup.getActiveTypeList());
         member_group.setOrder_total_amount(memberCrowdGroup.getOrder_total_amount());
         member_group.setUpdate_time(DateHelper.getCurrentDate());
         member_group.setEnable(0);
-
+        member_group.setCreate_name(memberCrowdGroup.getCreate_name());
         if (StringUtil.isNullOrEmpty(memberCrowdGroup.get_id())) {
             member_group.setCreate_code(userId);
             ComResponse result= memberGroupFeign.addCrowdGroup(member_group);
