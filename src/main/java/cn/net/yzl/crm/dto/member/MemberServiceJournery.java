@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.dto.member;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,10 +17,10 @@ class MemberServiceJournery {
     @ApiModelProperty(value = "员工工号", name = "staffNo")
     private String staffNo;
     @ApiModelProperty(value = "开始时间(yyyy年MM月dd日)", name = "startTime")
-    @DateTimeFormat(pattern = "yyyy年MM月dd日")
+    @JsonFormat(pattern = "yyyy年MM月dd日",timezone="GMT+8")
     private Date startTime;
     @ApiModelProperty(value = "结束时间(yyyy年MM月dd日)", name = "endTime")
-    @DateTimeFormat(pattern = "yyyy年MM月dd日")
+    @JsonFormat(pattern = "yyyy年MM月dd日",timezone="GMT+8")
     private Date endTime;
     @ApiModelProperty(value = "累计消费", name = "totalPrice")
     private double totalPrice;
