@@ -18,7 +18,7 @@ import java.util.List;
 public interface DiseaseClient {
 
     @GetMapping("queryTreeNode")
-    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree();
+    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree(@RequestParam("allowEmpty") Boolean allowEmpty);
 
     @PostMapping("insert")
     ComResponse<Integer> insertDisease(@RequestBody DiseaseVo diseaseVo);

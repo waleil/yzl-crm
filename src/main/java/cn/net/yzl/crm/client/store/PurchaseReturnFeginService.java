@@ -33,7 +33,7 @@ public interface PurchaseReturnFeginService {
      */
     @ApiOperation(value = "采购退货单分页列表", notes = "采购退货单分页列表")
     @PostMapping("purchaseReturn/v1/page")
-    ComResponse<Page<PurReturnPageDto>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition);
+    ComResponse<Page<PurReturnNotMerge>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition);
 
     @ApiOperation(value = "采购退货单新增")
     @PostMapping("purchaseReturn/v1/add")

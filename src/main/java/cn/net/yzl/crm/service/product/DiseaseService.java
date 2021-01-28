@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface DiseaseService {
 
-    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree();
+    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree(Boolean allowEmpty);
 
     ComResponse<Integer> insertDisease(DiseaseVo diseaseBean);
 

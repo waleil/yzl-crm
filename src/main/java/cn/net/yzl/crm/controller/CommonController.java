@@ -8,7 +8,7 @@ import cn.net.yzl.crm.dto.dmc.ActivityDetailResponse;
 import cn.net.yzl.crm.dto.dmc.CoopCompanyMediaDto;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.ehr.CommonPostDto;
-import cn.net.yzl.crm.dto.ehr.StaffStatusDto;
+import cn.net.yzl.crm.dto.ehr.SysDictDto;
 import cn.net.yzl.crm.dto.product.ProduceDto;
 import cn.net.yzl.crm.service.CommonService;
 import cn.net.yzl.crm.service.micservice.BiTaskClient;
@@ -66,8 +66,14 @@ public class CommonController {
 
     @ApiOperation(value = "获取职场", httpMethod = "GET")
     @GetMapping("v1/getWorkplace")
-    public ComResponse<List<StaffStatusDto>> getWorkplace() {
+    public ComResponse<List<SysDictDto>> getWorkplace() {
         return ehrStaffClient.getAllStuffStatus(EhrParamEnum.EHR_DICT_WORKPLACE_STATUS);
+    }
+
+    @ApiOperation(value = "获取培训成绩", httpMethod = "GET")
+    @GetMapping("v1/getByType")
+    public ComResponse<List<SysDictDto>> getByType() {
+        return ehrStaffClient.getAllStuffStatus(EhrParamEnum.EHR_DICT_TRAINING_GRADE);
     }
 
     @ApiOperation(value = "查询媒体下所有投放的广告")
