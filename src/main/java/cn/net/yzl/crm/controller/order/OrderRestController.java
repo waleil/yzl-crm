@@ -171,6 +171,8 @@ public class OrderRestController {
 				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis生成订单号
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
 		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
+		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
+		orderm.setUpdateName(staffInfo.getName());// 更新人姓名
 		// 按部门id查询部门信息
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
@@ -391,8 +393,6 @@ public class OrderRestController {
 		orderm.setMediaName(orderin.getMediaName());// 媒介名称
 		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
 		orderm.setMediaType(orderin.getMediaType());// 媒介类型
-		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
-		orderm.setUpdateName(orderm.getStaffName());// 更新人姓名
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
 		// 组装扣减库存参数
 		OrderProductVO orderProduct = new OrderProductVO();
