@@ -33,7 +33,7 @@ import cn.net.yzl.product.model.vo.product.vo.ProductUpdateTimeVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductVO;
 import io.swagger.annotations.ApiOperation;
 
-@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/productMeal/product")
+@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/product")
 public interface ProductClient {
 
 	@GetMapping(value = "v1/queryCountByStatus")
