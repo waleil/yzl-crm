@@ -3,15 +3,19 @@ package cn.net.yzl.crm.service.impl.order;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.model.order.ExpressTraceResDTO;
+import cn.net.yzl.crm.model.order.LogisticsInfo;
 import cn.net.yzl.crm.model.order.OrderInfoVO;
 import cn.net.yzl.crm.model.order.OrderLogistcInfo;
+import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
-import cn.net.yzl.crm.service.micservice.OrderLogisticsInfoClient;
+
 import cn.net.yzl.crm.service.order.IOrderSearchService;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
+import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.order.model.vo.order.OrderInfoResDTO;
 import cn.net.yzl.order.model.vo.order.OrderProductDTO;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotEmpty;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,7 +37,7 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
     private MemberFien memberFien;
 
     @Autowired
-    private OrderLogisticsInfoClient logisticsFien;
+    private LogisticsFien logisticsFien;
 
     
     @Override
@@ -92,12 +98,31 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         orderLogistcInfo = new OrderLogistcInfo();
         orderLogistcInfo.setCompanyName(order.getExpressCompanyName());
         orderLogistcInfo.setMailId(order.getExpressNumber());
-
-        ComResponse<List<ExpressTraceResDTO>> logisticsTraces = logisticsFien.findLogisticsTraces(order.getExpressCompanyCode(), order.getExpressNumber());
+        ExpressFindTraceDTO dto = new ExpressFindTraceDTO();
+        dto.setMailId(order.getExpressNumber());
+        dto.setCompanyCode(order.getExpressCompanyCode());
+        GeneralResult<List<ExpressTraceResDTO>> logisticsTraces = logisticsFien.findLogisticsTraces(dto);
         if(logisticsTraces.getCode().compareTo(Integer.valueOf(200)) !=0){
             throw new BizException(logisticsTraces.getCode(),logisticsTraces.getMessage());
         }
-        orderLogistcInfo.setList(logisticsTraces.getData());
+        List<ExpressTraceResDTO> data = logisticsTraces.getData();
+        List<LogisticsInfo> result = new ArrayList<>();
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        data.forEach(map->{
+            LogisticsInfo info = new LogisticsInfo();
+            info.setMailId(order.getExpressNumber());
+            info.setCity(map.getCity());
+            info.setDescription(map.getDescription());
+            info.setSite(map.getSite());
+            info.setStatus(map.getStatus());
+
+            info.setTime(df.format(map.getTime()));
+            result.add(info);
+
+        });
+
+        orderLogistcInfo.setList(result);
         return ComResponse.success(orderLogistcInfo);
     }
 

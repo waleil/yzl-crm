@@ -13,12 +13,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -136,6 +134,13 @@ public class SupplierController {
     public ComResponse<List<SupplierPo>> selectAll() {
         return supplierFeginService.selectAll();
 
+    }
+
+
+    @ApiOperation(value = "采购单供应商下拉表", notes = "采购单供应商下拉表")
+    @RequestMapping(value = "/v1/selectOrdersList", method = RequestMethod.GET)
+    public ComResponse<List<SupplierPo>> selectOrdersList() {
+        return supplierFeginService.selectOrdersList();
     }
 
 }

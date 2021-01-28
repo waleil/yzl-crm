@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.model.order;
 
+import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,5 +19,5 @@ public class OrderLogistcInfo {
     private String companyName;
 
     @ApiModelProperty("快递跟踪信息")
-    List<ExpressTraceResDTO> list;
+    List<LogisticsInfo> list;
 }
