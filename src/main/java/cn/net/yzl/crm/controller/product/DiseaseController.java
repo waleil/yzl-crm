@@ -27,10 +27,10 @@ public class DiseaseController {
     @Autowired
     private DiseaseService diseaseService;
 
-    @ApiOperation("【未完成商品关联】查询树形结构，包含商品信息")
+    @ApiOperation("查询树形结构，包含商品信息")
     @GetMapping("v1/queryTreeNode")
     public ComResponse<List<DiseaseTreeNode>> queryTreeNode() {
-        return diseaseService.getDiseaseSimpleTree();
+        return diseaseService.getDiseaseSimpleTree(true);
     }
 
     @ApiOperation("【返回id】新增病症")
@@ -117,5 +117,12 @@ public class DiseaseController {
             pageSize = 10;
         }
         return diseaseService.queryDiseaseTreePage(pageNo,pageSize);
+    }
+    
+    @ApiOperation(value = "【过滤一级空分类】查询树状信息",notes = "【过滤一级空分类】查询树状信息")
+    @GetMapping
+    public ComResponse<List<DiseaseTreeNode>> querySelectTreeNode() {
+
+        return diseaseService.getDiseaseSimpleTree(false);
     }
 }
