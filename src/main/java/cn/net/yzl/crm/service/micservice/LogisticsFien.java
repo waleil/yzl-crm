@@ -11,6 +11,8 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.logistics.model.ExpressCompany;
+import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
+import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
@@ -32,6 +34,11 @@ import javax.validation.constraints.NotBlank;
 @FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
+
+
+    @ApiOperation(value = "查询物流轨迹", notes = "")
+    @PostMapping("logistics/findLogisticsTraces")
+    public GeneralResult<List<ExpressTraceResDTO>> findLogisticsTraces(@RequestBody @Valid ExpressFindTraceDTO dto) ;
 
     @ApiOperation(value="获取所有仓库和编码")
     @GetMapping("/exp/company/v1/store/listPage")
@@ -108,4 +115,5 @@ public interface LogisticsFien {
 //    @ApiImplicitParam(name = "pid",paramType = "query",value = "父级编号",defaultValue = "0",required = true)
     @GetMapping("/exp/company/v1/selectExpressComponyDetail")
     public ComResponse<List<ExpressCodeVo>> selectExpressComponyDetail() ;
+
 }
