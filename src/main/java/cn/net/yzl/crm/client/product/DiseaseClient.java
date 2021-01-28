@@ -30,7 +30,7 @@ public interface DiseaseClient {
     ComResponse selectAllDiseases();
 
     @GetMapping("queryByPID")
-    ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid);
+    ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid,@RequestParam("allowEmpty")Boolean allowEmpty);
 
     @GetMapping("changeName")
     ComResponse<?> changeName(@RequestParam("id") Integer id, @RequestParam("name") String name, @RequestParam("userId") String userId);
