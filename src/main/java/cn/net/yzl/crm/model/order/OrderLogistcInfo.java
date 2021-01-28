@@ -19,5 +19,5 @@ public class OrderLogistcInfo {
     private String companyName;
 
     @ApiModelProperty("快递跟踪信息")
-    List<ExpressTraceResDTO> list;
+    List<LogisticsInfo> list;
 }

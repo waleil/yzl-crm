@@ -3,8 +3,10 @@ package cn.net.yzl.crm.service.impl.order;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.customer.model.Member;
+import cn.net.yzl.crm.model.order.LogisticsInfo;
 import cn.net.yzl.crm.model.order.OrderInfoVO;
 import cn.net.yzl.crm.model.order.OrderLogistcInfo;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -21,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotEmpty;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -101,7 +105,24 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         if(logisticsTraces.getCode().compareTo(Integer.valueOf(200)) !=0){
             throw new BizException(logisticsTraces.getCode(),logisticsTraces.getMessage());
         }
-        orderLogistcInfo.setList(logisticsTraces.getData());
+        List<ExpressTraceResDTO> data = logisticsTraces.getData();
+        List<LogisticsInfo> result = new ArrayList<>();
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        data.forEach(map->{
+            LogisticsInfo info = new LogisticsInfo();
+            info.setMailId(order.getExpressNumber());
+            info.setCity(map.getCity());
+            info.setDescription(map.getDescription());
+            info.setSite(map.getSite());
+            info.setStatus(map.getStatus());
+
+            info.setTime(df.format(map.getTime()));
+            result.add(info);
+
+        });
+
+        orderLogistcInfo.setList(result);
         return ComResponse.success(orderLogistcInfo);
     }
 
