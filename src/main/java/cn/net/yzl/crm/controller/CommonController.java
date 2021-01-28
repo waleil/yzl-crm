@@ -4,25 +4,20 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.biTask.Indicators;
-import cn.net.yzl.crm.dto.dmc.ActivityDetailResponse;
-import cn.net.yzl.crm.dto.dmc.CoopCompanyMediaDto;
-import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
+import cn.net.yzl.crm.dto.dmc.*;
 import cn.net.yzl.crm.dto.ehr.CommonPostDto;
 import cn.net.yzl.crm.dto.ehr.SysDictDto;
 import cn.net.yzl.crm.dto.product.ProduceDto;
 import cn.net.yzl.crm.service.CommonService;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.crm.service.micservice.ActivityClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -108,6 +103,11 @@ public class CommonController {
         return activityClient.getActivityList();
     }
 
+    @ApiOperation(value = "会员管理-会员级别管理-会员级别设置列表")
+    @PostMapping("v1/getMemberLevelPages")
+    public ComResponse<Page<MemberLevelResponse>> getMemberLevelPages(@RequestBody PageModel request) {
+        return activityClient.getMemberLevelPages(request);
+    }
 
 
 }
