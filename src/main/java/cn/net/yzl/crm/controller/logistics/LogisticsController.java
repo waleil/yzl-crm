@@ -26,6 +26,24 @@ public class LogisticsController {
 
     @Autowired
     LogisticsFien logisticsFien;
+
+
+    @ApiOperation(value="物流公司编码和名称")
+    @PostMapping("v1/express/company/list")
+    public ComResponse  viewExpressCompany() {
+        return  ComResponse.success(logisticsFien.viewExpressCompany()) ;
+//        List<ObjectCommon>
+
+    }
+
+    @ApiOperation(value="获取所有仓库和编码")
+    @GetMapping("v1/store/listPage")
+    public List<ObjectCommon>   storeService(){
+        List<ObjectCommon> storeBasic=logisticsFien.storeService();
+        return storeBasic;
+//                = storeService.getStoreBasic();
+    }
+
     @ApiOperation("物流快递追踪轨迹信息")
     @GetMapping ("v1/selectExpressComponyCode")
     public ComResponse<List<ExpressCodeVo>> selectExpressComponyCode() {

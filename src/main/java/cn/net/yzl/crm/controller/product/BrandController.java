@@ -216,14 +216,15 @@ public class BrandController {
             brandVO.setDescri(descri);
             brandVO.setSort(sort);
             brandVO.setId(brandId);
-            if(StringUtils.isNotEmpty(brand.getBrandUrl())){
-                fastdfsUtils.delete(brand.getBrandUrl());
-            }
             return brandService.updateBrand(brandVO);
         } catch (IOException e) {
             e.printStackTrace();
             if(!StringUtils.isBlank(path)){
-                fastdfsUtils.delete(path);
+                try {
+                    fastdfsUtils.delete(path);
+                }catch (Exception ex) {
+                    log.warn("错误码：2，错误信息：找不到节点或文件");
+                }
             }
             return ComResponse.fail(0,"添加/修改失败失败");
         }

@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.customer.model.MemberBaseAttr;
@@ -68,5 +69,10 @@ public interface MemberGroupFeign {
      */
     @GetMapping("/v1/query4Select")
     ComResponse<List<CustomerCrowdGroupVO>> query4Select();
+
+    @PostMapping("/v1/groupTrial")
+    ComResponse<Integer> memberCrowdGroupTrial(@RequestBody member_crowd_group memberCrowdGroup);
+
+
 
 }
