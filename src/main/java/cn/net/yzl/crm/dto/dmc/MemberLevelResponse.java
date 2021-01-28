@@ -15,7 +15,7 @@ public class MemberLevelResponse {
 
 
     @ApiModelProperty(value = "业务主键")
-    private Long preferentialRuleBusNo;
+    private Long memberLevelBusNo;
 
     @ApiModelProperty(value = "会员等级(数字 0-9 对应等级1到等级10)")
     private Integer memberLevelGrade;
