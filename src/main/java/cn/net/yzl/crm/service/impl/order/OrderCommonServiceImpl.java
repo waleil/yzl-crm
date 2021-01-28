@@ -41,7 +41,7 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
         vo.setPayType(order.getPayType());
         vo.setTotalAll(order.getTotalAll());
         vo.setCash(order.getCash());
-        //vo.setOrderTime(DateFormatUtil.dateToString(order.getCreateTime(),"YYYY-MM-dd HH:mm:ss"));
+        vo.setOrderTime(order.getCreateTime());
         vo.setTargetProvince(order.getReveiverProvince());
         vo.setTargetCity(order.getReveiverCityName());
         vo.setTargetArea(order.getReveiverAreaName());
