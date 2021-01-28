@@ -21,14 +21,6 @@ public class MemberCrowdGroupDTO {
     @ApiModelProperty("群组描述")
     private String description;
 
-    @ApiModelProperty("生效时间")
-    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
-    private Date effective_date;
-
-    @ApiModelProperty("失效时间")
-    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
-    private Date expire_date;
-
     @ApiModelProperty("性别： 0男，1女，-1不做条件判断")
     private Integer sex;
 

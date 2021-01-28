@@ -43,15 +43,8 @@ public class MemberGroupController {
     @PostMapping("/v1/saveMemberCrowdGroup")
     public ComResponse saveMemberCrowdGroup(@RequestBody MemberCrowdGroupDTO memberCrowdGroup,
                                             HttpServletRequest request) {
-        if (memberCrowdGroup == null ||memberCrowdGroup.getEffective_date()==null
-                || memberCrowdGroup.getExpire_date()==null)
+        if (memberCrowdGroup == null)
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
-        if(memberCrowdGroup.getExpire_date().before(memberCrowdGroup.getEffective_date())){
-            throw  new BizException(101,"日期选择错误");
-        }
-        if(memberCrowdGroup.getExpire_date().before(DateHelper.getCurrentDate())){
-            throw  new BizException(101,"失效日期在当前日期之前");
-        }
         //获取操作人id
         String userId= request.getHeader("userId");
         member_crowd_group member_group = new member_crowd_group();
@@ -74,8 +67,6 @@ public class MemberGroupController {
         member_group.setDel(false);
         member_group.setDescription(memberCrowdGroup.getDescription());
         member_group.setDiseases(memberCrowdGroup.getDiseases());
-        member_group.setEffective_date(memberCrowdGroup.getEffective_date());
-        member_group.setExpire_date(memberCrowdGroup.getExpire_date());
         member_group.setFirst_order_to_days(memberCrowdGroup.getFirst_order_to_days());
         member_group.setHave_order(memberCrowdGroup.getHave_order());
         member_group.setTotal_amount(memberCrowdGroup.getTotal_amount());
@@ -104,14 +95,11 @@ public class MemberGroupController {
         member_group.setSign_date_to_days(memberCrowdGroup.getSign_date_to_days());
         member_group.setStaff_sex(memberCrowdGroup.getStaff_sex());
         member_group.setVip(memberCrowdGroup.getVip());
-        member_group.setActiveList(memberCrowdGroup.getActiveList());
+        member_group.setActiveCodeList(memberCrowdGroup.getActiveList());
         member_group.setOrder_total_amount(memberCrowdGroup.getOrder_total_amount());
         member_group.setUpdate_time(DateHelper.getCurrentDate());
         member_group.setEnable(0);
-        Date currentDate=DateHelper.getCurrentDate();
-        if(currentDate.after(memberCrowdGroup.getEffective_date()) && currentDate.before(memberCrowdGroup.getExpire_date())){
-            member_group.setEnable(1);
-        }
+
         if (StringUtil.isNullOrEmpty(memberCrowdGroup.get_id())) {
             member_group.setCreate_code(userId);
             ComResponse result= memberGroupFeign.addCrowdGroup(member_group);
