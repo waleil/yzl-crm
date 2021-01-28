@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.test;
 
+import java.util.Arrays;
+
 import javax.annotation.Resource;
 
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,8 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
+import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
+import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
 
 /**
  * 单元测试类
@@ -114,17 +118,17 @@ public class OrderRestControllerTests {
 		try {
 			OrderIn order = new OrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
-			od1.setProductCode("10000130");
+			od1.setProductCode("10000145");
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(2);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_1);
 			OrderDetailIn od2 = new OrderDetailIn();
-			od2.setProductCode("10000114");
+			od2.setProductCode("10000144");
 			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od2.setProductCount(2);
 			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od3 = new OrderDetailIn();
-			od3.setProductCode("10000106");
+			od3.setProductCode("10000139");
 			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od3.setProductCount(2);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
@@ -133,6 +137,7 @@ public class OrderRestControllerTests {
 			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
 			order.setReveiverAddressNo(482416);
+			order.setMediaChannel(0);
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
@@ -165,6 +170,30 @@ public class OrderRestControllerTests {
 			order.setReveiverAddressNo(482416);
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testProductReduce() {
+		try {
+			OrderProductVO vo = new OrderProductVO();
+			vo.setOrderNo("ON1314020T202101271816500065");
+			ProductReduceVO p1 = new ProductReduceVO();
+			p1.setNum(1);
+			p1.setOrderNo(vo.getOrderNo());
+			p1.setProductCode("10000145");
+			ProductReduceVO p2 = new ProductReduceVO();
+			p2.setNum(1);
+			p2.setOrderNo(vo.getOrderNo());
+			p2.setProductCode("10000144");
+			ProductReduceVO p4 = new ProductReduceVO();
+			p4.setNum(1);
+			p4.setOrderNo(vo.getOrderNo());
+			p4.setProductCode("10000139");
+			vo.setProductReduceVOS(Arrays.asList(p1, p2,  p4));
+			System.err.println(this.productClient.productReduce(vo));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -17,19 +17,19 @@ public interface BrandClient {
 
     @ApiOperation(value = "获取所有品牌信息")
     @GetMapping("getPage")
-    ComResponse getAllBrands(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize, @RequestParam("keyWord") String keyword);
+    ComResponse<?> getAllBrands(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize, @RequestParam("keyWord") String keyword);
 
     @GetMapping("selectById")
     ComResponse<BrandBean> getBrandById(@RequestParam("id") Integer id);
 
     @PutMapping("changeStatus")
-    ComResponse changeBrandStatus(@RequestParam("flag") Integer flag, @RequestParam("id") Integer id);
+    ComResponse<?> changeBrandStatus(@RequestParam("flag") Integer flag, @RequestParam("id") Integer id);
 
     @PostMapping("edit")
-    ComResponse editBrand(@RequestBody BrandVO brand);
+    ComResponse<?> editBrand(@RequestBody BrandVO brand);
 
     @PostMapping("deleteById")
-    ComResponse deleteById(@RequestBody BrandDelVO brandDelVO);
+    ComResponse<?> deleteById(@RequestBody BrandDelVO brandDelVO);
 
     @GetMapping("checkUnique")
     ComResponse<Boolean> checkUnique(@RequestParam("name") String name, @RequestParam("id") int id);

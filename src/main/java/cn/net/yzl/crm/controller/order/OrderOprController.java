@@ -30,7 +30,7 @@ public class OrderOprController {
      */
     @ApiOperation(value = "取消订单")
     @PostMapping("v1/cancleOrderM")
-    public ComResponse cancleOrderM(@RequestBody @Valid OrderOprDTO dto) {
+    public ComResponse<?> cancleOrderM(@RequestBody @Valid OrderOprDTO dto) {
 
         return this.orderOprService.cancleOrder(dto);
     }
@@ -42,7 +42,7 @@ public class OrderOprController {
      */
     @ApiOperation(value = "正常订单审批")
     @PostMapping("v1/checkOrder")
-    public ComResponse checkOrder(@RequestBody OrderCheckDetailDTO dto) {
+    public ComResponse<?> checkOrder(@RequestBody OrderCheckDetailDTO dto) {
 
         return this.orderOprService.checkOrder(dto);
     }

@@ -3,9 +3,8 @@ package cn.net.yzl.crm.controller.order;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
-import cn.net.yzl.crm.model.Advisor;
-import cn.net.yzl.crm.model.Media;
 import cn.net.yzl.crm.model.order.OrderInfoVO;
+import cn.net.yzl.crm.model.order.OrderLogistcInfo;
 import cn.net.yzl.crm.service.order.IOrderSearchService;
 import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.Api;
@@ -15,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -71,5 +70,14 @@ public class OrderSeachController {
     public  ComResponse<Page<OderListResDTO>> selectOrderList4Check(@RequestBody OrderList4CheckReqDTO dto) {
 
         return  orderSearchClient.selectOrderList4Check(dto);
+    }
+
+    @ApiOperation(value = "查询物流信息")
+    @GetMapping("v1/selectLogisticInfo")
+    public  ComResponse<OrderLogistcInfo> selectLogisticInfo(@RequestParam("orderNo") @NotEmpty(message = "订单号不能为空") String orderNo,
+                                                             @RequestParam(name = "companyCode" ,required = false)  String companyCode,
+                                                             @RequestParam(name = "expressNo",required = false) String expressNo) {
+
+        return  orderSearchService.selectLogisticInfo(orderNo,companyCode,expressNo);
     }
 }

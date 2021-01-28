@@ -61,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse getCategoriesByPid(Integer pid) {
+    public ComResponse<?> getCategoriesByPid(Integer pid) {
         return categoryClient.getCategoriesByPid(pid);
     }
 

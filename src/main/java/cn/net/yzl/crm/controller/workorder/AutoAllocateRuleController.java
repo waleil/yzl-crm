@@ -90,13 +90,13 @@ public class AutoAllocateRuleController {
 
     @ApiOperation("获取顾客群组列表")
     @PostMapping("/v1/listMemberCrowdGroup")
-    public ComResponse listMemberCrowdGroup(@RequestBody CrowdGroupDTO crowdGroupDTO){
+    public ComResponse<?> listMemberCrowdGroup(@RequestBody CrowdGroupDTO crowdGroupDTO){
         return memberClient.getCrowdGroupByPage(crowdGroupDTO);
     }
 
     @ApiOperation("获取员工群组列表")
     @PostMapping("/v1/listStaffCrowdGroup")
-    public ComResponse listStaffCrowdGroup(@RequestBody CrowdGroupDTO crowdGroupDTO){
+    public ComResponse<?> listStaffCrowdGroup(@RequestBody CrowdGroupDTO crowdGroupDTO){
 //        return staffClient.
         // TODO: 2021/1/12
         //获取员工群列表

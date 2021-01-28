@@ -4,11 +4,15 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
+import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import javax.sound.midi.SoundbankResource;
+import java.util.List;
 
 /**
  * 智能工单
@@ -107,6 +111,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-列表
+     *
      * @param myWorkOrderHotlineListDTO
      * @return
      */
@@ -115,6 +120,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-接收
+     *
      * @param updateAcceptStatusReceiveDTO
      * @return
      */
@@ -123,6 +129,7 @@ public interface WorkOrderClient {
 
     /**
      * 我的热线工单-处理工单详情
+     *
      * @param updateAcceptStatusReceiveDTO
      * @return
      */
@@ -131,6 +138,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-被叫号码查询工单是否存在
+     *
      * @param findByCalledPhoneIsEmptyDTO
      * @return
      */
@@ -139,6 +147,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-创建处理工单流水
+     *
      * @param workOrderDisposeFlowBean
      * @return
      */
@@ -182,9 +191,71 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单：我的热线工单-修改处理工单流水
+     *
      * @param workOrderDisposeFlowBean
      * @return
      */
     @PostMapping("v1/updateWorkOrderDisposeFlow")
     ComResponse<String> updateWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+
+    /**
+     * 智能工单-我的回访工单-查询上交规则
+     *
+     * @return
+     */
+    @GetMapping("v1/submissionRules")
+    ComResponse<List<WorkOrderRuleConfigBean>> submissionRules();
+
+    /**
+     * 智能工单-我的回访工单-上交规则-查询通话记录表某段时间未接通记录是否超出上交规则
+     *
+     * @param IsHandInDTO
+     * @return
+     */
+    @PostMapping(value = "v1/callInfoCount")
+    ComResponse<Boolean> callInfoCount(IsHandInDTO IsHandInDTO);
+
+    /**
+     * 智能工单-我的回访工单-上交规则-超出维护客户上限查询
+     *
+     * @return
+     */
+    @PostMapping(value = "v1/mCustomerLExceeded")
+    ComResponse<Boolean> mCustomerLExceeded(IsHandInDTO isHandInDTO);
+
+    /**
+     * 智能工单-我的回访工单-上交规则-员工放弃自取顾客
+     *
+     * @return
+     */
+    @PostMapping(value = "v1/eGiveUpTakingCustomersByThemselves")
+    ComResponse<Boolean> eGiveUpTakingCustomersByThemselves(IsHandInDTO isHandInDTO);
+
+    /**
+     * 智能工单-我的回访工单-上交规则-超时回访
+     *
+     * @param isHandInDTO
+     * @return
+     */
+    @PostMapping(value = "v1/overtimeReturnVisit")
+    ComResponse<Boolean> overtimeReturnVisit(IsHandInDTO isHandInDTO);
+
+    /**
+     * 智能工单-我的回访工单-自取规则上交
+     *
+     * @param isHandInDTO
+     * @return
+     */
+    @PostMapping("v1/rulesHandedIn")
+    ComResponse<Void> rulesHandedIn(IsHandInDTO isHandInDTO);
+
+    /**
+     * 员工维护的顾客是否超限
+     *
+     * @param workOrderUsersDTO
+     * @return
+     */
+    @PostMapping(value = "v1/isUsersToplimit")
+    ComResponse<Boolean> isUsersToplimit(WorkOrderUsersDTO workOrderUsersDTO);
+
 }

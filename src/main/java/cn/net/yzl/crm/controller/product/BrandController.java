@@ -11,6 +11,7 @@ import cn.net.yzl.product.model.vo.brand.BrandDelVO;
 import cn.net.yzl.product.model.vo.brand.BrandVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/product/v1/brand")
 @Api(tags = "商品品牌管理", description = "包含：增删改查")
+@Slf4j
 public class BrandController {
 
     @Autowired
@@ -47,7 +49,7 @@ public class BrandController {
             @ApiImplicitParam(name = "pageNo", paramType="query",value = "页码", dataType = "int",defaultValue = "1"),
             @ApiImplicitParam(name = "pageSize",paramType="query", value = "每页显示记录数", dataType = "int",defaultValue = "15")
     })
-    public ComResponse getAllBrands(@RequestParam(required = false,defaultValue = "1",value = "pageNo") Integer pageNo,
+    public ComResponse<?> getAllBrands(@RequestParam(required = false,defaultValue = "1",value = "pageNo") Integer pageNo,
                                     @RequestParam(required = false,defaultValue = "15",value = "pageSize") Integer pageSize,
                                     String keyword) {
         if (pageNo == null || pageNo < 0) {
@@ -66,7 +68,7 @@ public class BrandController {
     @GetMapping("selectById")
     @ApiImplicitParam(name = "id", value = "主键信息", required = true, dataType = "Integer",paramType = "query")
     public ComResponse<BrandBean> getBrandById(@RequestParam("id") Integer id) {
-        ComResponse comResponse = brandService.getBrandById(id);
+        ComResponse<?> comResponse = brandService.getBrandById(id);
         if (comResponse.getData() == null) {
             return ComResponse.nodata();
         }
@@ -100,8 +102,10 @@ public class BrandController {
             @ApiImplicitParam(name = "descri", paramType="query",value = "品牌故事", required = false, dataType = "String"),
             @ApiImplicitParam(name = "sort", paramType="query",value = "排序", required = false, dataType = "Integer") })
     @PostMapping("insert")
-    public ComResponse insertBrand(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request,
-                                   String name, @RequestParam(value = "descri",required = false) String descri,@RequestParam(value = "sort",required = false,defaultValue = "0") Integer sort) {
+    public ComResponse<?> insertBrand(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request,
+                                      String name, @RequestParam(value = "descri",required = false) String descri,@RequestParam(value = "sort",required = false,defaultValue = "0") Integer sort) {
+        //新增失败的回滚url
+        String path = "";
         try {
             BrandVO brandVO = new BrandVO();
             if(file!=null){
@@ -115,6 +119,7 @@ public class BrandController {
                 }
                 StorePath storePath = fastdfsUtils.upload(file);
                 String filePath = storePath.getFullPath();
+                path = filePath;
                 brandVO.setBrandUrl(filePath);
             }
             String userId = request.getHeader("userId");
@@ -128,6 +133,9 @@ public class BrandController {
             return brandService.insertBrand(brandVO);
         } catch (IOException e) {
             e.printStackTrace();
+            if(!StringUtils.isBlank(path)){
+                fastdfsUtils.delete(path);
+            }
             return ComResponse.fail(0,"添加失败");
         }
     }
@@ -135,7 +143,7 @@ public class BrandController {
     @ApiOperation("通过id删除品牌")
     @ApiImplicitParam(name = "id", value = "id",paramType = "query",required = true)
     @GetMapping("delete")
-    public ComResponse delete(@RequestParam("id") Integer id,HttpServletRequest request){
+    public ComResponse<?> delete(@RequestParam("id") Integer id,HttpServletRequest request){
         if(id == null){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getMessage());
         }
@@ -162,6 +170,8 @@ public class BrandController {
     public ComResponse<Void> updateBrand(MultipartFile file, HttpServletRequest request,
                                          String name, String descri, @RequestParam(defaultValue = "0")Integer sort, Integer brandId,String url) {
         String userId = request.getHeader("userId");
+        //修改失败的回滚url
+        String path = "";
         if (StringUtils.isBlank(userId)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆！");
         }
@@ -188,21 +198,18 @@ public class BrandController {
                     }
                 }
             }else{
-                long size = file.getSize() / 1024; //kb
-                if (size > 50) { //判断图片大小 单位Kb
+                long size = file.getSize();
+                if (size > 50 << 10) { //判断图片大小 (50*1024)B
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"图片过大,保证在50Kb下");
                 }
                 String fileName = file.getOriginalFilename();
                 if(!fileName.endsWith(".jpg")&&!fileName.endsWith(".png")){
                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"只能上传jpg/png格式文件");
                 }
-                if(StringUtils.isNotEmpty(brand.getBrandUrl())){
-                    fastdfsUtils.delete(brand.getBrandUrl());
-                }
                 StorePath storePath = fastdfsUtils.upload(file);
                 String filePath = storePath.getFullPath();
+                path = filePath;
                 brandVO.setBrandUrl(filePath);
-
             }
             brandVO.setUpdateNo(userId);
             brandVO.setName(name);
@@ -212,7 +219,14 @@ public class BrandController {
             return brandService.updateBrand(brandVO);
         } catch (IOException e) {
             e.printStackTrace();
-            return ComResponse.fail(0,"添加失败");
+            if(!StringUtils.isBlank(path)){
+                try {
+                    fastdfsUtils.delete(path);
+                }catch (Exception ex) {
+                    log.warn("错误码：2，错误信息：找不到节点或文件");
+                }
+            }
+            return ComResponse.fail(0,"添加/修改失败失败");
         }
     }
 

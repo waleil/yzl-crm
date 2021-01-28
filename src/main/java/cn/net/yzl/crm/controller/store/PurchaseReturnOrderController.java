@@ -2,12 +2,13 @@ package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.PurchaseReturnFeginService;
 import cn.net.yzl.model.dto.PurchaseReturnResDto;
 import cn.net.yzl.model.dto.PurchaseReturnReviewDto;
 import cn.net.yzl.model.dto.PurchaseReturnWaybillDto;
-import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnOrderAddDto;
-import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnUpdateDto;
+import cn.net.yzl.model.dto.purchase.returns.*;
 import cn.net.yzl.model.vo.PurReturnOrderAddVo;
 import cn.net.yzl.model.vo.PurReturnOrderUpdateVo;
 import cn.net.yzl.model.vo.PurchaseReturnCondition;
@@ -15,9 +16,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wangshuaidong
@@ -32,15 +36,15 @@ public class PurchaseReturnOrderController {
 
     @Autowired
     private PurchaseReturnFeginService purchaseReturnFeginService;
-
     /**
      * 采购退货单分页查询
      * @param purchaseReturnCondition
      * @return
      */
     @ApiOperation(value = "采购退货单分页列表", notes = "采购退货单分页列表")
+
     @PostMapping("v1/page")
-    public ComResponse<Page<PurchaseReturnResDto>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
+    public ComResponse<Page<PurReturnNotMerge>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
         return purchaseReturnFeginService.page(purchaseReturnCondition);
     }
 
@@ -58,14 +62,14 @@ public class PurchaseReturnOrderController {
 
     @ApiOperation(value = "采购退货单审核")
     @PostMapping("v1/review")
-    public ComResponse review(@RequestBody PurchaseReturnReviewDto purchaseReturnReviewDto){
+    public ComResponse review(@RequestBody @Valid PurchaseReturnReviewDto purchaseReturnReviewDto){
         return purchaseReturnFeginService.review(purchaseReturnReviewDto);
     }
 
     @ApiOperation(value = "采购退货单详情")
     @ApiImplicitParam(name = "id", value = "采购退货单id", required = true, dataType = "Int", paramType = "query")
     @GetMapping("v1/detail")
-    public ComResponse<PurchaseReturnResDto> detail(@RequestParam("id") Integer id){
+    public ComResponse<PurReturnEditDto> detail(@RequestParam("id") Integer id){
         return purchaseReturnFeginService.detail(id);
     }
 
@@ -78,28 +82,29 @@ public class PurchaseReturnOrderController {
      */
     @ApiOperation(value = "采购退货单状态下拉框列表")
     @GetMapping("v1/status/list")
-    public ComResponse purchaseReturnStatus() {
+    public ComResponse<List<Map<String,Object>>> purchaseReturnStatus() {
         return purchaseReturnFeginService.purchaseReturnStatus();
     }
 
     /**
-     * 采购订单审核列表分页查询
+     * 采购退货单审核列表
      * @param purchaseReturnCondition
      * @return
      */
-    @ApiOperation(value = "采购退货单审核列表", notes = "采购退货单审核列表")
+    @ApiOperation(value = "采购退货单审核列表")
     @PostMapping("v1/review/page")
-    public ComResponse<Page<PurchaseReturnResDto>> reviewPage(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
+    public  ComResponse<Page<PurchaseReturnResDto>>  reviewPage(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
         return purchaseReturnFeginService.reviewPage(purchaseReturnCondition);
     }
+
     /**
      * 采购退货单审核列表
-     * @param returnWaybillDto
+     * @param waybillAddDto
      * @return
      */
     @ApiOperation(value = "采购退货单退回添加货运单号")
-    @PostMapping("v1/back/waybill")
-    public ComResponse backWayBill(@RequestBody PurchaseReturnWaybillDto returnWaybillDto){
-        return purchaseReturnFeginService.backWayBill(returnWaybillDto);
+    @PostMapping("v1/add/waybill")
+    public ComResponse addWayBill(@RequestBody WaybillAddDto waybillAddDto){
+        return purchaseReturnFeginService.addWayBill(waybillAddDto);
     }
 }

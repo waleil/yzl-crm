@@ -27,15 +27,15 @@ public class DiseaseController {
     @Autowired
     private DiseaseService diseaseService;
 
-    @ApiOperation("【未完成商品关联】查询树形结构，包含商品信息")
+    @ApiOperation("查询树形结构，包含商品信息")
     @GetMapping("v1/queryTreeNode")
     public ComResponse<List<DiseaseTreeNode>> queryTreeNode() {
-        return diseaseService.getDiseaseSimpleTree();
+        return diseaseService.getDiseaseSimpleTree(true);
     }
 
     @ApiOperation("【返回id】新增病症")
     @PostMapping("v1/insert")
-    public ComResponse insertDisease(@RequestBody @Valid DiseaseVo diseaseVo,HttpServletRequest request) {
+    public ComResponse<?> insertDisease(@RequestBody @Valid DiseaseVo diseaseVo,HttpServletRequest request) {
         String userId = request.getHeader("userId");
         if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取用户id，请检查您的登录状态");
@@ -50,7 +50,7 @@ public class DiseaseController {
             @ApiImplicitParam(name = "id",value = "id",required = true,paramType = "query"),
             @ApiImplicitParam(name = "pid",value = "该病症的一级id,如果本身就是一级病症，则传入0",required = true,paramType = "query")
     })
-    public ComResponse deleteDisease(@RequestParam("id") Integer id, @RequestParam("pid")Integer pid, HttpServletRequest request) {
+    public ComResponse<?> deleteDisease(@RequestParam("id") Integer id, @RequestParam("pid")Integer pid, HttpServletRequest request) {
         String userId = request.getHeader("userId");
         if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取用户id，请检查您的登录状态");
@@ -91,7 +91,7 @@ public class DiseaseController {
             @ApiImplicitParam(name = "name",value = "名称",paramType = "query", required = true)
     })
     @GetMapping("v1/changeName")
-    public ComResponse changeName(@RequestParam("id") Integer id, @RequestParam("name") String name,HttpServletRequest request){
+    public ComResponse<?> changeName(@RequestParam("id") Integer id, @RequestParam("name") String name,HttpServletRequest request){
         String userId = request.getHeader("userId");
         if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取身份信息，请检查您的登录状态！");
@@ -117,5 +117,12 @@ public class DiseaseController {
             pageSize = 10;
         }
         return diseaseService.queryDiseaseTreePage(pageNo,pageSize);
+    }
+    
+    @ApiOperation(value = "【过滤一级空分类】查询树状信息",notes = "【过滤一级空分类】查询树状信息")
+    @GetMapping
+    public ComResponse<List<DiseaseTreeNode>> querySelectTreeNode() {
+
+        return diseaseService.getDiseaseSimpleTree(false);
     }
 }

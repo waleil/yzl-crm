@@ -72,7 +72,7 @@ public interface EhrStaffClient {
      * @return
      */
     @GetMapping("/sysDic/getByType")
-    ComResponse<List<StaffStatusDto>> getAllStuffStatus(@RequestParam("dictType") String dictType);
+    ComResponse<List<SysDictDto>> getAllStuffStatus(@RequestParam("dictType") String dictType);
 
     /**
      * 获取岗位级别通过岗位

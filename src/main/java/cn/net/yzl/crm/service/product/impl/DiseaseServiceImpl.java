@@ -22,8 +22,8 @@ public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseClient client;
 
     @Override
-    public ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree() {
-        return client.getDiseaseSimpleTree();
+    public ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree(Boolean allowEmpty) {
+        return client.getDiseaseSimpleTree(allowEmpty);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DiseaseServiceImpl implements DiseaseService {
     }
 
     @Override
-    public ComResponse changeName(Integer id, String name, String userId) {
+    public ComResponse<?> changeName(Integer id, String name, String userId) {
         return client.changeName(id, name, userId);
     }
 
