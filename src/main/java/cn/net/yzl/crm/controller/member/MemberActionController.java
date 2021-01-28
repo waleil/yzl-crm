@@ -2,9 +2,10 @@ package cn.net.yzl.crm.controller.member;
 
 import cn.net.yzl.common.entity.ComResponse;
 
-import cn.net.yzl.crm.customer.dto.member.MemberActionRelationDto;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.viewmodel.memberActionModel.MemberActionRelationList;
 import cn.net.yzl.crm.dto.member.ActionDictDto;
+import cn.net.yzl.crm.dto.member.MemberActionRelationDto;
 import cn.net.yzl.crm.model.customer.ActionDict;
 import cn.net.yzl.crm.model.customer.MemberActionRelation;
 import cn.net.yzl.crm.service.micservice.MemberActionFeign;
@@ -12,7 +13,6 @@ import cn.net.yzl.crm.utils.ValidList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +44,9 @@ public class MemberActionController {
     @ApiOperation(value = "顾客综合行为-保存顾客综合行为字典")
     @PostMapping("v1/memberActionSaveUpdate")
     public ComResponse<Integer> saveUpdateActionDict(@RequestBody @Validated ValidList<ActionDictDto> ageDictDtos){
+        ageDictDtos.forEach(x->{
+            x.setCreator(QueryIds.userNo.get());
+        });
         return memberActionFeign.saveUpdateActionDict(ageDictDtos);
     }
 
@@ -62,12 +65,16 @@ public class MemberActionController {
     @ApiOperation(value = "顾客综合行为-保存顾客综合行为")
     @PostMapping("v1/memberAgeRelationSaveUpdate")
     public ComResponse<Integer> saveUpdateRelation(@RequestBody @Validated ValidList<MemberActionRelationDto> memberAgeRelationDtos){
+        memberAgeRelationDtos.forEach(x->{
+            x.setCreator(QueryIds.userNo.get());
+        });
         return memberActionFeign.saveUpdateRelation(memberAgeRelationDtos);
     }
 
     @ApiOperation(value = "顾客综合行为-单条新增顾客综合行为")
     @PostMapping("v1/addRelation")
     public ComResponse<Integer> addRelation(@RequestBody @Validated MemberActionRelationDto memberAgeRelationDtos){
+        memberAgeRelationDtos.setCreator(QueryIds.userNo.get());
         return memberActionFeign.addRelation(memberAgeRelationDtos);
     }
 
@@ -75,6 +82,7 @@ public class MemberActionController {
     @ApiOperation(value = "客户行为关联-客户综合行为手动新增录入关联")
     @PostMapping("v1/addRelationWithDict")
     public ComResponse<Integer> addRelationWithDict(@RequestBody @Validated MemberActionRelationDto memberAgeRelationDtos){
+        memberAgeRelationDtos.setCreator(QueryIds.userNo.get());
         return memberActionFeign.addRelationWithDict(memberAgeRelationDtos);
     }
 
