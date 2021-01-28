@@ -48,7 +48,7 @@ public class LogisticsController {
      * 11111
      * */
     @ApiOperation(value="分页查询物流公司列表")
-    @PostMapping("v1/listPage")
+    @PostMapping("v1/expresscompany/listPage")
     public ComResponse<Page<ExpressCompany>> listPage(@RequestBody ExpressSearchDTO expressSearchDTO) {
 
 
