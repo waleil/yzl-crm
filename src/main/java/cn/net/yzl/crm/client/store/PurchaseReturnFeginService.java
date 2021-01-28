@@ -4,9 +4,10 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.PurchaseReturnResDto;
 import cn.net.yzl.model.dto.PurchaseReturnReviewDto;
-import cn.net.yzl.model.dto.PurchaseReturnWaybillDto;
+import cn.net.yzl.model.dto.purchase.returns.PurReturnEditDto;
 import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnOrderAddDto;
 import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnUpdateDto;
+import cn.net.yzl.model.dto.purchase.returns.WaybillAddDto;
 import cn.net.yzl.model.vo.PurchaseReturnCondition;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -16,12 +17,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author wangshuaidong
  * @version 1.0
  */
 @FeignClient(name = "purchaseReturnService",url = "${api.gateway.url}/storeServer")
 public interface PurchaseReturnFeginService {
+
 
     /**
      * 采购退货单分页查询
@@ -42,12 +48,12 @@ public interface PurchaseReturnFeginService {
 
     @ApiOperation(value = "采购退货单审核")
     @PostMapping("purchaseReturn/v1/review")
-    ComResponse review(@RequestBody PurchaseReturnReviewDto purchaseReturnReviewDto);
+    ComResponse review(@RequestBody @Valid PurchaseReturnReviewDto purchaseReturnReviewDto);
 
     @ApiOperation(value = "采购退货单详情")
     @ApiImplicitParam(name = "id", value = "采购退货单id", required = true, dataType = "Int", paramType = "query")
     @GetMapping("purchaseReturn/v1/detail")
-    ComResponse<PurchaseReturnResDto> detail(@RequestParam("id") Integer id);
+    ComResponse<PurReturnEditDto> detail(@RequestParam("id") Integer id);
 
 
 
@@ -58,23 +64,24 @@ public interface PurchaseReturnFeginService {
      */
     @ApiOperation(value = "采购退货单状态下拉框列表")
     @GetMapping("purchaseReturn/v1/status/list")
-    ComResponse purchaseReturnStatus();
-
-    /**
-     * 采购订单审核列表分页查询
-     * @param purchaseReturnCondition
-     * @return
-     */
-    @ApiOperation(value = "采购退货单审核列表", notes = "采购退货单审核列表")
-    @PostMapping("purchaseReturn/v1/review/page")
-    ComResponse<Page<PurchaseReturnResDto>> reviewPage(@RequestBody PurchaseReturnCondition purchaseReturnCondition);
+    ComResponse<List<Map<String,Object>>> purchaseReturnStatus() ;
 
     /**
      * 采购退货单审核列表
-     * @param returnWaybillDto
+     * @param purchaseReturnCondition
+     * @return
+     */
+    @ApiOperation(value = "采购退货单审核列表")
+    @PostMapping("purchaseReturn/v1/review/page")
+    ComResponse<Page<PurchaseReturnResDto>>  reviewPage(@RequestBody PurchaseReturnCondition purchaseReturnCondition);
+
+    /**
+     * 采购退货单审核列表
+     * @param waybillAddDto
      * @return
      */
     @ApiOperation(value = "采购退货单退回添加货运单号")
-    @PostMapping("purchaseReturn/v1/back/waybill")
-    ComResponse backWayBill(@RequestBody PurchaseReturnWaybillDto returnWaybillDto);
+    @PostMapping("purchaseReturn/v1/add/waybill")
+    ComResponse addWayBill(@RequestBody WaybillAddDto waybillAddDto);
+
 }

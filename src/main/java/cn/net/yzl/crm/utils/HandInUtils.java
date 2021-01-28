@@ -1,6 +1,8 @@
 package cn.net.yzl.crm.utils;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.util.DateFormatUtil;
+import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.StaffService;
@@ -12,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -21,7 +25,7 @@ public class HandInUtils {
     private WorkOrderClient workOrderClient;
 
     @Autowired
-    private OrderClient orderClient;
+    private OrderSearchClient orderSearchClient;
 
     @Autowired
     private StaffService staffService;
@@ -31,43 +35,55 @@ public class HandInUtils {
      * 空号停机
      *
      * @param emptyNumberShutdown
+     * @param wORCBean
      * @return
      */
-    public Boolean emptyNumberShutdown(IsHandInDTO emptyNumberShutdown) {
-        return Boolean.TRUE;
+    public Boolean emptyNumberShutdown(IsHandInDTO emptyNumberShutdown, WorkOrderRuleConfigBean wORCBean) {
+        String paramsValue = wORCBean.getParamsValue();
+        Date date = new Date();
+        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, -Integer.valueOf(paramsValue));
+        Date time = calendar.getTime();
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        return orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData().getNearNoSignStatus();
+
     }
 
     /**
      * 无法联系
      *
      * @param emptyNumberShutdown
-     * @param data
+     * @param wORCBean
      * @return
      */
-    public Boolean unableToContact(IsHandInDTO emptyNumberShutdown, List<WorkOrderRuleConfigBean> data) {
-        WorkOrderRuleConfigBean wORCBean = null;
-        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
-            if (RuleDescriptionEnums.HOTLINE_CENTER_RULE_TWO.getCode().equals(workOrderRuleConfigBean.getId())) {
-                wORCBean = workOrderRuleConfigBean;
-            }
-        }
+    public Boolean unableToContact(IsHandInDTO emptyNumberShutdown, WorkOrderRuleConfigBean wORCBean) {
         String paramsValue = wORCBean.getParamsValue();
         emptyNumberShutdown.setParamValue(paramsValue);
         ComResponse<Boolean> booleanComResponse = workOrderClient.callInfoCount(emptyNumberShutdown);
         if (!booleanComResponse.getData()) {
             return Boolean.FALSE;
         }
-        //TODO
-        return Boolean.TRUE;
+        Date date = new Date();
+        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        String[] split = paramsValue.split(",");
+        calendar.add(Calendar.MONTH, -Integer.valueOf(split[2]));
+        Date time = calendar.getTime();
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        return orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData().getNearNoContinuityShoppingStatus();
     }
 
     /**
      * 客户拒访
      *
      * @param isHandInDTO
+     * @param wORCBean
      * @return
      */
-    public Boolean customerRefusedToVisit(IsHandInDTO isHandInDTO) {
+    public Boolean customerRefusedToVisit(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
         if (!isHandInDTO.getApplyUpMemo().equals("顾客要求不需要回访")) {
             return Boolean.FALSE;
         }
@@ -80,8 +96,16 @@ public class HandInUtils {
      * @param isHandInDTO
      * @return
      */
-    public Boolean customerRefund(IsHandInDTO isHandInDTO) {
-        return Boolean.TRUE;
+    public Boolean customerRefund(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
+        String paramsValue = wORCBean.getParamsValue();
+        Date date = new Date();
+        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, -Integer.valueOf(paramsValue));
+        Date time = calendar.getTime();
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        return orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), startDate, endDate).getData().getIsGuestComplaint();
     }
 
     /**
@@ -90,8 +114,16 @@ public class HandInUtils {
      * @param isHandInDTO
      * @return
      */
-    public Boolean dormantCustomers(IsHandInDTO isHandInDTO) {
-        return Boolean.TRUE;
+    public Boolean dormantCustomers(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
+        String paramsValue = wORCBean.getParamsValue();
+        Date date = new Date();
+        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, -Integer.valueOf(paramsValue));
+        Date time = calendar.getTime();
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        return orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), startDate, endDate).getData().getNearNoSignStatus();
     }
 
     /**
@@ -100,13 +132,8 @@ public class HandInUtils {
      * @param isHandInDTO
      * @return
      */
-    public Boolean mCustomerLExceeded(IsHandInDTO isHandInDTO, List<WorkOrderRuleConfigBean> data) {
-        WorkOrderRuleConfigBean wORCBean = null;
-        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
-            if (RuleDescriptionEnums.HOTLINE_CENTER_RULE_TWO.getCode().equals(workOrderRuleConfigBean.getId())) {
-                wORCBean = workOrderRuleConfigBean;
-            }
-        }
+    public Boolean mCustomerLExceeded(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
+
         String paramsValue = wORCBean.getParamsValue();
         isHandInDTO.setParamValue(paramsValue);
         StaffImageBaseInfoDto staffImageBaseInfoByStaffNo = staffService.getStaffImageBaseInfoByStaffNo(isHandInDTO.getStaffNo());
@@ -132,13 +159,8 @@ public class HandInUtils {
      * @param isHandInDTO
      * @return
      */
-    public Boolean overtimeReturnVisit(IsHandInDTO isHandInDTO, List<WorkOrderRuleConfigBean> data) {
-        WorkOrderRuleConfigBean wORCBean = null;
-        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
-            if (RuleDescriptionEnums.HOTLINE_CENTER_RULE_TWO.getCode().equals(workOrderRuleConfigBean.getId())) {
-                wORCBean = workOrderRuleConfigBean;
-            }
-        }
+    public Boolean overtimeReturnVisit(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
+
         String paramsValue = wORCBean.getParamsValue();
         isHandInDTO.setParamValue(paramsValue);
         return workOrderClient.overtimeReturnVisit(isHandInDTO).getData();
