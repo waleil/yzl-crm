@@ -360,7 +360,6 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品库存不足。");
 			}
 		}
-		System.err.println(JSON.toJSONString(orderdetailList, true));
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
 		orderm.setWorkBatchNo(orderin.getWorkBatchNo());// 工单流水号
 		orderm.setPayType(orderin.getPayType());// 支付方式
@@ -426,6 +425,8 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>调用顾客[{}]账户消费服务接口失败>>{}", orderm.getMemberCardNo(), customerAmountOperation);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
+		System.err.println(JSON.toJSONString(orderm, true));
+		System.err.println(JSON.toJSONString(orderdetailList, true));
 		// 调用创建订单服务接口
 		ComResponse<?> submitOrder = this.orderFeignClient.submitOrder(new OrderRequest(orderm, orderdetailList));
 		// 如果调用服务接口失败
