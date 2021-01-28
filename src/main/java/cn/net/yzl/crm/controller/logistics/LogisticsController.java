@@ -2,11 +2,11 @@ package cn.net.yzl.crm.controller.logistics;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.logistics.model.ExpressCompany;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
-import com.github.pagehelper.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,11 +27,7 @@ public class LogisticsController {
     @Autowired
     LogisticsFien logisticsFien;
 
-    @ApiOperation(value="test")
-    @PostMapping("ee/22")
-    private String getTest(){
-        return  logisticsFien.getTest();
-    }
+
 
     @ApiOperation(value="物流公司编码和名称")
     @PostMapping("v1/express/company/list")
@@ -43,9 +39,10 @@ public class LogisticsController {
 
     @ApiOperation(value="获取所有仓库和编码")
     @GetMapping("v1/store/listPage")
-    public List<ObjectCommon>   storeService(){
+    public ComResponse<List<ObjectCommon>>   storeService(){
+
         List<ObjectCommon> storeBasic=logisticsFien.storeService();
-        return storeBasic;
+        return ComResponse.success(storeBasic)  ;
 //                = storeService.getStoreBasic();
     }
 
