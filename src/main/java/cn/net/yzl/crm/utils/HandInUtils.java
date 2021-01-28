@@ -3,6 +3,7 @@ package cn.net.yzl.crm.utils;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
+import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.StaffService;
@@ -23,6 +24,9 @@ public class HandInUtils {
 
     @Autowired
     private WorkOrderClient workOrderClient;
+
+    @Autowired
+    private TurnRulnClient callInfoCount;
 
     @Autowired
     private OrderSearchClient orderSearchClient;
@@ -61,7 +65,7 @@ public class HandInUtils {
     public Boolean unableToContact(IsHandInDTO emptyNumberShutdown, WorkOrderRuleConfigBean wORCBean) {
         String paramsValue = wORCBean.getParamsValue();
         emptyNumberShutdown.setParamValue(paramsValue);
-        ComResponse<Boolean> booleanComResponse = workOrderClient.callInfoCount(emptyNumberShutdown);
+        ComResponse<Boolean> booleanComResponse = callInfoCount.callInfoCount(emptyNumberShutdown);
         if (!booleanComResponse.getData()) {
             return Boolean.FALSE;
         }
@@ -139,7 +143,7 @@ public class HandInUtils {
         StaffImageBaseInfoDto staffImageBaseInfoByStaffNo = staffService.getStaffImageBaseInfoByStaffNo(isHandInDTO.getStaffNo());
         isHandInDTO.setPostId(staffImageBaseInfoByStaffNo.getPostId());
         isHandInDTO.setPostLevelId(staffImageBaseInfoByStaffNo.getPostLevelId());
-        return workOrderClient.mCustomerLExceeded(isHandInDTO).getData();
+        return callInfoCount.mCustomerLExceeded(isHandInDTO).getData();
 
     }
 
@@ -150,7 +154,7 @@ public class HandInUtils {
      * @return
      */
     public Boolean eGiveUpTakingCustomersByThemselves(IsHandInDTO isHandInDTO) {
-        return workOrderClient.eGiveUpTakingCustomersByThemselves(isHandInDTO).getData();
+        return callInfoCount.eGiveUpTakingCustomersByThemselves(isHandInDTO).getData();
     }
 
     /**
@@ -163,6 +167,6 @@ public class HandInUtils {
 
         String paramsValue = wORCBean.getParamsValue();
         isHandInDTO.setParamValue(paramsValue);
-        return workOrderClient.overtimeReturnVisit(isHandInDTO).getData();
+        return callInfoCount.overtimeReturnVisit(isHandInDTO).getData();
     }
 }
