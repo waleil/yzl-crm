@@ -248,4 +248,14 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/rulesHandedIn")
     ComResponse<Void> rulesHandedIn(IsHandInDTO isHandInDTO);
+
+    /**
+     * 员工维护的顾客是否超限
+     *
+     * @param workOrderUsersDTO
+     * @return
+     */
+    @PostMapping(value = "v1/isUsersToplimit")
+    ComResponse<Boolean> isUsersToplimit(WorkOrderUsersDTO workOrderUsersDTO);
+
 }

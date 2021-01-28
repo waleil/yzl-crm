@@ -368,6 +368,8 @@ public class WorkOrderController {
     @ApiOperation(value = "智能工单-我的回访工单-单条上交",notes = "智能工单-我的回访工单-单条上交")
     @PostMapping(value = "v1/isHandIn")
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
+        isHandInDTO.setStaffNo(QueryIds.userNo.get());
+        isHandInDTO.setStaffName(QueryIds.userName.get());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = workOrderClient.submissionRules();
         if(CollectionUtils.isEmpty(listComResponse.getData())){
             return ComResponse.success(Boolean.TRUE);

@@ -23,12 +23,15 @@ import javax.validation.constraints.NotBlank;
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer/expresscompany")
+@FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
 
 
-    @ApiOperation(value = "物流公司编码和名称")
+    @PostMapping("23323/ee/22")
+    public String getTest();
+
+    @ApiOperation(value = "快递公司编码和名称")
     @PostMapping("v1/express/company/list")
     public ComResponse viewExpressCompany();
 
@@ -36,7 +39,7 @@ public interface LogisticsFien {
     @GetMapping("v1/store/listPage")
     public List<ObjectCommon> storeService();
 
-    @ApiOperation("物流快递追踪轨迹信息")
+    @ApiOperation("物流公司")
     @GetMapping("/v1/selectExpressComponyCode")
     ComResponse<List<ExpressCodeVo>> selectExpressComponyCode();
 
