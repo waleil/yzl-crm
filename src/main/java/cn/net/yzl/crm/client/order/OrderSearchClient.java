@@ -70,4 +70,9 @@ public interface OrderSearchClient {
             @RequestParam("startTime") @NotEmpty(message = "开始时间不可为空") String startTime,
             @RequestParam("endTime") @NotEmpty(message = "结束时间不可为空") String endTime);
 
+    @ApiOperation(value = "查询订单基本信息仅订单信息")
+    @GetMapping("v1/selectOrderInfoOnly")
+    public ComResponse<OrderInfoResDTO> selectOrderInfoOnly(@RequestParam("orderNo")
+                                                            @NotNull(message = "订单编号不能为空") String orderNo);
+
 }
