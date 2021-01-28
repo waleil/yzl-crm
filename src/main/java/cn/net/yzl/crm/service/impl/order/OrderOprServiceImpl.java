@@ -164,7 +164,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
         if(vo.getOrder().getOrderStatus().compareTo(Integer.valueOf(cn.net.yzl.order.enums.OrderStatus.ORDER_STATUS_1.getCode())) != 0 ){
             throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(), "订单号:[" + dto.getOrderNo() + "] 已审核，请勿重复提交！");
         }
-        if(vo.getOrder().getOrderNature().compareTo(Integer.valueOf(CommonConstant.ORDER_NATURE_F)) == 0) {
+        if(vo.getOrder().getOrderNature().compareTo(Integer.valueOf(CommonConstant.ORDER_NATURE_T)) == 0) {
             throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(), "订单号:[" + dto.getOrderNo() + "] 是免审订单，无需审核！");
 
         }

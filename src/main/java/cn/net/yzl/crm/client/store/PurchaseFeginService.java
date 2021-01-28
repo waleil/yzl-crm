@@ -3,10 +3,10 @@ package cn.net.yzl.crm.client.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.*;
+import cn.net.yzl.model.dto.purchase.returns.PurToReturnDto;
 import cn.net.yzl.model.vo.PurchaseOrderAddVo;
 import cn.net.yzl.model.vo.PurchaseOrderCondition;
 import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
-import cn.net.yzl.model.vo.PurchaseOrderVo;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -122,7 +122,7 @@ public interface PurchaseFeginService {
     @ApiOperation(value = "采购单号查找退货信息", notes = "采购单号查找退货信息")
     @ApiImplicitParam(name = "orderNo", value = "采购订单号", required = true, dataType = "String", paramType = "query")
     @GetMapping("purchase/v1/detail/by/order/no")
-    ComResponse<PurchaseReturnResDto> detailByOrderNo(@RequestParam("orderNo") String orderNo);
+    ComResponse<PurToReturnDto>  detailByOrderNo(@RequestParam("orderNo") String orderNo);
 
 
     /**

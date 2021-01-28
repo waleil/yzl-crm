@@ -10,12 +10,14 @@ import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.*;
+import cn.net.yzl.workorder.model.enums.RuleDescriptionEnums;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
@@ -27,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -62,22 +66,26 @@ public class WorkOrderController {
     public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO) {
         isListPageDTO.setStaffNO(QueryIds.userNo.get());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isListPage(isListPageDTO);
-        Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
+            Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
         String productNames = new String();
         for (WorkOrderBean workOrderBean : workOrderBeans) {
-            productNames += "," + workOrderBean.getProductCode();
+            workOrderBean.setProductName("");
+            productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
         }
         productNames = productNames.substring(1);
-        List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
+        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
-            Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
+            Map<String, ProductMainDTO> collect = data.stream().collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())) {
-                    workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+                if (workOrderBean.getFirstBuyProductCode().contains(collect.get(workOrderBean.getFirstBuyProductCode()).getProductCode())) {
+                        workOrderBean.setFirstBuyProductCode(collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                }
+                if (workOrderBean.getLastBuyProductCode().contains(collect.get(workOrderBean.getLastBuyProductCode()).getProductCode())) {
+                    workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
                 }
             });
         }
@@ -126,22 +134,26 @@ public class WorkOrderController {
     @PostMapping(value = "v1/listPage")
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
-        Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
+            Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
         String productNames = new String();
         for (WorkOrderBean workOrderBean : workOrderBeans) {
-            productNames += "," + workOrderBean.getProductCode();
+            workOrderBean.setProductName("");
+            productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
         }
         productNames = productNames.substring(1);
-        List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
+        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
-            Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
+            Map<String, ProductMainDTO> collect = data.stream().collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())) {
-                    workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+                if (workOrderBean.getFirstBuyProductCode().contains(collect.get(workOrderBean.getFirstBuyProductCode()).getProductCode())) {
+                    workOrderBean.setFirstBuyProductCode(collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                }
+                if (workOrderBean.getLastBuyProductCode().contains(collect.get(workOrderBean.getLastBuyProductCode()).getProductCode())) {
+                    workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
                 }
             });
         }
@@ -168,16 +180,16 @@ public class WorkOrderController {
 
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
     @GetMapping("v1/queryFirstProduct")
-    public ComResponse<List<ProductMainInfoDTO>> queryFirstProduct() {
+    public ComResponse<List<ProductMainDTO>> queryFirstProduct() {
         String data = workOrderClient.queryFirstProduct().getData();
-        return productClient.queryProducts(data);
+        return productClient.queryByProductCodes(data);
     }
 
     @ApiOperation(value = "查询所有用户最后一次购买商品", notes = "查询所有用户最后一次购买商品")
     @GetMapping("v1/queryLastProduct")
-    public ComResponse<List<ProductMainInfoDTO>> queryLastProduct() {
+    public ComResponse<List<ProductMainDTO>> queryLastProduct() {
         String data = workOrderClient.queryLastProduct().getData();
-        return productClient.queryProducts(data);
+        return productClient.queryByProductCodes(data);
     }
 
     /**
@@ -356,14 +368,93 @@ public class WorkOrderController {
     @ApiOperation(value = "智能工单-我的回访工单-单条上交",notes = "智能工单-我的回访工单-单条上交")
     @PostMapping(value = "v1/isHandIn")
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
+        isHandInDTO.setStaffNo(QueryIds.userNo.get());
+        isHandInDTO.setStaffName(QueryIds.userName.get());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = workOrderClient.submissionRules();
         if(CollectionUtils.isEmpty(listComResponse.getData())){
             return ComResponse.success(Boolean.TRUE);
         }
+        List<WorkOrderRuleConfigBean> data = listComResponse.getData();
+        if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
+            WorkOrderRuleConfigBean workOrderRuleConfigBean1 = null;
+            for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data){
+                if(workOrderRuleConfigBean.getId() == 7)
+                    workOrderRuleConfigBean1 = workOrderRuleConfigBean;
+            }
+            if(null != workOrderRuleConfigBean1){
+                isHandInDTO.setApplyUpStatus(1);
+                workOrderClient.rulesHandedIn(isHandInDTO);
+                return ComResponse.success(Boolean.TRUE);
+            }
+            RecoveryDTO recoveryDTO = new RecoveryDTO();
+            recoveryDTO.setStaffName(isHandInDTO.getStaffName());
+            recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());
+            recoveryDTO.setCreateId(isHandInDTO.getStaffNo());
+            recoveryDTO.setCreateName(isHandInDTO.getStaffName());
+            recoveryDTO.setCode(isHandInDTO.getCode());
+            recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
+            recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            workOrderClient.handIn(recoveryDTO);
+            return ComResponse.success(Boolean.TRUE);
+        }
+        WorkOrderRuleConfigBean wORCBean = null;
         HandInUtils handInUtils = new HandInUtils();
-        handInUtils.emptyNumberShutdown(isHandInDTO);
-        handInUtils.unableToContact(isHandInDTO,listComResponse.getData());
-        handInUtils.customerRefusedToVisit(isHandInDTO);
-        return ComResponse.success(Boolean.TRUE);
+        Boolean flag = true;
+        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
+            wORCBean = workOrderRuleConfigBean;
+            switch (workOrderRuleConfigBean.getId()){
+                case 1:
+                    flag = handInUtils.emptyNumberShutdown(isHandInDTO,wORCBean);
+                    break;
+
+                case 2:
+                    flag = handInUtils.unableToContact(isHandInDTO,wORCBean);
+                    break;
+
+                case 3:
+                    flag = handInUtils.customerRefusedToVisit(isHandInDTO,wORCBean);
+                    break;
+
+                case 4:
+                    flag = handInUtils.customerRefund(isHandInDTO,wORCBean);
+                    break;
+
+                case 5:
+                    flag = handInUtils.dormantCustomers(isHandInDTO,wORCBean);
+                    break;
+
+                case 6:
+                    flag = handInUtils.mCustomerLExceeded(isHandInDTO,wORCBean);
+                    break;
+
+                case 7:
+                    flag = handInUtils.eGiveUpTakingCustomersByThemselves(isHandInDTO);
+                    break;
+
+                case 8:
+                    flag = handInUtils.overtimeReturnVisit(isHandInDTO,wORCBean);
+                    break;
+
+                default:{}
+                if(BooleanUtils.isFalse(flag)){
+                    break;
+                }
+            }
+        }
+        if(flag){
+            RecoveryDTO recoveryDTO = new RecoveryDTO();
+            recoveryDTO.setStaffName(isHandInDTO.getStaffName());
+            recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());
+            recoveryDTO.setCreateId(isHandInDTO.getStaffNo());
+            recoveryDTO.setCreateName(isHandInDTO.getStaffName());
+            recoveryDTO.setCode(isHandInDTO.getCode());
+            recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
+            recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            workOrderClient.handIn(recoveryDTO);
+        }else {
+            isHandInDTO.setApplyUpStatus(1);
+            workOrderClient.rulesHandedIn(isHandInDTO);
+        }
+        return ComResponse.success(flag);
     }
 }

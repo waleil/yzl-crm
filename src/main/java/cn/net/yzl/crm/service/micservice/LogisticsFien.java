@@ -1,34 +1,45 @@
 package cn.net.yzl.crm.service.micservice;
 
-import java.util.List;
-
 import cn.net.yzl.common.entity.ComResponse;
-
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.logistics.model.ExpressCompany;
+import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
+import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
 import com.github.pagehelper.Page;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer/expresscompany")
+@FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
 
 
-    @ApiOperation("物流快递追踪轨迹信息")
+    @PostMapping("23323/ee/22")
+    public String getTest();
+
+    @ApiOperation(value = "快递公司编码和名称")
+    @PostMapping("v1/express/company/list")
+    public ComResponse viewExpressCompany();
+
+    @ApiOperation(value = "获取所有仓库和编码")
+    @GetMapping("v1/store/listPage")
+    public List<ObjectCommon> storeService();
+
+    @ApiOperation("物流公司")
     @GetMapping("/v1/selectExpressComponyCode")
     ComResponse<List<ExpressCodeVo>> selectExpressComponyCode();
 
@@ -71,5 +82,9 @@ public interface LogisticsFien {
     public GeneralResult<Integer> deleteById(@RequestParam("id")
                                              @NotBlank(message = "物流公司id不能为空")
                                              @ApiParam(name = "id", value = "物流公司id", required = true) Integer id);
+
+    @ApiOperation(value = "查询物流轨迹", notes = "")
+    @PostMapping("logistics/findLogisticsTraces")
+    public GeneralResult<List<ExpressTraceResDTO>> findLogisticsTraces(@RequestBody @Valid ExpressFindTraceDTO dto) ;
 
 }

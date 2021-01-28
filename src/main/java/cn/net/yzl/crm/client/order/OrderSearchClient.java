@@ -1,18 +1,15 @@
 package cn.net.yzl.crm.client.order;
 
-import java.util.List;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @FeignClient(name = "orderSerch", url = "${api.gateway.url}/orderService/orderSearch")
 //@FeignClient(name = "orderSerch", url = "localhost:4455/orderSearch")
@@ -69,5 +66,22 @@ public interface OrderSearchClient {
             @RequestParam("memberCarNo") @NotEmpty(message = "会员编号不能为空") String memberCarNo,
             @RequestParam("startTime") @NotEmpty(message = "开始时间不可为空") String startTime,
             @RequestParam("endTime") @NotEmpty(message = "结束时间不可为空") String endTime);
+
+    @ApiOperation(value = "查询订单基本信息仅订单信息")
+    @GetMapping("v1/selectOrderInfoOnly")
+    public ComResponse<OrderInfoResDTO> selectOrderInfoOnly(@RequestParam("orderNo")
+                                                            @NotNull(message = "订单编号不能为空") String orderNo);
+
+    /**
+     * 获取顾客画像-订单信息
+     *
+     * @param workOrderNo
+     * @param workBatchNo
+     * @return
+     */
+    @GetMapping("v1/getPortraitOrderDetail")
+    ComResponse<List<PortraitOrderDetailDTO>> getPortraitOrderDetail(
+            @RequestParam("workOrderNo") @NotEmpty(message = "工单号不可为空") String workOrderNo,
+            @RequestParam("workBatchNo") @NotEmpty(message = "工单流水号不可为空") String workBatchNo);
 
 }

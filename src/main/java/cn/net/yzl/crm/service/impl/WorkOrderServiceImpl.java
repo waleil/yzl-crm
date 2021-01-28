@@ -71,6 +71,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
             if(StringUtils.isNotBlank(staffNo)){
                 ComResponse<StaffImageBaseInfoDto> sresponse = EhrStaffClient.getDetailsByNo(staffNo);
                 StaffImageBaseInfoDto staffInfo = sresponse.getData();
+                YLoggerUtil.infoLog("待领取顾客池-领取-获取登录信息", JsonUtil.toJsonStr(staffInfo));
                 if(null != staffInfo){
                     WorkOrderReceiveUpdateDTO receiveUpdateDTO = new WorkOrderReceiveUpdateDTO();
                     receiveUpdateDTO.setStaffNo(staffInfo.getStaffNo());

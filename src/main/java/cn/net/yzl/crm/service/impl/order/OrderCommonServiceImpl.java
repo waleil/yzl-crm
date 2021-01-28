@@ -41,7 +41,7 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
         vo.setPayType(order.getPayType());
         vo.setTotalAll(order.getTotalAll());
         vo.setCash(order.getCash());
-        //vo.setOrderTime(DateFormatUtil.dateToString(order.getCreateTime(),"YYYY-MM-dd HH:mm:ss"));
+        vo.setOrderTime(order.getCreateTime());
         vo.setTargetProvince(order.getReveiverProvince());
         vo.setTargetCity(order.getReveiverCityName());
         vo.setTargetArea(order.getReveiverAreaName());
@@ -103,6 +103,7 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
             orderProductVo.setUseSpareMoney(map.getPointsDeduction());//积分扣减
             orderProductVo.setUseRedPacket(map.getAmountRedEnvelope());//红包扣减
             orderProductVo.setCash(map.getCash());//实收金额
+            orderProductVos.add(orderProductVo);
 
 
         });
