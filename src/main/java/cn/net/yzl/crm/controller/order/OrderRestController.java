@@ -126,6 +126,8 @@ public class OrderRestController {
 		}
 		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
 		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
+		orderm.setMemberName(member.getMember_name());// 顾客姓名
+		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 		// 按顾客号查询顾客收获地址
 		ComResponse<List<ReveiverAddressDto>> raresponse = this.memberAddressClient
 				.getReveiverAddress(orderin.getMemberCardNo());
@@ -389,10 +391,8 @@ public class OrderRestController {
 		orderm.setMediaName(orderin.getMediaName());// 媒介名称
 		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
 		orderm.setMediaType(orderin.getMediaType());// 媒介类型
-		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
 		orderm.setUpdateName(orderm.getStaffName());// 更新人姓名
-		orderm.setMemberName(orderin.getMemberName());// 顾客姓名
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
 		// 组装扣减库存参数
 		OrderProductVO orderProduct = new OrderProductVO();
