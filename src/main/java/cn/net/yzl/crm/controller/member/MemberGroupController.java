@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateHelper;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
+import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
 import cn.net.yzl.crm.customer.mongomodel.crowd.CustomerCrowdGroupVO;
 import cn.net.yzl.crm.customer.mongomodel.crowd.UpdateCrowdStatusVO;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
@@ -233,5 +234,17 @@ public class MemberGroupController {
     @GetMapping("/v1/query4Select")
     public ComResponse<List<CustomerCrowdGroupVO>> query4Select(){
         return memberGroupFeign.query4Select();
+    }
+    /**
+     * @Author: lichanghong
+     * @Description: 根据分组编号查询关联的顾客
+     * @Date: 2021/1/28 12:54 上午
+     * @param groupId
+     * @Return: java.util.List<cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember>
+     */
+    @ApiOperation("根据圈选编号查询顾客")
+    @GetMapping("/v1/queryMemberByGroupId")
+    public ComResponse<List<GroupRefMember>> queryMembersByGroupId(@RequestParam String groupId){
+        return memberGroupFeign.queryMembersByGroupId(groupId);
     }
 }

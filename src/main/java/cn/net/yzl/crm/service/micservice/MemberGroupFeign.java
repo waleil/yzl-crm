@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
+import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.customer.model.MemberBaseAttr;
 import cn.net.yzl.crm.customer.mongomodel.crowd.CustomerCrowdGroupVO;
@@ -72,6 +73,10 @@ public interface MemberGroupFeign {
 
     @PostMapping("/v1/groupTrial")
     ComResponse<Integer> memberCrowdGroupTrial(@RequestBody member_crowd_group memberCrowdGroup);
+
+    @GetMapping("/v1/queryMemberByGroupId")
+    ComResponse<List<GroupRefMember>> queryMembersByGroupId(@RequestParam("groupId") String groupId);
+
 
 
 
