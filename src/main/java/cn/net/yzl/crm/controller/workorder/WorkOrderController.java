@@ -73,19 +73,18 @@ public class WorkOrderController {
         String productNames = new String();
         for (WorkOrderBean workOrderBean : workOrderBeans) {
             workOrderBean.setProductName("");
-            productNames += "," + workOrderBean.getProductCode();
+            productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
         }
         productNames = productNames.substring(1);
         List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
             Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().contains(collect.get(workOrderBean.getProductCode()).getProductCode())) {
-                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getProductName())){
-                        workOrderBean.setProductName(workOrderBean.getProductName()+","+collect.get(workOrderBean.getProductCode()).getName());
-                    }else {
-                        workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
-                    }
+                if (workOrderBean.getFirstBuyProductCode().contains(collect.get(workOrderBean.getFirstBuyProductCode()).getProductCode())) {
+                        workOrderBean.setFirstBuyProductCode(collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                }
+                if (workOrderBean.getLastBuyProductCode().contains(collect.get(workOrderBean.getLastBuyProductCode()).getProductCode())) {
+                    workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
                 }
             });
         }
@@ -141,19 +140,19 @@ public class WorkOrderController {
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
         String productNames = new String();
         for (WorkOrderBean workOrderBean : workOrderBeans) {
-            productNames += "," + workOrderBean.getProductCode();
+            workOrderBean.setProductName("");
+            productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
         }
         productNames = productNames.substring(1);
         List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
             Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().contains(collect.get(workOrderBean.getProductCode()).getProductCode())) {
-                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getProductName())){
-                        workOrderBean.setProductName(workOrderBean.getProductName()+","+collect.get(workOrderBean.getProductCode()).getName());
-                    }else {
-                        workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
-                    }
+                if (workOrderBean.getFirstBuyProductCode().contains(collect.get(workOrderBean.getFirstBuyProductCode()).getProductCode())) {
+                    workOrderBean.setFirstBuyProductCode(collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                }
+                if (workOrderBean.getLastBuyProductCode().contains(collect.get(workOrderBean.getLastBuyProductCode()).getProductCode())) {
+                    workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
                 }
             });
         }
