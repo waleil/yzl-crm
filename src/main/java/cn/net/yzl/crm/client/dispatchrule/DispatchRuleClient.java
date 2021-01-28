@@ -33,7 +33,7 @@ public interface DispatchRuleClient {
      * @return
      */
     @PostMapping("v1/saveDispatch")
-    public ComResponse saveDispatch(@RequestBody DispatchRuleDetail detail);
+    public ComResponse<?> saveDispatch(@RequestBody DispatchRuleDetail detail);
 
 
     /**
@@ -43,7 +43,7 @@ public interface DispatchRuleClient {
      * @return
      */
     @GetMapping("v1/updateDispatchRule")
-    public ComResponse updateDispatchRule(@RequestParam("id") @NotBlank(message = "分配规则ID不能为空") String id,
+    public ComResponse<?> updateDispatchRule(@RequestParam("id") @NotBlank(message = "分配规则ID不能为空") String id,
                                           @RequestParam("status") @NotBlank(message = "请选择操作") Integer status);
 
     /**
@@ -67,7 +67,7 @@ public interface DispatchRuleClient {
      * @return
      */
     @PostMapping("v1/saveDispatchSetUp")
-    public ComResponse saveDispatchSetUp(@RequestBody DispatchRuleSetUp dispatchRuleSetUp);
+    public ComResponse<?> saveDispatchSetUp(@RequestBody DispatchRuleSetUp dispatchRuleSetUp);
 
     /**
      * 查询 进线设置
@@ -75,7 +75,7 @@ public interface DispatchRuleClient {
      * @return
      */
     @GetMapping("v1/getDispatchSetUp")
-    public ComResponse getDispatchSetUpOne();
+    public ComResponse<?> getDispatchSetUpOne();
 
 
 }

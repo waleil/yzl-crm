@@ -33,7 +33,7 @@ import cn.net.yzl.product.model.vo.product.vo.ProductUpdateTimeVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductVO;
 import io.swagger.annotations.ApiOperation;
 
-@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/product")
+@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/productMeal/product")
 public interface ProductClient {
 
 	@GetMapping(value = "v1/queryCountByStatus")
@@ -46,14 +46,14 @@ public interface ProductClient {
 	ComResponse<Void> editProduct(@RequestBody ProductVO vo);
 
 	@PostMapping(value = "v1/updateStatus")
-	ComResponse updateStatusByProductCode(@RequestBody ProductUpdateStatusVO vo);
+	ComResponse<?> updateStatusByProductCode(@RequestBody ProductUpdateStatusVO vo);
 
 	@GetMapping("v1/queryProductListAtlas")
 	ComResponse<List<ProductAtlasDTO>> queryProductListAtlas(@RequestParam("productName") String productName,
 			@RequestParam("id") Integer id, @RequestParam("pid") Integer pid);
 
 	@PostMapping(value = "v1/updateTime")
-	ComResponse updateTimeByProductCode(@RequestBody ProductUpdateTimeVO vo);
+	ComResponse<?> updateTimeByProductCode(@RequestBody ProductUpdateTimeVO vo);
 
 	@GetMapping(value = "v1/queryProductDetail")
 	ComResponse<ProductDetailVO> queryProductDetail(@RequestParam("productCode") String productCode);
@@ -84,14 +84,14 @@ public interface ProductClient {
 	 */
 	@ApiOperation("批量下单扣减库存")
 	@PostMapping(value = "v1/batchReduce")
-	public ComResponse productReduce(@RequestBody @Valid BatchProductVO productVO);
+	public ComResponse<?> productReduce(@RequestBody @Valid BatchProductVO productVO);
 
 	@GetMapping(value = "v1/queryProducts")
 	ComResponse<List<ProductMainInfoDTO>> queryProducts(@RequestParam(value = "ids", required = false) String ids);
 
 	@ApiOperation("取消单增加库存")
 	@PostMapping(value = "v1/increaseStock")
-	public ComResponse increaseStock(@RequestBody @Valid OrderProductVO orderProductVO);
+	public ComResponse<?> increaseStock(@RequestBody @Valid OrderProductVO orderProductVO);
 
 	/**
 	 * 按一组商品编码查询商品列表

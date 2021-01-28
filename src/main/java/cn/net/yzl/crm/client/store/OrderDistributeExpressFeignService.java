@@ -37,23 +37,23 @@ public interface OrderDistributeExpressFeignService {
 
     @PostMapping(value = "orderDistributeExpress/v1/insertOrderDistributeExpressRule")
     @ApiOperation("智能分配快递规则新增")
-    public ComResponse insertOrderDistributeExpressRule(@RequestBody OrderDistributeExpressRuleEditVO vo);
+    public ComResponse<?> insertOrderDistributeExpressRule(@RequestBody OrderDistributeExpressRuleEditVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressRule")
     @ApiOperation("智能分配快递规则修改")
-    public ComResponse updateOrderDistributeExpressRule(@RequestBody OrderDistributeExpressRuleEditVO vo);
+    public ComResponse<?> updateOrderDistributeExpressRule(@RequestBody OrderDistributeExpressRuleEditVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressRuleStatus")
     @ApiOperation("智能分配快递规则状态修改")
-    public ComResponse updateOrderDistributeExpressRuleStatus(@RequestBody OrderDistributeExpressRuleStatusVO vo);
+    public ComResponse<?> updateOrderDistributeExpressRuleStatus(@RequestBody OrderDistributeExpressRuleStatusVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/batchUpdateOrderDistributeExpressRuleStatus")
     @ApiOperation("批量检测并修改规则状态")
-    public ComResponse batchUpdateOrderDistributeExpressRuleStatus();
+    public ComResponse<?> batchUpdateOrderDistributeExpressRuleStatus();
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
-    public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody List<OrderExpressDTO> orderExpressList);
+    public ComResponse<?> updateOrderDistributeExpressRuleResult(@RequestBody DistributeExpressVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/selectOrderDistributeExpressList")
     @ApiOperation("订单分配快递列表分页查询")
@@ -61,22 +61,26 @@ public interface OrderDistributeExpressFeignService {
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressStatus")
     @ApiOperation("修改订单状态")
-    public ComResponse updateOrderDistributeExpressStatus(@RequestBody OrderDistributeExpressStatusVO vo);
+    public ComResponse<?> updateOrderDistributeExpressStatus(@RequestBody OrderDistributeExpressStatusVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressRegisterInfo")
     @ApiOperation("异常登记")
-    public ComResponse updateOrderDistributeExpressRegisterInfo(@RequestBody OrderDistributeExpressRegisterVO vo);
+    public ComResponse<?> updateOrderDistributeExpressRegisterInfo(@RequestBody OrderDistributeExpressRegisterVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressByMan")
     @ApiOperation("人工分配")
-    public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo);
+    public ComResponse<?> updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo);
 
     @PostMapping(value = "orderDistributeExpress/v1/insertOrderDistributeExpress")
     @ApiOperation("订单分配快递数据插入")
-    public ComResponse insertOrderDistributeExpress(@RequestBody List<OrderDistributeExpressVO> voList);
+    public ComResponse<?> insertOrderDistributeExpress(@RequestBody List<OrderDistributeExpressVO> voList);
 
     @GetMapping(value = "orderDistributeExpress/v1/selectExpressCompanyList")
     @ApiOperation("获取物流服务物流公司列表")
-    public ComResponse selectExpressCompanyList();
+    public ComResponse<?> selectExpressCompanyList();
+
+    @PostMapping(value = "orderDistributeExpress/v1/updateOrderDistributeExpressStatusToCancel")
+    @ApiOperation("取消订单")
+    public ComResponse<?> updateOrderDistributeExpressStatusToCancel(@RequestBody OrderCancelStatusVO vo);
 
 }

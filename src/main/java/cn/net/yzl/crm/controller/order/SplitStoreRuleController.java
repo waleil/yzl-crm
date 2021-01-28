@@ -45,7 +45,7 @@ public class SplitStoreRuleController {
         if (list.size() == 0) {
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        String userNo = request.getHeader("userNo");
+        String userNo = Optional.ofNullable(request.getHeader("userNo")).orElse("");
         return splitStoreRuleClient.addRule(list, userNo);
     }
 

@@ -9,17 +9,17 @@ import java.util.List;
 
 
 public interface BrandService {
-    ComResponse getAllBrands(Integer pageNo, Integer pageSize, String keyword);
+    ComResponse<?> getAllBrands(Integer pageNo, Integer pageSize, String keyword);
 
-    ComResponse getBrandById(Integer id);
+    ComResponse<?> getBrandById(Integer id);
 
     ComResponse<Void> changeBrandStatus(Integer flag, Integer id);
 
-    ComResponse insertBrand(BrandVO brand);
+    ComResponse<?> insertBrand(BrandVO brand);
 
     ComResponse<Void> updateBrand(BrandVO brand);
 
-    ComResponse deleteBrandById(BrandDelVO brandDelVO);
+    ComResponse<?> deleteBrandById(BrandDelVO brandDelVO);
 
     ComResponse<Boolean> checkUnique(String name, int id);
 
