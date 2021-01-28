@@ -88,7 +88,7 @@ public class OrderRestController {
 
 	@PostMapping("/v1/submitorder")
 	@ApiOperation(value = "热线工单-购物车-提交订单")
-	public ComResponse<Object> submitOrder(@RequestBody OrderIn orderin) {
+	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
 		OrderM orderm = new OrderM();// 订单信息
 		orderm.setTotal(0);// 实收金额=应收金额+预存
 		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
