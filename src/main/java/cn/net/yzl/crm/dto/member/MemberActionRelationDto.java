@@ -39,8 +39,7 @@ public class MemberActionRelationDto implements Serializable {
     @ApiModelProperty(value ="字典名称(手动填写时必填)",name="dname")
     private String dname;
 
-    @ApiModelProperty(value ="创建人",name="creator")
-    @NotBlank
+    @ApiModelProperty(value ="创建人",name="creator",hidden = true)
     private String creator;
 
     private static final long serialVersionUID = 1L;
