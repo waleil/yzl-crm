@@ -124,6 +124,8 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息>>{}", orderin.getMemberCardNo(), member);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
 		}
+		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
+		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
 		// 按顾客号查询顾客收获地址
 		ComResponse<List<ReveiverAddressDto>> raresponse = this.memberAddressClient
 				.getReveiverAddress(orderin.getMemberCardNo());
@@ -165,6 +167,8 @@ public class OrderRestController {
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, staffInfo.getWorkCode(),
 				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis生成订单号
+		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
+		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
 		// 按部门id查询部门信息
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
@@ -388,12 +392,8 @@ public class OrderRestController {
 		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
 		orderm.setUpdateName(orderm.getStaffName());// 更新人姓名
-		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
-		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
 		orderm.setMemberName(orderin.getMemberName());// 顾客姓名
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
-		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
-		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
 		// 组装扣减库存参数
 		OrderProductVO orderProduct = new OrderProductVO();
 		orderProduct.setOrderNo(orderm.getOrderNo());// 订单编号
