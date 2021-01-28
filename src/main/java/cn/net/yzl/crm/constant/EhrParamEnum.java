@@ -22,6 +22,11 @@ public enum EhrParamEnum {
     public static final  String EHR_DICT_ABNORMAL_TYPE = "abnormal_type";
 
     /**
+     * 培训成绩
+     */
+    public static final  String EHR_DICT_TRAINING_GRADE = "training_grade";
+
+    /**
      * 业务属性   热线
      */
     public static final  int EHR_HOTLINE_BUSINESS_ATTRIBUTE_CODE = 42;

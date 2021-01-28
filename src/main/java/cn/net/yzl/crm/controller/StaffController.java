@@ -207,9 +207,9 @@ public class StaffController {
      */
     @ApiOperation(value="员工列表  获取员工所有状态",httpMethod = "GET")
     @GetMapping("/getAllStuffStatus")
-    public ComResponse<List<StaffStatusDto>> getAllStuffStatus(){
+    public ComResponse<List<SysDictDto>> getAllStuffStatus(){
         log.info("......StaffController.getAllStuffStatus()开始,......");
-        ComResponse<List<StaffStatusDto>> response = ehrStaffClient.getAllStuffStatus( EhrParamEnum.EHR_DICT_STAFF_STATUS);
+        ComResponse<List<SysDictDto>> response = ehrStaffClient.getAllStuffStatus( EhrParamEnum.EHR_DICT_STAFF_STATUS);
         return response;
     }
 
@@ -219,9 +219,9 @@ public class StaffController {
      */
     @ApiOperation(value="员工画像  员工异动字典",httpMethod = "GET")
     @GetMapping("/getAllAbnormalType")
-    public ComResponse<List<StaffStatusDto>> getAllAbnormalType(){
+    public ComResponse<List<SysDictDto>> getAllAbnormalType(){
         log.info("......StaffController.getAllAbnormalType()开始,......");
-        ComResponse<List<StaffStatusDto>> response = ehrStaffClient.getAllStuffStatus( EhrParamEnum.EHR_DICT_ABNORMAL_TYPE);
+        ComResponse<List<SysDictDto>> response = ehrStaffClient.getAllStuffStatus( EhrParamEnum.EHR_DICT_ABNORMAL_TYPE);
         return response;
     }
 
