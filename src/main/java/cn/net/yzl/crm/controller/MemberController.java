@@ -138,15 +138,15 @@ public class MemberController {
      * @param member_card
      * @return
      */
-    @ApiOperation("获取顾客购买商品")
+    @ApiOperation("顾客画像-获取顾客购买商品")
     @GetMapping("v1/getMemberProductEffectList")
-    public GeneralResult getMemberProductEffectList(
+    public ComResponse<List<String>> getMemberProductEffectList(
             @RequestParam("member_card")
             @NotBlank(message = "member_card不能为空")
             @ApiParam(name = "member_card", value = "会员卡号", required = true)
                     String member_card) {
-        GeneralResult<List<MemberProductEffect>> result = memberFien.getMemberProductEffectList(member_card);
-        return result;
+
+        return ComResponse.success();
     }
 
     /**
@@ -155,7 +155,7 @@ public class MemberController {
      * @param member_card
      * @return
      */
-    @ApiOperation("获取顾客咨询商品")
+    @ApiOperation("顾客画像-获取顾客咨询商品")
     @GetMapping("v1/getProductConsultationList")
     public GeneralResult getProductConsultationList(
             @RequestParam("member_card")

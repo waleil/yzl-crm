@@ -74,12 +74,8 @@ public interface MemberFien {
 	@GetMapping("/v1/setMemberToVip")
 	void setMemberToVip(@RequestParam("member_card") String member_card);
 
-	@ApiOperation("获取顾客购买商品")
-	@GetMapping("/v1/getMemberProductEffectList")
-	GeneralResult<List<MemberProductEffect>> getMemberProductEffectList(
-			@RequestParam("member_card") String member_card);
 
-	@ApiOperation("获取顾客咨询商品")
+	@ApiOperation("顾客画像-获取顾客咨询商品")
 	@GetMapping("/v1/getProductConsultationList")
 	GeneralResult<List<ProductConsultation>> getProductConsultationList(
 			@RequestParam("member_card") String member_card);
