@@ -9,16 +9,15 @@ import cn.net.yzl.common.entity.ComResponse;
 
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.logistics.model.ExpressCompany;
 import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
 import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
+import cn.net.yzl.model.vo.StoreVO;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,9 +39,9 @@ public interface LogisticsFien {
     @PostMapping("logistics/findLogisticsTraces")
     public GeneralResult<List<ExpressTraceResDTO>> findLogisticsTraces(@RequestBody @Valid ExpressFindTraceDTO dto) ;
 
-    @ApiOperation(value="获取所有仓库和编码")
+/*    @ApiOperation(value="获取所有仓库和编码")
     @GetMapping("/exp/company/v1/store/listPage")
-    public List<ObjectCommon>   storeService();
+    public ComResponse<Page<StoreVO>> storeService();*/
 
     @ApiOperation(value="分页快递公司档案列表")
     @PostMapping("/exp/company/v1/listPage")
@@ -50,7 +49,7 @@ public interface LogisticsFien {
 
     @ApiOperation(value="快递公司档案编码列表")
     @PostMapping("/exp/company/v1/express/company/list")
-    public ComResponse  viewExpressCompany() ;
+    public ComResponse viewExpressCompany() ;
 
 
 

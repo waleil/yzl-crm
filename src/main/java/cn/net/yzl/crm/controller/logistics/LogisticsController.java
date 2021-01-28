@@ -1,14 +1,10 @@
 package cn.net.yzl.crm.controller.logistics;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.logistics.model.ExpressCompany;
-import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
-import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
@@ -17,14 +13,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -36,13 +29,12 @@ public class LogisticsController {
     LogisticsFien logisticsFien;
 
 
-    @ApiOperation(value="获取所有仓库和编码")
+/*    @ApiOperation(value="获取所有仓库和编码")
     @GetMapping("v1/store/listPage")
-    public ComResponse<List<ObjectCommon>>   storeService(){
-        List<ObjectCommon> list = logisticsFien.storeService();
-        return ComResponse.success(list);
+    public ComResponse<Page<StoreVO>> storeService(){
+        return logisticsFien.storeService();
 //                = storeService.getStoreBasic();
-    }
+    }*/
 
     /*
      * 11111
@@ -80,7 +72,7 @@ public class LogisticsController {
     @ApiOperation(value="添加物流公司")
     @PostMapping("v1/save")
     public ComResponse<Integer> save(@RequestBody @Valid ExpressCompanySaveDTO saveDTO) {
-       return logisticsFien.save(saveDTO);
+        return logisticsFien.save(saveDTO);
     }
 
     @ApiOperation(value="物流公司的账户信息")
