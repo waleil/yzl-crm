@@ -16,6 +16,7 @@ import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.*;
+import cn.net.yzl.workorder.model.enums.RuleDescriptionEnums;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -360,10 +363,50 @@ public class WorkOrderController {
         if(CollectionUtils.isEmpty(listComResponse.getData())){
             return ComResponse.success(Boolean.TRUE);
         }
+        WorkOrderRuleConfigBean wORCBean = null;
         HandInUtils handInUtils = new HandInUtils();
-        handInUtils.emptyNumberShutdown(isHandInDTO);
-        handInUtils.unableToContact(isHandInDTO,listComResponse.getData());
-        handInUtils.customerRefusedToVisit(isHandInDTO);
-        return ComResponse.success(Boolean.TRUE);
+        Boolean flag = true;
+        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : listComResponse.getData()) {
+            wORCBean = workOrderRuleConfigBean;
+            switch (workOrderRuleConfigBean.getId()){
+                case 1:
+                    flag = handInUtils.emptyNumberShutdown(isHandInDTO,wORCBean);
+                    break;
+
+                case 2:
+                    flag = handInUtils.unableToContact(isHandInDTO,wORCBean);
+                    break;
+
+                case 3:
+                    flag = handInUtils.customerRefusedToVisit(isHandInDTO,wORCBean);
+                    break;
+
+                case 4:
+                    flag = handInUtils.customerRefund(isHandInDTO,wORCBean);
+                    break;
+
+                case 5:
+                    flag = handInUtils.dormantCustomers(isHandInDTO,wORCBean);
+                    break;
+
+                case 6:
+                    flag = handInUtils.mCustomerLExceeded(isHandInDTO,wORCBean);
+                    break;
+
+                case 7:
+                    flag = handInUtils.eGiveUpTakingCustomersByThemselves(isHandInDTO);
+                    break;
+
+                case 8:
+                    flag = handInUtils.overtimeReturnVisit(isHandInDTO,wORCBean);
+                    break;
+
+                default:{}
+                if(BooleanUtils.isFalse(flag)){
+                    break;
+                }
+            }
+        }
+        return ComResponse.success(flag);
     }
 }
