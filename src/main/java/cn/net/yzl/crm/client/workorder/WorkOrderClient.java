@@ -239,4 +239,14 @@ public interface WorkOrderClient {
      */
     @PostMapping(value = "v1/overtimeReturnVisit")
     ComResponse<Boolean> overtimeReturnVisit(IsHandInDTO isHandInDTO);
+
+    /**
+     * 员工维护的顾客是否超限
+     *
+     * @param workOrderUsersDTO
+     * @return
+     */
+    @PostMapping(value = "v1/isUsersToplimit")
+    ComResponse<Boolean> isUsersToplimit(WorkOrderUsersDTO workOrderUsersDTO);
+
 }
