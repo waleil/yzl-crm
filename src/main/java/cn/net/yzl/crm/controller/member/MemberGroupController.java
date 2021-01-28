@@ -15,16 +15,13 @@ import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author lichanghong
@@ -128,8 +125,61 @@ public class MemberGroupController {
             return ComResponse.success(ResponseCodeEnums.NO_DATA_CODE);
         return result;
     }
-
-
+    @ApiOperation("圈选试算")
+    @PostMapping("/v1/groupTrial")
+    public ComResponse<Integer> memberCrowdGroupTrial(@RequestBody MemberCrowdGroupDTO memberCrowdGroup){
+        member_crowd_group member_group = new member_crowd_group();
+        member_group.setAge(memberCrowdGroup.getAge());
+        member_group.setEmail(memberCrowdGroup.getEmail());
+        member_group.setFirst_order_am(memberCrowdGroup.getFirst_order_am());
+        member_group.setNature(memberCrowdGroup.getNature());
+        member_group.setProducts(memberCrowdGroup.getProducts());
+        member_group.setQq(memberCrowdGroup.getQq());
+        member_group.setSex(memberCrowdGroup.getSex());
+        member_group.setTotal_amount(memberCrowdGroup.getTotal_amount());
+        member_group.setWechat(memberCrowdGroup.getWechat());
+        member_group.setActions(memberCrowdGroup.getActions());
+        member_group.setCrowd_name(memberCrowdGroup.getCrowd_name());
+        member_group.setActive_degree(memberCrowdGroup.getActive_degree());
+        member_group.setActive_order(member_group.getActive_order());
+        member_group.setActive_like(memberCrowdGroup.getActive_like());
+        member_group.setAdvers(memberCrowdGroup.getAdvers());
+        member_group.setAreas(memberCrowdGroup.getAreas());
+        member_group.setDescription(memberCrowdGroup.getDescription());
+        member_group.setDiseases(memberCrowdGroup.getDiseases());
+        member_group.setFirst_order_to_days(memberCrowdGroup.getFirst_order_to_days());
+        member_group.setHave_order(memberCrowdGroup.getHave_order());
+        member_group.setTotal_amount(memberCrowdGroup.getTotal_amount());
+        member_group.setTicket(memberCrowdGroup.getTicket());
+        member_group.setLast_order_to_days(memberCrowdGroup.getLast_order_to_days());
+        member_group.setLogistics_company_id(memberCrowdGroup.getLogistics_company_id());
+        member_group.setLogistics_state(memberCrowdGroup.getLogistics_state());
+        member_group.setMediaList(memberCrowdGroup.getMediaList());
+        member_group.setIntegral(memberCrowdGroup.getIntegral());
+        member_group.setOrder_action(memberCrowdGroup.getOrder_action());
+        member_group.setMember_grade(memberCrowdGroup.getMember_grade());
+        member_group.setMember_month(memberCrowdGroup.getMember_month());
+        member_group.setMember_type(memberCrowdGroup.getMember_type());
+        member_group.setOrder_high_am(memberCrowdGroup.getOrder_high_am());
+        member_group.setOrder_low_am(memberCrowdGroup.getOrder_low_am());
+        member_group.setPay_form(memberCrowdGroup.getPay_form());
+        member_group.setPay_state(memberCrowdGroup.getPay_state());
+        member_group.setPay_type(memberCrowdGroup.getPay_type());
+        member_group.setPhone_time(memberCrowdGroup.getPhone_time());
+        member_group.setRecharge(memberCrowdGroup.getRecharge());
+        member_group.setRed_bag(memberCrowdGroup.getRed_bag());
+        member_group.setResponse_time(memberCrowdGroup.getResponse_time());
+        member_group.setOrder_rec_amount(memberCrowdGroup.getOrder_rec_amount());
+        member_group.setOrder_source(memberCrowdGroup.getOrder_source());
+        member_group.setOrder_state(memberCrowdGroup.getOrder_state());
+        member_group.setSign_date_to_days(memberCrowdGroup.getSign_date_to_days());
+        member_group.setStaff_sex(memberCrowdGroup.getStaff_sex());
+        member_group.setVip(memberCrowdGroup.getVip());
+        member_group.setActiveCodeList(memberCrowdGroup.getActiveCodeList());
+        member_group.setActiveTypeList(memberCrowdGroup.getActiveTypeList());
+        member_group.setOrder_total_amount(memberCrowdGroup.getOrder_total_amount());
+        return memberGroupFeign.memberCrowdGroupTrial(member_group);
+    }
 
     @ApiOperation("删除顾客圈选")
     @GetMapping("/v1/delMemberCrowdGroup")
