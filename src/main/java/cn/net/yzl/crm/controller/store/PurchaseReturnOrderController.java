@@ -6,6 +6,7 @@ import cn.net.yzl.crm.client.store.PurchaseReturnFeginService;
 import cn.net.yzl.model.dto.PurchaseReturnResDto;
 import cn.net.yzl.model.dto.PurchaseReturnReviewDto;
 import cn.net.yzl.model.dto.PurchaseReturnWaybillDto;
+import cn.net.yzl.model.dto.purchase.returns.PurReturnNotMerge;
 import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnOrderAddDto;
 import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnUpdateDto;
 import cn.net.yzl.model.vo.PurReturnOrderAddVo;
@@ -40,7 +41,7 @@ public class PurchaseReturnOrderController {
      */
     @ApiOperation(value = "采购退货单分页列表", notes = "采购退货单分页列表")
     @PostMapping("v1/page")
-    public ComResponse<Page<PurchaseReturnResDto>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
+    public ComResponse<Page<PurReturnNotMerge>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition){
         return purchaseReturnFeginService.page(purchaseReturnCondition);
     }
 

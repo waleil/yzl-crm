@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.PurchaseReturnResDto;
 import cn.net.yzl.model.dto.PurchaseReturnReviewDto;
 import cn.net.yzl.model.dto.PurchaseReturnWaybillDto;
+import cn.net.yzl.model.dto.purchase.returns.PurReturnNotMerge;
 import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnOrderAddDto;
 import cn.net.yzl.model.dto.purchase.returns.PurchaseReturnUpdateDto;
 import cn.net.yzl.model.vo.PurchaseReturnCondition;
@@ -30,7 +31,7 @@ public interface PurchaseReturnFeginService {
      */
     @ApiOperation(value = "采购退货单分页列表", notes = "采购退货单分页列表")
     @PostMapping("purchaseReturn/v1/page")
-    ComResponse<Page<PurchaseReturnResDto>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition);
+    ComResponse<Page<PurReturnNotMerge>> page(@RequestBody PurchaseReturnCondition purchaseReturnCondition);
 
     @ApiOperation(value = "采购退货单新增")
     @PostMapping("purchaseReturn/v1/add")
