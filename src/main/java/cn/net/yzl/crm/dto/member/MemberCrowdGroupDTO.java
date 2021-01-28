@@ -21,33 +21,6 @@ public class MemberCrowdGroupDTO {
     @ApiModelProperty("群组描述")
     private String description;
 
-    @ApiModelProperty("是否启用:0=否，1=是")
-    private  Integer enable;
-
-    @ApiModelProperty("创建时间")
-    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
-    private Date create_time;
-
-    @ApiModelProperty("创建人编码")
-    private String create_code;
-
-
-    @ApiModelProperty("创建人姓名")
-    private String create_name;
-
-    @ApiModelProperty("修改时间")
-    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
-    private Date update_time;
-
-    @ApiModelProperty("修改人")
-    private String update_code;
-
-    @ApiModelProperty("修改人姓名")
-    private String update_name;
-
-    @ApiModelProperty("群组人数")
-    private Integer person_count;
-
     @ApiModelProperty("性别： 0男，1女，-1不做条件判断")
     private Integer sex;
 
@@ -145,10 +118,9 @@ public class MemberCrowdGroupDTO {
     @ApiModelProperty("是否活动订单，1是，0否，-1不做统计查询")
     private Integer active_order;
 
-    @ApiModelProperty("活动名称")
-    private List<crowd_active> activeCodeList;
-    @ApiModelProperty("活动类型")
-    private List<crowd_active> activeTypeList;
+    @ApiModelProperty("活动")
+    private List<crowd_active> activeList;
+
     @ApiModelProperty("订单来源: 0=电销事业中心，1=OTC ，2=淘宝 ，3=京东 ，4=自建app")
     private List<crowd_base_value> order_source;
 
@@ -162,7 +134,7 @@ public class MemberCrowdGroupDTO {
     private List<crowd_base_value> logistics_state;
 
     @ApiModelProperty("物流公司")
-    private List<crowd_base_value> logistics_company_id;
+    private List<crowd_base_value> logistics_company;
 
     @ApiModelProperty(value = "累计消费金额")
     private Integer total_amount;
