@@ -64,7 +64,7 @@ public interface LogisticsFien {
 
 
     @ApiOperation(value="快递公司档案详情")
-    @PostMapping("/exp/company/v1/view")
+    @GetMapping("/exp/company/v1/view")
     public ComResponse view(@RequestParam("id") @Valid String  id) ;
 
 

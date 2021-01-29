@@ -107,7 +107,7 @@ public class LogisticsController {
 
 
     @ApiOperation(value="查看物流公司")
-    @PostMapping("v1/view")
+    @GetMapping("v1/view")
     public ComResponse view(@RequestParam("id") @Valid String  id) {
         return logisticsFien.view(id);
     }
