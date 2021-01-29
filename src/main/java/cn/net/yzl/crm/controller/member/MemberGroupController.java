@@ -99,6 +99,8 @@ public class MemberGroupController {
         member_group.setUpdate_time(DateHelper.getCurrentDate());
         member_group.setEnable(0);
         member_group.setCreate_name(memberCrowdGroup.getCreate_name());
+        member_group.setAdvertProducts(memberCrowdGroup.getAdvertProducts());
+        member_group.setLastCallDays(memberCrowdGroup.getLastCallDays());
         if (StringUtil.isNullOrEmpty(memberCrowdGroup.get_id())) {
             member_group.setCreate_code(userId);
             ComResponse result= memberGroupFeign.addCrowdGroup(member_group);
@@ -179,6 +181,8 @@ public class MemberGroupController {
         member_group.setActiveCodeList(memberCrowdGroup.getActiveCodeList());
         member_group.setActiveTypeList(memberCrowdGroup.getActiveTypeList());
         member_group.setOrder_total_amount(memberCrowdGroup.getOrder_total_amount());
+        member_group.setAdvertProducts(memberCrowdGroup.getAdvertProducts());
+        member_group.setLastCallDays(memberCrowdGroup.getLastCallDays());
         return memberGroupFeign.memberCrowdGroupTrial(member_group);
     }
 
