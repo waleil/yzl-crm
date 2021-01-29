@@ -42,14 +42,14 @@ import javax.validation.constraints.NotBlank;
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
 
+    @ApiOperation(value = "下载文件", notes = "")
+    @PostMapping("/fastDfs/download/file")
+    String downLoadContract(String id);
 
-    @ApiOperation(value = "合同下载")
-    @GetMapping(value = "/fastDfs/download")
-    InputStream downloadFile(String filePath) throws IOException;
+    @ApiOperation(value = "记录文件路径", notes = "")
+    @PostMapping("fastDfs/record/file")
+    Boolean recordFilePath(@RequestParam("path") String path);
 
-    @ApiOperation(value = "合同上传")
-    @PostMapping("/fastDfs/upload")
-    public String uploadFile(MultipartFile file) throws IOException;
 
     @ApiOperation(value = "查询物流轨迹", notes = "")
     @PostMapping("logistics/findLogisticsTraces")
@@ -70,8 +70,8 @@ public interface LogisticsFien {
 
 
     @ApiOperation(value="快递公司档案详情")
-    @PostMapping("/exp/company/v1/view")
-    public ComResponse view(@RequestBody @Valid ExpressCompany expressCompany) ;
+    @GetMapping("/exp/company/v1/view")
+    public ComResponse view(@RequestParam("id") @Valid String  id) ;
 
 
     @ApiOperation(value="编辑快递公司档案")
@@ -130,5 +130,7 @@ public interface LogisticsFien {
 //    @ApiImplicitParam(name = "pid",paramType = "query",value = "父级编号",defaultValue = "0",required = true)
     @GetMapping("/exp/company/v1/selectExpressComponyDetail")
     public ComResponse<List<ExpressCodeVo>> selectExpressComponyDetail() ;
+
+
 
 }
