@@ -45,4 +45,10 @@ public interface RemoveStockFeignService {
     public ComResponse<Page<StoreToLogisticsDto>> selectOutStoreToLogistics(@RequestBody StoreToLogisticsParamVo storeToLogisticsParamVo);
 
 
+    @ApiOperation(value = "物流-修改订单状态和收据状态")
+    @PostMapping("removestock/v1/updateOutStoreToLogistics")
+    public ComResponse updateOutStoreToLogistics(@RequestBody LogisticsToStoreUpdateParam logisticsToStoreUpdateParam);
+
+
+
 }
