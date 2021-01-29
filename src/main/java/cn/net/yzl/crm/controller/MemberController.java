@@ -17,6 +17,7 @@ import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
+import cn.net.yzl.crm.dto.member.MemberCustomerJourneyDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
@@ -185,6 +186,18 @@ public class MemberController {
         list.add(memberServiceJournery);
         memberServiceJourneryDto.setMemberServiceJourneryList(list);
         return ComResponse.success(memberServiceJourneryDto);
+    }
+
+
+    @ApiOperation("顾客画像-顾客旅程")
+    @GetMapping("v1/getCustomerJourney")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+    })
+    public ComResponse<MemberCustomerJourneyDto> getCustomerJourney(String memberCard) {
+        // todo 等待 订单和工单提供接口
+
+        return ComResponse.success();
     }
 
 
