@@ -2,6 +2,10 @@ package cn.net.yzl.crm.service.micservice;
 
 import java.util.List;
 
+import cn.net.yzl.crm.customer.dto.member.MemberGradeRecordDto;
+import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,11 +37,14 @@ import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import io.swagger.annotations.ApiOperation;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 顾客服务接口
  */
 @FeignClient(name = "crmCustomer", url = "${api.gateway.url}" + MemberFien.SUFFIX_URL)
 //@FeignClient(value = "yzl-crm-customer-api")
+//@FeignClient(name = "crmCustomer", url = "http://localhost:2070/member")
 public interface MemberFien {
 	String SUFFIX_URL = "/crmCustomer/member";
 	String CUSTOMER_AMOUNT_OPERATION_URL = "/customerAmount/operation";
@@ -86,6 +93,10 @@ public interface MemberFien {
 	@ApiOperation("获取顾客病症")
 	@GetMapping("/v1/getMemberDisease")
 	ComResponse<List<MemberDiseaseCustomerDto>> getMemberDisease(@RequestParam("memberCard") String memberCard);
+
+	@ApiOperation("新增顾客病症")
+	@PostMapping("/v1/insertMemberDisease")
+	ComResponse<Integer> insertMemberDisease(@RequestBody MemberDiseaseDto memberDiseaseDto);
 
 	@ApiOperation("获取购买能力")
 	@GetMapping("/v1/getMemberOrderStat")
@@ -150,6 +161,12 @@ public interface MemberFien {
 
 	// 添加顾客咨询商品
 	@PostMapping("v1/addProductConsultation")
-	ComResponse<String> addProductConsultation(
-			@RequestBody @Validated List<ProductConsultationInsertVO> productConsultationInsertVOList);
+	ComResponse<String> addProductConsultation(@RequestBody @Validated List<ProductConsultationInsertVO> productConsultationInsertVOList);
+
+	@ApiOperation("获取会员级别记录")
+	@GetMapping("v1/getMemberGradeRecordList")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+	})
+	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordList(@NotBlank String memberCard);
 }

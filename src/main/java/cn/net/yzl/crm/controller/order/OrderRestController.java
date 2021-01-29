@@ -1,6 +1,8 @@
 package cn.net.yzl.crm.controller.order;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
@@ -33,7 +37,9 @@ import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
+import cn.net.yzl.crm.dao.RequestMessageMapper;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.model.RequestMessage;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.utils.RedisUtil;
@@ -436,7 +442,8 @@ public class OrderRestController {
 			// 如果调用服务接口失败
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
 				log.error("热线工单-购物车-提交订单>>恢复库存失败>>{}", increaseStock);
-				// TODO zww 插入本地消息记录表
+				this.insert(orderProduct, ProductClient.SUFFIX_URL, ProductClient.INCREASE_STOCK_URL,
+						orderm.getStaffCode(), orderm.getOrderNo());
 			}
 			// 恢复账户
 			memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 退回
@@ -445,7 +452,8 @@ public class OrderRestController {
 			// 如果调用服务接口失败
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation2.getCode())) {
 				log.error("热线工单-购物车-提交订单>>恢复账户失败>>{}", customerAmountOperation2);
-				// TODO zww 插入本地消息记录表
+				this.insert(memberAmountDetail, MemberFien.SUFFIX_URL, MemberFien.CUSTOMER_AMOUNT_OPERATION_URL,
+						orderm.getStaffCode(), orderm.getOrderNo());
 			}
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
@@ -456,6 +464,41 @@ public class OrderRestController {
 				orderm.getReveiverTelphoneNo(), BigDecimal.valueOf(orderm.getTotal()).divide(bd100).doubleValue(),
 				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100).doubleValue(),
 				orderm.getOrderNo()));
+	}
+
+	@Resource
+	private RequestMessageMapper requestMessageMapper;// 本地消息表mapper
+	@Resource
+	private ObjectMapper objectMapper;// json转换器
+	@Value("${api.gateway.url}")
+	private String apiGateWayUrl;// 应用网关地址
+
+	/**
+	 * 插入本地消息记录表
+	 * 
+	 * @param <T>       请求参数类型
+	 * @param object    请求参数
+	 * @param prefix    前缀
+	 * @param suffix    后缀
+	 * @param staffCode 员工编码
+	 * @param orderNo   订单号
+	 * @author zhangweiwei
+	 * @date 2021年1月29日,下午9:08:22
+	 */
+	private <T> void insert(T object, String prefix, String suffix, String staffCode, String orderNo) {
+		try {
+			RequestMessage message = new RequestMessage();
+			message.setMessageCode(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")));// 消息编码
+			message.setBusCode(orderNo);// 订单号
+			message.setRequestParam(this.objectMapper.writeValueAsString(object));// 请求参数
+			message.setRequestUrl(String.format("%s%s%s", this.apiGateWayUrl, prefix, suffix));// 请求链接
+			message.setCreateCode(staffCode);// 创建人
+			message.setUpdateCode(staffCode);// 修改人
+			// 插入本地消息记录表
+			this.requestMessageMapper.insert(message);
+		} catch (Exception e) {
+			log.error("ERROR", e);
+		}
 	}
 
 	@Getter
