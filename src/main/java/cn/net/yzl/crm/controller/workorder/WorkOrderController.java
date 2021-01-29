@@ -461,4 +461,11 @@ public class WorkOrderController {
     public ComResponse<List<WorkOrderFlowVO>> userRoute(@RequestParam(name = "memberCard",required = true)String memberCard){
         return workOrderClient.userRoute(memberCard);
     }
+
+    @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
+    @PostMapping(value = "v1/submitWorkOrder")
+    public ComResponse<Void> submitWorkOrder(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
+
+        return workOrderClient.submitWorkOrder(workOrderDisposeFlowBean);
+    }
 }
