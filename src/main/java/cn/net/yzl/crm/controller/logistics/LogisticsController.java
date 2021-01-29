@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
@@ -37,12 +40,19 @@ public class LogisticsController {
         this.logisticsFien = logisticsFien;
     }
 
-//    @ApiOperation(value = "合同下载")
-//    @GetMapping("/fastDfs/download")
-//    public void downloadFile(String filePath, HttpServletResponse response) throws IOException {
-//
-//        this.logisticsFien.downloadFile(filePath,response);
-//    }
+
+    @ApiOperation(value = "合同下载")
+    @GetMapping("/fastDfs/download")
+    public void downloadFile(String filePath,HttpServletResponse response) throws IOException {
+        String fileName = "";
+        InputStream bytes = this.logisticsFien.downloadFile(filePath);
+        response.setContentType("application/force-download");// 设置强制下载不打开
+        fileName = URLEncoder.encode(fileName, "utf-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        IOUtils.copy(bytes, response.getOutputStream());
+        response.flushBuffer();
+
+    }
 
     @ApiOperation(value = "合同上传")
     @PostMapping("/fastDfs/upload")
