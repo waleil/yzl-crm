@@ -37,12 +37,12 @@ public class LogisticsController {
         this.logisticsFien = logisticsFien;
     }
 
-    @ApiOperation(value = "合同下载")
-    @GetMapping("/fastDfs/download")
-    public void downloadFile(String filePath, HttpServletResponse response) throws IOException {
-
-        this.downloadFile(filePath,response);
-    }
+//    @ApiOperation(value = "合同下载")
+//    @GetMapping("/fastDfs/download")
+//    public void downloadFile(String filePath, HttpServletResponse response) throws IOException {
+//
+//        this.logisticsFien.downloadFile(filePath,response);
+//    }
 
     @ApiOperation(value = "合同上传")
     @PostMapping("/fastDfs/upload")

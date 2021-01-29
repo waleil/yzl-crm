@@ -41,9 +41,9 @@ import javax.validation.constraints.NotBlank;
 public interface LogisticsFien {
 
 
-    @ApiOperation(value = "合同下载")
-    @GetMapping("/fastDfs/download")
-    public void downloadFile(String filePath, HttpServletResponse response) throws IOException;
+//    @ApiOperation(value = "合同下载")
+//    @GetMapping("/fastDfs/download")
+//    public void downloadFile(String filePath, HttpServletResponse response) throws IOException;
 
     @ApiOperation(value = "合同上传")
     @PostMapping("/fastDfs/upload")
