@@ -12,6 +12,7 @@ import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.product.DiseaseClient;
 import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
@@ -25,6 +26,7 @@ import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
+import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import cn.net.yzl.crm.dto.member.customerJourney.MemberCustomerJourneyDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
@@ -278,6 +280,25 @@ public class MemberController {
         return ComResponse.success(list);
     }
 
+    @ApiOperation("诊疗结果-新增顾客病症")
+    @PostMapping("v1/insertMemberDisease")
+    public ComResponse<Integer> getMemberDisease(@RequestBody @Validated MemberDiseaseDto memberDiseaseDto) {
+        DiseaseMainInfo diseaseMainInfo=null;
+        String staffNo= QueryIds.userNo.get();
+        ComResponse<DiseaseMainInfo> diseaseMainInfoComResponse = diseaseClient.artificialSeatInput(memberDiseaseDto.getParDiseaseId(), memberDiseaseDto.getDiseaseName(), staffNo);
+        if(diseaseMainInfoComResponse!=null && diseaseMainInfoComResponse.getCode()==200 && diseaseMainInfoComResponse.getData()!=null){
+            diseaseMainInfo=diseaseMainInfoComResponse.getData();
+        }else{
+            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(),ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
+        }
+        memberDiseaseDto.setDiseaseId(diseaseMainInfo.getId());
+        memberDiseaseDto.setCreateNo(staffNo);
+        ComResponse<Integer> integerComResponse = memberFien.insertMemberDisease(memberDiseaseDto);
+        if(integerComResponse!=null || integerComResponse.getCode()!=200){
+            return integerComResponse;
+        }
+        return ComResponse.success(integerComResponse.getData());
+    }
 
 
     @ApiOperation(value = "顾客收货地址-添加顾客收货地址", notes = "顾客收货地址-添加顾客收货地址")
