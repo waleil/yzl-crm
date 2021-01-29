@@ -52,32 +52,37 @@ public class LogisticsController {
 
     @ApiOperation(value = "合同下载")
     @GetMapping("/fastDfs/download")
-    public void downloadFile(String filePath,HttpServletResponse response) throws IOException {
-        String fileName = "";
-        StorePath storePath = StorePath.parseFromUrl(filePath);
-        if (org.apache.commons.lang.StringUtils.isBlank(fileName)) {
-            fileName = FilenameUtils.getName(storePath.getPath());
-        }
+    public String downloadFile(@RequestParam(value = "id") String  id) throws IOException {
 
-
-        InputStream bytes =fastdfsUtils.download(filePath, fileName); ;
-        response.setContentType("application/force-download");// 设置强制下载不打开
-        fileName = URLEncoder.encode(fileName, "utf-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
-        IOUtils.copy(bytes, response.getOutputStream());
-        response.flushBuffer();
+        return logisticsFien.downLoadContract(id);
+//        String fileName = "";
+//        StorePath storePath = StorePath.parseFromUrl(filePath);
+//        if (org.apache.commons.lang.StringUtils.isBlank(fileName)) {
+//            fileName = FilenameUtils.getName(storePath.getPath());
+//        }
+//
+//
+//        InputStream bytes =fastdfsUtils.download(filePath, fileName); ;
+//        response.setContentType("application/force-download");// 设置强制下载不打开
+//        fileName = URLEncoder.encode(fileName, "utf-8");
+//        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+//        IOUtils.copy(bytes, response.getOutputStream());
+//        response.flushBuffer();
 
     }
 
     @ApiOperation(value = "合同上传")
     @PostMapping("/fastDfs/upload")
-    public ComResponse uploadFile(MultipartFile file) throws IOException {
+    public ComResponse uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 //        return logisticsFien.uploadFile(file);
 
         StorePath upload = fastdfsUtils.upload(file);
 
         String path = fastDFSConfig.getUrl()+"/"+upload.getFullPath();
 
+//        if(logisticsFien.recordFilePath(path)){
+//            return ComResponse.fail(51, "文件保存失败！");
+//        };
         return ComResponse.success(path);
     }
 
