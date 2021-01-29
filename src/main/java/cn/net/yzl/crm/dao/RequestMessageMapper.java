@@ -21,6 +21,6 @@ public interface RequestMessageMapper {
 	 * @author zhangweiwei
 	 * @date 2021年1月29日,下午6:50:24
 	 */
-	@Insert("insert into request_message (message_code,bus_code,request_url,call_back_url,request_param,create_code,update_code,state) values (#{messageCode},#{busCode},#{requestUrl},#{callBackUrl},#{requestParam},#{createCode},#{updateCode},#{state})")
+	@Insert("insert into request_message (message_code,bus_code,request_url,call_back_url,request_param,create_code,update_code) values (#{messageCode},#{busCode},#{requestUrl},#{callBackUrl},#{requestParam},#{createCode},#{updateCode})")
 	int insert(RequestMessage message);
 }
