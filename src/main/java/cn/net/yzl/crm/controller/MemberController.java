@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
@@ -10,10 +11,12 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.product.DiseaseClient;
+import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
+import cn.net.yzl.crm.customer.dto.member.MemberGradeRecordDto;
 import cn.net.yzl.crm.customer.dto.member.MemberProductEffectDTO;
 import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
 import cn.net.yzl.crm.customer.model.*;
@@ -33,6 +36,7 @@ import cn.net.yzl.crm.service.micservice.member.MemberProductEffectFien;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.PortraitOrderDetailDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +46,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "顾客管理")
@@ -225,6 +226,20 @@ public class MemberController {
             }
 
         }
+        // 获取会员等级
+        ComResponse<List<MemberGradeRecordDto>> memberGradeRecordList = memberFien.getMemberGradeRecordList(memberCard);
+        if(memberGradeRecordList.getData()!=null && memberGradeRecordList.getData().size()>0){
+            for (MemberGradeRecordDto datum : memberGradeRecordList.getData()) {
+                MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
+                memberCustomerJourneyDto.setWorkOrderType(3);
+                memberCustomerJourneyDto.setCreateTime(datum.getCreateTime());
+                memberCustomerJourneyDto.setMemberGradeRecordDto(datum);
+                list.add(memberCustomerJourneyDto);
+            }
+        }
+
+        // 根据时间排序
+       list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
         return ComResponse.success(list);
     }
 
@@ -299,7 +314,8 @@ public class MemberController {
         }
         return GeneralResult.success();
     }
-
+@Autowired
+private ProductClient productClient;
     @ApiOperation("获取顾客购买能力")
     @GetMapping("/v1/getMemberOrderStat")
     public GeneralResult getMemberOrderStat(
@@ -309,6 +325,41 @@ public class MemberController {
                     String member_card
     ) {
         GeneralResult<MemberOrderStat> result = memberFien.getMemberOrderStat(member_card);
+        if(result.getData()!=null){
+            MemberOrderStat data = result.getData();
+            // 首次的购买商品编号
+            String first_buy_product_code = data.getFirst_buy_product_code();
+            ComResponse<List<ProductMainDTO>> listComResponse = productClient.queryByProductCodes(first_buy_product_code);
+            if(listComResponse.getData()!=null && listComResponse.getData().size()>0){
+                StringBuffer str = new StringBuffer();
+                listComResponse.getData().forEach(productMainDTO -> {
+                    String name = productMainDTO.getName();
+                    if(StrUtil.isNotBlank(name)){
+                        str.append(name+",");
+                    }
+                });
+                if(str.toString().lastIndexOf(",")>0){
+                    data.setFirstBuyProductNames(str.substring(0,str.length()-1));
+                }
+            }
+
+            //最后一次购买的商品标号
+            String last_buy_product_code = data.getLast_buy_product_code();
+            listComResponse = productClient.queryByProductCodes(last_buy_product_code);
+            if(listComResponse.getData()!=null && listComResponse.getData().size()>0){
+                StringBuffer str = new StringBuffer();
+                listComResponse.getData().forEach(productMainDTO -> {
+                    String name = productMainDTO.getName();
+                    if(StrUtil.isNotBlank(name)){
+                        str.append(name+",");
+                    }
+                });
+                if(str.toString().lastIndexOf(",")>0){
+                    data.setLastBuyProductNames(str.substring(0,str.length()-1));
+                }
+            }
+        }
+
         return result;
     }
 

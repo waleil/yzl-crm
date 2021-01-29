@@ -4,8 +4,11 @@ import java.util.List;
 
 import cn.net.yzl.crm.customer.dto.member.MemberAddressAndLevelDTO;
 import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
+import cn.net.yzl.crm.customer.dto.member.MemberGradeRecordDto;
 import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.staff.dto.MemberDiseaseDto;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.validation.annotation.Validated;
@@ -38,6 +41,8 @@ import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import io.swagger.annotations.ApiOperation;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 顾客服务接口
@@ -156,4 +161,11 @@ public interface MemberFien {
 	// 添加顾客咨询商品
 	@PostMapping("v1/addProductConsultation")
 	ComResponse<String> addProductConsultation(@RequestBody @Validated List<ProductConsultationInsertVO> productConsultationInsertVOList);
+
+	@ApiOperation("获取会员级别记录")
+	@GetMapping("v1/getMemberGradeRecordList")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+	})
+	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordList(@NotBlank String memberCard);
 }
