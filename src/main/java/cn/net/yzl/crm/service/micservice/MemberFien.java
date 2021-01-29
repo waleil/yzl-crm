@@ -155,5 +155,5 @@ public interface MemberFien {
 
 	// 添加顾客咨询商品
 	@PostMapping("v1/addProductConsultation")
-	ComResponse<String> addProductConsultation(@RequestBody @Validated ProductConsultationInsertVO productConsultationInsertVO);
+	ComResponse<String> addProductConsultation(@RequestBody @Validated List<ProductConsultationInsertVO> productConsultationInsertVOList);
 }
