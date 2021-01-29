@@ -33,8 +33,10 @@ import cn.net.yzl.product.model.vo.product.vo.ProductUpdateTimeVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductVO;
 import io.swagger.annotations.ApiOperation;
 
-@FeignClient(name = "productClient", url = "${api.gateway.url}/productServer/product")
+@FeignClient(name = "productClient", url = "${api.gateway.url}" + ProductClient.SUFFIX_URL)
 public interface ProductClient {
+	String SUFFIX_URL = "/productServer/product";
+	String INCREASE_STOCK_URL = "/v1/increaseStock";
 
 	@GetMapping(value = "v1/queryCountByStatus")
 	ComResponse<List<ProductStatusCountDTO>> queryCountByStatus();
@@ -90,7 +92,7 @@ public interface ProductClient {
 	ComResponse<List<ProductMainInfoDTO>> queryProducts(@RequestParam(value = "ids", required = false) String ids);
 
 	@ApiOperation("取消单增加库存")
-	@PostMapping(value = "v1/increaseStock")
+	@PostMapping(INCREASE_STOCK_URL)
 	public ComResponse<?> increaseStock(@RequestBody @Valid OrderProductVO orderProductVO);
 
 	/**
