@@ -6,6 +6,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.staff.dto.lasso.Base;
 import cn.net.yzl.crm.staff.dto.lasso.ScheduleDto;
 import cn.net.yzl.crm.staff.dto.lasso.TrainProductDto;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @FeignClient(name = "ehr-staff-api", url = "${api.gateway.url}/staffDB")
+//@FeignClient(name = "ehr-staff-api", url = "localhost:38080/")
 public interface EhrStaffClient {
 
     /**
@@ -64,6 +66,15 @@ public interface EhrStaffClient {
      */
     @GetMapping("/staff/getDetailsByNo")
     ComResponse<StaffImageBaseInfoDto> getDetailsByNo(@RequestParam("staffNo") String staffNo);
+
+    /**
+     * 根据staffno数组批量查询用户详情
+     *
+     * @param list
+     * @return
+     */
+    @PostMapping(value = "/staff/getDetailsListByNo")
+    ComResponse<List<StaffDetail>> getDetailsListByNo(@RequestBody List<String> list);
 
     /**
      * 获取ehr字典表  员工在职状态

@@ -8,6 +8,7 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.*;
+import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
@@ -270,6 +271,12 @@ public class StaffController {
         log.info("......StaffController.getStaffListByPage()开始, 请求参数:{}......",JsonUtil.toJsonStr(query));
         ComResponse<Page<EhrStaff>> response = ehrStaffClient.getStaffListByPage(query);
         return response;
+    }
+
+    @ApiOperation(value = "根据员工工号数组批量查询用户详情", notes = "根据staffno数组批量查询用户详情")
+    @RequestMapping(value = "/getDetailsListByNo", method = RequestMethod.POST)
+    ComResponse<List<StaffDetail>> getDetailsListByNo(@RequestBody List<String> list) {
+        return staffService.getDetailsListByNo(list);
     }
 
 
