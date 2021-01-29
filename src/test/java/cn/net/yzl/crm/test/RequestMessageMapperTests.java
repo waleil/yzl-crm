@@ -28,7 +28,6 @@ public class RequestMessageMapperTests {
 		try {
 			RequestMessage message = new RequestMessage();
 			message.setBusCode("11");
-			message.setCallBackUrl("12");
 			message.setCreateCode("13");
 			message.setMessageCode("14");
 			message.setRequestParam(this.objectMapper.writeValueAsString(message));
