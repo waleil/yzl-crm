@@ -198,4 +198,11 @@ public interface WorkOrderClient {
     @PostMapping("v1/updateWorkOrderDisposeFlow")
     ComResponse<String> updateWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
 
+    /**
+     * 智能工单-顾客旅程-根据顾客会员号查询顾客工单信息
+     * @param memberCard
+     * @return
+     */
+    @GetMapping(value = "v1/queryWorkOrder")
+    ComResponse<List<WorkOrderVo>> queryWorkOrder(String memberCard);
 }
