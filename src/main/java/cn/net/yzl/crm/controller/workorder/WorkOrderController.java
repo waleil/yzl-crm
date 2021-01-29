@@ -6,8 +6,10 @@ import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.dto.ehr.EhrStaff;
 import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
+import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
@@ -27,6 +29,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -47,6 +51,9 @@ public class WorkOrderController {
     private WorkOrderService workOrderService;
     @Autowired
     private TurnRulnClient turnRulnClient;
+
+    @Autowired
+    private MemberFien memberFien;
 
     /**
      * 查询我的回访分页列表
@@ -460,5 +467,33 @@ public class WorkOrderController {
     @GetMapping(value = "v1/userRoute")
     public ComResponse<List<WorkOrderFlowVO>> userRoute(@RequestParam(name = "memberCard",required = true)String memberCard){
         return workOrderClient.userRoute(memberCard);
+    }
+
+    @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
+    @PostMapping(value = "v1/submitWorkOrder")
+    public ComResponse<Void> submitWorkOrder(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
+        String userNo = QueryIds.userNo.get();
+        String userName = QueryIds.userName.get();
+        workOrderDisposeFlowBean.setUpdateId(userNo);
+        workOrderDisposeFlowBean.setUpdateName(userName);
+        workOrderDisposeFlowBean.setCreateId(userNo);
+        workOrderDisposeFlowBean.setCreateName(userName);
+        List<ProductConsultationInsertVO> productConsultationInsertVOS = new ArrayList<>();
+        String informationGoods = workOrderDisposeFlowBean.getWorkOrderDisposeFlowSubBean().getInformationGoods();
+        String informationGoodNames = workOrderDisposeFlowBean.getWorkOrderDisposeFlowSubBean().getInformationGoodNames();
+        String[] informationGoodsSplit = informationGoods.split(",");
+        String[] informationGoodNamesSplit = informationGoodNames.split(",");
+        for (int i = 0 ; i< informationGoodsSplit.length;i++){
+            ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
+            productConsultationInsertVO.setMemberCard(workOrderDisposeFlowBean.getMemberCard());
+            productConsultationInsertVO.setProductCode(informationGoodsSplit[i]);
+            productConsultationInsertVO.setProductName(informationGoodNamesSplit[i]);
+            productConsultationInsertVO.setConsultationTime(new Date());
+            productConsultationInsertVOS.add(productConsultationInsertVO);
+        }
+        if(!CollectionUtils.isEmpty(productConsultationInsertVOS)){
+            memberFien.addProductConsultation(productConsultationInsertVOS);
+        }
+        return workOrderClient.submitWorkOrder(workOrderDisposeFlowBean);
     }
 }

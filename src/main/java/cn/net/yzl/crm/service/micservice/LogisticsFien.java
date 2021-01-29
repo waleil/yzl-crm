@@ -1,5 +1,8 @@
 package cn.net.yzl.crm.service.micservice;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +19,19 @@ import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
 import cn.net.yzl.model.vo.StoreVO;
+import feign.Response;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.io.IOUtils;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -33,6 +41,8 @@ import javax.validation.constraints.NotBlank;
 @FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
+
+
 
 
     @ApiOperation(value = "查询物流轨迹", notes = "")
@@ -54,8 +64,8 @@ public interface LogisticsFien {
 
 
     @ApiOperation(value="快递公司档案详情")
-    @PostMapping("/exp/company/v1/view")
-    public ComResponse view(@RequestBody @Valid ExpressCompany expressCompany) ;
+    @GetMapping("/exp/company/v1/view")
+    public ComResponse view(@RequestParam("id") @Valid String  id) ;
 
 
     @ApiOperation(value="编辑快递公司档案")

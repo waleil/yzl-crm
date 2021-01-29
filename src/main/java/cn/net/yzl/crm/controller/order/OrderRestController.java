@@ -191,6 +191,7 @@ public class OrderRestController {
 		// 收集每类商品的库存，key为商品编码，value为商品库存
 		Map<String, Integer> productStockMap = new HashMap<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
+		BigDecimal bd100 = BigDecimal.valueOf(100);// 分转元
 		// 如果有非套餐信息
 		if (!CollectionUtils.isEmpty(orderProductList)) {
 			// 收集商品编码
@@ -235,8 +236,7 @@ public class OrderRestController {
 				od.setProductNo(p.getProductNo());// 商品编码
 				od.setProductName(p.getName());// 商品名称
 				od.setProductBarCode(p.getBarCode());// 产品条形码
-				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice()))
-						.multiply(BigDecimal.valueOf(100)).intValue());// 商品单价
+				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
 				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
@@ -453,9 +453,8 @@ public class OrderRestController {
 		// 再次调用顾客账户余额
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
-				orderm.getReveiverTelphoneNo(),
-				BigDecimal.valueOf(orderm.getTotal()).divide(BigDecimal.valueOf(100)).doubleValue(),
-				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100)).doubleValue(),
+				orderm.getReveiverTelphoneNo(), BigDecimal.valueOf(orderm.getTotal()).divide(bd100).doubleValue(),
+				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100).doubleValue(),
 				orderm.getOrderNo()));
 	}
 
