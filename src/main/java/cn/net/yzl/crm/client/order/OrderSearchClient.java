@@ -102,4 +102,15 @@ public interface OrderSearchClient {
             @RequestParam("memberCarNo") @NotEmpty(message = "会员编号不能为空") String memberCarNo);
 
 
+    /**
+     * 根据员工号顾客卡号查询累计消费金额(元)
+     * @return
+     */
+    @GetMapping("v1/selectSalesQuota")
+    public ComResponse<String> selectSalesQuota(
+            @RequestParam("memberCarNo") @NotEmpty(message = "会员编号不能为空") String memberCarNo,
+            @RequestParam("staffNo") @NotEmpty(message = "员工号不能为空")  String staffNo,
+            @RequestParam("startTime") @NotEmpty(message = "开始时间不可为空")  String startTime,
+            @RequestParam("endTime") @NotEmpty(message = "结束时间不可为空") String endTime);
+
 }
