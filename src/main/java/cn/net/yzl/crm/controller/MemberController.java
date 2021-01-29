@@ -1,9 +1,14 @@
 package cn.net.yzl.crm.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
+import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.product.DiseaseClient;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
@@ -26,7 +31,9 @@ import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
 import cn.net.yzl.crm.service.micservice.member.MemberProductEffectFien;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.order.model.vo.order.PortraitOrderDetailDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
+import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,6 +195,10 @@ public class MemberController {
         return ComResponse.success(memberServiceJourneryDto);
     }
 
+    @Autowired
+    private cn.net.yzl.crm.client.workorder.WorkOrderClient workOrderClients;
+    @Autowired
+    private OrderSearchClient orderSearchClient;
 
     @ApiOperation("顾客画像-顾客旅程")
     @GetMapping("v1/getCustomerJourney")
@@ -195,9 +206,26 @@ public class MemberController {
             @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
     })
     public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard) {
-        // todo 等待 订单和工单提供接口
 
-        return ComResponse.success();
+        // 获取工单信息
+        ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard);
+        if(listComResponse.getData()==null || listComResponse.getData().size()<1){
+            return ComResponse.nodata();
+        }
+        List<WorkOrderVo> data = listComResponse.getData();
+        String sourcesJson = JSONUtil.toJsonStr(data);
+        List<MemberCustomerJourneyDto>  list = JsonUtil.jsonToList(sourcesJson, MemberCustomerJourneyDto.class);
+        // 获取订单信息
+        for (MemberCustomerJourneyDto memberCustomerJourneyDto : list) {
+            String id = memberCustomerJourneyDto.get_id();
+            Integer workOrderCode = memberCustomerJourneyDto.getWorkOrderCode();
+            ComResponse<List<PortraitOrderDetailDTO>> portraitOrderDetail = orderSearchClient.getPortraitOrderDetail(workOrderCode + "", id);
+            if(portraitOrderDetail.getData()!=null || portraitOrderDetail.getData().size()>0){
+                memberCustomerJourneyDto.setPortraitOrderDetailList(portraitOrderDetail.getData());
+            }
+
+        }
+        return ComResponse.success(list);
     }
 
 
@@ -368,6 +396,8 @@ public class MemberController {
         ComResponse<List<MemberProductEffectDTO>> result = memberProductEffectFien.getProductEffects(productEffect);
         return result;
     }
+
+
 
 
 }
