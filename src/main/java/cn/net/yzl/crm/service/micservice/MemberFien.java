@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.micservice;
 
 import java.util.List;
 
+import cn.net.yzl.crm.customer.dto.member.MemberAddressAndLevelDTO;
 import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
 import cn.net.yzl.crm.staff.dto.MemberDiseaseDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -143,4 +144,9 @@ public interface MemberFien {
 	 */
 	@PostMapping("/customerAmount/operation")
 	ComResponse<String> customerAmountOperation(@RequestBody MemberAmountDetailVO memberAmountDetail);
+
+	
+	@ApiOperation("顾客一批顾客卡号获取顾客收货地址、余额、会员等级")
+	@GetMapping("/v1/getMembereAddressAndLevelByMemberCards")
+	ComResponse<List<MemberAddressAndLevelDTO>> getMembereAddressAndLevelByMemberCards(@RequestParam("memberCards")String memberCards);
 }

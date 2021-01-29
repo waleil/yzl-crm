@@ -8,39 +8,29 @@ import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.ehr.EhrStaff;
 import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
-import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
-import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.*;
-import cn.net.yzl.workorder.model.enums.RuleDescriptionEnums;
-import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
-import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderUnclaimedUserVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
+import cn.net.yzl.workorder.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("workOrder")
@@ -459,5 +449,16 @@ public class WorkOrderController {
             turnRulnClient.rulesHandedIn(isHandInDTO);
         }
         return ComResponse.success(flag);
+    }
+
+    @ApiOperation(value = "智能工单-顾客旅程-根据顾客会员号查询顾客工单信息",notes = "智能工单-顾客旅程-根据顾客会员号查询顾客工单信息")
+    @GetMapping(value = "v1/queryWorkOrder")
+    public ComResponse<List<WorkOrderVo>> queryWorkOrder(@ApiParam(value = "顾客会员号")@RequestParam(value = "memberCard")String memberCard){
+        return workOrderClient.queryWorkOrder(memberCard);
+    }
+    @ApiOperation(value = "查询顾客旅程",notes = "查询顾客旅程")
+    @GetMapping(value = "v1/userRoute")
+    public ComResponse<List<WorkOrderFlowVO>> userRoute(@RequestParam(name = "memberCard",required = true)String memberCard){
+        return workOrderClient.userRoute(memberCard);
     }
 }

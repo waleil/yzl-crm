@@ -24,7 +24,6 @@ import com.alibaba.fastjson.JSON;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.client.member.MemberAddressClient;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
@@ -80,8 +79,6 @@ public class OrderRestController {
 	@Resource
 	private MemberFien memberFien;
 	@Resource
-	private MemberAddressClient memberAddressClient;
-	@Resource
 	private EhrStaffClient ehrStaffClient;
 	@Resource
 	private RedisUtil redisUtil;
@@ -129,7 +126,7 @@ public class OrderRestController {
 		orderm.setMemberName(member.getMember_name());// 顾客姓名
 		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 		// 按顾客号查询顾客收获地址
-		ComResponse<List<ReveiverAddressDto>> raresponse = this.memberAddressClient
+		ComResponse<List<ReveiverAddressDto>> raresponse = this.memberFien
 				.getReveiverAddress(orderin.getMemberCardNo());
 		// 如果调用服务异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(raresponse.getCode())) {
