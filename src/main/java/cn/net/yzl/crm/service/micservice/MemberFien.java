@@ -4,9 +4,11 @@ import java.util.List;
 
 import cn.net.yzl.crm.customer.dto.member.MemberAddressAndLevelDTO;
 import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
+import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.staff.dto.MemberDiseaseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -149,4 +151,9 @@ public interface MemberFien {
 	@ApiOperation("顾客一批顾客卡号获取顾客收货地址、余额、会员等级")
 	@GetMapping("/v1/getMembereAddressAndLevelByMemberCards")
 	ComResponse<List<MemberAddressAndLevelDTO>> getMembereAddressAndLevelByMemberCards(@RequestParam("memberCards")String memberCards);
+
+
+	// 添加顾客咨询商品
+	@PostMapping("v1/addProductConsultation")
+	ComResponse<String> addProductConsultation(@RequestBody @Validated ProductConsultationInsertVO productConsultationInsertVO);
 }
