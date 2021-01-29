@@ -5,10 +5,8 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.RemoveStockFeignService;
 import cn.net.yzl.model.dto.RemoveStockDto;
 import cn.net.yzl.model.dto.RemoveStockManageDto;
-import cn.net.yzl.model.vo.OutStoreOrderInfoParamVo;
-import cn.net.yzl.model.vo.OutStoreOrderParamVo;
-import cn.net.yzl.model.vo.OutStoreOrderVo;
-import cn.net.yzl.model.vo.RemoveStockRaramsVo;
+import cn.net.yzl.model.dto.StoreToLogisticsDto;
+import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +57,15 @@ public class RemoveStockController {
     public ComResponse<Page<RemoveStockDto>> selectOutStoreOrderInfo(@RequestBody OutStoreOrderInfoParamVo outStoreOrderInfoParamVo){
         return removeStockFeignService.selectOutStoreOrderInfo(outStoreOrderInfoParamVo);
     }
+
+    @ApiOperation(value = "物流-快递运单查询或运单异常登记")
+    @PostMapping("v1/selectOutStoreToLogistics")
+    public ComResponse<Page<StoreToLogisticsDto>> selectOutStoreToLogistics(@RequestBody StoreToLogisticsParamVo storeToLogisticsParamVo){
+        return removeStockFeignService.selectOutStoreToLogistics(storeToLogisticsParamVo);
+    }
+
+
+
 
 
 }
