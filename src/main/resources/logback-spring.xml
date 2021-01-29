@@ -76,6 +76,7 @@
             <appender-ref ref="console"/>
             <appender-ref ref="async_log"/>
         </logger>
+        <logger name="cn.net.yzl.crm.dao" level="debug"/>
     </springProfile>
     <springProfile name="prod">
         <root level="info">
