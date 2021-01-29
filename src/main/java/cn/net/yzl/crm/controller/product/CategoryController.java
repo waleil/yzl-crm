@@ -136,12 +136,16 @@ public class CategoryController {
 
     @ApiOperation(value = "根据pid分页查询分类数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query", required = true),
-            @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query", required = true),
-            @ApiImplicitParam(name = "pageSize",value = "每页条数",paramType = "query", required = true)
+            @ApiImplicitParam(name = "pid",value = "父类id，如果需要查询一级分类，此处输入0",paramType = "query"),
+            @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query"),
+            @ApiImplicitParam(name = "pageSize",value = "每页条数",paramType = "query"),
+            @ApiImplicitParam(name = "keyword", value = "关键词",paramType = "query")
     })
     @GetMapping("selectPage")
-    public ComResponse<Page<CategoryTO>> selectAll(@RequestParam Integer pid, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize) {
+    public ComResponse<Page<CategoryTO>> selectAll(@RequestParam(value = "pid",required = false) Integer pid,
+                                                   @RequestParam(value = "pageNo",required = false) Integer pageNo,
+                                                   @RequestParam(value = "pageSize",required = false) Integer pageSize,
+                                                   @RequestParam(value = "keyword",required = false) String keyword) {
         if (pid == null || pid < 0) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
         }
@@ -151,7 +155,7 @@ public class CategoryController {
         if (pageSize <= 0){
             pageSize = 10;
         }
-        return categoryService.selectAll(pid,pageNo, pageSize);
+        return categoryService.selectAll(pid,pageNo, pageSize,keyword);
     }
 
     @ApiOperation("提供给前端下拉列表的查询接口")
