@@ -5,7 +5,6 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.OrderDistributeExpressDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleDetailDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleListDTO;
-import cn.net.yzl.model.dto.OrderExpressDTO;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;

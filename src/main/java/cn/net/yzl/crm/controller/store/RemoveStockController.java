@@ -65,6 +65,14 @@ public class RemoveStockController {
     }
 
 
+    @ApiOperation(value = "物流-修改订单状态和收据状态")
+    @PostMapping("v1/updateOutStoreToLogistics")
+    public ComResponse updateOutStoreToLogistics(@RequestBody LogisticsToStoreUpdateParam logisticsToStoreUpdateParam){
+        return removeStockFeignService.updateOutStoreToLogistics(logisticsToStoreUpdateParam);
+
+    }
+
+
 
 
 
