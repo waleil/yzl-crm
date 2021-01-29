@@ -56,6 +56,8 @@ public class OrderRestControllerTests {
 	@Test
 	public void testQueryByCodes() {
 		try {
+			System.err.println(String.format("%s%s%s", this.apiGateWayUrl, ProductClient.SUFFIX_URL,
+					ProductClient.INCREASE_STOCK_URL));
 			String codes = "10000130,10000114,10000106";
 			this.productClient.queryByProductCodes(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
@@ -66,7 +68,8 @@ public class OrderRestControllerTests {
 	@Test
 	public void testGetMember() {
 		try {
-			System.err.println(this.apiGateWayUrl + MemberFien.SUFFIX_URL + MemberFien.CUSTOMER_AMOUNT_OPERATION_URL);
+			System.err.println(String.format("%s%s%s", this.apiGateWayUrl, MemberFien.SUFFIX_URL,
+					MemberFien.CUSTOMER_AMOUNT_OPERATION_URL));
 			String member = "100000002";
 			System.err.println(this.memberFien.getMember(member).getData());
 		} catch (Exception e) {
