@@ -5,6 +5,7 @@ import java.util.Arrays;
 import javax.annotation.Resource;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.fastjson.JSON;
@@ -39,6 +40,8 @@ public class OrderRestControllerTests {
 	private EhrStaffClient ehrStaffClient;
 	@Resource
 	private OrderRestController orderRestController;
+	@Value("${api.gateway.url}")
+	private String apiGateWayUrl;
 
 	@Test
 	public void testQueryListProductMealByCodes() {
@@ -63,6 +66,7 @@ public class OrderRestControllerTests {
 	@Test
 	public void testGetMember() {
 		try {
+			System.err.println(this.apiGateWayUrl + MemberFien.SUFFIX_URL + MemberFien.CUSTOMER_AMOUNT_OPERATION_URL);
 			String member = "100000002";
 			System.err.println(this.memberFien.getMember(member).getData());
 		} catch (Exception e) {
