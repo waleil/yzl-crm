@@ -76,6 +76,7 @@ public class NewOrderServiceImpl implements INewOrderService {
             }
             Integer wordCode = response.getData().getWorkCode();
             Integer departId = response.getData().getDepartId();
+            dto.setUserName(response.getData().getName());
             Integer financialOwner = null;
             String financialOwnerName = "";
             //生成批次号

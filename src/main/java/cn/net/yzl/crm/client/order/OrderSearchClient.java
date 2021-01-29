@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,5 +84,22 @@ public interface OrderSearchClient {
     ComResponse<List<PortraitOrderDetailDTO>> getPortraitOrderDetail(
             @RequestParam("workOrderNo") @NotEmpty(message = "工单号不可为空") String workOrderNo,
             @RequestParam("workBatchNo") @NotEmpty(message = "工单流水号不可为空") String workBatchNo);
+    /**
+     * 查询顾客购买过的商品
+     * @param memberCarNo
+     * @return
+     */
+    @GetMapping("v1/selectProductsByMemberCard")
+    public ComResponse<List<String>> selectProductsByMemberCard(
+            @RequestParam("memberCarNo") @NotEmpty(message = "会员编号不能为空")  String memberCarNo);
+
+    /**
+     * 查询顾客当天是否有退单记录
+     * @return
+     */
+    @GetMapping("v1/selectHasRefund")
+    public ComResponse<Boolean> selectHasRefund(
+            @RequestParam("memberCarNo") @NotEmpty(message = "会员编号不能为空") String memberCarNo);
+
 
 }
