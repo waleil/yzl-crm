@@ -16,7 +16,6 @@ public class RequestMessage {
 	private String messageCode;
 	private String busCode;
 	private String requestUrl;
-	private String callBackUrl;
 	private String requestParam;
 	private String createCode;
 	private String updateCode;
