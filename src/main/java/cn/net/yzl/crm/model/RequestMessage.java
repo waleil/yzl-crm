@@ -20,5 +20,4 @@ public class RequestMessage {
 	private String requestParam;
 	private String createCode;
 	private String updateCode;
-	private Integer state;
 }
