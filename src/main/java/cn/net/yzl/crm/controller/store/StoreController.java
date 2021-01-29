@@ -122,7 +122,7 @@ public class StoreController {
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "storeLocalNo", value = "库位编号", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "storeAreaKindId", value = "库位类型", required = false, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "storeAreaKindId", value = "库位类型id", required = false, dataType = "Int", paramType = "query"),
     })
     public ComResponse<Page<StoreLocalPo>> selectStoreLocalListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                                     @RequestParam(value = "storeLocalNo",required = false) String storeLocalNo,
