@@ -5,6 +5,8 @@ import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.logistics.model.ExpressCompany;
+import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
+import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
@@ -14,9 +16,12 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -28,13 +33,27 @@ public class LogisticsController {
     @Autowired
     LogisticsFien logisticsFien;
 
+    public LogisticsController(LogisticsFien logisticsFien) {
+        this.logisticsFien = logisticsFien;
+    }
 
-/*    @ApiOperation(value="获取所有仓库和编码")
-    @GetMapping("v1/store/listPage")
-    public ComResponse<Page<StoreVO>> storeService(){
-        return logisticsFien.storeService();
-//                = storeService.getStoreBasic();
-    }*/
+    @ApiOperation(value = "合同下载")
+    @GetMapping("/fastDfs/download")
+    public void downloadFile(String filePath, HttpServletResponse response) throws IOException {
+
+        this.downloadFile(filePath,response);
+    }
+
+    @ApiOperation(value = "合同上传")
+    @PostMapping("/fastDfs/upload")
+    public String uploadFile(MultipartFile file) throws IOException {
+        return logisticsFien.uploadFile(file);
+    }
+
+//    @Override
+//    public GeneralResult<List<ExpressTraceResDTO>> findLogisticsTraces(@Valid ExpressFindTraceDTO dto) {
+//        return null;
+//    }
 
     /*
      * 11111
