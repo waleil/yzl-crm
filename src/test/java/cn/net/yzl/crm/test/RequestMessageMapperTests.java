@@ -33,7 +33,6 @@ public class RequestMessageMapperTests {
 			message.setMessageCode("14");
 			message.setRequestParam(this.objectMapper.writeValueAsString(message));
 			message.setRequestUrl("16");
-			message.setState(17);
 			message.setUpdateCode("18");
 			System.err.println(this.requestMessageMapper.insert(message));
 		} catch (Exception e) {
