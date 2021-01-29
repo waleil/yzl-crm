@@ -24,7 +24,6 @@ import com.alibaba.fastjson.JSON;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.client.member.MemberAddressClient;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
@@ -80,8 +79,6 @@ public class OrderRestController {
 	@Resource
 	private MemberFien memberFien;
 	@Resource
-	private MemberAddressClient memberAddressClient;
-	@Resource
 	private EhrStaffClient ehrStaffClient;
 	@Resource
 	private RedisUtil redisUtil;
@@ -129,7 +126,7 @@ public class OrderRestController {
 		orderm.setMemberName(member.getMember_name());// 顾客姓名
 		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号
 		// 按顾客号查询顾客收获地址
-		ComResponse<List<ReveiverAddressDto>> raresponse = this.memberAddressClient
+		ComResponse<List<ReveiverAddressDto>> raresponse = this.memberFien
 				.getReveiverAddress(orderin.getMemberCardNo());
 		// 如果调用服务异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(raresponse.getCode())) {
@@ -194,6 +191,7 @@ public class OrderRestController {
 		// 收集每类商品的库存，key为商品编码，value为商品库存
 		Map<String, Integer> productStockMap = new HashMap<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
+		BigDecimal bd100 = BigDecimal.valueOf(100);// 分转元
 		// 如果有非套餐信息
 		if (!CollectionUtils.isEmpty(orderProductList)) {
 			// 收集商品编码
@@ -238,8 +236,7 @@ public class OrderRestController {
 				od.setProductNo(p.getProductNo());// 商品编码
 				od.setProductName(p.getName());// 商品名称
 				od.setProductBarCode(p.getBarCode());// 产品条形码
-				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice()))
-						.multiply(BigDecimal.valueOf(100)).intValue());// 商品单价
+				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
 				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
@@ -456,9 +453,8 @@ public class OrderRestController {
 		// 再次调用顾客账户余额
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
-				orderm.getReveiverTelphoneNo(),
-				BigDecimal.valueOf(orderm.getTotal()).divide(BigDecimal.valueOf(100)).doubleValue(),
-				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(BigDecimal.valueOf(100)).doubleValue(),
+				orderm.getReveiverTelphoneNo(), BigDecimal.valueOf(orderm.getTotal()).divide(bd100).doubleValue(),
+				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100).doubleValue(),
 				orderm.getOrderNo()));
 	}
 

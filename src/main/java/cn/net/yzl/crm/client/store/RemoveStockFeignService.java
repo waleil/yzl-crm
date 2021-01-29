@@ -4,10 +4,8 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.RemoveStockDto;
 import cn.net.yzl.model.dto.RemoveStockManageDto;
-import cn.net.yzl.model.vo.OutStoreOrderInfoParamVo;
-import cn.net.yzl.model.vo.OutStoreOrderParamVo;
-import cn.net.yzl.model.vo.OutStoreOrderVo;
-import cn.net.yzl.model.vo.RemoveStockRaramsVo;
+import cn.net.yzl.model.dto.StoreToLogisticsDto;
+import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,5 +38,17 @@ public interface RemoveStockFeignService {
     @ApiOperation(value = "查看出库单详情",notes = "查看出库单详情")
     @PostMapping("removestock/v1/selectOutStoreOrderInfo")
     public ComResponse<Page<RemoveStockDto>> selectOutStoreOrderInfo(@RequestBody OutStoreOrderInfoParamVo outStoreOrderInfoParamVo);
+
+
+    @ApiOperation(value = "物流-快递运单查询或运单异常登记")
+    @PostMapping("removestock/v1/selectOutStoreToLogistics")
+    public ComResponse<Page<StoreToLogisticsDto>> selectOutStoreToLogistics(@RequestBody StoreToLogisticsParamVo storeToLogisticsParamVo);
+
+
+    @ApiOperation(value = "物流-修改订单状态和收据状态")
+    @PostMapping("removestock/v1/updateOutStoreToLogistics")
+    public ComResponse updateOutStoreToLogistics(@RequestBody LogisticsToStoreUpdateParam logisticsToStoreUpdateParam);
+
+
 
 }

@@ -42,5 +42,8 @@ public interface DiseaseClient {
 
 
     @GetMapping("queryHierarchy")
-    public  ComResponse<List<DiseaseMainInfo>> queryHierarchy(@RequestParam("ids") String ids);
+    ComResponse<List<DiseaseMainInfo>> queryHierarchy(@RequestParam("ids") String ids);
+
+    @GetMapping("artificialSeatInput")
+    ComResponse<DiseaseMainInfo> artificialSeatInput(@RequestParam("pid") Integer pid ,@RequestParam("name")String name,@RequestParam("userId")String userId);
 }

@@ -9,6 +9,7 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.dto.staff.OrderCriteriaDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
@@ -122,5 +123,16 @@ public class StaffServiceImpl implements StaffService {
         }
         ComResponse<Page<OderListResDTO>> response = orderSearchClient.selectOrderList(reqDTO);
         return response;
+    }
+
+
+    /**
+     * 根据员工工号数组获取员工信息
+     * @param list
+     * @return
+     */
+    @Override
+   public ComResponse<List<StaffDetail>> getDetailsListByNo(List<String> list) {
+        return ehrStaffClient.getDetailsListByNo(list);
     }
 }
