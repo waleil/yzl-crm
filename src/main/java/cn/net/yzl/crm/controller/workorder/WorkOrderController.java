@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.workorder;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.ehr.EhrStaff;
@@ -54,6 +55,8 @@ public class WorkOrderController {
 
     @Autowired
     private WorkOrderService workOrderService;
+    @Autowired
+    private TurnRulnClient turnRulnClient;
 
     /**
      * 查询我的回访分页列表
@@ -368,7 +371,9 @@ public class WorkOrderController {
     @ApiOperation(value = "智能工单-我的回访工单-单条上交",notes = "智能工单-我的回访工单-单条上交")
     @PostMapping(value = "v1/isHandIn")
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
-        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = workOrderClient.submissionRules();
+        isHandInDTO.setStaffNo(QueryIds.userNo.get());
+        isHandInDTO.setStaffName(QueryIds.userName.get());
+        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules();
         if(CollectionUtils.isEmpty(listComResponse.getData())){
             return ComResponse.success(Boolean.TRUE);
         }
@@ -381,7 +386,7 @@ public class WorkOrderController {
             }
             if(null != workOrderRuleConfigBean1){
                 isHandInDTO.setApplyUpStatus(1);
-                workOrderClient.rulesHandedIn(isHandInDTO);
+                turnRulnClient.rulesHandedIn(isHandInDTO);
                 return ComResponse.success(Boolean.TRUE);
             }
             RecoveryDTO recoveryDTO = new RecoveryDTO();
@@ -451,7 +456,7 @@ public class WorkOrderController {
             workOrderClient.handIn(recoveryDTO);
         }else {
             isHandInDTO.setApplyUpStatus(1);
-            workOrderClient.rulesHandedIn(isHandInDTO);
+            turnRulnClient.rulesHandedIn(isHandInDTO);
         }
         return ComResponse.success(flag);
     }

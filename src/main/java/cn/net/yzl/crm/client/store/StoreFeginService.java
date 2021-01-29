@@ -72,7 +72,7 @@ public interface StoreFeginService {
 
     @GetMapping("store/v1/selectStoreLocalListPage")
     public ComResponse<Page<StoreLocalPo>> selectStoreLocalListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
-                                                                    @RequestParam(value = "storeNo",required = false) String storeNo,
+                                                                    @RequestParam(value = "storeLocalNo",required = false) String storeLocalNo,
                                                                     @RequestParam(value = "storeAreaKindId",required = false) Integer storeAreaKindId);
 
     @GetMapping("store/v1/delStoreArea")

@@ -2,20 +2,15 @@ package cn.net.yzl.crm.client.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.model.pojo.SupplierPo;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -87,5 +82,9 @@ public interface SupplierFeginService {
     @RequestMapping(value = "supplier/v1/selectAll", method = RequestMethod.GET)
     public ComResponse<List<SupplierPo>> selectAll();
 
+
+    @ApiOperation(value = "采购单供应商下拉表", notes = "采购单供应商下拉表")
+    @RequestMapping(value = "supplier/v1/selectOrdersList", method = RequestMethod.GET)
+    public ComResponse<List<SupplierPo>> selectOrdersList();
 
 }

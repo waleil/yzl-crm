@@ -235,6 +235,7 @@ public class OrderRestController {
 				od.setMealFlag(CommonConstant.MEAL_FLAG_0);// 不是套餐
 				ProductMainDTO p = pmap.get(in.getProductCode());
 				od.setProductCode(p.getProductCode());// 商品唯一标识
+				od.setProductNo(p.getProductNo());// 商品编码
 				od.setProductName(p.getName());// 商品名称
 				od.setProductBarCode(p.getBarCode());// 产品条形码
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice()))
@@ -307,6 +308,7 @@ public class OrderRestController {
 					od.setMealCount(in.getProductNum());// 套餐数量
 					od.setMealPrice(meal.getPrice());// 套餐价格
 					od.setProductCode(in.getProductCode());// 商品唯一标识
+					od.setProductNo(in.getProductNo());// 商品编码
 					od.setProductName(in.getName());// 商品名称
 					od.setProductBarCode(in.getBarCode());// 产品条形码
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分=元*100
