@@ -42,7 +42,13 @@ import javax.validation.constraints.NotBlank;
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
 
+    @ApiOperation(value = "下载文件", notes = "")
+    @PostMapping("/fastDfs/download/file")
+    String downLoadContract(String id);
 
+    @ApiOperation(value = "记录文件路径", notes = "")
+    @PostMapping("fastDfs/record/file")
+    Boolean recordFilePath(@RequestParam("path") String path);
 
 
     @ApiOperation(value = "查询物流轨迹", notes = "")
@@ -124,5 +130,7 @@ public interface LogisticsFien {
 //    @ApiImplicitParam(name = "pid",paramType = "query",value = "父级编号",defaultValue = "0",required = true)
     @GetMapping("/exp/company/v1/selectExpressComponyDetail")
     public ComResponse<List<ExpressCodeVo>> selectExpressComponyDetail() ;
+
+
 
 }
