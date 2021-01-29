@@ -4,14 +4,13 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
-import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.sound.midi.SoundbankResource;
 import java.util.List;
 
 /**
@@ -197,6 +196,14 @@ public interface WorkOrderClient {
      */
     @PostMapping("v1/updateWorkOrderDisposeFlow")
     ComResponse<String> updateWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+
+    /**
+     * 查询顾客旅程
+     * @param memberCard
+     * @return
+     */
+    @GetMapping(value = "v1/userRoute")
+    ComResponse<List<WorkOrderFlowVO>> userRoute(@RequestParam(name = "memberCard", required = true)String memberCard);
 
     /**
      * 智能工单-顾客旅程-根据顾客会员号查询顾客工单信息
