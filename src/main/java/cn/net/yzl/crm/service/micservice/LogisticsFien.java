@@ -43,13 +43,7 @@ import javax.validation.constraints.NotBlank;
 public interface LogisticsFien {
 
 
-    @ApiOperation(value = "合同下载")
-    @GetMapping(value = "/fastDfs/download")
-    InputStream downloadFile(String filePath) throws IOException;
 
-    @ApiOperation(value = "合同上传")
-    @PostMapping("/fastDfs/upload")
-    public String uploadFile(MultipartFile file) throws IOException;
 
     @ApiOperation(value = "查询物流轨迹", notes = "")
     @PostMapping("logistics/findLogisticsTraces")
@@ -70,8 +64,8 @@ public interface LogisticsFien {
 
 
     @ApiOperation(value="快递公司档案详情")
-    @PostMapping("/exp/company/v1/view")
-    public ComResponse view(@RequestBody @Valid ExpressCompany expressCompany) ;
+    @GetMapping("/exp/company/v1/view")
+    public ComResponse view(@RequestParam("id") @Valid String  id) ;
 
 
     @ApiOperation(value="编辑快递公司档案")
