@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.db.order.OrderDetail;
@@ -259,5 +260,7 @@ public class SimpleTests {
 	@Test
 	public void testDate() {
 		System.err.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")));
+		QueryIds.userNo.set("zhangweiwei");
+		System.err.println(Optional.ofNullable(QueryIds.userNo.get()).filter(p -> !p.isEmpty()).orElse("14020"));
 	}
 }
