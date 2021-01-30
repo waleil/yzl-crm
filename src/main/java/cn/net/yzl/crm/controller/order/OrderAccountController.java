@@ -59,7 +59,7 @@ public class OrderAccountController {
     @PostMapping("v1/saveAccountOrderInfo")
     public ComResponse<Boolean> saveOrderInfo(@RequestParam
                                                   @NotEmpty(message = "退款账号不能为空")
-                                                  @ApiParam(value = "退款账号", required = true) String refundPayeeAccount,
+                                                  @ApiParam(value = "退款账号", required = true) String accPayeeAccount,
                                               @RequestParam
                                                   @NotEmpty(message = "交易流水号不能为空")
                                                   @ApiParam(value = "交易流水号", required = true) String transactionNo,
@@ -80,7 +80,7 @@ public class OrderAccountController {
                                                   @ApiParam(value = "退款表示：0=全部退款，1=部分退款", required = true) String isn) {
         ComResponse comResponse = null;
         try {
-            comResponse = orderAccountClient.saveAccountOrderInfo(refundPayeeAccount,transactionNo,orderAccountTime,saleOrderNo,updateCode,updateName,isn);
+            comResponse = orderAccountClient.saveAccountOrderInfo(accPayeeAccount,transactionNo,orderAccountTime,saleOrderNo,updateCode,updateName,isn);
         } catch (Exception e) {
             // 远程调用 异常
             return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), ResponseCodeEnums.API_ERROR_CODE.getMessage());

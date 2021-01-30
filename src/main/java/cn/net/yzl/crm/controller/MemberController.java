@@ -199,6 +199,8 @@ public class MemberController {
         if(workOrderFlowVOList==null || workOrderFlowVOList.size()<1){
             return ComResponse.nodata();
         }
+        //
+
         workOrderFlowVOList= orderdingWorkOrderFlowVOList(workOrderFlowVOList);
         // 获取数量
         List<WorkOrderFlowVO> collect = workOrderFlowVOList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
@@ -245,7 +247,7 @@ public class MemberController {
                 // 处理
                 WorkOrderFlowVO workOrderFlowVO1 = new WorkOrderFlowVO();
                 BeanUtil.copyProperties(list.get(list.size()-1),workOrderFlowVO1);
-                workOrderFlowVO1.setStartTime(list.get(0).getStartTime());
+                workOrderFlowVO1.setEndTime(list.get(0).getEndTime());
                 result.add(workOrderFlowVO1);
 
                 // 需要清空 list 并取出list的数据
@@ -258,7 +260,7 @@ public class MemberController {
                 // 如果是最后一个
                 WorkOrderFlowVO workOrderFlowVO1 = new WorkOrderFlowVO();
                 BeanUtil.copyProperties(workOrderFlowVO,workOrderFlowVO1);
-                workOrderFlowVO1.setStartTime(list.get(0).getStartTime());
+                workOrderFlowVO1.setEndTime(list.get(0).getEndTime());
                 result.add(workOrderFlowVO1);
             }
             list.add(workOrderFlowVO);
