@@ -86,6 +86,7 @@ public class MemberGroupController {
         member_group.setPhone_time(memberCrowdGroup.getPhone_time());
         member_group.setRecharge(memberCrowdGroup.getRecharge());
         member_group.setRed_bag(memberCrowdGroup.getRed_bag());
+        member_group.setPerson_count(memberCrowdGroup.getPerson_count());
         member_group.setResponse_time(memberCrowdGroup.getResponse_time());
         member_group.setOrder_rec_amount(memberCrowdGroup.getOrder_rec_amount());
         member_group.setOrder_source(memberCrowdGroup.getOrder_source());

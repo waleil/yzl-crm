@@ -370,7 +370,7 @@ public class WorkOrderController {
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
         isHandInDTO.setStaffNo(QueryIds.userNo.get());
         isHandInDTO.setStaffName(QueryIds.userName.get());
-        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules();
+        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
         if(CollectionUtils.isEmpty(listComResponse.getData())){
             return ComResponse.success(Boolean.TRUE);
         }
@@ -399,7 +399,7 @@ public class WorkOrderController {
         }
         WorkOrderRuleConfigBean wORCBean = null;
         HandInUtils handInUtils = new HandInUtils();
-        Boolean flag = true;
+        Boolean flag = Boolean.FALSE;
         for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
             wORCBean = workOrderRuleConfigBean;
             switch (workOrderRuleConfigBean.getId()){
@@ -436,7 +436,7 @@ public class WorkOrderController {
                     break;
 
                 default:{}
-                if(BooleanUtils.isFalse(flag)){
+                if(BooleanUtils.isTrue(flag)){
                     break;
                 }
             }
@@ -495,5 +495,38 @@ public class WorkOrderController {
             memberFien.addProductConsultation(productConsultationInsertVOS);
         }
         return workOrderClient.submitWorkOrder(workOrderDisposeFlowBean);
+    }
+
+    @ApiOperation(value = "回访规则校验",notes = "回访规则校验")
+    @GetMapping(value = "v1/returnVisitRules")
+    public ComResponse<Boolean> returnVisitRules(){
+        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(2, 2, 1, 0);
+        List<WorkOrderRuleConfigBean> data = listComResponse.getData();
+        if (CollectionUtils.isEmpty(data)){
+            return ComResponse.success();
+        }
+        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
+            switch (workOrderRuleConfigBean.getId()){
+                case 9:
+                    break;
+                case 10:
+                    String paramsValue = workOrderRuleConfigBean.getParamsValue();
+                    workOrderClient.visitDateLtCurrentDate(paramsValue);
+                    break;
+            }
+        }
+        return ComResponse.success();
+    }
+
+    @ApiOperation(value = "产品服用量小于规则配置:需回访",notes = "产品服用量小于规则配置:需回访")
+    @PostMapping(value = "v1/productDosage")
+    public ComResponse<Boolean> productDosage(@ApiParam("顾客会员号")@RequestParam("memberCard") List<String> memberCard){
+        return workOrderClient.productDosage(memberCard);
+    }
+
+    @ApiOperation(value = "新客户回访",notes = "新客户回访")
+    @GetMapping(value = "v1/newMember")
+    public ComResponse<Boolean> newMember(@ApiParam("顾客会员号")@RequestParam("memberCard") String memberCard){
+        return workOrderClient.newMember(memberCard);
     }
 }

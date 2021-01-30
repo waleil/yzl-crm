@@ -110,7 +110,7 @@ public interface OrderSearchClient {
     public ComResponse<String> selectSalesQuota(
             @RequestParam("memberCarNo") @NotEmpty(message = "会员编号不能为空") String memberCarNo,
             @RequestParam("staffNo") @NotEmpty(message = "员工号不能为空")  String staffNo,
-            @RequestParam("startTime") @NotEmpty(message = "开始时间不可为空")  String startTime,
-            @RequestParam("endTime") @NotEmpty(message = "结束时间不可为空") String endTime);
+            @RequestParam("startTime") @NotEmpty(message = "开始时间不可为空(yyyy-MM-dd HH:mm:ss)")  String startTime,
+            @RequestParam("endTime") @NotEmpty(message = "结束时间不可为空(yyyy-MM-dd HH:mm:ss)") String endTime);
 
 }

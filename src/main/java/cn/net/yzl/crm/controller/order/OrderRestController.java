@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,7 +67,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 订单restful控制器
+ * 订单管理
  * 
  * @author zhangweiwei
  * @date 2021年1月16日,下午12:12:17
@@ -90,7 +91,7 @@ public class OrderRestController {
 	private RedisUtil redisUtil;
 
 	@PostMapping("/v1/submitorder")
-	@ApiOperation(value = "热线工单-购物车-提交订单")
+	@ApiOperation(value = "热线工单-购物车-提交订单", notes = "热线工单-购物车-提交订单")
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
 		OrderM orderm = new OrderM();// 订单信息
 		orderm.setTotal(0);// 实收金额=应收金额+预存
@@ -170,6 +171,10 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
+		if (staffInfo == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]信息>>{}", orderm.getStaffCode(), sresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
+		}
 		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, staffInfo.getWorkCode(),
 				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis生成订单号
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
@@ -185,6 +190,11 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
 		}
 		DepartDto depart = dresponse.getData();
+		if (depart == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
+					dresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
+		}
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
@@ -467,8 +477,31 @@ public class OrderRestController {
 	}
 
 	@PostMapping("/v1/updateorder")
-	@ApiOperation(value = "订单列表-编辑")
+	@ApiOperation(value = "订单列表-编辑", notes = "订单列表-编辑")
 	public ComResponse<Boolean> updateOrder(@RequestBody UpdateOrderIn orderin) {
+		// 判断是否传入订单号
+		if (!StringUtils.hasText(orderin.getOrderNo())) {
+			log.error("订单列表-编辑>>订单号不能为空>>{}", orderin);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单号不能为空。");
+		}
+		// 判断是否传入订单明细
+		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
+			log.error("订单列表-编辑>>订单明细集合里没有任何元素>>{}", orderin);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
+		}
+		// 按订单编号查询订单信息
+		ComResponse<OrderM> oresponse = this.orderFeignClient.queryOrder(orderin.getOrderNo());
+		// 如果调用异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(oresponse.getCode())) {
+			log.error("订单列表-编辑>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
+		}
+		OrderM orderm = oresponse.getData();
+		// 如果不存在
+		if (orderm == null) {
+			log.error("订单列表-编辑>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
+		}
 		return ComResponse.success(true);
 	}
 
