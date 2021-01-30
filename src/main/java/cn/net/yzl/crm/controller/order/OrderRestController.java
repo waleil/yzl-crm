@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -91,6 +92,17 @@ public class OrderRestController {
 	@Resource
 	private RedisUtil redisUtil;
 
+	/**
+	 * 获取当前登录用户编码
+	 * 
+	 * @return 用户编码
+	 * @author zhangweiwei
+	 * @date 2021年1月30日,下午9:31:07
+	 */
+	private String getUserNo() {
+		return Optional.ofNullable(QueryIds.userNo.get()).filter(p -> !p.isEmpty()).orElse("14020");
+	}
+
 	@PostMapping("/v1/submitorder")
 	@ApiOperation(value = "热线工单-购物车-提交订单", notes = "热线工单-购物车-提交订单")
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
@@ -111,7 +123,7 @@ public class OrderRestController {
 		orderm.setReturnPointsDeduction(0);
 		orderm.setInvoiceFlag(CommonConstant.INVOICE_F);// 不开票
 		orderm.setRelationReissueOrderNo("0");
-		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
+		orderm.setStaffCode(this.getUserNo());// 下单坐席编码
 		// 如果订单里没有商品
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin);
@@ -298,6 +310,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
+//			mealMap=ordermealList.stream().collect(collectors.group)
 			for (ProductMealListDTO meal : mlist) {
 				// 如果套餐里没有商品
 				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
@@ -511,7 +524,7 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
 		orderm.setUpdateTime(new Date());// 修改时间
-		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
+		orderm.setUpdateCode(this.getUserNo());// 修改人编码
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
