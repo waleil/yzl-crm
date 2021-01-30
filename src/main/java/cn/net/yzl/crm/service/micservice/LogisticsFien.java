@@ -44,6 +44,9 @@ import javax.validation.constraints.NotBlank;
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
 
+
+
+
     @ApiOperation(value = "物流-登记生产")
     @PostMapping("exp/company/v1/generateBillOrderNo")
     public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo);

@@ -52,6 +52,13 @@ public class LogisticsController {
     @Autowired
     private FastDFSConfig fastDFSConfig;
 
+    @ApiOperation(value = "查询物流轨迹", notes = "")
+    @PostMapping("findLogisticsTraces")
+    public GeneralResult<List<ExpressTraceResDTO>> findLogisticsTraces(@RequestBody @Valid ExpressFindTraceDTO dto){
+        return logisticsFien.findLogisticsTraces(dto);
+    }
+
+
     @ApiOperation(value = "物流-登记生产")
     @PostMapping("v1/generateBillOrderNo")
     public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo){
