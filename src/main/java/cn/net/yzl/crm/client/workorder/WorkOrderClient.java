@@ -247,8 +247,9 @@ public interface WorkOrderClient {
     /**
      * 智能工单-回访规则校验第3条-新客户回访
      * @param memberCard
+     * @param status
      * @return
      */
     @GetMapping(value = "v1/newMember")
-    ComResponse<Boolean> newMember(@RequestParam("memberCard")String memberCard);
+    ComResponse<Boolean> newMember(@RequestParam("memberCard") String memberCard,@RequestParam("status") Integer status);
 }
