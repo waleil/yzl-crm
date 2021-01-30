@@ -45,7 +45,9 @@ import javax.validation.constraints.NotBlank;
 public interface LogisticsFien {
 
 
-
+    @ApiOperation(value = "物流-取消批量登记")
+    @PostMapping("v1/cancelbatch/registry/exceptioninfo")
+    public ComResponse<Boolean> cancelBatchRegistryException(@RequestBody String ids);
 
     @ApiOperation(value = "物流-登记生产")
     @GetMapping("exp/company/v1/generateBillOrderNo")
