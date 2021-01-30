@@ -10,7 +10,7 @@ public interface ObtainType {
 	/** 退回 */
 	int OBTAIN_TYPE_1 = 1;
 	/** 消费 */
-	int OBTAIN_TYPE_2 = 3;
+	int OBTAIN_TYPE_2 = 2;
 	/** 充值 */
 	int OBTAIN_TYPE_3 = 3;
 }

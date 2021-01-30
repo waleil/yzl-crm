@@ -21,7 +21,7 @@ public class MemberDiseaseDto {
     @Min(0)
     private Integer parDiseaseId;
 
-    @ApiModelProperty("病症id")
+    @ApiModelProperty(value = "病症id",hidden = true)
     @Min(0)
     private Integer diseaseId;
 

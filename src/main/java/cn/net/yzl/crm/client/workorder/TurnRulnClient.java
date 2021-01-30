@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 上交规则
@@ -63,7 +64,11 @@ public interface TurnRulnClient {
      * 智能工单-我的回访工单-查询上交规则
      *
      * @return
+     * @param ruleType
+     * @param deptType
+     * @param isUse
+     * @param isDel
      */
     @GetMapping("v1/submissionRules")
-    ComResponse<List<WorkOrderRuleConfigBean>> submissionRules();
+    ComResponse<List<WorkOrderRuleConfigBean>> submissionRules(@RequestParam("ruleType") Integer ruleType,@RequestParam("deptType") Integer deptType,@RequestParam("isUse") Integer isUse,@RequestParam("isDel") Integer isDel);
 }
