@@ -730,6 +730,65 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品库存不足。");
 			}
 		}
+		// 组装扣减库存参数
+		OrderProductVO orderProduct = new OrderProductVO();
+		orderProduct.setOrderNo(orderm.getOrderNo());// 订单编号
+		orderProduct.setProductReduceVOS(entrySet.stream().map(m -> {
+			ProductReduceVO vo = new ProductReduceVO();
+			vo.setNum(m.getValue());// 商品数量
+			vo.setProductCode(m.getKey());// 商品编号
+			vo.setOrderNo(orderm.getOrderNo());// 订单编号
+			return vo;
+		}).collect(Collectors.toList()));
+		// 调用扣减库存服务接口
+		ComResponse<?> productReduce = this.productClient.productReduce(orderProduct);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
+			log.error("订单列表-编辑>>调用扣减库存服务接口失败>>{}", productReduce);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "修改订单失败，请稍后重试。");
+		}
+		// 组装顾客账户消费参数
+		MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
+		memberAmountDetail.setDiscountMoney(orderm.getTotal());// 订单总金额，单位分
+		memberAmountDetail.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+		memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);// 消费
+		memberAmountDetail.setOrderNo(orderm.getOrderNo());// 订单编号
+		memberAmountDetail.setRemark("订单列表-编辑:修改订单");// 备注
+		// 调用顾客账户消费服务接口
+		ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
+			log.error("订单列表-编辑>>调用顾客[{}]账户消费服务接口失败>>{}", orderm.getMemberCardNo(), customerAmountOperation);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "修改订单失败，请稍后重试。");
+		}
+		log.info("订单: {}", JSON.toJSONString(orderm, true));
+		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
+		// 调用修改订单服务接口
+		ComResponse<?> updateOrder = this.orderFeignClient.updateOrder(new OrderRequest(orderm, orderdetailList));
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(updateOrder.getCode())) {
+			log.error("订单列表-编辑>>修改订单失败[订单号：{}]>>{}", orderm.getOrderNo(), updateOrder);
+			// 恢复库存
+			ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
+			// 如果调用服务接口失败
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
+				log.error("订单列表-编辑>>恢复库存失败>>{}", increaseStock);
+				this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL, ProductClient.INCREASE_STOCK_URL,
+						orderm.getStaffCode(), orderm.getOrderNo());
+			}
+			// 恢复账户
+			memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 退回
+			memberAmountDetail.setRemark("订单列表-编辑:退回金额");// 备注
+			ComResponse<?> customerAmountOperation2 = this.memberFien.customerAmountOperation(memberAmountDetail);
+			// 如果调用服务接口失败
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation2.getCode())) {
+				log.error("订单列表-编辑>>恢复账户失败>>{}", customerAmountOperation2);
+				this.orderCommonService.insert(memberAmountDetail, MemberFien.SUFFIX_URL,
+						MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, orderm.getStaffCode(), orderm.getOrderNo());
+			}
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "修改订单失败，请稍后重试。");
+		}
+		log.info("订单列表-编辑>>修改订单成功[订单号：{}]", orderm.getOrderNo());
 		return ComResponse.success(true);
 	}
 
