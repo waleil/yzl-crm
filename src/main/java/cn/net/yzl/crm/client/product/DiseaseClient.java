@@ -33,9 +33,6 @@ public interface DiseaseClient {
     @GetMapping("selectAll")
     ComResponse selectAllDiseases();
 
-    @GetMapping(value = "queryProductByDiseaseId")
-    ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(@RequestParam("name") String name);
-
     @GetMapping("queryByPID")
     ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid);
 
@@ -53,4 +50,8 @@ public interface DiseaseClient {
 
     @GetMapping("artificialSeatInput")
     ComResponse<DiseaseMainInfo> artificialSeatInput(@RequestParam("pid") Integer pid ,@RequestParam("name")String name,@RequestParam("userId")String userId);
+
+    @GetMapping(value = "queryProductByDiseaseId")
+    ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(@RequestParam("name") String name);
+
 }

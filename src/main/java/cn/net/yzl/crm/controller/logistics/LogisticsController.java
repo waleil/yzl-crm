@@ -79,6 +79,12 @@ public class LogisticsController {
 
     }
 
+    @ApiOperation(value = "物流-取消批量登记")
+    @PostMapping("v1/cancelbatch/registry/exceptioninfo")
+    public ComResponse<Boolean> cancelBatchRegistryException(@RequestBody List<String> ids){
+        return logisticsFien.cancelBatchRegistryException(ids);
+    }
+
     @ApiOperation(value = "合同下载")
     @GetMapping("/fastDfs/download")
     public String downloadFile(@RequestParam(value = "id") String  id) throws IOException {
