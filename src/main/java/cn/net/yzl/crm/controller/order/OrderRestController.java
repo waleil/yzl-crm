@@ -537,12 +537,12 @@ public class OrderRestController {
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
 		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
-		orderin.setTotal(0);// 实收金额=应收金额+预存
-		orderin.setCash(0);// 应收金额=订单总额+邮费-优惠
-		orderin.setTotalAll(0);// 订单总额
-		orderin.setCash1(0);// 预存金额
-		orderin.setSpend(0);// 消费金额=订单总额-优惠
-		orderin.setPfee(0);// 邮费
+		orderm.setTotal(0);// 实收金额=应收金额+预存
+		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
+		orderm.setTotalAll(0);// 订单总额
+		orderm.setCash1(0);// 预存金额
+		orderm.setSpend(0);// 消费金额=订单总额-优惠
+		orderm.setPfee(0);// 邮费
 		// 如果有非套餐信息
 		if (!CollectionUtils.isEmpty(orderProductList)) {
 			// 收集商品编码
@@ -605,8 +605,8 @@ public class OrderRestController {
 				return od;
 			}).collect(Collectors.toList());
 			orderdetailList.addAll(result);
-			orderin.setTotal(orderin.getTotal() + result.stream().mapToInt(OrderDetail::getTotal).sum());
-			orderin.setCash(orderin.getCash() + result.stream().mapToInt(OrderDetail::getCash).sum());
+			orderm.setTotal(orderm.getTotal() + result.stream().mapToInt(OrderDetail::getTotal).sum());
+			orderm.setCash(orderm.getCash() + result.stream().mapToInt(OrderDetail::getCash).sum());
 		}
 		// 获取套餐
 		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
@@ -703,13 +703,13 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
-			orderin.setTotal(orderin.getTotal()
+			orderm.setTotal(orderm.getTotal()
 					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
-			orderin.setCash(orderin.getCash()
+			orderm.setCash(orderm.getCash()
 					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
-		orderin.setTotalAll(orderin.getTotal());
-		orderin.setSpend(orderin.getCash());
+		orderm.setTotalAll(orderm.getTotal());
+		orderm.setSpend(orderm.getCash());
 		// 如果订单总金额大于账户剩余金额，单位分
 		if (orderm.getTotal() > account.getTotalMoney()) {
 			log.error("订单列表-编辑>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
