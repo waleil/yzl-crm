@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -92,17 +91,6 @@ public class OrderRestController {
 	@Resource
 	private RedisUtil redisUtil;
 
-	/**
-	 * 获取当前登录用户编码
-	 * 
-	 * @return 用户编码
-	 * @author zhangweiwei
-	 * @date 2021年1月30日,下午9:31:07
-	 */
-	private String getUserNo() {
-		return Optional.ofNullable(QueryIds.userNo.get()).filter(p -> !p.isEmpty()).orElse("14020");
-	}
-
 	@PostMapping("/v1/submitorder")
 	@ApiOperation(value = "热线工单-购物车-提交订单", notes = "热线工单-购物车-提交订单")
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
@@ -123,7 +111,7 @@ public class OrderRestController {
 		orderm.setReturnPointsDeduction(0);
 		orderm.setInvoiceFlag(CommonConstant.INVOICE_F);// 不开票
 		orderm.setRelationReissueOrderNo("0");
-		orderm.setStaffCode(this.getUserNo());// 下单坐席编码
+		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
 		// 如果订单里没有商品
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin);
@@ -310,7 +298,11 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
-//			mealMap=ordermealList.stream().collect(collectors.group)
+			// 统计订单明细中的每个套餐的总数，key为套餐编码，value为购买套餐总数
+			Map<String, Integer> mealCountMap = ordermealList.stream()
+					.collect(Collectors.groupingBy(OrderDetailIn::getMealNo)).entrySet().stream()
+					.collect(Collectors.toMap(Entry::getKey,
+							v -> v.getValue().stream().mapToInt(OrderDetailIn::getMealCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
 				// 如果套餐里没有商品
 				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
@@ -334,14 +326,15 @@ public class OrderRestController {
 					od.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是套餐
 					od.setMealName(meal.getName());// 套餐名称
 					od.setMealNo(meal.getMealNo());// 套餐唯一标识
-					od.setMealCount(in.getProductNum());// 套餐数量
+					Integer mealCount = mealCountMap.get(meal.getMealNo());
+					od.setMealCount(mealCount);// 套餐数量
 					od.setMealPrice(mealPrice.intValue());// 套餐价格，单位分
 					od.setProductCode(in.getProductCode());// 商品唯一标识
 					od.setProductNo(in.getProductNo());// 商品编码
 					od.setProductName(in.getName());// 商品名称
 					od.setProductBarCode(in.getBarCode());// 产品条形码
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
-					od.setProductCount(in.getProductNum());// 商品数量
+					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
 					od.setPackageunit(in.getPackagingUnit());// 包装单位
@@ -524,7 +517,7 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
 		orderm.setUpdateTime(new Date());// 修改时间
-		orderm.setUpdateCode(this.getUserNo());// 修改人编码
+		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
