@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import cn.hutool.core.lang.Tuple;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.order.constant.CommonConstant;
@@ -263,4 +265,18 @@ public class SimpleTests {
 		QueryIds.userNo.set("zhangweiwei");
 		System.err.println(Optional.ofNullable(QueryIds.userNo.get()).filter(p -> !p.isEmpty()).orElse("14020"));
 	}
+
+	@Test
+	public void testMerge() {
+		Tuple p1 = new Tuple("aa", 5);
+		Tuple p2 = new Tuple("bb", 4);
+		Tuple p3 = new Tuple("cc", 3);
+		Tuple p11 = new Tuple("aa", 5);
+		Tuple p21 = new Tuple("bb", 4);
+		Tuple p31 = new Tuple("cc", 3);
+		Map<String, Integer> map = new HashMap<>();
+		Arrays.asList(p1, p2, p3, p11, p21, p31).stream().forEach(p -> map.merge(p.get(0), p.get(1), Integer::sum));
+		System.err.println(map);
+	}
+
 }
