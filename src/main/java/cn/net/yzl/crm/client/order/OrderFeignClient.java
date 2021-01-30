@@ -30,6 +30,17 @@ public interface OrderFeignClient {
 	ComResponse<Object> submitOrder(@RequestBody OrderRequest orderRequest);
 
 	/**
+	 * 订单列表-编辑
+	 * 
+	 * @param orderRequest 订单信息
+	 * @return 修改订单
+	 * @author zhangweiwei
+	 * @date 2021年1月31日,上午1:40:14
+	 */
+	@PostMapping("/order/v1/updateorder")
+	ComResponse<Object> updateOrder(@RequestBody OrderRequest orderRequest);
+
+	/**
 	 * 按订单编号查询订单信息
 	 * 
 	 * @param orderNo 订单编号
