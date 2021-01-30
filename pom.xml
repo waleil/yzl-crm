@@ -236,6 +236,7 @@
     </repositories>
 
     <build>
+        <finalName>yzl-crm</finalName>
         <plugins>
 			<!-- ⬇编译时将方法的参数名也同时编译到class文件中⬇ -->
 	        <plugin>

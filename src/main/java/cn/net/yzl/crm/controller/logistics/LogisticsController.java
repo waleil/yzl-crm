@@ -12,6 +12,8 @@ import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
+import cn.net.yzl.logistics.model.vo.SExceptionCondition;
+import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,6 +51,33 @@ public class LogisticsController {
     private FastdfsUtils fastdfsUtils;
     @Autowired
     private FastDFSConfig fastDFSConfig;
+
+    @ApiOperation(value = "查询物流轨迹", notes = "")
+    @PostMapping("findLogisticsTraces")
+    public GeneralResult<List<ExpressTraceResDTO>> findLogisticsTraces(@RequestBody @Valid ExpressFindTraceDTO dto){
+        return logisticsFien.findLogisticsTraces(dto);
+    }
+
+
+    @ApiOperation(value = "物流-登记生产")
+    @PostMapping("v1/generateBillOrderNo")
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo){
+        return logisticsFien.generateBillOrderNo(orderNo);
+    }
+
+    @ApiOperation(value = "物流-登记查询")
+    @PostMapping("v1/searcha/exception")
+    public ComResponse<Page<StoreToLogisticsDto>> selectExceptionByCondition(@RequestBody SExceptionCondition sExceptionCondition){
+
+        return logisticsFien.selectExceptionByCondition(sExceptionCondition);
+    }
+
+    @ApiOperation(value = "物流-登记查询")
+    @PostMapping("v1/cancel/registry/exceptioninfo")
+    public ComResponse<Boolean> cancelRegistryException(@RequestParam("id") String id){
+         return logisticsFien.cancelRegistryException(id);
+
+    }
 
     @ApiOperation(value = "合同下载")
     @GetMapping("/fastDfs/download")
