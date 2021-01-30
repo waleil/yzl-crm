@@ -61,7 +61,6 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -504,7 +503,6 @@ public class OrderRestController {
 	@Getter
 	@Setter
 	@AllArgsConstructor
-	@NoArgsConstructor
 	@ApiModel(description = "订单")
 	public static class OrderOut {
 		@ApiModelProperty(value = "收货人地址")
