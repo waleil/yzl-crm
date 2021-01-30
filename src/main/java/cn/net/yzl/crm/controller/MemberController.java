@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
@@ -8,6 +9,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.product.DiseaseClient;
@@ -37,6 +39,7 @@ import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.PortraitOrderDetailDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
+import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -175,31 +178,132 @@ public class MemberController {
         return result;
     }
 
+    @Autowired
+    private OrderSearchClient orderSearchClient;
+//@Autowired
+//private WorkOrderClient workOrderClient;
     @ApiOperation("顾客画像-服务旅程")
     @GetMapping("v1/getMemberServiceJourney")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
     })
     public ComResponse<MemberServiceJourneryDto> getMemberServiceJourney(String memberCard) {
-        // todo 等待 订单和工单提供接口
 
         MemberServiceJourneryDto memberServiceJourneryDto = new MemberServiceJourneryDto();
-        memberServiceJourneryDto.setStaffNum(1);
-        MemberServiceJournery memberServiceJournery = new MemberServiceJournery();
-        memberServiceJournery.setEndTime(new Date());
-        memberServiceJournery.setStaffNo("14020");
-        memberServiceJournery.setStartTime(new Date());
-        memberServiceJournery.setTotalPrice(112.0);
+
+        // 从 订单获取 顾客的 时间
+        ComResponse<List<WorkOrderFlowVO>> listComResponse = workOrderClients.userRoute(memberCard);
+        List<WorkOrderFlowVO> workOrderFlowVOList = listComResponse.getData();
+        if(workOrderFlowVOList==null || workOrderFlowVOList.size()<1){
+            return ComResponse.nodata();
+        }
+        workOrderFlowVOList= orderdingWorkOrderFlowVOList(workOrderFlowVOList);
+        // 获取数量
+        List<WorkOrderFlowVO> collect = workOrderFlowVOList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                -> new TreeSet<>(Comparator.comparing(WorkOrderFlowVO::getStaffNo))), ArrayList::new));
+        memberServiceJourneryDto.setStaffNum(collect.size());
         List list = new ArrayList<MemberServiceJournery>();
-        list.add(memberServiceJournery);
+        // 从订单获取顾客的消费情况
+        workOrderFlowVOList.forEach(workOrderFlowVO -> {
+            Date endTime = workOrderFlowVO.getEndTime(); // 开始时间
+            Date startTime = workOrderFlowVO.getStartTime(); // 结束时间
+            String staffNo = workOrderFlowVO.getStaffNo(); // 员工编号
+            MemberServiceJournery memberServiceJournery = new MemberServiceJournery();
+            memberServiceJournery.setStaffNo(staffNo);
+            memberServiceJournery.setStartTime(startTime);
+            memberServiceJournery.setEndTime(endTime);
+            String startTimeStr = DateFormatUtil.dateToString(startTime, DateFormatUtil.UTIL_FORMAT);
+           String endTimeStr= DateFormatUtil.dateToString(endTime, DateFormatUtil.UTIL_FORMAT);
+            ComResponse<String> stringComResponse = orderSearchClient.selectSalesQuota(memberCard, staffNo, startTimeStr, endTimeStr);
+            if(stringComResponse.getData()!=null){
+                memberServiceJournery.setTotalPrice(Double.parseDouble(stringComResponse.getData()));
+            }
+            list.add(memberServiceJournery);
+
+        });
         memberServiceJourneryDto.setMemberServiceJourneryList(list);
         return ComResponse.success(memberServiceJourneryDto);
     }
 
+
+    // 对顾客的维护的  坐席 排序
+    public static List<WorkOrderFlowVO> orderdingWorkOrderFlowVOList(List<WorkOrderFlowVO> workOrderFlowVOList) {
+        String staffNo=null;
+        List<WorkOrderFlowVO> result = new ArrayList<>();
+        List<WorkOrderFlowVO> list = new ArrayList<>();
+        for (int i = 0; i < workOrderFlowVOList.size(); i++) {
+            WorkOrderFlowVO  workOrderFlowVO=  workOrderFlowVOList.get(i);
+            String staffNo1 = workOrderFlowVO.getStaffNo();
+            Date startTime = workOrderFlowVO.getStartTime();
+            Date endTime = workOrderFlowVO.getEndTime();
+
+            if(StrUtil.isBlank(staffNo)){
+                staffNo=staffNo1;
+            }else if (!staffNo1.equals(staffNo) ){
+                // 处理
+                WorkOrderFlowVO workOrderFlowVO1 = new WorkOrderFlowVO();
+                BeanUtil.copyProperties(list.get(list.size()-1),workOrderFlowVO1);
+                workOrderFlowVO1.setStartTime(list.get(0).getStartTime());
+                result.add(workOrderFlowVO1);
+
+                // 需要清空 list 并取出list的数据
+                list= new ArrayList<WorkOrderFlowVO>();
+                staffNo=staffNo1;
+                if(i==workOrderFlowVOList.size()-1){
+                    result.add(workOrderFlowVO);
+                }
+            }else if (i==workOrderFlowVOList.size()-1){
+                // 如果是最后一个
+                WorkOrderFlowVO workOrderFlowVO1 = new WorkOrderFlowVO();
+                BeanUtil.copyProperties(workOrderFlowVO,workOrderFlowVO1);
+                workOrderFlowVO1.setStartTime(list.get(0).getStartTime());
+                result.add(workOrderFlowVO1);
+            }
+            list.add(workOrderFlowVO);
+
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        WorkOrderFlowVO  w1 = new WorkOrderFlowVO();
+        w1.setStaffNo("1");
+        w1.setStartTime(DateFormatUtil.stringToDate("20210-1-10",DateFormatUtil.SQL_FORMAT));
+        w1.setEndTime(DateFormatUtil.stringToDate("20210-1-11",DateFormatUtil.SQL_FORMAT));
+        WorkOrderFlowVO  w2 = new WorkOrderFlowVO();
+        w2.setStaffNo("1");
+        w2.setStartTime(DateFormatUtil.stringToDate("20210-1-13",DateFormatUtil.SQL_FORMAT));
+        w2.setEndTime(DateFormatUtil.stringToDate("20210-1-14",DateFormatUtil.SQL_FORMAT));
+        WorkOrderFlowVO  w3 = new WorkOrderFlowVO();
+        w3.setStaffNo("2");
+        w3.setStartTime(DateFormatUtil.stringToDate("20210-1-16",DateFormatUtil.SQL_FORMAT));
+        w3.setEndTime(DateFormatUtil.stringToDate("20210-1-17",DateFormatUtil.SQL_FORMAT));
+        WorkOrderFlowVO  w4 = new WorkOrderFlowVO();
+        w4.setStaffNo("2");
+        w4.setStartTime(DateFormatUtil.stringToDate("20210-1-19",DateFormatUtil.SQL_FORMAT));
+        w4.setEndTime(DateFormatUtil.stringToDate("20210-1-20",DateFormatUtil.SQL_FORMAT));
+
+        WorkOrderFlowVO  w5 = new WorkOrderFlowVO();
+        w5.setStaffNo("1");
+        w5.setStartTime(DateFormatUtil.stringToDate("20210-1-22",DateFormatUtil.SQL_FORMAT));
+        w5.setEndTime(DateFormatUtil.stringToDate("20210-1-25",DateFormatUtil.SQL_FORMAT));
+
+
+        WorkOrderFlowVO  w6 = new WorkOrderFlowVO();
+        w6.setStaffNo("1");
+        w6.setStartTime(DateFormatUtil.stringToDate("20210-1-27",DateFormatUtil.SQL_FORMAT));
+        w6.setEndTime(DateFormatUtil.stringToDate("20210-1-28",DateFormatUtil.SQL_FORMAT));
+        List<WorkOrderFlowVO> list = new ArrayList<>();
+        list.add(w1);list.add(w2);list.add(w3);list.add(w4);list.add(w5);list.add(w6);
+
+
+        System.err.println(JSONUtil.toJsonStr(orderdingWorkOrderFlowVOList(list)));
+    }
+
+
     @Autowired
     private cn.net.yzl.crm.client.workorder.WorkOrderClient workOrderClients;
-    @Autowired
-    private OrderSearchClient orderSearchClient;
+
 
     @ApiOperation("顾客画像-顾客旅程")
     @GetMapping("v1/getCustomerJourney")
