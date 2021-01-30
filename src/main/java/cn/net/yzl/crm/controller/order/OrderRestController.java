@@ -51,6 +51,7 @@ import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
 import cn.net.yzl.order.model.vo.order.OrderRequest;
+import cn.net.yzl.order.model.vo.order.UpdateOrderIn;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
@@ -465,6 +466,12 @@ public class OrderRestController {
 				orderm.getOrderNo()));
 	}
 
+	@PostMapping("/v1/updateorder")
+	@ApiOperation(value = "订单列表-编辑")
+	public ComResponse<Boolean> updateOrder(@RequestBody UpdateOrderIn orderin) {
+		return ComResponse.success(true);
+	}
+
 	@Resource
 	private RequestMessageMapper requestMessageMapper;// 本地消息表mapper
 	@Resource
@@ -511,9 +518,9 @@ public class OrderRestController {
 		private String reveiverName;
 		@ApiModelProperty(value = "收货人电话")
 		private String reveiverTelphoneNo;
-		@ApiModelProperty(value = "实收金额")
+		@ApiModelProperty(value = "实收金额，单位元")
 		private double total;
-		@ApiModelProperty(value = "账户余额")
+		@ApiModelProperty(value = "账户余额，单位元")
 		private double totalMoney;
 		@ApiModelProperty(value = "订单号")
 		private String orderNo;
