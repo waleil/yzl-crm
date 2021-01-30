@@ -542,6 +542,8 @@ public class OrderRestController {
 		List<OrderDetail> orderdetailList = new ArrayList<>();
 		// 收集每类商品的库存，key为商品编码，value为商品库存
 		Map<String, Integer> productStockMap = new HashMap<>();
+		// 收集订单明细里商品的购买数量
+		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
 		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		// 如果有非套餐信息
