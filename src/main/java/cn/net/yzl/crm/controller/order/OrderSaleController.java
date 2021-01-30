@@ -1,29 +1,26 @@
 package cn.net.yzl.crm.controller.order;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.client.order.OrderSaleClient;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.order.enums.RedisKeys;
 import cn.net.yzl.order.model.vo.order.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.GeneralResult;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.client.order.OrderSaleClient;
-import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
-import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.crm.service.micservice.MemberFien;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequestMapping("/orderSale")
@@ -73,7 +70,7 @@ public class OrderSaleController {
                 createEndTime, pageSize, pageNo);
     }
 
-    @ApiOperation(value = "查询订单信息——（可联调）",notes = "售后单查看和审核查看共用一个")
+    @ApiOperation(value = "查询订单信息——（可联调）", notes = "售后单查看和审核查看共用一个")
     @GetMapping("/v1/selectOrderSaleInfo")
     public ComResponse<OrderSaleDetailWatchDTO> selectOrderSaleInfo(@RequestParam @NotBlank(message = "售后单号不能为空") @ApiParam(value = "售后单号", required = true) String saleOrderNo) {
         return orderSaleClient.selectOrderSaleInfo(saleOrderNo);
