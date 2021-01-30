@@ -125,7 +125,7 @@ public class WorkOrderController {
 
     @ApiOperation(value = "待领取顾客池-领取", notes = "待领取顾客池-领取")
     @PostMapping("v1/receiveUsers")
-    public ComResponse<Void> receiveUsers(@RequestBody List<WorkOrderFlowDTO> list) {
+    public ComResponse<Boolean> receiveUsers(@RequestBody List<WorkOrderFlowDTO> list) {
         return workOrderService.receiveUsers(list);
     }
 

@@ -63,7 +63,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     }
 
     @Override
-    public ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list) {
+    public ComResponse<Boolean> receiveUsers(List<WorkOrderFlowDTO> list) {
         WorkOrderReceiveDTO workOrderReceiveDTO = new WorkOrderReceiveDTO();
         if (null != list && list.size() > 0) {
             // 按员工号查询员工信息

@@ -158,7 +158,7 @@ public interface WorkOrderClient {
 
 
     @PostMapping(value = "v1/receiveUsers")
-    ComResponse<Void> receiveUsers(WorkOrderReceiveDTO workOrderReceiveDTO);
+    ComResponse<Boolean> receiveUsers(WorkOrderReceiveDTO workOrderReceiveDTO);
 
 
     /**
