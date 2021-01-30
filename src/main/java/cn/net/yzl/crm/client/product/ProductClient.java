@@ -96,7 +96,7 @@ public interface ProductClient {
 	public ComResponse<?> increaseStock(@RequestBody @Valid OrderProductVO orderProductVO);
 
 	/**
-	 * 按一组商品编码查询商品列表
+	 * 按一组商品编码查询商品列表 to王潇
 	 * 
 	 * @param codes 商品编码，多个以英文逗号分隔
 	 * @return 商品列表
@@ -104,5 +104,5 @@ public interface ProductClient {
 	 * @date 2021年1月25日,下午10:14:01
 	 */
 	@GetMapping("/v1/queryByProductCodes")
-	public ComResponse<List<ProductMainDTO>> queryByProductCodes(@RequestParam @NotBlank String codes);
+	ComResponse<List<ProductMainDTO>> queryByProductCodes(@RequestParam @NotBlank String codes);
 }
