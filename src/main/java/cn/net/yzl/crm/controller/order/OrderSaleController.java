@@ -105,18 +105,24 @@ public class OrderSaleController {
         return orderSaleClient.reviewSaleOrder(dto);
     }
 
-    @ApiOperation(value = "查询售后订单审批列表")
-    @GetMapping("/v1/selectOrderSaleCheckList")
-    public ComResponse<Page<OrderSaleCheckListVO>> selectOrderSaleCheckList(
-            @RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
-            @RequestParam(required = false) @ApiParam(value = "顾客姓名") String memberName,
-            @RequestParam(required = false) @ApiParam(value = "开始时间") String createStartTime,
-            @RequestParam(required = false) @ApiParam(value = "结束时间") String createEndTime,
-            @RequestParam(required = false, defaultValue = "18") @ApiParam(value = "页数") Integer pageSize,
-            @RequestParam(required = false, defaultValue = "1") @ApiParam(value = "条数") Integer pageNo,
-            @RequestParam @NotBlank(message = "售后单状态不能为空") @ApiParam(value = "售后单状态 1:未审核,其他:已审核", required = true) Integer state) {
-        return orderSaleClient.selectOrderSaleCheckList(orderNo, memberName, createStartTime, createEndTime, pageSize,
-                pageNo, state);
+    @ApiOperation(value = "查询待审核售后单列表")
+    @GetMapping("/v1/getUnReviewSaleOrder")
+    public ComResponse<Page<OrderSaleCheckListVO>> getUnReviewSaleOrder(
+            @RequestParam(required = false) @ApiParam(name = "orderNo", value = "订单编号") String orderNo,
+            @RequestParam(required = false) @ApiParam(name = "memberName", value = "顾客姓名") String memberName,
+            @RequestParam @ApiParam(value = "页数", name = "pageSize") Integer pageSize,
+            @RequestParam @ApiParam(value = "条数", name = "pageNo") Integer pageNo) {
+        return orderSaleClient.getUnReviewSaleOrder(orderNo, memberName, pageSize, pageNo);
+    }
+
+    @ApiOperation(value = "查询已审核售后单列表")
+    @GetMapping("/v1/getReviewedSaleOrder")
+    public ComResponse<Page<OrderSaleCheckListVO>> getReviewedSaleOrder(
+            @RequestParam(required = false) @ApiParam(name = "orderNo", value = "订单编号") String orderNo,
+            @RequestParam(required = false) @ApiParam(name = "memberName", value = "顾客姓名") String memberName,
+            @RequestParam @ApiParam(value = "页数", name = "pageSize") Integer pageSize,
+            @RequestParam @ApiParam(value = "条数", name = "pageNo") Integer pageNo) {
+        return orderSaleClient.getReviewedSaleOrder(orderNo, memberName, pageSize, pageNo);
     }
 
     @ApiOperation(value = "根据订单号查询订单信息——（可联调）")
