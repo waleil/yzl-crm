@@ -2,6 +2,7 @@ package cn.net.yzl.crm.client.order;
 
 import javax.validation.constraints.NotBlank;
 
+import cn.net.yzl.order.model.vo.order.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,22 +12,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.order.model.vo.order.OrderSaleCheckDetailVO;
-import cn.net.yzl.order.model.vo.order.OrderSaleCheckListVO;
-import cn.net.yzl.order.model.vo.order.OrderSaleDetailVO;
-import cn.net.yzl.order.model.vo.order.OrderSaleListVO;
-import cn.net.yzl.order.model.vo.order.OrderSaleVO;
 
 @FeignClient(name = "orderSale", url = "${api.gateway.url}/orderService/orderSale")
 public interface OrderSaleClient {
 	/**
-	 * @param orderSalem
+	 * @param dto
 	 * @return 新建售后订单
 	 * @author zhangweiwei
 	 * @date 2021年1月25日,下午1:27:55
 	 */
 	@PostMapping("/v1/saveOrderSale")
-	public ComResponse<Boolean> saveOrderSale(@RequestBody @Validated OrderSaleVO orderSalem);
+	public ComResponse<Boolean> saveOrderSale(@RequestBody @Validated OrderSaleAddDTO dto);
 
 	@PostMapping("/v1/updateOrderSale")
 	public ComResponse<Boolean> updateOrderSale(@RequestBody @Validated OrderSaleVO orderSalem);
