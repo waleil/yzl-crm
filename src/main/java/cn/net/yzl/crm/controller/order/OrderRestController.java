@@ -70,20 +70,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/order")
 @Slf4j
 public class OrderRestController {
-	@Resource
-	private OrderFeignClient orderFeignClient;
-	@Resource
-	private MealClient mealClient;
-	@Resource
-	private ProductClient productClient;
-	@Resource
-	private MemberFien memberFien;
-	@Resource
-	private EhrStaffClient ehrStaffClient;
-	@Resource
-	private RedisUtil redisUtil;
-	@Resource
-	private IOrderCommonService orderCommonService;
 
 	@PostMapping("/v1/submitorder")
 	@ApiOperation(value = "热线工单-购物车-提交订单", notes = "热线工单-购物车-提交订单")
@@ -747,4 +733,18 @@ public class OrderRestController {
 		return ComResponse.success(true);
 	}
 
+	@Resource
+	private OrderFeignClient orderFeignClient;
+	@Resource
+	private MealClient mealClient;
+	@Resource
+	private ProductClient productClient;
+	@Resource
+	private MemberFien memberFien;
+	@Resource
+	private EhrStaffClient ehrStaffClient;
+	@Resource
+	private RedisUtil redisUtil;
+	@Resource
+	private IOrderCommonService orderCommonService;
 }
