@@ -357,8 +357,10 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
-			orderm.setTotal(orderm.getTotal() + mlist.stream().mapToInt(ProductMealListDTO::getPrice).sum());
-			orderm.setCash(orderm.getCash() + mlist.stream().mapToInt(ProductMealListDTO::getPrice).sum());
+			orderm.setTotal(orderm.getTotal()
+					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+			orderm.setCash(orderm.getCash()
+					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
 		orderm.setTotalAll(orderm.getTotal());
 		orderm.setSpend(orderm.getCash());
