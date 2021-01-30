@@ -72,7 +72,7 @@ public class LogisticsController {
         return logisticsFien.selectExceptionByCondition(sExceptionCondition);
     }
 
-    @ApiOperation(value = "物流-登记查询")
+    @ApiOperation(value = "物流-取消登记单条")
     @PostMapping("v1/cancel/registry/exceptioninfo")
     public ComResponse<Boolean> cancelRegistryException(@RequestParam("id") String id){
          return logisticsFien.cancelRegistryException(id);
