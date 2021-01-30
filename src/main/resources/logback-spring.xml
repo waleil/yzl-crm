@@ -6,7 +6,7 @@
     <springProperty scope="context" name="application.name" source="spring.application.name"/>
     <property name="LOG_HOME" value="/opt/logs/${application.name}"/>
     <property scope="context" name="SYS_MONITOR_LOG_FILE_NAME" value="request" />
-    <property name="PATTERN" value="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%c{12}:%L] %msg%n"/>
+    <property name="PATTERN" value="[%-4level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%c{12}:%L] %msg%n"/>
 
     <!-- %m输出的信息,%p日志级别,%t线程名,%d日期,%c类的全名,%i索引【从数字0开始递增】,,, -->
     <!-- appender是configuration的子节点，是负责写日志的组件。 -->
