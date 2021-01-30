@@ -48,7 +48,7 @@ public interface LogisticsFien {
 
 
     @ApiOperation(value = "物流-登记生产")
-    @PostMapping("exp/company/v1/generateBillOrderNo")
+    @GetMapping("exp/company/v1/generateBillOrderNo")
     public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo);
 
     @ApiOperation(value = "物流-登记查询")
