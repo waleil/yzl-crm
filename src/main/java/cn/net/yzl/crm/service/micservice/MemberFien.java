@@ -3,6 +3,7 @@ package cn.net.yzl.crm.service.micservice;
 import java.util.List;
 
 import cn.net.yzl.crm.customer.dto.member.MemberGradeRecordDto;
+import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -43,6 +44,7 @@ import javax.validation.constraints.NotBlank;
  */
 @FeignClient(name = "crmCustomer", url = "${api.gateway.url}" + MemberFien.SUFFIX_URL)
 //@FeignClient(value = "yzl-crm-customer-api")
+//@FeignClient(name = "crmCustomer", url = "http://localhost:2070/member")
 public interface MemberFien {
 	String SUFFIX_URL = "/crmCustomer/member";
 	String CUSTOMER_AMOUNT_OPERATION_URL = "/customerAmount/operation";
@@ -91,6 +93,10 @@ public interface MemberFien {
 	@ApiOperation("获取顾客病症")
 	@GetMapping("/v1/getMemberDisease")
 	ComResponse<List<MemberDiseaseCustomerDto>> getMemberDisease(@RequestParam("memberCard") String memberCard);
+
+	@ApiOperation("新增顾客病症")
+	@PostMapping("/v1/insertMemberDisease")
+	ComResponse<Integer> insertMemberDisease(@RequestBody MemberDiseaseDto memberDiseaseDto);
 
 	@ApiOperation("获取购买能力")
 	@GetMapping("/v1/getMemberOrderStat")

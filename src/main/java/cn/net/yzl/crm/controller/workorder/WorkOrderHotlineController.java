@@ -155,13 +155,13 @@ public class WorkOrderHotlineController {
 //        return workOrderHotlineClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
 //    }
 
-    /**
-     * 智能工单：我的热线工单-处理工单提交
-     * @return
-     */
-    @PostMapping("v1/updateDisposeWorkOrderCommit")
-//    @ApiOperation(value = "智能工单：我的热线工单-处理工单提交", notes = "智能工单：我的热线工单-处理工单提交")
-    public ComResponse<Void> updateDisposeWorkOrderCommit(@Validated @RequestBody UpdateDisposeWorkOrderCommit updateDisposeWorkOrderCommit){
-        return workOrderHotlineClient.updateDisposeWorkOrderCommit(updateDisposeWorkOrderCommit);
-    }
+//    /**
+//     * 智能工单：我的热线工单-处理工单提交
+//     * @return
+//     */
+//    @PostMapping("v1/updateDisposeWorkOrderCommit")
+////    @ApiOperation(value = "智能工单：我的热线工单-处理工单提交", notes = "智能工单：我的热线工单-处理工单提交")
+//    public ComResponse<Void> updateDisposeWorkOrderCommit(@Validated @RequestBody UpdateDisposeWorkOrderCommit updateDisposeWorkOrderCommit){
+//        return workOrderHotlineClient.updateDisposeWorkOrderCommit(updateDisposeWorkOrderCommit);
+//    }
 }
