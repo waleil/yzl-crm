@@ -58,26 +58,9 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
             }
             //TODO 邮件，没有员工邮件地址
             if (dto.getSendType().equals(2) || dto.getSendType().equals(3)) {
-
-                int size = email.size();
-                int unitNum = 400;
-                int startIndex = 0;
-                int endIndex = 0;
-                while (size > 0) {
-                    if (size > unitNum) {
-                        endIndex = startIndex + unitNum;
-                    } else {
-                        endIndex = startIndex + size;
-                    }
-                    List<String> insertData = email.subList(startIndex, endIndex);
-                    List<MailVo> mailVos = new ArrayList<>();
-                    insertData.forEach(m -> mailVos.add(new MailVo(m, "出库预警", SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()))));
-                    //发送400封
-                    SendTask.runTask(mailVos);
-
-                    size = size - unitNum;
-                    startIndex = endIndex;
-                }
+                List<MailVo> mailVos = new ArrayList<>();
+                email.forEach(m -> mailVos.add(new MailVo(m, "出库预警", SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()))));
+                SendTask.runTask(mailVos);
             }
 
             return ComResponse.success();

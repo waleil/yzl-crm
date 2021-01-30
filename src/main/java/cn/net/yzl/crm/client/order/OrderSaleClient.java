@@ -24,8 +24,8 @@ public interface OrderSaleClient {
 	@PostMapping("/v1/saveOrderSale")
 	public ComResponse<Boolean> saveOrderSale(@RequestBody @Validated OrderSaleAddDTO dto);
 
-	@PostMapping("/v1/updateOrderSale")
-	public ComResponse<Boolean> updateOrderSale(@RequestBody @Validated OrderSaleVO orderSalem);
+//	@PostMapping("/v1/updateOrderSale")
+//	public ComResponse<Boolean> updateOrderSale(@RequestBody @Validated OrderSaleVO orderSalem);
 
 	/**
 	 * @param orderNo
@@ -75,7 +75,7 @@ public interface OrderSaleClient {
 	 * @date 2021年1月25日,下午1:27:07
 	 */
 	@GetMapping("/v1/selectOrderSaleProductInfoByOrderNo")
-	public ComResponse<OrderSaleDetailVO> selectOrderSaleProductInfoByOrderNo(@RequestParam String orderNo);
+	public ComResponse<CreateOrderSaleForSearchDTO> selectOrderSaleProductInfoByOrderNo(@RequestParam String orderNo);
 
 	/**
 	 * @param orderNo

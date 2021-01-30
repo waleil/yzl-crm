@@ -125,7 +125,7 @@ public class WorkOrderController {
 
     @ApiOperation(value = "待领取顾客池-领取", notes = "待领取顾客池-领取")
     @PostMapping("v1/receiveUsers")
-    public ComResponse<Void> receiveUsers(@RequestBody List<WorkOrderFlowDTO> list) {
+    public ComResponse<Boolean> receiveUsers(@RequestBody List<WorkOrderFlowDTO> list) {
         return workOrderService.receiveUsers(list);
     }
 
@@ -526,7 +526,7 @@ public class WorkOrderController {
 
     @ApiOperation(value = "新客户回访",notes = "新客户回访")
     @GetMapping(value = "v1/newMember")
-    public ComResponse<Boolean> newMember(@ApiParam("顾客会员号")@RequestParam("memberCard") String memberCard){
-        return workOrderClient.newMember(memberCard);
+    public ComResponse<Boolean> newMember(@ApiParam("顾客会员号")@RequestParam("memberCard") String memberCard,@ApiParam("状态:1新顾客;2:老顾客")@RequestParam("status")Integer status ){
+        return workOrderClient.newMember(memberCard,status);
     }
 }

@@ -153,7 +153,7 @@ public class OrderSaleController {
 
     @ApiOperation(value = "根据订单号查询订单信息——（可联调）")
     @GetMapping("/v1/selectOrderSaleProductInfoByOrderNo")
-    public ComResponse<OrderSaleDetailVO> selectOrderSaleProductInfoByOrderNo(
+    public ComResponse<CreateOrderSaleForSearchDTO> selectOrderSaleProductInfoByOrderNo(
             @RequestParam @ApiParam(value = "订单编号") String orderNo) {
         return orderSaleClient.selectOrderSaleProductInfoByOrderNo(orderNo);
     }

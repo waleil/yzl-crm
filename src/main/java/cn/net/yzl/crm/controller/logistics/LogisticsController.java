@@ -60,7 +60,7 @@ public class LogisticsController {
 
 
     @ApiOperation(value = "物流-登记生产")
-    @PostMapping("v1/generateBillOrderNo")
+    @GetMapping("v1/generateBillOrderNo")
     public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo){
         return logisticsFien.generateBillOrderNo(orderNo);
     }
@@ -72,11 +72,17 @@ public class LogisticsController {
         return logisticsFien.selectExceptionByCondition(sExceptionCondition);
     }
 
-    @ApiOperation(value = "物流-登记查询")
+    @ApiOperation(value = "物流-取消登记单条")
     @PostMapping("v1/cancel/registry/exceptioninfo")
     public ComResponse<Boolean> cancelRegistryException(@RequestParam("id") String id){
          return logisticsFien.cancelRegistryException(id);
 
+    }
+
+    @ApiOperation(value = "物流-取消批量登记")
+    @PostMapping("v1/cancelbatch/registry/exceptioninfo")
+    public ComResponse<Boolean> cancelBatchRegistryException(@RequestBody List<String> ids){
+        return logisticsFien.cancelBatchRegistryException(ids);
     }
 
     @ApiOperation(value = "合同下载")

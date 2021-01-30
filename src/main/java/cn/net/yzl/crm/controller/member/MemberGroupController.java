@@ -5,6 +5,7 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateHelper;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
+import cn.net.yzl.crm.customer.mongomodel.crowd.MemberCrowdGroupOpVO;
 import cn.net.yzl.crm.customer.mongomodel.crowd.CustomerCrowdGroupVO;
 import cn.net.yzl.crm.customer.mongomodel.crowd.UpdateCrowdStatusVO;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
@@ -185,6 +186,18 @@ public class MemberGroupController {
         member_group.setAdvertProducts(memberCrowdGroup.getAdvertProducts());
         member_group.setLastCallDays(memberCrowdGroup.getLastCallDays());
         return memberGroupFeign.memberCrowdGroupTrial(member_group);
+    }
+
+    @ApiOperation("通过群组Id圈选试算")
+    @PostMapping("/v1/groupTrialById")
+    public ComResponse<Integer> memberCrowdGroupTrialById(@RequestBody MemberCrowdGroupOpVO crowdGroupOpVO){
+        return memberGroupFeign.memberCrowdGroupTrialById(crowdGroupOpVO);
+    }
+
+    @ApiOperation("通过群组Id圈选")
+    @PostMapping("/v1/groupRunById")
+    public ComResponse<Integer> memberCrowdGroupRunById(@RequestBody MemberCrowdGroupOpVO crowdGroupOpVO){
+        return memberGroupFeign.memberCrowdGroupRunById(crowdGroupOpVO);
     }
 
     @ApiOperation("删除顾客圈选")

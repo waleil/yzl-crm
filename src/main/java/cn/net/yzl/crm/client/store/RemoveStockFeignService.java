@@ -8,8 +8,10 @@ import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -49,6 +51,10 @@ public interface RemoveStockFeignService {
     @PostMapping("removestock/v1/updateOutStoreToLogistics")
     public ComResponse updateOutStoreToLogistics(@RequestBody LogisticsToStoreUpdateParam logisticsToStoreUpdateParam);
 
+
+    @ApiOperation(value = "物流-登记查询")
+    @GetMapping("removestock/v1/selectBillOrderNo")
+    public ComResponse<StoreToLogisticsDto> selectBillOrderNo(@RequestParam("orderNo") String orderNo);
 
 
 }

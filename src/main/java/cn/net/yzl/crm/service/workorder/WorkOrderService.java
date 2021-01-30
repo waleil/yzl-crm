@@ -24,5 +24,5 @@ public interface WorkOrderService {
      * @param list
      * @return
      */
-    ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list);
+    ComResponse<Boolean> receiveUsers(List<WorkOrderFlowDTO> list);
 }

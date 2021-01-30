@@ -51,8 +51,10 @@ public class DataSourceContextAop {
 
         }
     }
+
     private Method getMethod(JoinPoint pjp) {
         MethodSignature signature = (MethodSignature)pjp.getSignature();
         return signature.getMethod();
     }
+
 }
