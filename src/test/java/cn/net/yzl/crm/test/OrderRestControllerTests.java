@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
@@ -40,6 +41,8 @@ public class OrderRestControllerTests {
 	private EhrStaffClient ehrStaffClient;
 	@Resource
 	private OrderRestController orderRestController;
+	@Resource
+	private OrderFeignClient orderFeignClient;
 	@Value("${api.gateway.url}")
 	private String apiGateWayUrl;
 
@@ -157,6 +160,7 @@ public class OrderRestControllerTests {
 			OrderIn order = new OrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
 			od1.setMealNo("T0000155");
+			od1.setMealCount(2);
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
@@ -191,6 +195,15 @@ public class OrderRestControllerTests {
 			p4.setProductCode("10000139");
 			vo.setProductReduceVOS(Arrays.asList(p1, p2, p4));
 			System.err.println(this.productClient.productReduce(vo));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testQueryOrder() {
+		try {
+			System.err.println(this.orderFeignClient.queryOrder("ON1314020T202101301744350095").getData());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
