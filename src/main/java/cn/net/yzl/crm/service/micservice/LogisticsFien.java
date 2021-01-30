@@ -18,6 +18,8 @@ import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
+import cn.net.yzl.logistics.model.vo.SExceptionCondition;
+import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.vo.StoreVO;
 import feign.Response;
 import io.swagger.annotations.ApiParam;
@@ -41,6 +43,18 @@ import javax.validation.constraints.NotBlank;
 @FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
+
+    @ApiOperation(value = "物流-登记生产")
+    @PostMapping("exp/company/v1/generateBillOrderNo")
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo);
+
+    @ApiOperation(value = "物流-登记查询")
+    @PostMapping("exp/company/v1/searcha/exception")
+    public ComResponse<Page<StoreToLogisticsDto>> selectExceptionByCondition(@RequestBody SExceptionCondition sExceptionCondition);
+
+    @ApiOperation(value = "物流-登记查询")
+    @PostMapping("exp/company/v1/cancel/registry/exceptioninfo")
+    public ComResponse<Boolean> cancelRegistryException(@RequestParam("id") String id);
 
     @ApiOperation(value = "下载文件", notes = "")
     @PostMapping("/fastDfs/download/file")
