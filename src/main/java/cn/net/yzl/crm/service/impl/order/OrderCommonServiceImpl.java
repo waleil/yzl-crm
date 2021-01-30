@@ -2,8 +2,10 @@ package cn.net.yzl.crm.service.impl.order;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -66,7 +68,7 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
 		OrderDistributeExpressVO vo = new OrderDistributeExpressVO();
 		vo.setOutStoreNo(orderInfoVo.getDetails().get(0).getStoreNo());
 		vo.setOrderNo(order.getOrderNo());
-		vo.setMediaType(order.getMediaType().toString());
+		vo.setMediaType(String.valueOf(order.getMediaType()));
 		vo.setMediaName(order.getMediaName());
 		vo.setMemberName(order.getMemberName());
 		vo.setMemberPhone(order.getMemberTelphoneNo());
@@ -108,22 +110,23 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
 		List<OrderDetailDTO> list = BeanCopyUtils.transferList(orderDetails, OrderDetailDTO.class);
 		List<OrderCouponDetail> couponDetails = vo.getCouponDetail();
 		if (couponDetails != null && couponDetails.size() > 0) {
-			list.forEach(map -> {
-				couponDetails.forEach(item -> {
-					if (map.getOrderDetailCode().equals(item.getOrderDetailCode())) {
-						if (item.getCouponType() == 2) {
-							map.setAmountRedEnvelope(item.getCouponAmt());
-						} else if (item.getCouponType() == 1) {
-							map.setAmountCoupon(item.getCouponAmt());
-						} else if (item.getCouponType() == 4) {
-							map.setPointsDeduction(item.getCouponAmt());
-						}
+			Map<String, OrderCouponDetail> collect = couponDetails.stream()
+					.collect(Collectors.toMap(OrderCouponDetail::getOrderDetailCode, Function.identity()));
+			list.stream().forEach(map -> {
+				OrderCouponDetail item = collect.get(map.getOrderDetailCode());
+				if (item != null) {
+					if (item.getCouponType() == 2) {
+						map.setAmountRedEnvelope(item.getCouponAmt());
+					} else if (item.getCouponType() == 1) {
+						map.setAmountCoupon(item.getCouponAmt());
+					} else if (item.getCouponType() == 4) {
+						map.setPointsDeduction(item.getCouponAmt());
 					}
-				});
+				}
 			});
 		}
-		List<OrderProductVo> orderProductVos = new ArrayList<>();
-		list.forEach(map -> {
+
+		return list.stream().map(map -> {
 			OrderProductVo orderProductVo = new OrderProductVo();
 			orderProductVo.setOutStoreNo(String.valueOf(map.getStoreNo()));// 仓库号
 			orderProductVo.setOrderNo(map.getOrderNo());// 订单号
@@ -136,11 +139,8 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
 			orderProductVo.setUseSpareMoney(map.getPointsDeduction());// 积分扣减
 			orderProductVo.setUseRedPacket(map.getAmountRedEnvelope());// 红包扣减
 			orderProductVo.setCash(map.getCash());// 实收金额
-			orderProductVos.add(orderProductVo);
-
-		});
-
-		return orderProductVos;
+			return orderProductVo;
+		}).collect(Collectors.toList());
 
 	}
 }
