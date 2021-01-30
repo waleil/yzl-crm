@@ -504,8 +504,8 @@ public class OrderRestController {
 			log.error("订单列表-编辑>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
-		orderm.setUpdateTime(new Date());//修改时间
-		orderm.setUpdateCode(QueryIds.userNo.get());//修改人编码
+		orderm.setUpdateTime(new Date());// 修改时间
+		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
@@ -518,7 +518,7 @@ public class OrderRestController {
 			log.error("订单列表-编辑>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
-		orderm.setUpdateName(staffInfo.getName());//修改人姓名
+		orderm.setUpdateName(staffInfo.getName());// 修改人姓名
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
 				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
