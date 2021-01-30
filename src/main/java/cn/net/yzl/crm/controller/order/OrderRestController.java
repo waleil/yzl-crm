@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cn.hutool.core.lang.Tuple;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
@@ -207,6 +208,8 @@ public class OrderRestController {
 		List<OrderDetail> orderdetailList = new ArrayList<>();
 		// 收集每类商品的库存，key为商品编码，value为商品库存
 		Map<String, Integer> productStockMap = new HashMap<>();
+		// 收集订单明细里商品的购买数量
+		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
 		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		// 如果有非套餐信息
@@ -259,6 +262,7 @@ public class OrderRestController {
 				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
 				od.setPackageunit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
+				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 				// 如果是非赠品
 				if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
@@ -339,6 +343,7 @@ public class OrderRestController {
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
 					od.setPackageunit(in.getPackagingUnit());// 包装单位
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
+					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 					// 如果是非赠品
 					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
@@ -380,12 +385,9 @@ public class OrderRestController {
 					account.getTotalMoney());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
 		}
-		// 将订单明细按商品编码进行分组，key为商品编码，value为订单明细集合
-		Map<String, List<OrderDetail>> productMap = orderdetailList.stream()
-				.collect(Collectors.groupingBy(OrderDetail::getProductCode));
 		// 统计订单明细中的每类商品的总数，key为商品编码，value为购买商品总数
-		Map<String, Integer> productCountMap = productMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey,
-				v -> v.getValue().stream().mapToInt(OrderDetail::getProductCount).sum()));
+		Map<String, Integer> productCountMap = new HashMap<>();
+		tuples.stream().forEach(p -> productCountMap.merge(p.get(0), p.get(1), Integer::sum));
 		// 校验订单购买商品的总数是否超出库存数
 		Set<Entry<String, Integer>> entrySet = productCountMap.entrySet();
 		for (Entry<String, Integer> entry : entrySet) {
