@@ -546,6 +546,12 @@ public class OrderRestController {
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
 		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
+		orderin.setTotal(0);// 实收金额=应收金额+预存
+		orderin.setCash(0);// 应收金额=订单总额+邮费-优惠
+		orderin.setTotalAll(0);// 订单总额
+		orderin.setCash1(0);// 预存金额
+		orderin.setSpend(0);// 消费金额=订单总额-优惠
+		orderin.setPfee(0);// 邮费
 		// 如果有非套餐信息
 		if (!CollectionUtils.isEmpty(orderProductList)) {
 			// 收集商品编码
@@ -608,8 +614,108 @@ public class OrderRestController {
 				return od;
 			}).collect(Collectors.toList());
 			orderdetailList.addAll(result);
-//			orderm.setTotal(orderm.getTotal() + result.stream().mapToInt(OrderDetail::getTotal).sum());
-//			orderm.setCash(orderm.getCash() + result.stream().mapToInt(OrderDetail::getCash).sum());
+			orderin.setTotal(orderin.getTotal() + result.stream().mapToInt(OrderDetail::getTotal).sum());
+			orderin.setCash(orderin.getCash() + result.stream().mapToInt(OrderDetail::getCash).sum());
+		}
+		// 获取套餐
+		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
+		// 如果有套餐信息
+		if (!CollectionUtils.isEmpty(ordermealList)) {
+			// 收集套餐编码
+			List<String> mealNoList = ordermealList.stream().map(OrderDetailIn::getMealNo).distinct()
+					.collect(Collectors.toList());
+			// 用,拼接套餐编码
+			String mealNos = mealNoList.stream().collect(Collectors.joining(","));
+			// 根据拼接后的套餐编码查询套餐列表
+			ComResponse<List<ProductMealListDTO>> mresponse = this.mealClient.queryByIds(mealNos);
+			// 如果服务调用异常
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
+				log.error("订单列表-编辑>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
+			}
+			List<ProductMealListDTO> mlist = mresponse.getData();
+			if (CollectionUtils.isEmpty(mlist)) {
+				log.error("订单列表-编辑>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
+			}
+			if (mlist.size() != mealNoList.size()) {
+				log.error("订单列表-编辑>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
+			}
+			// 统计订单明细中的每个套餐的总数，key为套餐编码，value为购买套餐总数
+			Map<String, Integer> mealCountMap = ordermealList.stream()
+					.collect(Collectors.groupingBy(OrderDetailIn::getMealNo)).entrySet().stream()
+					.collect(Collectors.toMap(Entry::getKey,
+							v -> v.getValue().stream().mapToInt(OrderDetailIn::getMealCount).sum()));
+			for (ProductMealListDTO meal : mlist) {
+				// 如果套餐里没有商品
+				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
+					log.error("订单列表-编辑>>该套餐没有包含商品信息>>{}", meal);
+					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐没有包含商品信息。");
+				}
+				// 套餐价，单位分
+				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
+				// 组装订单明细信息
+				List<OrderDetail> result = meal.getMealProductList().stream().map(in -> {
+					OrderDetail od = new OrderDetail();
+					// 按主订单号生成订单明细编号
+					od.setOrderDetailCode(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
+					od.setOrderNo(orderm.getOrderNo());// 订单编号
+					od.setUpdateCode(orderm.getUpdateCode());// 更新人编号
+					od.setStaffCode(orderm.getUpdateCode());// 创建人编号
+					od.setMemberCardNo(orderm.getMemberCardNo());// 顾客卡号
+					od.setMemberName(orderm.getMemberName());// 顾客姓名
+					od.setDepartId(orderm.getDepartId());// 部门表唯一标识
+					od.setGiftFlag(in.getMealGiftFlag());// 是否赠品
+					od.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是套餐
+					od.setMealName(meal.getName());// 套餐名称
+					od.setMealNo(meal.getMealNo());// 套餐唯一标识
+					Integer mealCount = mealCountMap.get(meal.getMealNo());
+					od.setMealCount(mealCount);// 套餐数量
+					od.setMealPrice(mealPrice.intValue());// 套餐价格，单位分
+					od.setProductCode(in.getProductCode());// 商品唯一标识
+					od.setProductNo(in.getProductNo());// 商品编码
+					od.setProductName(in.getName());// 商品名称
+					od.setProductBarCode(in.getBarCode());// 产品条形码
+					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
+					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
+					od.setUnit(in.getUnit());// 单位
+					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
+					od.setPackageunit(in.getPackagingUnit());// 包装单位
+					productStockMap.put(od.getProductCode(), in.getStock());// 库存
+					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
+					// 如果是非赠品
+					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
+						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
+					} else {// 如果是赠品，将金额设置为0
+						od.setTotal(0);// 实收金额，单位分
+						od.setCash(0);// 应收金额，单位分
+					}
+					return od;
+				}).collect(Collectors.toList());
+				// 套餐商品总金额
+				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
+				orderdetailList.addAll(result.stream().map(od -> {
+					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
+					// 如果是非赠品
+					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+						od.setProductUnitPrice(price.intValue());
+						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
+						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
+					} else {// 如果是赠品，将金额设置为0
+						od.setProductUnitPrice(0);
+						od.setTotal(0);// 实收金额，单位分
+						od.setCash(0);// 应收金额，单位分
+					}
+					return od;
+				}).collect(Collectors.toList()));
+			}
+			orderin.setTotal(orderin.getTotal()
+					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+			orderin.setCash(orderin.getCash()
+					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
 		return ComResponse.success(true);
 	}
