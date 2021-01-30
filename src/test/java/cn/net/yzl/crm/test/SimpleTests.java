@@ -2,6 +2,8 @@ package cn.net.yzl.crm.test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -265,5 +267,10 @@ public class SimpleTests {
 			return m;
 		}).collect(Collectors.toList()).forEach(
 				od -> System.err.println(String.format("%s: %s", od.getProductName(), od.getProductUnitPrice())));
+	}
+
+	@Test
+	public void testDate() {
+		System.err.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")));
 	}
 }

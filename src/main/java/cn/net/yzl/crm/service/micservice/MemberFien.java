@@ -2,10 +2,12 @@ package cn.net.yzl.crm.service.micservice;
 
 import java.util.List;
 
-import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
-import cn.net.yzl.crm.staff.dto.MemberDiseaseDto;
+import cn.net.yzl.crm.customer.dto.member.MemberGradeRecordDto;
+import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,29 +21,33 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
+import cn.net.yzl.crm.customer.dto.member.MemberAddressAndLevelDTO;
+import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
 import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
-import cn.net.yzl.crm.customer.model.*;
-
-import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.model.MemberBaseAttr;
-import cn.net.yzl.crm.customer.model.MemberDisease;
 import cn.net.yzl.crm.customer.model.MemberGrad;
 import cn.net.yzl.crm.customer.model.MemberOrderStat;
 import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.crm.customer.model.MemberProductEffect;
 import cn.net.yzl.crm.customer.model.ProductConsultation;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
+import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import io.swagger.annotations.ApiOperation;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "crmCustomer", url = "${api.gateway.url}/crmCustomer/member")
+@FeignClient(name = "crmCustomer", url = "${api.gateway.url}" + MemberFien.SUFFIX_URL)
 //@FeignClient(value = "yzl-crm-customer-api")
+//@FeignClient(name = "crmCustomer", url = "http://localhost:2070/member")
 public interface MemberFien {
+	String SUFFIX_URL = "/crmCustomer/member";
+	String CUSTOMER_AMOUNT_OPERATION_URL = "/customerAmount/operation";
 
 	@RequestMapping(method = RequestMethod.POST, value = "/v1/getMemberListByPage")
 	ComResponse<Page<Member>> listPage(@RequestBody MemberSerchConditionDTO dto);
@@ -88,17 +94,21 @@ public interface MemberFien {
 	@GetMapping("/v1/getMemberDisease")
 	ComResponse<List<MemberDiseaseCustomerDto>> getMemberDisease(@RequestParam("memberCard") String memberCard);
 
+	@ApiOperation("新增顾客病症")
+	@PostMapping("/v1/insertMemberDisease")
+	ComResponse<Integer> insertMemberDisease(@RequestBody MemberDiseaseDto memberDiseaseDto);
+
 	@ApiOperation("获取购买能力")
 	@GetMapping("/v1/getMemberOrderStat")
 	GeneralResult<MemberOrderStat> getMemberOrderStat(@RequestParam("member_card") String member_card);
 
 	@ApiOperation("新增购买能力")
 	@GetMapping("/v1/addMemberOrderStat")
-	GeneralResult addMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
+	GeneralResult<?> addMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
 
 	@ApiOperation("修改购买能力")
 	@GetMapping("/v1/updateMemberOrderStat")
-	GeneralResult updateMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
+	GeneralResult<?> updateMemberOrderStat(@RequestBody MemberOrderStat memberOrderStat);
 
 //    @ApiOperation("添加顾客行为偏好")
 //    @GetMapping("/v1/addMemberAction")
@@ -141,6 +151,22 @@ public interface MemberFien {
 	 * @author zhangweiwei
 	 * @date 2021年1月26日,下午9:03:51
 	 */
-	@PostMapping("/customerAmount/operation")
+	@PostMapping(CUSTOMER_AMOUNT_OPERATION_URL)
 	ComResponse<String> customerAmountOperation(@RequestBody MemberAmountDetailVO memberAmountDetail);
+
+	@ApiOperation("顾客一批顾客卡号获取顾客收货地址、余额、会员等级")
+	@GetMapping("/v1/getMembereAddressAndLevelByMemberCards")
+	ComResponse<List<MemberAddressAndLevelDTO>> getMembereAddressAndLevelByMemberCards(
+			@RequestParam("memberCards") String memberCards);
+
+	// 添加顾客咨询商品
+	@PostMapping("v1/addProductConsultation")
+	ComResponse<String> addProductConsultation(@RequestBody @Validated List<ProductConsultationInsertVO> productConsultationInsertVOList);
+
+	@ApiOperation("获取会员级别记录")
+	@GetMapping("v1/getMemberGradeRecordList")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+	})
+	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordList(@NotBlank String memberCard);
 }

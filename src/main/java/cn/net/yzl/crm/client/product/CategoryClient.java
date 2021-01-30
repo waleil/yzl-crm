@@ -39,7 +39,8 @@ public interface CategoryClient {
     @GetMapping("queryPageByPid")
     ComResponse<Page<CategoryTO>> queryPageByPid(@RequestParam("pid") int pid,
                                                  @RequestParam("pageNo") Integer pageNo,
-                                                 @RequestParam("pageSize") Integer pageSize);
+                                                 @RequestParam("pageSize") Integer pageSize, 
+                                                 @RequestParam("keyword") String keyword);
     @GetMapping("query4SelectOption")
     ComResponse<List<CategorySelectTO>> query4SelectOption(@RequestParam(value ="pid") Integer pid,
                                                            @RequestParam(value = "type") String type);

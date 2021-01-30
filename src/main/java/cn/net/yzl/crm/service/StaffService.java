@@ -4,9 +4,12 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.staff.OrderCriteriaDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
 import cn.net.yzl.order.model.vo.order.OderListResDTO;
+
+import java.util.List;
 
 /**
  * 员工业务层业务层
@@ -43,4 +46,10 @@ public interface StaffService {
      */
     Page<CustomerDto> getCustomerListByStaffNo(String staffNo, Integer pageNo, Integer pageSize);
 
+    /**
+     * 根据员工工号数组查询员工列表
+     * @param
+     * @return
+     */
+    ComResponse<List<StaffDetail>> getDetailsListByNo(List<String> list);
 }

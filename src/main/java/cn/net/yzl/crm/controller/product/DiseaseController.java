@@ -10,6 +10,7 @@ import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
 import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDiseaseInfo;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,4 +126,15 @@ public class DiseaseController {
 
         return diseaseService.getDiseaseSimpleTree(false);
     }
+
+    @GetMapping(value = "v1/queryProductByDiseaseId")
+    @ApiOperation(value = "根据病症名称查询所属商品")
+    @ApiImplicitParam(name = "name",paramType = "query", value="病症名称")
+    public ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(@RequestParam("name") String name){
+        if (com.alibaba.nacos.common.utils.StringUtils.isBlank(name)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"病症名称不能为空！");
+        }
+        return diseaseService.queryProductByDiseaseId(name);
+    }
+
 }
