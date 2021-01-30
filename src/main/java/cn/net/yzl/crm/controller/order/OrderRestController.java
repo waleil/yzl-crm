@@ -511,6 +511,18 @@ public class OrderRestController {
 			log.error("订单列表-编辑>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
+		// 按顾客号查询顾客账号
+		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		// 如果调用服务异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
+			log.error("订单列表-编辑>>找不到该顾客[{}]账号>>{}", orderm.getMemberCardNo(), maresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
+		}
+		MemberAmountDto account = maresponse.getData();
+		if (account == null) {
+			log.error("订单列表-编辑>>找不到该顾客[{}]账号>>{}", orderm.getMemberCardNo(), account);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
+		}
 		orderm.setUpdateTime(new Date());// 修改时间
 		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
 		// 按员工号查询员工信息
@@ -709,6 +721,28 @@ public class OrderRestController {
 					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 			orderin.setCash(orderin.getCash()
 					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+		}
+		orderin.setTotalAll(orderin.getTotal());
+		orderin.setSpend(orderin.getCash());
+		// 如果订单总金额大于账户剩余金额，单位分
+		if (orderm.getTotal() > account.getTotalMoney()) {
+			log.error("订单列表-编辑>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
+					account.getTotalMoney());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
+		}
+		// 统计订单明细中的每类商品的总数，key为商品编码，value为购买商品总数
+		Map<String, Integer> productCountMap = new HashMap<>();
+		tuples.stream().forEach(p -> productCountMap.merge(p.get(0), p.get(1), Integer::sum));
+		// 校验订单购买商品的总数是否超出库存数
+		Set<Entry<String, Integer>> entrySet = productCountMap.entrySet();
+		for (Entry<String, Integer> entry : entrySet) {
+			Integer pstock = productStockMap.get(entry.getKey());// 取出商品库存
+			// 如果购买商品总数大于商品库存
+			if (entry.getValue() > pstock) {
+				log.error("订单列表-编辑>>该订单[{}]商品[{}]购买总数[{}]大于库存总数[{}]", orderm.getOrderNo(), entry.getKey(),
+						entry.getValue(), pstock);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品库存不足。");
+			}
 		}
 		return ComResponse.success(true);
 	}
