@@ -24,4 +24,7 @@ class MemberServiceJournery {
     private Date endTime;
     @ApiModelProperty(value = "累计消费", name = "totalPrice")
     private double totalPrice;
+
+
+
 }
