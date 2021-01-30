@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.order.constant.CommonConstant;
+import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 
 /**
@@ -223,47 +224,33 @@ public class SimpleTests {
 	@Test
 	public void testOrderRule3() {
 		System.err.println("计算规则三：");
-		OrderDetailIn taocan = new OrderDetailIn();
-		taocan.setMealPrice(46869D);// 套餐价
-		taocan.setMealName("套餐");
+		OrderDetail taocan = new OrderDetail();
+		taocan.setMealPrice(150000);// 套餐价
+		taocan.setMealNo("T0000155");
+		taocan.setMealName("维维的套餐不要动");
 
-		OrderDetailIn d1 = new OrderDetailIn();
-		d1.setProductUnitPrice(3213D);// 商品单价
-		d1.setProductCount(1);// 商品数量
+		OrderDetail d1 = new OrderDetail();
+		d1.setProductUnitPrice(24000);// 商品单价
+		d1.setProductCount(3);// 商品数量
 		d1.setTotal(d1.getProductUnitPrice() * d1.getProductCount());// 商品总价=商品单价*商品数量
-		d1.setProductCode("AAA");
-		d1.setProductName("商品A");
+		d1.setProductCode("10000156");
+		d1.setProductName("维维的商品不要动3");
 
-		OrderDetailIn d2 = new OrderDetailIn();
-		d2.setProductUnitPrice(43434D);// 商品单价
-		d2.setProductCount(1);// 商品数量
+		OrderDetail d2 = new OrderDetail();
+		d2.setProductUnitPrice(30000);// 商品单价
+		d2.setProductCount(3);// 商品数量
 		d2.setTotal(d2.getProductUnitPrice() * d2.getProductCount());
-		d2.setProductCode("BBB");
-		d2.setProductName("商品B");
+		d2.setProductCode("10000155");
+		d2.setProductName("维维的商品不要动2");
 
-		OrderDetailIn d3 = new OrderDetailIn();
-		d3.setProductUnitPrice(99D);// 商品单价
-		d3.setProductCount(1);// 商品数量
-		d3.setTotal(d3.getProductUnitPrice() * d3.getProductCount());
-		d3.setProductCode("CCC");
-		d3.setProductName("商品C");
-
-		OrderDetailIn d4 = new OrderDetailIn();
-		d4.setProductUnitPrice(99D);// 商品单价
-		d4.setProductCount(1);// 商品数量
-		d4.setTotal(d4.getProductUnitPrice() * d4.getProductCount());
-		d4.setProductCode("DDD");
-		d4.setProductName("商品D");
-
-		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3, d4);
-		double orderTotal = orderList.stream().mapToDouble(OrderDetailIn::getTotal).sum();
+		List<OrderDetail> orderList = Arrays.asList(d1, d2);
+		int orderTotal = orderList.stream().mapToInt(OrderDetail::getTotal).sum();
 		BigDecimal b1 = BigDecimal.valueOf(taocan.getMealPrice());
 		BigDecimal b2 = BigDecimal.valueOf(orderTotal);
 		orderList.stream().map(m -> {
 			BigDecimal b3 = BigDecimal.valueOf(m.getProductUnitPrice());
-			BigDecimal b4 = b1.multiply(b3).divide(b2, 2, BigDecimal.ROUND_HALF_UP);
-//			System.err.println(String.format("%s: %s", m.getProductName(), b4.intValue()));
-			m.setProductUnitPrice(b4.doubleValue());
+			BigDecimal b4 = b1.multiply(b3).divide(b2, 0, BigDecimal.ROUND_HALF_UP);
+			m.setProductUnitPrice(b4.intValue());
 			return m;
 		}).collect(Collectors.toList()).forEach(
 				od -> System.err.println(String.format("%s: %s", od.getProductName(), od.getProductUnitPrice())));

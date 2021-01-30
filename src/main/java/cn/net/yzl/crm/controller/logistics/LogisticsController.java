@@ -60,7 +60,7 @@ public class LogisticsController {
 
 
     @ApiOperation(value = "物流-登记生产")
-    @PostMapping("v1/generateBillOrderNo")
+    @GetMapping("v1/generateBillOrderNo")
     public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo){
         return logisticsFien.generateBillOrderNo(orderNo);
     }
