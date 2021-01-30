@@ -13,7 +13,6 @@ import cn.net.yzl.order.model.vo.order.OrderRequest;
  * @author zhangweiwei
  * @date 2021年1月16日,下午12:03:42
  */
-//@FeignClient(name = "order", url = "http://localhost:4455/order")
 @FeignClient(name = "order", url = "${api.gateway.url}/orderService/order")
 public interface OrderFeignClient {
 	/**
