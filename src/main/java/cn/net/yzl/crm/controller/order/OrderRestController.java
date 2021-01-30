@@ -43,6 +43,7 @@ import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.dao.RequestMessageMapper;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.RequestMessage;
+import cn.net.yzl.crm.model.order.OrderOut;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.utils.RedisUtil;
@@ -60,12 +61,7 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -755,22 +751,4 @@ public class OrderRestController {
 		}
 	}
 
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	@ApiModel(description = "订单")
-	public static class OrderOut {
-		@ApiModelProperty(value = "收货人地址")
-		private String reveiverAddress;
-		@ApiModelProperty(value = "收货人姓名")
-		private String reveiverName;
-		@ApiModelProperty(value = "收货人电话")
-		private String reveiverTelphoneNo;
-		@ApiModelProperty(value = "实收金额，单位元")
-		private double total;
-		@ApiModelProperty(value = "账户余额，单位元")
-		private double totalMoney;
-		@ApiModelProperty(value = "订单号")
-		private String orderNo;
-	}
 }
