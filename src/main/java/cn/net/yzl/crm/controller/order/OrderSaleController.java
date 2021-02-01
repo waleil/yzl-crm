@@ -36,7 +36,7 @@ public class OrderSaleController {
     @Autowired
     private RedisUtil redisUtil;
 
-    @ApiOperation(value = "新建售后单——（测试中）")
+    @ApiOperation(value = "新建售后单 ")
     @PostMapping("/v1/saveOrderSale")
     public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSaleAddDTO dto,
                                                       HttpServletRequest request) {
@@ -54,7 +54,7 @@ public class OrderSaleController {
         return orderSaleClient.saveOrderSale(dto);
     }
 
-    @ApiOperation(value = "查询售后单列表——（可联调）")
+    @ApiOperation(value = "查询售后单列表 ")
     @GetMapping("/v1/selectOrderSaleList")
     public ComResponse<Page<OrderSaleListVO>> selectOrderSaleList(
             @RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
@@ -70,13 +70,13 @@ public class OrderSaleController {
                 createEndTime, pageSize, pageNo);
     }
 
-    @ApiOperation(value = "查询订单信息——（可联调）", notes = "售后单查看和审核查看共用一个")
+    @ApiOperation(value = "查询售后单信息 ", notes = "售后单查看和审核查看共用一个")
     @GetMapping("/v1/selectOrderSaleInfo")
     public ComResponse<OrderSaleDetailWatchDTO> selectOrderSaleInfo(@RequestParam @NotBlank(message = "售后单号不能为空") @ApiParam(value = "售后单号", required = true) String saleOrderNo) {
         return orderSaleClient.selectOrderSaleInfo(saleOrderNo);
     }
 
-    @ApiOperation(value = "变更售后单物流信息——（可联调）")
+    @ApiOperation(value = "变更售后单物流信息 ")
     @PostMapping("/v1/updateExpress")
     public ComResponse<Boolean> updateExpress(@RequestParam @Valid OrderSaleUpdateExpress express, HttpServletRequest request) {
 
@@ -125,7 +125,7 @@ public class OrderSaleController {
         return orderSaleClient.getReviewedSaleOrder(orderNo, memberName, pageSize, pageNo);
     }
 
-    @ApiOperation(value = "根据订单号查询订单信息——（可联调）")
+    @ApiOperation(value = "根据订单号查询订单信息 ")
     @GetMapping("/v1/selectOrderSaleProductInfoByOrderNo")
     public ComResponse<CreateOrderSaleForSearchDTO> selectOrderSaleProductInfoByOrderNo(
             @RequestParam @ApiParam(value = "订单编号") String orderNo) {
