@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.dto.ehr.MarketTargetDto;
 import cn.net.yzl.crm.dto.staff.OrderCriteriaDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.StaffDetail;
@@ -52,4 +53,6 @@ public interface StaffService {
      * @return
      */
     ComResponse<List<StaffDetail>> getDetailsListByNo(List<String> list);
+
+    ComResponse<MarketTargetDto> getMarketTarget();
 }

@@ -54,7 +54,7 @@ public interface RemoveStockFeignService {
 
     @ApiOperation(value = "物流-登记查询")
     @GetMapping("removestock/v1/selectBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> selectBillOrderNo(@RequestParam("orderNo") String orderNo);
+    public ComResponse<StoreToLogisticsDto> selectBillExpressNum(@RequestParam("expressNum") String expressNum);
 
 
 }

@@ -70,9 +70,9 @@ public class RemoveStockController {
 
 
     @ApiOperation(value = "物流-登记查询")
-    @GetMapping("v1/selectBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> selectBillOrderNo(@RequestParam("orderNo") String orderNo){
-        return removeStockFeignService.selectBillOrderNo(orderNo);
+    @GetMapping("v1/selectBillExpressNum")
+    public ComResponse<StoreToLogisticsDto> selectBillExpressNum(@RequestParam("expressNum") String expressNum){
+        return removeStockFeignService.selectBillExpressNum(expressNum);
     }
 
 
