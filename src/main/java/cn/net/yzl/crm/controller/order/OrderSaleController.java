@@ -79,7 +79,7 @@ public class OrderSaleController {
 
     @ApiOperation(value = "变更售后单物流信息 ")
     @PostMapping("/v1/updateExpress")
-    public ComResponse<Boolean> updateExpress(@RequestParam @Valid OrderSaleUpdateExpress express, HttpServletRequest request) {
+    public ComResponse<Boolean> updateExpress(@RequestBody @Valid OrderSaleUpdateExpress express, HttpServletRequest request) {
 
         ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
         if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {

@@ -95,7 +95,7 @@ public interface OrderSaleClient {
      * @return
      */
     @PostMapping("/v1/updateExpress")
-    ComResponse<Boolean> updateExpress(@RequestParam @Valid OrderSaleUpdateExpress express);
+    ComResponse<Boolean> updateExpress(@RequestBody @Valid OrderSaleUpdateExpress express);
 
 
     /**
