@@ -427,10 +427,6 @@ public class WorkOrderController {
                     flag = handInUtils.mCustomerLExceeded(isHandInDTO,wORCBean);
                     break;
 
-                case 7:
-                    flag = handInUtils.eGiveUpTakingCustomersByThemselves(isHandInDTO);
-                    break;
-
                 case 8:
                     flag = handInUtils.overtimeReturnVisit(isHandInDTO,wORCBean);
                     break;
@@ -470,7 +466,7 @@ public class WorkOrderController {
     }
 
     @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
-    @PostMapping(value = "v1/submitWorkOrder")
+   // @PostMapping(value = "v1/submitWorkOrder")
     public ComResponse<Void> submitWorkOrder(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
         String userNo = QueryIds.userNo.get();
         String userName = QueryIds.userName.get();
@@ -497,7 +493,7 @@ public class WorkOrderController {
         return workOrderClient.submitWorkOrder(workOrderDisposeFlowBean);
     }
 
-    @ApiOperation(value = "回访规则校验",notes = "回访规则校验")
+    @ApiOperation(value = "回访规则校验Job",notes = "回访规则校验Job")
     @GetMapping(value = "v1/returnVisitRules")
     public ComResponse<Boolean> returnVisitRules(){
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(2, 2, 1, 0);

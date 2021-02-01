@@ -26,7 +26,7 @@ public class HandInUtils {
     private WorkOrderClient workOrderClient;
 
     @Autowired
-    private TurnRulnClient callInfoCount;
+    private TurnRulnClient turnRulnClient;
 
     @Autowired
     private OrderSearchClient orderSearchClient;
@@ -65,7 +65,7 @@ public class HandInUtils {
     public Boolean unableToContact(IsHandInDTO emptyNumberShutdown, WorkOrderRuleConfigBean wORCBean) {
         String paramsValue = wORCBean.getParamsValue();
         emptyNumberShutdown.setParamValue(paramsValue);
-        ComResponse<Boolean> booleanComResponse = callInfoCount.callInfoCount(emptyNumberShutdown);
+        ComResponse<Boolean> booleanComResponse = turnRulnClient.callInfoCount(emptyNumberShutdown);
         if (!booleanComResponse.getData()) {
             return Boolean.FALSE;
         }
@@ -143,7 +143,7 @@ public class HandInUtils {
         StaffImageBaseInfoDto staffImageBaseInfoByStaffNo = staffService.getStaffImageBaseInfoByStaffNo(isHandInDTO.getStaffNo());
         isHandInDTO.setPostId(staffImageBaseInfoByStaffNo.getPostId());
         isHandInDTO.setPostLevelId(staffImageBaseInfoByStaffNo.getPostLevelId());
-        return callInfoCount.mCustomerLExceeded(isHandInDTO).getData();
+        return turnRulnClient.mCustomerLExceeded(isHandInDTO).getData();
 
     }
 
@@ -154,7 +154,7 @@ public class HandInUtils {
      * @return
      */
     public Boolean eGiveUpTakingCustomersByThemselves(IsHandInDTO isHandInDTO) {
-        return callInfoCount.eGiveUpTakingCustomersByThemselves(isHandInDTO).getData();
+        return turnRulnClient.eGiveUpTakingCustomersByThemselves(isHandInDTO).getData();
     }
 
     /**
@@ -167,6 +167,6 @@ public class HandInUtils {
 
         String paramsValue = wORCBean.getParamsValue();
         isHandInDTO.setParamValue(paramsValue);
-        return callInfoCount.overtimeReturnVisit(isHandInDTO).getData();
+        return turnRulnClient.overtimeReturnVisit(isHandInDTO).getData();
     }
 }
