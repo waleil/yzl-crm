@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/orderSale")
@@ -120,8 +121,8 @@ public class OrderSaleController {
     public ComResponse<Page<OrderSaleCheckListVO>> getReviewedSaleOrder(
             @RequestParam(required = false) @ApiParam(name = "orderNo", value = "订单编号") String orderNo,
             @RequestParam(required = false) @ApiParam(name = "memberName", value = "顾客姓名") String memberName,
-            @RequestParam @ApiParam(value = "页数", name = "pageSize") Integer pageSize,
-            @RequestParam @ApiParam(value = "条数", name = "pageNo") Integer pageNo) {
+            @RequestParam @NotNull(message = "页数不可为空") @ApiParam(required = true,value = "页数", name = "pageSize") Integer pageSize,
+            @RequestParam @NotNull(message = "页码不可为空") @ApiParam(value = "当前页码", name = "pageNo") Integer pageNo) {
         return orderSaleClient.getReviewedSaleOrder(orderNo, memberName, pageSize, pageNo);
     }
 
