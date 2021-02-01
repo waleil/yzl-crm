@@ -527,7 +527,7 @@ private ProductClient productClient;
     }
 
     @ApiOperation("获取顾客行为偏好字典数据")
-    @GetMapping("/v1/getMemberActions")
+    //@GetMapping("/v1/getMemberActions")
     public ComResponse getMemberActions() {
         return ComResponse.success(memberFien.getMemberActions());
     }
