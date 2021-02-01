@@ -157,7 +157,7 @@ public interface MemberFien {
 	@ApiOperation("顾客一批顾客卡号获取顾客收货地址、余额、会员等级")
 	@GetMapping("/v1/getMembereAddressAndLevelByMemberCards")
 	ComResponse<List<MemberAddressAndLevelDTO>> getMembereAddressAndLevelByMemberCards(
-			@RequestParam("memberCards") String memberCards);
+			@RequestParam("member_cards") String memberCards);
 
 	// 添加顾客咨询商品
 	@PostMapping("v1/addProductConsultation")

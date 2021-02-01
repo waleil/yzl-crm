@@ -147,7 +147,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
         dto.setDepartId(sresponse.getData().getDepartId());
         dto.setCheckDepartId(sresponse.getData().getDepartId());
         dto.setCheckUserName(sresponse.getData().getName());
-        dto.setCheckUserNo(sresponse.getData().getStaffNo());
+        dto.setCheckUserNo(QueryIds.userNo.get());
 
         //查询订单信息及当前状态
         ComResponse<OrderInfoVo> response = orderSearchClient.selectOrderInfo4Opr(dto.getOrderNo());
@@ -194,6 +194,8 @@ public class OrderOprServiceImpl implements IOrderOprService {
         //todo 给仓库发通知，生成出库单
         List<OrderDistributeExpressVO> list = new ArrayList<>();
         OrderDistributeExpressVO vo= orderCommonService.mkOrderDistributeExpressData(orderInfoVo);
+
+
         list.add(vo);
 
 

@@ -1,10 +1,16 @@
 package cn.net.yzl.crm.client.product;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
+import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +33,9 @@ import io.swagger.annotations.ApiOperation;
 @FeignClient(name = "mealClient", url = "${api.gateway.url}/productServer/productMeal/v1")
 //@FeignClient("yzl-product-server")
 public interface MealClient {
+
+	Logger logger = LoggerFactory.getLogger(ActivityClient.class);
+
 
 	/**
 	 * @param
@@ -103,4 +112,18 @@ public interface MealClient {
 	 */
 	@GetMapping("/queryByIds")
 	ComResponse<List<ProductMealListDTO>> queryByIds(@RequestParam @NotBlank String ids);
+
+	default List<ProductMealListDTO> queryByIdsDefault(String productCodes) {
+		try {
+			ComResponse<List<ProductMealListDTO>> listComResponse = queryByIds(productCodes);
+			if (null == listComResponse || !ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
+				logger.error("{message:根据多个商品编码查询商品信息失败！}");
+				return Collections.emptyList();
+			}
+			return listComResponse.getData();
+		} catch (Exception e) {
+			logger.error("message:根据多个商品编码查询商品信息失败！", e);
+		}
+		return Collections.emptyList();
+	}
 }

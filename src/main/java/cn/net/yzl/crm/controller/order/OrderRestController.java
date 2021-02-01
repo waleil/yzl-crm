@@ -481,7 +481,7 @@ public class OrderRestController {
 
 	@PostMapping("/v1/updateorder")
 	@ApiOperation(value = "订单列表-编辑", notes = "订单列表-编辑")
-	public ComResponse<Boolean> updateOrder(@RequestBody UpdateOrderIn orderin) {
+	public ComResponse<String> updateOrder(@RequestBody UpdateOrderIn orderin) {
 		// 判断是否传入订单号
 		if (!StringUtils.hasText(orderin.getOrderNo())) {
 			log.error("订单列表-编辑>>订单号不能为空>>{}", orderin);
@@ -519,6 +519,8 @@ public class OrderRestController {
 		}
 		orderm.setUpdateTime(new Date());// 修改时间
 		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
+		orderm.setCreateTime(orderm.getUpdateTime());
+		orderm.setStaffCode(orderm.getUpdateCode());
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
@@ -531,7 +533,27 @@ public class OrderRestController {
 			log.error("订单列表-编辑>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
-		orderm.setUpdateName(staffInfo.getName());// 修改人姓名
+		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, staffInfo.getWorkCode(),
+				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis重新生成订单号
+		orderm.setUpdateName(staffInfo.getName());// 更新人姓名
+		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
+		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
+		// 按部门id查询部门信息
+		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
+		// 如果服务调用异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
+			log.error("订单列表-编辑>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
+					dresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
+		}
+		DepartDto depart = dresponse.getData();
+		if (depart == null) {
+			log.error("订单列表-编辑>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
+					dresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
+		}
+		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
+		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
 				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
@@ -548,8 +570,8 @@ public class OrderRestController {
 		orderm.setTotal(0);// 实收金额=应收金额+预存
 		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
 		orderm.setTotalAll(0);// 订单总额
-		orderm.setCash1(0);// 预存金额
 		orderm.setSpend(0);// 消费金额=订单总额-优惠
+		orderm.setCash1(0);// 预存金额
 		orderm.setPfee(0);// 邮费
 		// 如果有非套餐信息
 		if (!CollectionUtils.isEmpty(orderProductList)) {
@@ -805,7 +827,7 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "修改订单失败，请稍后重试。");
 		}
 		log.info("订单列表-编辑>>修改订单成功[订单号：{}]", orderm.getOrderNo());
-		return ComResponse.success(true);
+		return ComResponse.success(orderm.getOrderNo());
 	}
 
 	@Resource

@@ -9,6 +9,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(name="work-order-api", url = "${api.gateway.url}/workorderServer")
+//@FeignClient(name="work-order-api", url = "127.0.0.1:4602")
 public interface WorkOrderClient {
 
     /**

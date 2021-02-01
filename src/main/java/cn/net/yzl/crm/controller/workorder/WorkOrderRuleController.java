@@ -4,8 +4,11 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.workorder.WorkOrderRuleConfigClient;
 import cn.net.yzl.crm.dto.ehr.BusinessPostDto;
+import cn.net.yzl.crm.dto.ehr.EhrStaff;
 import cn.net.yzl.crm.dto.ehr.PostDto;
+import cn.net.yzl.crm.dto.ehr.StaffQueryDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.enums.DeptTypeEnums;
 import cn.net.yzl.workorder.model.vo.WorkOrderRuleConfigTO;
@@ -103,5 +106,34 @@ public class WorkOrderRuleController {
         }
 
     }
+
+    /**
+     * 根据条件获取部门 list
+     * @param bussinessAtrrCode
+     * @return
+     */
+    @ApiOperation(value = "根据条件获取部门 list",notes = "根据条件获取部门 list")
+    @GetMapping(value = "v1/getBusiPostListByAttr")
+    public ComResponse<List<DepartDto>> getListByBusinessAttrId(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode){
+        if(bussinessAtrrCode == DeptTypeEnums.HOTLINE_CENTER.getCode()){
+            bussinessAtrrCode=41;//热线工单 42
+        } else {
+            bussinessAtrrCode=42;//回访工单 43
+        }
+        ComResponse<List<DepartDto>> posts = ehrStaffClient.getListByBusinessAttrId(bussinessAtrrCode.toString());
+        return posts;
+    }
+
+    /**
+     * 多条件获取 员工list
+     * @param staffParamsVO
+     * @return
+     */
+    @ApiOperation(value = "多条件获取 员工list",notes = "多条件获取 员工list")
+    @RequestMapping(value = "/staff/getListsByParams", method = RequestMethod.POST)
+    public ComResponse<List<EhrStaff>> getListsByParams(@RequestBody StaffQueryDto staffParamsVO){
+        return ehrStaffClient.getListsByParams(staffParamsVO);
+    }
+
 
 }
