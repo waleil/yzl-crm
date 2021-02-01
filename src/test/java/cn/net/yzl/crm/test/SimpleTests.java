@@ -145,7 +145,7 @@ public class SimpleTests {
 	public void testOrderRule1() {
 		System.err.println("计算规则一：");
 		OrderDetailIn taocan = new OrderDetailIn();
-		taocan.setMealPrice(400D);// 套餐价
+		taocan.setProductUnitPrice(400D);// 套餐价
 		taocan.setMealName("套餐");
 
 		OrderDetailIn d1 = new OrderDetailIn();
@@ -172,7 +172,7 @@ public class SimpleTests {
 		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
 		double orderTotal = orderList.stream().mapToDouble(OrderDetailIn::getTotal).sum();
 
-		BigDecimal b2 = BigDecimal.valueOf(taocan.getMealPrice());
+		BigDecimal b2 = BigDecimal.valueOf(taocan.getProductUnitPrice());
 		BigDecimal b3 = BigDecimal.valueOf(orderTotal);
 		orderList.stream().forEach(m -> {
 			BigDecimal b1 = BigDecimal.valueOf(m.getTotal());
@@ -186,7 +186,7 @@ public class SimpleTests {
 	public void testOrderRule2() {
 		System.err.println("计算规则二：");
 		OrderDetailIn taocan = new OrderDetailIn();
-		taocan.setMealPrice(400D);// 套餐价
+		taocan.setProductUnitPrice(400D);// 套餐价
 		taocan.setMealName("套餐");
 
 		OrderDetailIn d1 = new OrderDetailIn();
@@ -213,7 +213,7 @@ public class SimpleTests {
 		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
 		double orderTotal = orderList.stream().mapToDouble(OrderDetailIn::getTotal).sum();
 		double proTotal = orderList.stream().mapToDouble(OrderDetailIn::getProductUnitPrice).sum();
-		double cha = orderTotal - taocan.getMealPrice();
+		double cha = orderTotal - taocan.getProductUnitPrice();
 
 		BigDecimal b1 = BigDecimal.valueOf(cha);
 		BigDecimal b2 = BigDecimal.valueOf(proTotal);
