@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.dto.staff;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,9 +49,11 @@ public class StaffCallRecord {
     private String voiceUrl;
 
     @ApiModelProperty(value = "接听时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date answerTime;
 
     @ApiModelProperty(value = "记录生成时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
 
     @ApiModelProperty(value = "工单类型   1：热线，2：回访")
