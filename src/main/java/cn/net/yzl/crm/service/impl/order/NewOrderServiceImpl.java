@@ -197,9 +197,20 @@ public class NewOrderServiceImpl implements INewOrderService {
            //将预下单并发送到mq
             prepareAndSendMessage(dto.getCustomerGroupIds(),orderTempVO.getOrderTemp(),orderTempVO.getProducts(),successCnt,failCnt);
            //根据无效客户的数量，回退库存
-            ComResponse<?> comResponse = increaseStore(failCnt, orderTempVO);
+            if(failCnt.intValue() >0){
+                ComResponse<?> comResponse = increaseStore(failCnt, orderTempVO);
+                if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(comResponse.getCode())) {
+                    throw new BizException(comResponse.getCode(),comResponse.getMessage());
+                }
+            }
+            orderTemp.setFailCount(failCnt.intValue());
+            orderTemp.setSuccessCount(successCnt.intValue());
+            orderTemp.setOprCount(orderTemp.getFailCount()+orderTemp.getSuccessCount());
             //更新订单模板表
-//            newOrderClient.update();
+            ComResponse<Boolean> res = newOrderClient.updateResult(orderTemp);
+            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
+               throw new BizException(res.getCode(),res.getMessage());
+            }
 
         }catch (BizException e){
             log.error(e.getMessage(),e);

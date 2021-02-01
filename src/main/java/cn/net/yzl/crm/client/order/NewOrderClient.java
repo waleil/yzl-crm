@@ -2,7 +2,9 @@ package cn.net.yzl.crm.client.order;
 
 import javax.servlet.http.HttpServletResponse;
 
+import cn.net.yzl.order.model.db.order.OrderTemp;
 import cn.net.yzl.order.model.vo.order.OrderTempVO;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +26,9 @@ public interface NewOrderClient {
     @PostMapping("v1/newOrder")
     public ComResponse<Boolean> newOrderTemp(@RequestBody OrderTempVO dto);
 
-
+    @ApiOperation(value = "更新创建结果")
+    @PostMapping("v1/updateResult")
+    public ComResponse<Boolean> updateResult(@RequestBody OrderTemp dto);
     /**
      * 新建订单页导出模板
      */
