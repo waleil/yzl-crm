@@ -237,7 +237,7 @@ public class StaffServiceImpl implements StaffService {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMainDTO.getName())
                             .salePriceD(productMainDTO.getSalePrice())
-                            .imageUrl(fastDFSConfig.getUrl() + productMainDTO.getImageUrl())
+                            .imageUrl(fastDFSConfig.getUrl() +"/"+ productMainDTO.getImageUrl())
                             .build();
                     activityProductList.add(produceDto);
                 });
@@ -252,7 +252,7 @@ public class StaffServiceImpl implements StaffService {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
-                            .imageUrl(productMealListDTO.getFastDFSUrl())
+                            .imageUrl(fastDFSConfig.getUrl() +"/"+ productMealListDTO.getImageUrl())
                             .build();
                     activityProductList.add(produceDto);
                 });
