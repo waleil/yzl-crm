@@ -493,7 +493,7 @@ public class WorkOrderController {
         return workOrderClient.submitWorkOrder(workOrderDisposeFlowBean);
     }
 
-    @ApiOperation(value = "回访规则校验",notes = "回访规则校验")
+    @ApiOperation(value = "回访规则校验Job",notes = "回访规则校验Job")
     @GetMapping(value = "v1/returnVisitRules")
     public ComResponse<Boolean> returnVisitRules(){
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(2, 2, 1, 0);
