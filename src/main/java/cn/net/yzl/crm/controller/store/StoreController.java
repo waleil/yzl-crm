@@ -210,8 +210,8 @@ public class StoreController {
 
 
     @ApiOperation(value = "新增仓库的时候下拉库位的查询",notes = "新增仓库的时候下拉库位的查询")
-    @GetMapping("v1/StoreLocalPullDown")
-    public ComResponse<List<StoreLocalVo>> StoreLocalPullDown() {
+    @GetMapping("v1/storeLocalPullDown")
+    public ComResponse<List<StoreLocalVo>> storeLocalPullDown() {
         return storeFeginService.storeLocalPullDown();
     }
 
