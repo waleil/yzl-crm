@@ -170,7 +170,7 @@ public class StoreController {
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "codeAndName", value = "商品编码/条形码/商品名称", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "storeName", value = "仓库名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "storeNo", value = "仓库编号", required = false, dataType = "String", paramType = "query"),
     })
     public ComResponse<Page<ProductStockPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                           @RequestParam(value = "codeAndName",required = false) String codeAndName    ,

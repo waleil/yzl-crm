@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import cn.hutool.core.lang.Tuple;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.order.constant.CommonConstant;
@@ -58,8 +60,8 @@ public class SimpleTests {
 	@Test
 	public void testGroupingBy() {
 		OrderDetailIn od1 = new OrderDetailIn();
-		od1.setMealNo("11");
-		od1.setMealName("套餐11");
+		od1.setProductCode("11");
+		od1.setProductName("套餐11");
 		od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
 		OrderDetailIn od2 = new OrderDetailIn();
 		od2.setProductCode("22");
@@ -74,8 +76,8 @@ public class SimpleTests {
 		od4.setProductName("商品44");
 		od4.setMealFlag(CommonConstant.MEAL_FLAG_0);
 		OrderDetailIn od5 = new OrderDetailIn();
-		od5.setMealNo("55");
-		od5.setMealName("套餐55");
+		od5.setProductCode("55");
+		od5.setProductName("套餐55");
 		od5.setMealFlag(CommonConstant.MEAL_FLAG_1);
 		Map<Integer, List<OrderDetailIn>> odMap = Arrays.asList(od1, od2, od3, od4, od5).stream()
 				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
@@ -86,7 +88,7 @@ public class SimpleTests {
 	@Test
 	public void testCollect() {
 		OrderDetailIn od1 = new OrderDetailIn();
-		od1.setMealNo("11");
+		od1.setProductCode("11");
 		od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
 		OrderDetailIn od2 = new OrderDetailIn();
 		od2.setProductCode("22");
@@ -143,8 +145,8 @@ public class SimpleTests {
 	public void testOrderRule1() {
 		System.err.println("计算规则一：");
 		OrderDetailIn taocan = new OrderDetailIn();
-		taocan.setMealPrice(400D);// 套餐价
-		taocan.setMealName("套餐");
+		taocan.setProductUnitPrice(400D);// 套餐价
+		taocan.setProductName("套餐");
 
 		OrderDetailIn d1 = new OrderDetailIn();
 		d1.setProductUnitPrice(100D);// 商品单价
@@ -170,7 +172,7 @@ public class SimpleTests {
 		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
 		double orderTotal = orderList.stream().mapToDouble(OrderDetailIn::getTotal).sum();
 
-		BigDecimal b2 = BigDecimal.valueOf(taocan.getMealPrice());
+		BigDecimal b2 = BigDecimal.valueOf(taocan.getProductUnitPrice());
 		BigDecimal b3 = BigDecimal.valueOf(orderTotal);
 		orderList.stream().forEach(m -> {
 			BigDecimal b1 = BigDecimal.valueOf(m.getTotal());
@@ -184,8 +186,8 @@ public class SimpleTests {
 	public void testOrderRule2() {
 		System.err.println("计算规则二：");
 		OrderDetailIn taocan = new OrderDetailIn();
-		taocan.setMealPrice(400D);// 套餐价
-		taocan.setMealName("套餐");
+		taocan.setProductUnitPrice(400D);// 套餐价
+		taocan.setProductName("套餐");
 
 		OrderDetailIn d1 = new OrderDetailIn();
 		d1.setProductUnitPrice(100D);// 商品单价
@@ -211,7 +213,7 @@ public class SimpleTests {
 		List<OrderDetailIn> orderList = Arrays.asList(d1, d2, d3);
 		double orderTotal = orderList.stream().mapToDouble(OrderDetailIn::getTotal).sum();
 		double proTotal = orderList.stream().mapToDouble(OrderDetailIn::getProductUnitPrice).sum();
-		double cha = orderTotal - taocan.getMealPrice();
+		double cha = orderTotal - taocan.getProductUnitPrice();
 
 		BigDecimal b1 = BigDecimal.valueOf(cha);
 		BigDecimal b2 = BigDecimal.valueOf(proTotal);
@@ -263,4 +265,18 @@ public class SimpleTests {
 		QueryIds.userNo.set("zhangweiwei");
 		System.err.println(Optional.ofNullable(QueryIds.userNo.get()).filter(p -> !p.isEmpty()).orElse("14020"));
 	}
+
+	@Test
+	public void testMerge() {
+		Tuple p1 = new Tuple("aa", 5);
+		Tuple p2 = new Tuple("bb", 4);
+		Tuple p3 = new Tuple("cc", 3);
+		Tuple p11 = new Tuple("aa", 5);
+		Tuple p21 = new Tuple("bb", 4);
+		Tuple p31 = new Tuple("cc", 3);
+		Map<String, Integer> map = new HashMap<>();
+		Arrays.asList(p1, p2, p3, p11, p21, p31).stream().forEach(p -> map.merge(p.get(0), p.get(1), Integer::sum));
+		System.err.println(map);
+	}
+
 }

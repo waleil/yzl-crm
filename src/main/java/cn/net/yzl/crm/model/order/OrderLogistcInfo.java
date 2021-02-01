@@ -1,11 +1,10 @@
 package cn.net.yzl.crm.model.order;
 
-import cn.net.yzl.logistics.model.ExpressTraceResDTO;
+import java.util.List;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.util.List;
 @ApiModel(
         value = "订单详情查询输出参数类",
         description = "参数类"

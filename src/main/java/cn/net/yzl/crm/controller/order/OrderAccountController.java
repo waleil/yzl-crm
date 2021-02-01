@@ -7,6 +7,7 @@ import cn.net.yzl.crm.client.order.OrderAccountClient;
 
 import cn.net.yzl.order.model.vo.order.OrderAccoundInfoDTO;
 import cn.net.yzl.order.model.vo.order.OrderListAccuntDTO;
+import cn.net.yzl.order.model.vo.order.PaymentInfoDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -57,30 +59,10 @@ public class OrderAccountController {
 
     @ApiOperation(value = "保存退款信息")
     @PostMapping("v1/saveAccountOrderInfo")
-    public ComResponse<Boolean> saveOrderInfo(@RequestParam("accPayeeAccount")
-                                                  @NotEmpty(message = "退款账号不能为空")
-                                                  @ApiParam(value = "退款账号", required = true) String accPayeeAccount,
-                                              @RequestParam("transactionNo")
-                                                  @NotEmpty(message = "交易流水号不能为空")
-                                                  @ApiParam(value = "交易流水号", required = true) String transactionNo,
-                                              @RequestParam("orderAccountTime")
-                                                  @NotEmpty(message = "退款时间")
-                                                  @ApiParam(value = "退款时间", required = true) String orderAccountTime,
-                                              @RequestParam("saleOrderNo")
-                                                  @NotEmpty(message = "售后申请单编号不能为空")
-                                                  @ApiParam(value = "售后申请单编号", required = true) String saleOrderNo,
-                                              @RequestParam("updateCode")
-                                                  @NotEmpty(message = "修改人员工编号不能为空")
-                                                  @ApiParam(value = "修改人员工编号", required = true) String updateCode,
-                                              @RequestParam("updateName")
-                                                  @NotEmpty(message = "修改人员工姓名不能为空")
-                                                  @ApiParam(value = "修改人员工姓名", required = true) String updateName,
-                                              @RequestParam("isn")
-                                                  @NotEmpty(message = "退款标识不能为空")
-                                                  @ApiParam(value = "退款表示：0=全部退款，1=部分退款", required = true) String isn) {
+    public ComResponse<Boolean> saveOrderInfo(@RequestBody @Valid PaymentInfoDTO dto) {
         ComResponse comResponse = null;
         try {
-            comResponse = orderAccountClient.saveAccountOrderInfo(accPayeeAccount,transactionNo,orderAccountTime,saleOrderNo,updateCode,updateName,isn);
+            comResponse = orderAccountClient.saveAccountOrderInfo(dto);
         } catch (Exception e) {
             // 远程调用 异常
             return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), ResponseCodeEnums.API_ERROR_CODE.getMessage());
