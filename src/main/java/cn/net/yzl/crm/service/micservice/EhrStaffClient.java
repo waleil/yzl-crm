@@ -14,11 +14,10 @@ import cn.net.yzl.crm.staff.dto.lasso.WorkOrderTypeDto;
 import cn.net.yzl.model.dto.DepartDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;
@@ -133,6 +132,20 @@ public interface EhrStaffClient {
     @GetMapping(value = "/businessPost/getPostByBussinessAttrCode")
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode);
 
+    /**
+     * 根据业务属性获取部门 list
+     * @param bussinessAttrId
+     * @return
+     */
+    @RequestMapping(value = "/depart/getListByBusinessAttrId", method = RequestMethod.GET)
+    ComResponse<List<DepartDto>> getListByBusinessAttrId(@RequestParam("bussinessAttrId") String bussinessAttrId);
+
+    /**
+     * 多条件获取 员工list
+     * @param staffParamsVO
+     * @return
+     */
+    ComResponse<List<EhrStaff>> getListsByParams(@RequestBody  StaffQueryDto staffParamsVO);
     /**
      * 获取培训过的商品
      *

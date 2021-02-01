@@ -269,40 +269,40 @@ public class MemberController {
         return result;
     }
 
-    public static void main(String[] args) {
-        WorkOrderFlowVO  w1 = new WorkOrderFlowVO();
-        w1.setStaffNo("1");
-        w1.setStartTime(DateFormatUtil.stringToDate("20210-1-10",DateFormatUtil.SQL_FORMAT));
-        w1.setEndTime(DateFormatUtil.stringToDate("20210-1-11",DateFormatUtil.SQL_FORMAT));
-        WorkOrderFlowVO  w2 = new WorkOrderFlowVO();
-        w2.setStaffNo("1");
-        w2.setStartTime(DateFormatUtil.stringToDate("20210-1-13",DateFormatUtil.SQL_FORMAT));
-        w2.setEndTime(DateFormatUtil.stringToDate("20210-1-14",DateFormatUtil.SQL_FORMAT));
-        WorkOrderFlowVO  w3 = new WorkOrderFlowVO();
-        w3.setStaffNo("2");
-        w3.setStartTime(DateFormatUtil.stringToDate("20210-1-16",DateFormatUtil.SQL_FORMAT));
-        w3.setEndTime(DateFormatUtil.stringToDate("20210-1-17",DateFormatUtil.SQL_FORMAT));
-        WorkOrderFlowVO  w4 = new WorkOrderFlowVO();
-        w4.setStaffNo("2");
-        w4.setStartTime(DateFormatUtil.stringToDate("20210-1-19",DateFormatUtil.SQL_FORMAT));
-        w4.setEndTime(DateFormatUtil.stringToDate("20210-1-20",DateFormatUtil.SQL_FORMAT));
-
-        WorkOrderFlowVO  w5 = new WorkOrderFlowVO();
-        w5.setStaffNo("1");
-        w5.setStartTime(DateFormatUtil.stringToDate("20210-1-22",DateFormatUtil.SQL_FORMAT));
-        w5.setEndTime(DateFormatUtil.stringToDate("20210-1-25",DateFormatUtil.SQL_FORMAT));
-
-
-        WorkOrderFlowVO  w6 = new WorkOrderFlowVO();
-        w6.setStaffNo("1");
-        w6.setStartTime(DateFormatUtil.stringToDate("20210-1-27",DateFormatUtil.SQL_FORMAT));
-        w6.setEndTime(DateFormatUtil.stringToDate("20210-1-28",DateFormatUtil.SQL_FORMAT));
-        List<WorkOrderFlowVO> list = new ArrayList<>();
-        list.add(w1);list.add(w2);list.add(w3);list.add(w4);list.add(w5);list.add(w6);
-
-
-        System.err.println(JSONUtil.toJsonStr(orderdingWorkOrderFlowVOList(list)));
-    }
+//    public static void main(String[] args) {
+//        WorkOrderFlowVO  w1 = new WorkOrderFlowVO();
+//        w1.setStaffNo("1");
+//        w1.setStartTime(DateFormatUtil.stringToDate("20210-1-10",DateFormatUtil.SQL_FORMAT));
+//        w1.setEndTime(DateFormatUtil.stringToDate("20210-1-11",DateFormatUtil.SQL_FORMAT));
+//        WorkOrderFlowVO  w2 = new WorkOrderFlowVO();
+//        w2.setStaffNo("1");
+//        w2.setStartTime(DateFormatUtil.stringToDate("20210-1-13",DateFormatUtil.SQL_FORMAT));
+//        w2.setEndTime(DateFormatUtil.stringToDate("20210-1-14",DateFormatUtil.SQL_FORMAT));
+//        WorkOrderFlowVO  w3 = new WorkOrderFlowVO();
+//        w3.setStaffNo("2");
+//        w3.setStartTime(DateFormatUtil.stringToDate("20210-1-16",DateFormatUtil.SQL_FORMAT));
+//        w3.setEndTime(DateFormatUtil.stringToDate("20210-1-17",DateFormatUtil.SQL_FORMAT));
+//        WorkOrderFlowVO  w4 = new WorkOrderFlowVO();
+//        w4.setStaffNo("2");
+//        w4.setStartTime(DateFormatUtil.stringToDate("20210-1-19",DateFormatUtil.SQL_FORMAT));
+//        w4.setEndTime(DateFormatUtil.stringToDate("20210-1-20",DateFormatUtil.SQL_FORMAT));
+//
+//        WorkOrderFlowVO  w5 = new WorkOrderFlowVO();
+//        w5.setStaffNo("1");
+//        w5.setStartTime(DateFormatUtil.stringToDate("20210-1-22",DateFormatUtil.SQL_FORMAT));
+//        w5.setEndTime(DateFormatUtil.stringToDate("20210-1-25",DateFormatUtil.SQL_FORMAT));
+//
+//
+//        WorkOrderFlowVO  w6 = new WorkOrderFlowVO();
+//        w6.setStaffNo("1");
+//        w6.setStartTime(DateFormatUtil.stringToDate("20210-1-27",DateFormatUtil.SQL_FORMAT));
+//        w6.setEndTime(DateFormatUtil.stringToDate("20210-1-28",DateFormatUtil.SQL_FORMAT));
+//        List<WorkOrderFlowVO> list = new ArrayList<>();
+//        list.add(w1);list.add(w2);list.add(w3);list.add(w4);list.add(w5);list.add(w6);
+//
+//
+//        System.err.println(JSONUtil.toJsonStr(orderdingWorkOrderFlowVOList(list)));
+//    }
 
 
     @Autowired

@@ -184,6 +184,7 @@ public class StaffDetail implements Serializable {
     @ApiModelProperty(value = "是否在职(0:否,1:是)", name = "workStatus")
     private Integer workStatus;
 
-
+    @ApiModelProperty(value = "是否上班:(1:是,0:否)", name = "staffScheduleStatus")
+    private  int staffScheduleStatus;
 
 }
