@@ -292,6 +292,8 @@ public class OrderRestController {
 					log.error("热线工单-购物车-提交订单>>该套餐没有包含商品信息>>{}", meal);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐没有包含商品信息。");
 				}
+				// 套餐数量
+				Integer mealCount = mealCountMap.get(meal.getMealNo());
 				// 套餐价，单位分
 				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
 				// 组装订单明细信息
@@ -309,7 +311,6 @@ public class OrderRestController {
 					od.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是套餐
 					od.setMealName(meal.getName());// 套餐名称
 					od.setMealNo(meal.getMealNo());// 套餐唯一标识
-					Integer mealCount = mealCountMap.get(meal.getMealNo());
 					od.setMealCount(mealCount);// 套餐数量
 					od.setMealPrice(mealPrice.intValue());// 套餐价格，单位分
 					od.setProductCode(in.getProductCode());// 商品唯一标识
@@ -674,6 +675,8 @@ public class OrderRestController {
 					log.error("订单列表-编辑>>该套餐没有包含商品信息>>{}", meal);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐没有包含商品信息。");
 				}
+				// 套餐数量
+				Integer mealCount = mealCountMap.get(meal.getMealNo());
 				// 套餐价，单位分
 				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
 				// 组装订单明细信息
@@ -691,7 +694,6 @@ public class OrderRestController {
 					od.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是套餐
 					od.setMealName(meal.getName());// 套餐名称
 					od.setMealNo(meal.getMealNo());// 套餐唯一标识
-					Integer mealCount = mealCountMap.get(meal.getMealNo());
 					od.setMealCount(mealCount);// 套餐数量
 					od.setMealPrice(mealPrice.intValue());// 套餐价格，单位分
 					od.setProductCode(in.getProductCode());// 商品唯一标识
