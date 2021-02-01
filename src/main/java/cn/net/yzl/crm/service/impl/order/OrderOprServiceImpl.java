@@ -66,7 +66,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
                 throw new BizException(sresponse.getCode(),sresponse.getMessage());
             }
-            dto.setDepartId(sresponse.getData().getDepartId());
+            dto.setDepartId(String.valueOf(sresponse.getData().getDepartId()));
             dto.setOprCode(sresponse.getData().getStaffNo());
             dto.setOprName(sresponse.getData().getName());
 
@@ -144,7 +144,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
             throw new BizException(sresponse.getCode(),sresponse.getMessage());
         }
-        dto.setDepartId(sresponse.getData().getDepartId());
+        dto.setDepartId(String.valueOf(sresponse.getData().getDepartId()));
         dto.setCheckDepartId(sresponse.getData().getDepartId());
         dto.setCheckUserName(sresponse.getData().getName());
         dto.setCheckUserNo(QueryIds.userNo.get());
