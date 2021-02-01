@@ -144,7 +144,7 @@ public interface EhrStaffClient {
      * 多条件获取 员工list
      * @param staffParamsVO
      * @return
-     */
+     */ @RequestMapping(value = "/staff/getListsByParams", method = RequestMethod.POST)
     ComResponse<List<EhrStaff>> getListsByParams(@RequestBody  StaffQueryDto staffParamsVO);
     /**
      * 获取培训过的商品
