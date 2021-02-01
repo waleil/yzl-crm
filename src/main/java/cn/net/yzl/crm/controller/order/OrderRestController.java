@@ -261,7 +261,7 @@ public class OrderRestController {
 		// 如果有套餐信息
 		if (!CollectionUtils.isEmpty(ordermealList)) {
 			// 收集套餐编码
-			List<String> mealNoList = ordermealList.stream().map(OrderDetailIn::getMealNo).distinct()
+			List<String> mealNoList = ordermealList.stream().map(OrderDetailIn::getProductCode).distinct()
 					.collect(Collectors.toList());
 			// 用,拼接套餐编码
 			String mealNos = mealNoList.stream().collect(Collectors.joining(","));
@@ -283,7 +283,7 @@ public class OrderRestController {
 			}
 			// 统计订单明细中的每个套餐的总数，key为套餐编码，value为购买套餐总数
 			Map<String, Integer> mealCountMap = ordermealList.stream()
-					.collect(Collectors.groupingBy(OrderDetailIn::getMealNo)).entrySet().stream()
+					.collect(Collectors.groupingBy(OrderDetailIn::getProductCode)).entrySet().stream()
 					.collect(Collectors.toMap(Entry::getKey,
 							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
@@ -621,7 +621,7 @@ public class OrderRestController {
 		// 如果有套餐信息
 		if (!CollectionUtils.isEmpty(ordermealList)) {
 			// 收集套餐编码
-			List<String> mealNoList = ordermealList.stream().map(OrderDetailIn::getMealNo).distinct()
+			List<String> mealNoList = ordermealList.stream().map(OrderDetailIn::getProductCode).distinct()
 					.collect(Collectors.toList());
 			// 用,拼接套餐编码
 			String mealNos = mealNoList.stream().collect(Collectors.joining(","));
@@ -643,7 +643,7 @@ public class OrderRestController {
 			}
 			// 统计订单明细中的每个套餐的总数，key为套餐编码，value为购买套餐总数
 			Map<String, Integer> mealCountMap = ordermealList.stream()
-					.collect(Collectors.groupingBy(OrderDetailIn::getMealNo)).entrySet().stream()
+					.collect(Collectors.groupingBy(OrderDetailIn::getProductCode)).entrySet().stream()
 					.collect(Collectors.toMap(Entry::getKey,
 							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
