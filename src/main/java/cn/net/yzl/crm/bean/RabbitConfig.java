@@ -1,17 +1,23 @@
 package cn.net.yzl.crm.bean;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.PostConstruct;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Configuration
 @Slf4j
-public class RabbitConfig implements CommandLineRunner {
+@AutoConfigureAfter(value = RabbitAutoConfiguration.class)
+public class RabbitConfig  {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
@@ -29,8 +35,8 @@ public class RabbitConfig implements CommandLineRunner {
         return new Jackson2JsonMessageConverter(objectMapper);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
+    @PostConstruct
+    public void init()  {
         // 设置消息发布确认回调
         this.rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
