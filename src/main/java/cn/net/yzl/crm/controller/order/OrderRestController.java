@@ -285,7 +285,7 @@ public class OrderRestController {
 			Map<String, Integer> mealCountMap = ordermealList.stream()
 					.collect(Collectors.groupingBy(OrderDetailIn::getMealNo)).entrySet().stream()
 					.collect(Collectors.toMap(Entry::getKey,
-							v -> v.getValue().stream().mapToInt(OrderDetailIn::getMealCount).sum()));
+							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
 				// 如果套餐里没有商品
 				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
@@ -645,7 +645,7 @@ public class OrderRestController {
 			Map<String, Integer> mealCountMap = ordermealList.stream()
 					.collect(Collectors.groupingBy(OrderDetailIn::getMealNo)).entrySet().stream()
 					.collect(Collectors.toMap(Entry::getKey,
-							v -> v.getValue().stream().mapToInt(OrderDetailIn::getMealCount).sum()));
+							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
 				// 如果套餐里没有商品
 				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
