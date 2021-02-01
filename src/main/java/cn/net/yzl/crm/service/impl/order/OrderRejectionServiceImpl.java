@@ -59,7 +59,7 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
         cn.net.yzl.order.model.vo.order.OrderRejectionAddDTO dto = new cn.net.yzl.order.model.vo.order.OrderRejectionAddDTO();
         dto.setOrderNo(orderRejectionAddDTO.getOrderNo());
         dto.setRejectType(orderRejectionAddDTO.getRejectType());
-        dto.setDepartId(departId);
+        dto.setDepartId(String.valueOf(departId));
         dto.setRejectionNo(seqNo);
         dto.setStoreNo(String.valueOf(orderRejectionAddDTO.getStoreNo()));
 //        dto.setStoreName();

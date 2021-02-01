@@ -159,7 +159,7 @@ public class OrderRestController {
 		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, staffInfo.getWorkCode(),
 				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis生成订单号
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
-		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
+		orderm.setDepartId(String.valueOf(staffInfo.getDepartId()));// 下单坐席所属部门id
 		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
 		orderm.setUpdateName(staffInfo.getName());// 更新人姓名
 		// 按部门id查询部门信息
@@ -537,7 +537,7 @@ public class OrderRestController {
 				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis重新生成订单号
 		orderm.setUpdateName(staffInfo.getName());// 更新人姓名
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
-		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
+		orderm.setDepartId(String.valueOf(staffInfo.getDepartId()));// 下单坐席所属部门id
 		// 按部门id查询部门信息
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
