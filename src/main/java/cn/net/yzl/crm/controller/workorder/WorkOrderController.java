@@ -427,10 +427,6 @@ public class WorkOrderController {
                     flag = handInUtils.mCustomerLExceeded(isHandInDTO,wORCBean);
                     break;
 
-                case 7:
-                    flag = handInUtils.eGiveUpTakingCustomersByThemselves(isHandInDTO);
-                    break;
-
                 case 8:
                     flag = handInUtils.overtimeReturnVisit(isHandInDTO,wORCBean);
                     break;
@@ -470,7 +466,7 @@ public class WorkOrderController {
     }
 
     @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
-    @PostMapping(value = "v1/submitWorkOrder")
+   // @PostMapping(value = "v1/submitWorkOrder")
     public ComResponse<Void> submitWorkOrder(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
         String userNo = QueryIds.userNo.get();
         String userName = QueryIds.userName.get();
