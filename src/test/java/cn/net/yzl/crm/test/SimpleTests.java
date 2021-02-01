@@ -60,7 +60,7 @@ public class SimpleTests {
 	@Test
 	public void testGroupingBy() {
 		OrderDetailIn od1 = new OrderDetailIn();
-		od1.setMealNo("11");
+		od1.setProductCode("11");
 		od1.setProductName("套餐11");
 		od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
 		OrderDetailIn od2 = new OrderDetailIn();
@@ -76,7 +76,7 @@ public class SimpleTests {
 		od4.setProductName("商品44");
 		od4.setMealFlag(CommonConstant.MEAL_FLAG_0);
 		OrderDetailIn od5 = new OrderDetailIn();
-		od5.setMealNo("55");
+		od5.setProductCode("55");
 		od5.setProductName("套餐55");
 		od5.setMealFlag(CommonConstant.MEAL_FLAG_1);
 		Map<Integer, List<OrderDetailIn>> odMap = Arrays.asList(od1, od2, od3, od4, od5).stream()
@@ -88,7 +88,7 @@ public class SimpleTests {
 	@Test
 	public void testCollect() {
 		OrderDetailIn od1 = new OrderDetailIn();
-		od1.setMealNo("11");
+		od1.setProductCode("11");
 		od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
 		OrderDetailIn od2 = new OrderDetailIn();
 		od2.setProductCode("22");
