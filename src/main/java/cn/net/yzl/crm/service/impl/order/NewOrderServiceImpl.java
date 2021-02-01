@@ -151,7 +151,7 @@ public class NewOrderServiceImpl implements INewOrderService {
             //查询群组信息
             List<CrowdGroup> groups = searchGroups(dto.getCustomerGroupIds());
             //组织群组信息
-            OrderTemp orderTemp = mkOrderTemp(groups,batchNo,dto,departId,wordCode,financialOwner,financialOwnerName);
+            OrderTemp orderTemp = mkOrderTemp(groups,batchNo,dto,String.valueOf(departId),wordCode,financialOwner,financialOwnerName);
 
             //总人数
             totalCount = new AtomicInteger(groups.stream().mapToInt(CrowdGroup ::getPerson_count).sum());
@@ -470,7 +470,7 @@ public class NewOrderServiceImpl implements INewOrderService {
             orderDetail.setEstimateArrivalTime(null);
             orderDetail.setExpressCompanyCode(null);
             orderDetail.setLogisticsStatus(0);
-            orderDetail.setDepartId(0);
+            orderDetail.setDepartId("0");
             orderDetail.setMemberName(member.getMemberName());
             orderDetail.setMemberCardNo(member.getMemberCard());
 
@@ -548,7 +548,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
        return response.getData();
     }
-    private OrderTemp mkOrderTemp(List<CrowdGroup> groups, String batchNo, NewOrderDTO dto, int departId, Integer wordCode, Integer financialOwner, String financialOwnerName){
+    private OrderTemp mkOrderTemp(List<CrowdGroup> groups, String batchNo, NewOrderDTO dto, String departId, Integer wordCode, Integer financialOwner, String financialOwnerName){
         List<OrderTemp> list = new ArrayList<>();
 
         groups.forEach(map ->{
