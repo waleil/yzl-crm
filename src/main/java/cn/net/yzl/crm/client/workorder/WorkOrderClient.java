@@ -194,8 +194,8 @@ public interface WorkOrderClient {
      * @param workOrderDisposeFlowBean
      * @return
      */
-    @PostMapping("v1/updateWorkOrderDisposeFlow")
-    ComResponse<String> updateWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+//    @PostMapping("v1/updateWorkOrderDisposeFlow")
+//    ComResponse<String> updateWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
 
     /**
      * 查询顾客旅程
@@ -215,11 +215,11 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单-我的回访工单-处理工单-提交
-     * @param workOrderDisposeFlowBean
+     * @param submitWorkOrderDTO
      * @return
      */
     @PostMapping(value = "v1/submitWorkOrder")
-    ComResponse<Void> submitWorkOrder(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+    ComResponse<Void> submitWorkOrder(SubmitWorkOrderDTO submitWorkOrderDTO);
 
     /**
      * 智能工单-回访规则校验第一条
