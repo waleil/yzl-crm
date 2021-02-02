@@ -180,7 +180,7 @@ public class StaffServiceImpl implements StaffService {
         }
         Long groupId = null;
         for (StaffCrowdGroup staffCrowdGroup : staffCrowdGroupList) {
-            if(!CollectionUtils.isEmpty(staffCrowdGroup.getStaffCodeList()) && staffCrowdGroup.getStaffCodeList().contains(userNo)){
+            if (!CollectionUtils.isEmpty(staffCrowdGroup.getStaffCodeList()) && staffCrowdGroup.getStaffCodeList().contains(userNo)) {
                 groupId = staffCrowdGroup.getId();
             }
         }
@@ -205,6 +205,10 @@ public class StaffServiceImpl implements StaffService {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMainDTO.getName())
                             .salePriceD(productMainDTO.getSalePrice())
+                            .applicable(productMainDTO.getApplicable())
+                            .forbidden(productMainDTO.getForbidden())
+                            .oneToTimes(productMainDTO.getOneToTimes())
+                            .oneUseNum(productMainDTO.getOneUseNum())
                             .imageUrl(fastDFSConfig.getUrl() + productMainDTO.getImageUrl())
                             .build();
                     marketTargetProductList.add(produceDto);
@@ -220,7 +224,7 @@ public class StaffServiceImpl implements StaffService {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
-                            .imageUrl(productMealListDTO.getFastDFSUrl())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -240,7 +244,11 @@ public class StaffServiceImpl implements StaffService {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMainDTO.getName())
                             .salePriceD(productMainDTO.getSalePrice())
-                            .imageUrl(fastDFSConfig.getUrl() +"/"+ productMainDTO.getImageUrl())
+                            .applicable(productMainDTO.getApplicable())
+                            .forbidden(productMainDTO.getForbidden())
+                            .oneToTimes(productMainDTO.getOneToTimes())
+                            .oneUseNum(productMainDTO.getOneUseNum())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
                             .build();
                     activityProductList.add(produceDto);
                 });
@@ -255,7 +263,7 @@ public class StaffServiceImpl implements StaffService {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
-                            .imageUrl(fastDFSConfig.getUrl() +"/"+ productMealListDTO.getImageUrl())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
                             .build();
                     activityProductList.add(produceDto);
                 });
