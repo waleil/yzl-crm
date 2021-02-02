@@ -159,7 +159,7 @@ public class OrderRestController {
 		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, staffInfo.getWorkCode(),
 				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis生成订单号
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
-		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
+		orderm.setDepartId(String.valueOf(staffInfo.getDepartId()));// 下单坐席所属部门id
 		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
 		orderm.setUpdateName(staffInfo.getName());// 更新人姓名
 		// 按部门id查询部门信息
@@ -292,6 +292,8 @@ public class OrderRestController {
 					log.error("热线工单-购物车-提交订单>>该套餐没有包含商品信息>>{}", meal);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐没有包含商品信息。");
 				}
+				// 套餐数量
+				Integer mealCount = mealCountMap.get(meal.getMealNo());
 				// 套餐价，单位分
 				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
 				// 组装订单明细信息
@@ -309,7 +311,6 @@ public class OrderRestController {
 					od.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是套餐
 					od.setMealName(meal.getName());// 套餐名称
 					od.setMealNo(meal.getMealNo());// 套餐唯一标识
-					Integer mealCount = mealCountMap.get(meal.getMealNo());
 					od.setMealCount(mealCount);// 套餐数量
 					od.setMealPrice(mealPrice.intValue());// 套餐价格，单位分
 					od.setProductCode(in.getProductCode());// 商品唯一标识
@@ -510,7 +511,7 @@ public class OrderRestController {
 		// 如果调用服务异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
 			log.error("订单列表-编辑>>找不到该顾客[{}]账号>>{}", orderm.getMemberCardNo(), maresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到该顾客账号[%s]", maresponse.getMessage()));
 		}
 		MemberAmountDto account = maresponse.getData();
 		if (account == null) {
@@ -526,7 +527,7 @@ public class OrderRestController {
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
 			log.error("订单列表-编辑>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到该坐席信息[%s]", sresponse.getMessage()));
 		}
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		if (staffInfo == null) {
@@ -537,14 +538,14 @@ public class OrderRestController {
 				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis重新生成订单号
 		orderm.setUpdateName(staffInfo.getName());// 更新人姓名
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
-		orderm.setDepartId(staffInfo.getDepartId());// 下单坐席所属部门id
+		orderm.setDepartId(String.valueOf(staffInfo.getDepartId()));// 下单坐席所属部门id
 		// 按部门id查询部门信息
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
 			log.error("订单列表-编辑>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
 					dresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到该坐席的财务归属[%s]", dresponse.getMessage()));
 		}
 		DepartDto depart = dresponse.getData();
 		if (depart == null) {
@@ -585,7 +586,7 @@ public class OrderRestController {
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(presponse.getCode())) {
 				log.error("订单列表-编辑>>找不到商品[{}]信息>>{}", productCodes, presponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
+				return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到商品信息[%s]", presponse.getMessage()));
 			}
 			List<ProductMainDTO> plist = presponse.getData();
 			if (CollectionUtils.isEmpty(plist)) {
@@ -610,7 +611,7 @@ public class OrderRestController {
 				od.setMemberCardNo(orderm.getMemberCardNo());// 顾客卡号
 				od.setMemberName(orderm.getMemberName());// 顾客姓名
 				od.setDepartId(orderm.getDepartId());// 部门表唯一标识
-				od.setGiftFlag(in.getGiftFlag());// 是否赠品
+				od.setGiftFlag(CommonConstant.GIFT_FLAG_0);// 是否赠品
 				od.setMealFlag(CommonConstant.MEAL_FLAG_0);// 不是套餐
 				ProductMainDTO p = pmap.get(in.getProductCode());
 				od.setProductCode(p.getProductCode());// 商品唯一标识
@@ -624,14 +625,8 @@ public class OrderRestController {
 				od.setPackageunit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
-				// 如果是非赠品
-				if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
-					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
-					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
-				} else {// 如果是赠品，将金额设置为0
-					od.setTotal(0);// 实收金额，单位分
-					od.setCash(0);// 应收金额，单位分
-				}
+				od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
+				od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				return od;
 			}).collect(Collectors.toList());
 			orderdetailList.addAll(result);
@@ -652,7 +647,7 @@ public class OrderRestController {
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
 				log.error("订单列表-编辑>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
+				return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到套餐信息[%s]", mresponse.getMessage()));
 			}
 			List<ProductMealListDTO> mlist = mresponse.getData();
 			if (CollectionUtils.isEmpty(mlist)) {
@@ -674,6 +669,8 @@ public class OrderRestController {
 					log.error("订单列表-编辑>>该套餐没有包含商品信息>>{}", meal);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐没有包含商品信息。");
 				}
+				// 套餐数量
+				Integer mealCount = mealCountMap.get(meal.getMealNo());
 				// 套餐价，单位分
 				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
 				// 组装订单明细信息
@@ -691,7 +688,6 @@ public class OrderRestController {
 					od.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是套餐
 					od.setMealName(meal.getName());// 套餐名称
 					od.setMealNo(meal.getMealNo());// 套餐唯一标识
-					Integer mealCount = mealCountMap.get(meal.getMealNo());
 					od.setMealCount(mealCount);// 套餐数量
 					od.setMealPrice(mealPrice.intValue());// 套餐价格，单位分
 					od.setProductCode(in.getProductCode());// 商品唯一标识
@@ -775,7 +771,7 @@ public class OrderRestController {
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
 			log.error("订单列表-编辑>>调用扣减库存服务接口失败>>{}", productReduce);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "修改订单失败，请稍后重试。");
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("修改订单失败[%s]", productReduce.getMessage()));
 		}
 		// 组装顾客账户消费参数
 		MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
@@ -797,7 +793,8 @@ public class OrderRestController {
 				this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL, ProductClient.INCREASE_STOCK_URL,
 						orderm.getStaffCode(), orderm.getOrderNo());
 			}
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "修改订单失败，请稍后重试。");
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("修改订单失败[%s]", customerAmountOperation.getMessage()));
 		}
 		log.info("订单: {}", JSON.toJSONString(orderm, true));
 		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));

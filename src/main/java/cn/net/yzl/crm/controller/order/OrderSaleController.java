@@ -51,7 +51,7 @@ public class OrderSaleController {
         dto.setSaleOrderNo(seqNo);
         dto.setCreateCode(data.getStaffNo());
         dto.setCreateName(data.getName());
-        dto.setDepartId(data.getDepartId());
+        dto.setDepartId(String.valueOf(data.getDepartId()));
         return orderSaleClient.saveOrderSale(dto);
     }
 
@@ -88,7 +88,7 @@ public class OrderSaleController {
         StaffImageBaseInfoDto data = userNo.getData();
         express.setCreateCode(data.getStaffNo());
         express.setCreateName(data.getName());
-        express.setDepartId(data.getDepartId());
+        express.setDepartId(String.valueOf(data.getDepartId()));
         return orderSaleClient.updateExpress(express);
     }
 
@@ -102,7 +102,7 @@ public class OrderSaleController {
         StaffImageBaseInfoDto data = userNo.getData();
         dto.setCreateCode(data.getStaffNo());
         dto.setCreateName(data.getName());
-        dto.setDepartId(data.getDepartId());
+        dto.setDepartId(String.valueOf(data.getDepartId()));
         return orderSaleClient.reviewSaleOrder(dto);
     }
 

@@ -178,9 +178,12 @@ public class StaffServiceImpl implements StaffService {
         if (CollectionUtils.isEmpty(staffCrowdGroupList)) {
             return ComResponse.nodata("当前无营销目标！");
         }
-        Long groupId = staffCrowdGroupList.stream().filter(staffCrowdGroup ->
-                !CollectionUtils.isEmpty(staffCrowdGroup.getStaffCodeList()) && staffCrowdGroup.getStaffCodeList().contains(userNo))
-                .map(StaffCrowdGroup::getId).collect(Collectors.toList()).get(0);
+        Long groupId = null;
+        for (StaffCrowdGroup staffCrowdGroup : staffCrowdGroupList) {
+            if(!CollectionUtils.isEmpty(staffCrowdGroup.getStaffCodeList()) && staffCrowdGroup.getStaffCodeList().contains(userNo)){
+                groupId = staffCrowdGroup.getId();
+            }
+        }
         if (null == groupId) {
             return ComResponse.nodata("当前无营销目标！");
         }
