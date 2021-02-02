@@ -385,9 +385,9 @@ public class OrderRestController {
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
 		orderm.setWorkBatchNo(orderin.getWorkBatchNo());// 工单流水号
 		orderm.setPayType(orderin.getPayType());// 支付方式
+		orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非免审
 		// 如果是款到发货
 		if (String.valueOf(orderin.getPayType()).equals(String.valueOf(CommonConstant.PAY_TYPE_1))) {
-			orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非免审
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_1);// 已收款
 		} else {
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
