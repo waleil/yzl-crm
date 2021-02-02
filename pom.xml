@@ -208,6 +208,13 @@
             <version>2.1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>5.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!--        <dependency>-->
         <!--            <groupId>cn.net.yzl</groupId>-->
         <!--            <artifactId>yzl-common</artifactId>-->
