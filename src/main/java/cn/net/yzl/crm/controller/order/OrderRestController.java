@@ -386,6 +386,8 @@ public class OrderRestController {
 		if (String.valueOf(orderin.getPayType()).equals(String.valueOf(CommonConstant.PAY_TYPE_1))) {
 			orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非免审
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_1);// 已收款
+		} else {
+			orderm.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
 		}
 		orderm.setRemark(orderin.getRemark());// 订单备注
 		orderm.setReveiverAddressNo(orderin.getReveiverAddressNo());// 配送地址唯一标识
