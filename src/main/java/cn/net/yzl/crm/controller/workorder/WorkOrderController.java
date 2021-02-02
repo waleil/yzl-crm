@@ -359,11 +359,11 @@ public class WorkOrderController {
      * 智能工单：我的热线工单-修改处理工单流水
      * @return
      */
-    @PostMapping("v1/updateWorkOrderDisposeFlow")
-    @ApiOperation(value = "智能工单：我的热线工单-修改处理工单流水", notes = "智能工单：我的热线工单-修改处理工单流水")
-    public ComResponse<String> updateWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
-        return workOrderClient.updateWorkOrderDisposeFlow(workOrderDisposeFlowBean);
-    }
+//    @PostMapping("v1/updateWorkOrderDisposeFlow")
+//    @ApiOperation(value = "智能工单：我的热线工单-修改处理工单流水", notes = "智能工单：我的热线工单-修改处理工单流水")
+//    public ComResponse<String> updateWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
+//        return workOrderClient.updateWorkOrderDisposeFlow(workOrderDisposeFlowBean);
+//    }
 
     @ApiOperation(value = "智能工单-我的回访工单-单条上交",notes = "智能工单-我的回访工单-单条上交")
     @PostMapping(value = "v1/isHandIn")
@@ -467,21 +467,19 @@ public class WorkOrderController {
 
     @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
    // @PostMapping(value = "v1/submitWorkOrder")
-    public ComResponse<Void> submitWorkOrder(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
+    public ComResponse<Void> submitWorkOrder(@Validated @RequestBody SubmitWorkOrderDTO submitWorkOrderDTO){
         String userNo = QueryIds.userNo.get();
         String userName = QueryIds.userName.get();
-        workOrderDisposeFlowBean.setUpdateId(userNo);
-        workOrderDisposeFlowBean.setUpdateName(userName);
-        workOrderDisposeFlowBean.setCreateId(userNo);
-        workOrderDisposeFlowBean.setCreateName(userName);
-        List<ProductConsultationInsertVO> productConsultationInsertVOS = new ArrayList<>();
-        String informationGoods = workOrderDisposeFlowBean.getWorkOrderDisposeFlowSubBean().getInformationGoods();
-        String informationGoodNames = workOrderDisposeFlowBean.getWorkOrderDisposeFlowSubBean().getInformationGoodNames();
+        submitWorkOrderDTO.setUpdateId(userNo);
+        submitWorkOrderDTO.setUpdateName(userName);
+        List<ProductConsultationInsertVO> productConsultationInsertVOS = new ArrayList<ProductConsultationInsertVO>();
+        String informationGoods = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoods();
+        String informationGoodNames = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoodNames();
         String[] informationGoodsSplit = informationGoods.split(",");
         String[] informationGoodNamesSplit = informationGoodNames.split(",");
         for (int i = 0 ; i< informationGoodsSplit.length;i++){
             ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
-            productConsultationInsertVO.setMemberCard(workOrderDisposeFlowBean.getMemberCard());
+            productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
             productConsultationInsertVO.setProductCode(informationGoodsSplit[i]);
             productConsultationInsertVO.setProductName(informationGoodNamesSplit[i]);
             productConsultationInsertVO.setConsultationTime(new Date());
@@ -490,7 +488,7 @@ public class WorkOrderController {
         if(!CollectionUtils.isEmpty(productConsultationInsertVOS)){
             memberFien.addProductConsultation(productConsultationInsertVOS);
         }
-        return workOrderClient.submitWorkOrder(workOrderDisposeFlowBean);
+        return workOrderClient.submitWorkOrder(submitWorkOrderDTO);
     }
 
     @ApiOperation(value = "回访规则校验Job",notes = "回访规则校验Job")
