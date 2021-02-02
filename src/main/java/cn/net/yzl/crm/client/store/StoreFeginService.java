@@ -131,4 +131,9 @@ public interface StoreFeginService {
     @GetMapping("store/v1/storeLocalPullDown")
     ComResponse<List<StoreLocalVo>> storeLocalPullDown();
 
+
+    @GetMapping("store/v1/storeLocalPageList")
+    public ComResponse<Page<StoreLocalPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                                        @RequestParam(value = "storeId",required = false) Integer storeI);
+
 }

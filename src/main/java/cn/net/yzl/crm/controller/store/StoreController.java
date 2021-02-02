@@ -215,4 +215,19 @@ public class StoreController {
         return storeFeginService.storeLocalPullDown();
     }
 
+
+
+    @GetMapping("v1/storeLocalPageList")
+    @ApiOperation(value = "分页查询绑定的库位", notes = "分页查询绑定的库位")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "storeId", value = "仓库id", required = true, dataType = "Int", paramType = "query"),
+    })
+    public ComResponse<Page<StoreLocalPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                                        @RequestParam(value = "storeId",required = false) Integer storeId){
+
+        return storeFeginService.stockInquiry(pageNo,pageSize,storeId);
+    }
+
 }
