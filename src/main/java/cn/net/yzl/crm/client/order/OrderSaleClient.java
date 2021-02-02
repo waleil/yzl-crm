@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @FeignClient(name = "orderSale", url = "${api.gateway.url}/orderService/orderSale")
+//@FeignClient(name = "orderSale", url = "localhost:4455/orderSale")
 public interface OrderSaleClient {
     /**
      * @param dto
@@ -95,7 +96,7 @@ public interface OrderSaleClient {
      * @return
      */
     @PostMapping("/v1/updateExpress")
-    ComResponse<Boolean> updateExpress(@RequestParam @Valid OrderSaleUpdateExpress express);
+    ComResponse<Boolean> updateExpress(@RequestBody @Valid OrderSaleUpdateExpress express);
 
 
     /**
