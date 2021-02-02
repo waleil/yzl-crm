@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-//@FeignClient(name = "OrderAccountConfirmClient", url = "${api.gateway.url}/orderService/orderAccountConfirm")
-@FeignClient(name = "OrderAccountConfirmClient", url = "localhost:4455/orderAccountConfirm")
+@FeignClient(name = "OrderAccountConfirmClient", url = "${api.gateway.url}/orderService/orderAccountConfirm")
+//@FeignClient(name = "OrderAccountConfirmClient", url = "localhost:4455/orderAccountConfirm")
 public interface OrderAccountConfirmClient {
 
     @ApiOperation(value = "根据订单号查询收款确认单")
