@@ -52,9 +52,9 @@ public class YzlCrmApplication implements CommandLineRunner {
 	 * @author chengyu
 	 * @date 2021年1月30日,上午11:34:02
 	 */
-//	@Bean
-//	public Jackson2JsonMessageConverter messageConverter(ObjectMapper objectMapper) {
-//		return new Jackson2JsonMessageConverter(objectMapper);
-//	}
+	@Bean
+	public Jackson2JsonMessageConverter messageConverter(ObjectMapper objectMapper) {
+		return new Jackson2JsonMessageConverter(objectMapper);
+	}
 
 }
