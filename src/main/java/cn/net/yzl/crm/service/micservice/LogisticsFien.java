@@ -18,6 +18,7 @@ import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
+import cn.net.yzl.logistics.model.vo.InterFaceInfo;
 import cn.net.yzl.logistics.model.vo.SExceptionCondition;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.vo.StoreVO;
@@ -44,6 +45,11 @@ import javax.validation.constraints.NotBlank;
 //@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
 
+
+
+    @ApiOperation(value = "接口信息加载")
+    @GetMapping("exp/company/v1/express/company/interfaceinfo/list")
+    public ComResponse<List<InterFaceInfo>>  listInterfaceInfo(@RequestParam("id") String id);
 
 
     @ApiOperation(value = "物流-取消批量登记")

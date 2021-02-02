@@ -592,7 +592,7 @@ public class RedisUtil {
 		// 初始化长度
 		StringBuilder seqNo = new StringBuilder(length);
 		// 获取时间戳
-		String timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
+		String timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS").format(LocalDateTime.now());
 		// 获取自增值
 		String num = this.incr(rediskey).toString();
 		// 左补0

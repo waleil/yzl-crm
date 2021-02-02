@@ -12,6 +12,7 @@ import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
+import cn.net.yzl.logistics.model.vo.InterFaceInfo;
 import cn.net.yzl.logistics.model.vo.SExceptionCondition;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
@@ -51,6 +52,14 @@ public class LogisticsController {
     private FastdfsUtils fastdfsUtils;
     @Autowired
     private FastDFSConfig fastDFSConfig;
+
+
+
+    @ApiOperation(value = "接口信息加载")
+    @GetMapping("/v1/express/company/interfaceinfo/list")
+    public ComResponse<List<InterFaceInfo>>  listInterfaceInfo(@RequestParam("id") String id){
+        return logisticsFien.listInterfaceInfo(id);
+    }
 
     @ApiOperation(value = "查询物流轨迹", notes = "")
     @PostMapping("findLogisticsTraces")
