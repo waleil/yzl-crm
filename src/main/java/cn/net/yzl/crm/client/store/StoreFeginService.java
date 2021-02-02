@@ -133,7 +133,7 @@ public interface StoreFeginService {
 
 
     @GetMapping("store/v1/storeLocalPageList")
-    public ComResponse<Page<StoreLocalPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+    public ComResponse<Page<StoreLocalPo>> storeLocalPageList(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                         @RequestParam(value = "storeId",required = false) Integer storeI);
 
 }

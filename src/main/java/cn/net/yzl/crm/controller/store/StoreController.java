@@ -224,10 +224,10 @@ public class StoreController {
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "storeId", value = "仓库id", required = true, dataType = "Int", paramType = "query"),
     })
-    public ComResponse<Page<StoreLocalPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+    public ComResponse<Page<StoreLocalPo>> storeLocalPageList(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                         @RequestParam(value = "storeId",required = false) Integer storeId){
 
-        return storeFeginService.stockInquiry(pageNo,pageSize,storeId);
+        return storeFeginService.storeLocalPageList(pageNo,pageSize,storeId);
     }
 
 }
