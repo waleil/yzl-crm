@@ -29,13 +29,16 @@ public class ProduceDto {
     @ApiModelProperty("市场价(售卖价)单位为元")
     private String salePriceD;
 
-    @ApiModelProperty("库存,-1代表不限制库存")
-    private Integer stock;
+    @ApiModelProperty("每天服用次数")
+    private Integer oneToTimes;
 
-    @ApiModelProperty("总药量")
-    private Integer totalUseNum;
+    @ApiModelProperty("每次使用次数")
+    private Integer oneUseNum;
 
-    @ApiModelProperty("计量单位")
-    private String unit;
+    @ApiModelProperty("禁用人群")
+    private String forbidden;
+
+    @ApiModelProperty("适用人群")
+    private String applicable;
 
 }
