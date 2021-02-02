@@ -81,8 +81,8 @@ public class NewOrderServiceImpl implements INewOrderService {
     @Autowired
     private EhrStaffClient ehrStaffClient;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+//    @Autowired
+//    private RabbitTemplate rabbitTemplate;
     @Autowired
     private MemberFien memberFien;
     
@@ -501,10 +501,10 @@ public class NewOrderServiceImpl implements INewOrderService {
     }
 
     private void sendMessage(OrderInfo4Mq infoVO) {
-
+    	// TODO zhangweiwei 先暂时去掉mq发送。
        try {
-           this.rabbitTemplate.convertAndSend(CommonConstant.NEW_ORDER_EXCHANGE_NAME,
-                   CommonConstant.NEW_ORDER_ROOT_KEY, infoVO);
+//           this.rabbitTemplate.convertAndSend(CommonConstant.NEW_ORDER_EXCHANGE_NAME,
+//                   CommonConstant.NEW_ORDER_ROOT_KEY, infoVO);
 
            System.err.println(infoVO);
 
