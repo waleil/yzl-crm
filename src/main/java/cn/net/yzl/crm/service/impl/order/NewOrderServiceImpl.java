@@ -45,10 +45,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -178,9 +175,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
             });
             vo.setProductReduceVOS(reduceVOS);
-
-
-            //调用扣减内存接口（根据批次号扣减库存）
+            //调用扣减库存接口（根据批次号扣减库存）
             orderRes = productClient.productReduce(vo);
 
             OrderTempVO orderTempVO = new OrderTempVO();
@@ -194,29 +189,47 @@ public class NewOrderServiceImpl implements INewOrderService {
                throw new BizException(orderRes.getCode(),orderRes.getMessage());
            }
 
-           //将预下单并发送到mq
-            prepareAndSendMessage(dto.getCustomerGroupIds(),orderTempVO.getOrderTemp(),orderTempVO.getProducts(),successCnt,failCnt);
-           //根据无效客户的数量，回退库存
-            if(failCnt.intValue() >0){
-                ComResponse<?> comResponse = increaseStore(failCnt, orderTempVO);
-                if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(comResponse.getCode())) {
-                    throw new BizException(comResponse.getCode(),comResponse.getMessage());
-                }
-            }
-            orderTemp.setFailCount(failCnt.intValue());
-            orderTemp.setSuccessCount(successCnt.intValue());
-            orderTemp.setOprCount(orderTemp.getFailCount()+orderTemp.getSuccessCount());
-            //更新订单模板表
-            ComResponse<Boolean> res = newOrderClient.updateResult(orderTemp);
-            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
-               throw new BizException(res.getCode(),res.getMessage());
-            }
-
         }catch (BizException e){
             log.error(e.getMessage(),e);
             throw new BizException(e.getCode(),e.getMessage());
         }
 
+
+        return ComResponse.success(true);
+    }
+
+    @Override
+    public ComResponse<Boolean> sendHKOrderTask() {
+        //查询未处理的会刊订单记录
+        ComResponse<List<OrderTempVO>> listComResponse = newOrderClient.selectUnOpredHKOrder();
+        if(!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())){
+            throw new BizException(listComResponse.getCode(),listComResponse.getMessage());
+        }
+        List<OrderTempVO> data = listComResponse.getData();
+        data.forEach(map->{
+            AtomicInteger successCnt = new AtomicInteger(0);
+            AtomicInteger failCnt = new AtomicInteger(0);
+
+            //将预下单并发送到mq
+            prepareAndSendMessage(map.getOrderTemp(),map.getProducts(),successCnt,failCnt);
+            //根据无效客户的数量，回退库存
+            if(failCnt.intValue() >0){
+                ComResponse<?> comResponse = increaseStore(failCnt, map);
+                if (ResponseCodeEnums.SUCCESS_CODE.getCode().compareTo(comResponse.getCode()) !=0) {
+                    throw new BizException(comResponse.getCode(),comResponse.getMessage());
+                }
+            }
+
+            map.getOrderTemp().setFailCount(failCnt.intValue());
+            map.getOrderTemp().setSuccessCount(successCnt.intValue());
+            map.getOrderTemp().setOprCount(map.getOrderTemp().getFailCount()+map.getOrderTemp().getSuccessCount());
+            map.getOrderTemp().setOprStats(1);
+            //更新订单模板表
+            ComResponse<Boolean> res = newOrderClient.updateResult(map.getOrderTemp());
+            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
+                throw new BizException(res.getCode(),res.getMessage());
+            }
+        });
 
         return ComResponse.success(true);
     }
@@ -245,13 +258,13 @@ public class NewOrderServiceImpl implements INewOrderService {
 
     /**
      * 准备发送mq数据，并发送
-     * @param groupids
      * @param orderTemp
      * @param product
      * @param successCnt
      * @param failCnt
      */
-    private void prepareAndSendMessage(List<String> groupids,OrderTemp orderTemp, List<OrderTempProduct> product, AtomicInteger successCnt, AtomicInteger failCnt) {
+    private void prepareAndSendMessage(OrderTemp orderTemp, List<OrderTempProduct> product, AtomicInteger successCnt, AtomicInteger failCnt) {
+         List<String> groupids = Arrays.asList(orderTemp.getGroupId().split(","));
          groupids.forEach(map->{
              ComResponse<List<GroupRefMember>> listComResponse = memberGroupFeign.queryMembersByGroupId(map);
              if(!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())){
@@ -372,7 +385,7 @@ public class NewOrderServiceImpl implements INewOrderService {
         orderM.setTotalAll(orderTemp.getTotalAllAmt());//订单总额
         orderM.setPfee(0);
         orderM.setPfeeFlag(0);
-        orderM.setCash(orderTemp.getTotalAmt() + orderM.getPfee());//应收
+        orderM.setCash(orderTemp.getTotalAmt() );//应收
         orderM.setCash1(orderTemp.getTotalAmt());//预存
         orderM.setSpend(orderTemp.getTotalAmt());//消费金额
 
@@ -427,7 +440,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
         orderM.setFinancialOwner(orderTemp.getFinancialOwner());
         orderM.setFinancialOwnerName(orderTemp.getFinancialOwnerName());
-        orderM.setRelationReissueOrderNo("-1");
+        orderM.setRelationReissueOrderNo("0");
         orderM.setLogisticsClaims(null);
         orderM.setRelationReissueOrderTotal(null);
         //todo 等dmc数据
