@@ -23,8 +23,8 @@ import java.util.List;
  * @version 1.0
  * @date 2021/1/16 13:37
  */
-@FeignClient("yzl-store-server")
-//@FeignClient(name = "storeClient",url = "${api.gateway.url}/storeServer")
+//@FeignClient("yzl-store-server")
+@FeignClient(name = "storeClient",url = "${api.gateway.url}/storeServer")
 public interface StoreFeginService {
 
     @GetMapping("store/v1/selectStoreListPage")
@@ -101,8 +101,8 @@ public interface StoreFeginService {
     @GetMapping("store/v1/selectStoreLocal")
     public ComResponse<StoreLocalPo> selectStoreLocal(@RequestParam(value = "no") String no);
 
-    @GetMapping("store/v1/storeLocalPageList")
-    public ComResponse<Page<ProductStockPo>> storeLocalPageList(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+    @GetMapping("store/v1/stockInquiry")
+    public ComResponse<Page<ProductStockPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                           @RequestParam(value = "codeAndName",required = false) String codeAndName,
                                                           @RequestParam(value = "storeNo",required = false) String storeNo);
 
