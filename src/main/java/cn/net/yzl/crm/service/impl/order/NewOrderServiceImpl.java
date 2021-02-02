@@ -419,9 +419,9 @@ public class NewOrderServiceImpl implements INewOrderService {
         orderM.setShippingTime(null);
         orderM.setEstimateArrivalTime(null);
         orderM.setSignTime(null);
-        //todo
+
         orderM.setMemberLevelBefor(member.getGradeCode());
-        orderM.setMemberTypeBefor(member.getGradeId());
+        orderM.setMemberTypeBefor(member.getMemberType());
         orderM.setMemberLevelAfter(null);
         orderM.setMemberTypeAfter(null);
 
