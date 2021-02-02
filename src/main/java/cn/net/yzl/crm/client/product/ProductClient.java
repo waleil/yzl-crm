@@ -9,6 +9,8 @@ import javax.validation.constraints.NotBlank;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.dto.dmc.TaskDto;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -128,4 +130,7 @@ public interface ProductClient {
 		}
 		return Collections.emptyList();
 	}
+
+	@GetMapping("v1/queryProductListAtlasByDiseaseName")
+	ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(@RequestParam(value = "diseaseName") String diseaseName);
 }

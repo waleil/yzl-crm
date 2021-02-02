@@ -252,4 +252,13 @@ public class ProductController {
         return productService.queryProducts(ids);
     }
 
+    @ApiOperation("根据病症查询商品图谱")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "diseaseName", value = "商品名称", dataType = "String", paramType = "query")
+    })
+    @GetMapping("v1/queryProductListAtlasByDiseaseName")
+    public ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(@RequestParam(value = "diseaseName") String diseaseName) {
+        return productService.queryProductListAtlasByDiseaseName(diseaseName);
+    }
+
 }
