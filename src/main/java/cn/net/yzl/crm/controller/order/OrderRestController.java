@@ -625,14 +625,8 @@ public class OrderRestController {
 				od.setPackageunit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
-				// 如果是非赠品
-				if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
-					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
-					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
-				} else {// 如果是赠品，将金额设置为0
-					od.setTotal(0);// 实收金额，单位分
-					od.setCash(0);// 应收金额，单位分
-				}
+				od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
+				od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				return od;
 			}).collect(Collectors.toList());
 			orderdetailList.addAll(result);
