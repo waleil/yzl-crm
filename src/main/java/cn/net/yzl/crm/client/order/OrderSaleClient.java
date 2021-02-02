@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @FeignClient(name = "orderSale", url = "${api.gateway.url}/orderService/orderSale")
+//@FeignClient(name = "orderSale", url = "localhost:4455/orderSale")
 public interface OrderSaleClient {
     /**
      * @param dto
