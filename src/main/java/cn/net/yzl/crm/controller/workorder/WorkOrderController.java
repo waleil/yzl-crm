@@ -307,12 +307,12 @@ public class WorkOrderController {
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     @ApiOperation(value = "智能工单：我的热线工单-创建处理工单流水", notes = "智能工单：我的热线工单-创建处理工单流水")
-    public ComResponse<String> insertWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean) {
-        workOrderDisposeFlowBean.setCreateId(QueryIds.userNo.get());
-        workOrderDisposeFlowBean.setCreateName(QueryIds.userName.get());
-        workOrderDisposeFlowBean.setUpdateId(QueryIds.userNo.get());
-        workOrderDisposeFlowBean.setUpdateName(QueryIds.userName.get());
-        return workOrderClient.insertWorkOrderDisposeFlow(workOrderDisposeFlowBean);
+    public ComResponse<String> insertWorkOrderDisposeFlow(@Validated @RequestBody InsertWorkOrderDisposeFlowDTO insertWorkOrderDisposeFlowDTO) {
+        insertWorkOrderDisposeFlowDTO.setCreateId(QueryIds.userNo.get());
+        insertWorkOrderDisposeFlowDTO.setCreateName(QueryIds.userName.get());
+        insertWorkOrderDisposeFlowDTO.setUpdateId(QueryIds.userNo.get());
+        insertWorkOrderDisposeFlowDTO.setUpdateName(QueryIds.userName.get());
+        return workOrderClient.insertWorkOrderDisposeFlow(insertWorkOrderDisposeFlowDTO);
     }
 
     /**

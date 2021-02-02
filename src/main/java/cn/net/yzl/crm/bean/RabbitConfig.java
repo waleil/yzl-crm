@@ -14,9 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Configuration
+//@Configuration
 @Slf4j
-@AutoConfigureAfter(value = RabbitAutoConfiguration.class)
+//@AutoConfigureAfter(value = RabbitAutoConfiguration.class)
 public class RabbitConfig  {
     @Autowired
     private RabbitTemplate rabbitTemplate;

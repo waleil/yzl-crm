@@ -147,11 +147,11 @@ public interface WorkOrderClient {
     /**
      * 智能工单：我的热线工单-创建处理工单流水
      *
-     * @param workOrderDisposeFlowBean
+     * @param insertWorkOrderDisposeFlowDTO
      * @return
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
-    ComResponse<String> insertWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+    ComResponse<String> insertWorkOrderDisposeFlow(InsertWorkOrderDisposeFlowDTO insertWorkOrderDisposeFlowDTO);
 
     @PostMapping(value = "v1/queryUnclaimedUsers")
     ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO);
