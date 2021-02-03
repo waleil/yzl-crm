@@ -162,6 +162,7 @@ public interface LogisticsFien {
     @GetMapping("/exp/company/v1/selectExpressComponyDetail")
     public ComResponse<List<ExpressCodeVo>> selectExpressComponyDetail() ;
 
-
-
+    @ApiOperation(value = "模糊搜索快递公司")
+    @GetMapping("exp/company/v1/like/search/expresscompany")
+    ComResponse<List<ObjectCommon>> getCompanyByName(@RequestParam("companyName") String companyName);
 }
