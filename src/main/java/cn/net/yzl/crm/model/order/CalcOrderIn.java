@@ -14,7 +14,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2021年2月3日,下午4:22:32
  */
 @ApiModel(description = "订单")
-public class CalcOrder {
+public class CalcOrderIn {
 
 	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
 	private Double amountStored;
