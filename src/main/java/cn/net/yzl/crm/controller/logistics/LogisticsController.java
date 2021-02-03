@@ -81,18 +81,24 @@ public class LogisticsController {
     }
 
 
+
+
+
     @ApiOperation(value = "物流-登记生产")
+<<<<<<<<< Temporary merge branch 1
     @GetMapping("v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo, HttpServletRequest
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody RegistryOrderinfo orderNo){
+        return logisticsFien.generateBillOrderNo(orderNo);
+=========
+    @PostMapping("v1/generateBillOrderNo")
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody String orderNo, HttpServletRequest
                                                                 request){
 
+//        return  ComResponse.fail(111,"33232");
         RegistryOrderinfo registryOrderinfo  = new RegistryOrderinfo();
 
         try {
             ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
-            if(ObjectUtils.isEmpty(userNo)){
-                return ComResponse.fail(ComResponse.ERROR_STATUS, "用户不存在");
-            }
             if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 
                 throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
