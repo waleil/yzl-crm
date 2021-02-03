@@ -17,10 +17,7 @@ import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
 import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
-import cn.net.yzl.logistics.model.vo.ExpressCode;
-import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
-import cn.net.yzl.logistics.model.vo.InterFaceInfo;
-import cn.net.yzl.logistics.model.vo.SExceptionCondition;
+import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.vo.StoreVO;
 import feign.Response;
@@ -63,8 +60,8 @@ public interface LogisticsFien {
     public ComResponse<Boolean> cancelBatchRegistryException(@RequestBody String ids);
 
     @ApiOperation(value = "物流-登记生产")
-    @GetMapping("exp/company/v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo);
+    @PostMapping("exp/company/v1/generateBillOrderNo")
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody RegistryOrderinfo registryOrderinfo);
 
     @ApiOperation(value = "物流-登记查询")
     @PostMapping("exp/company/v1/searcha/exception")
