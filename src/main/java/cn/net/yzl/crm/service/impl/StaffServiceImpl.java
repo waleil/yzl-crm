@@ -212,6 +212,9 @@ public class StaffServiceImpl implements StaffService {
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
                             .diseaseName(productMainDTO.getDiseaseName())
                             .rawStock(productMainDTO.getRawStock())
+                            .packagingUnit(productMainDTO.getPackagingUnit())
+                            .totalUseNum(productMainDTO.getTotalUseNum())
+                            .unit(productMainDTO.getUnit())
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -258,6 +261,9 @@ public class StaffServiceImpl implements StaffService {
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
                             .diseaseName(productMainDTO.getDiseaseName())
                             .rawStock(productMainDTO.getRawStock())
+                            .packagingUnit(productMainDTO.getPackagingUnit())
+                            .totalUseNum(productMainDTO.getTotalUseNum())
+                            .unit(productMainDTO.getUnit())
                             .build();
                     activityProductList.add(produceDto);
                 });
