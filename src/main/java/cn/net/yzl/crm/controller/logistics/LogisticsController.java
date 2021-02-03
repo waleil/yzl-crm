@@ -83,26 +83,30 @@ public class LogisticsController {
 
 
     @ApiOperation(value = "物流-登记生产")
-    @PostMapping("v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody String orderNo, HttpServletRequest
+    @GetMapping("v1/generateBillOrderNo")
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo, HttpServletRequest
                                                                 request){
 
 //        return  ComResponse.fail(111,"33232");
+//        RegistryOrderinfo registryOrderinfo  = new RegistryOrderinfo();
+//
+//        try {
+//            ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+//            if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+//
+//                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
+//            }
+//            StaffImageBaseInfoDto data = userNo.getData();
+//
+//            registryOrderinfo.setOrderNO(orderNo);
+//            registryOrderinfo.setRegisterName(data.getName());
+//        } catch (BizException e) {
+//            ComResponse.fail(12, "获取用户认证！");
+//        }
         RegistryOrderinfo registryOrderinfo  = new RegistryOrderinfo();
+        registryOrderinfo.setOrderNO(orderNo);
+            registryOrderinfo.setRegisterName("4324324");
 
-        try {
-            ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
-            if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
-
-                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
-            }
-            StaffImageBaseInfoDto data = userNo.getData();
-
-            registryOrderinfo.setOrderNO(orderNo);
-            registryOrderinfo.setRegisterName(data.getName());
-        } catch (BizException e) {
-            ComResponse.fail(12, "获取用户认证！");
-        }
 
         return logisticsFien.generateBillOrderNo(registryOrderinfo);
     }
