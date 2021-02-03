@@ -44,4 +44,7 @@ public class ProduceDto {
     @ApiModelProperty(value = "主治病症")
     private String diseaseName;
 
+    @ApiModelProperty(value = "主要原料")
+    private String rawStock;
+
 }

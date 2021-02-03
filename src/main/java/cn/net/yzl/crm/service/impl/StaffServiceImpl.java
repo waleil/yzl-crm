@@ -39,7 +39,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -212,6 +211,7 @@ public class StaffServiceImpl implements StaffService {
                             .oneUseNum(productMainDTO.getOneUseNum())
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
                             .diseaseName(productMainDTO.getDiseaseName())
+                            .rawStock(productMainDTO.getRawStock())
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -227,6 +227,10 @@ public class StaffServiceImpl implements StaffService {
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
+                            .applicable(String.join(",", productMealListDTO.getApplicable()))
+                            .forbidden(String.join(",", productMealListDTO.getForbidden()))
+                            .diseaseName(String.join(",", productMealListDTO.getDiseaseName()))
+                            .rawStock(String.join(",", productMealListDTO.getRawStock()))
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -253,6 +257,7 @@ public class StaffServiceImpl implements StaffService {
                             .oneUseNum(productMainDTO.getOneUseNum())
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
                             .diseaseName(productMainDTO.getDiseaseName())
+                            .rawStock(productMainDTO.getRawStock())
                             .build();
                     activityProductList.add(produceDto);
                 });
@@ -268,6 +273,10 @@ public class StaffServiceImpl implements StaffService {
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
+                            .applicable(String.join(",", productMealListDTO.getApplicable()))
+                            .forbidden(String.join(",", productMealListDTO.getForbidden()))
+                            .diseaseName(String.join(",", productMealListDTO.getDiseaseName()))
+                            .rawStock(String.join(",", productMealListDTO.getRawStock()))
                             .build();
                     activityProductList.add(produceDto);
                 });
