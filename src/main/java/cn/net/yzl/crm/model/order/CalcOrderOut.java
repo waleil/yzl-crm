@@ -20,12 +20,12 @@ public class CalcOrderOut {
 
 	@ApiModelProperty(value = "订单总额，单位元", required = false)
 	private Double totalAll = 0d;
+	@ApiModelProperty(value = "实收金额，单位元", required = false)
+	private Double total = 0d;
 	@ApiModelProperty(value = "使用优惠券 单位元", required = false)
 	private Double amountCoupon = 0d;
 	@ApiModelProperty(value = "使用积分抵扣 单位元", required = false)
 	private Double pointsDeduction = 0d;
 	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
 	private Double amountStored = 0d;
-	@ApiModelProperty(value = "实收金额，单位元", required = false)
-	private Double total = 0d;
 }
