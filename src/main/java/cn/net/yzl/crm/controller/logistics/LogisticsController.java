@@ -11,10 +11,7 @@ import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
 import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
-import cn.net.yzl.logistics.model.vo.ExpressCode;
-import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
-import cn.net.yzl.logistics.model.vo.InterFaceInfo;
-import cn.net.yzl.logistics.model.vo.SExceptionCondition;
+import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
@@ -77,7 +74,7 @@ public class LogisticsController {
 
     @ApiOperation(value = "物流-登记生产")
     @GetMapping("v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo){
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody RegistryOrderinfo orderNo){
         return logisticsFien.generateBillOrderNo(orderNo);
     }
 
