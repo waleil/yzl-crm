@@ -21,7 +21,10 @@ import lombok.ToString;
 @Getter
 @ToString
 public class CalcOrderIn {
-
+	@ApiModelProperty(hidden = true)
+	private Integer total;
+	@ApiModelProperty(hidden = true)
+	private Integer cash;
 	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
 	private Double amountStored;
 	@ApiModelProperty(value = "使用优惠券 单位元", required = false)
