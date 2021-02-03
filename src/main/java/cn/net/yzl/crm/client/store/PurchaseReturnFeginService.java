@@ -77,8 +77,17 @@ public interface PurchaseReturnFeginService {
      * @param waybillAddDto
      * @return
      */
-    @ApiOperation(value = "采购退货单退回添加货运单号")
+    @ApiOperation(value = "采购退货单退回添加物流信息")
     @PostMapping("purchaseReturn/v1/add/waybill")
     ComResponse addWayBill(@RequestBody WaybillAddDto waybillAddDto);
+
+    /**
+     * 采购退货单审核列表
+     * @param waybillUpdateDto
+     * @return
+     */
+    @ApiOperation(value = "采购退货单编辑物流信息")
+    @PostMapping("purchaseReturn/v1/update/waybill")
+    ComResponse updateWayBill(@RequestBody WaybillUpdateDto waybillUpdateDto);
 
 }

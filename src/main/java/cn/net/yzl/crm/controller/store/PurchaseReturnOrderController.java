@@ -102,9 +102,21 @@ public class PurchaseReturnOrderController {
      * @param waybillAddDto
      * @return
      */
-    @ApiOperation(value = "采购退货单退回添加货运单号")
+    @ApiOperation(value = "采购退货单退回添加物流信息")
     @PostMapping("v1/add/waybill")
     public ComResponse addWayBill(@RequestBody WaybillAddDto waybillAddDto){
         return purchaseReturnFeginService.addWayBill(waybillAddDto);
     }
+
+    /**
+     * 采购退货单审核列表
+     * @param waybillUpdateDto
+     * @return
+     */
+    @ApiOperation(value = "采购退货单编辑物流信息")
+    @PostMapping("v1/update/waybill")
+    public ComResponse updateWayBill(@RequestBody WaybillUpdateDto waybillUpdateDto){
+        return purchaseReturnFeginService.updateWayBill(waybillUpdateDto);
+    }
+
 }
