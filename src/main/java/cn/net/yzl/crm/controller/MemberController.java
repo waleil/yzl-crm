@@ -576,7 +576,7 @@ private ProductClient productClient;
 
 
     @ApiOperation(value = "顾客类别查询", notes = "顾客类别查询")
-    @PostMapping(value = "/v1/queryMemberType")
+    @GetMapping(value = "/v1/queryMemberType")
     public ComResponse<List<MemberTypeDTO>> queryMemberType() {
         ComResponse<List<MemberTypeDTO>> result = memberTypeFien.queryMemberType();
         return result;

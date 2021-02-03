@@ -103,7 +103,7 @@ public class DownImageInController {
             //向前端写入文件流流
             EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
                     .sheet("盘点商品库存表").doWrite(listComResponseData);
-        }else if (status==2){
+        }else if (status==2 || status==3){
 
             List<InventoryProductResultExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
             for (InventoryProductExcelVo listComResponseDatum : listComResponseData) {
