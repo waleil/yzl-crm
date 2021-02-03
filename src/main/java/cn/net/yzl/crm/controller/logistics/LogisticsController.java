@@ -24,7 +24,9 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -87,25 +89,37 @@ public class LogisticsController {
     public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo, HttpServletRequest
                                                                 request){
 
-//        return  ComResponse.fail(111,"33232");
-//        RegistryOrderinfo registryOrderinfo  = new RegistryOrderinfo();
-//
-//        try {
-//            ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
-//            if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
-//
-//                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
-//            }
-//            StaffImageBaseInfoDto data = userNo.getData();
-//
-//            registryOrderinfo.setOrderNO(orderNo);
-//            registryOrderinfo.setRegisterName(data.getName());
-//        } catch (BizException e) {
-//            ComResponse.fail(12, "获取用户认证！");
-//        }
         RegistryOrderinfo registryOrderinfo  = new RegistryOrderinfo();
-        registryOrderinfo.setOrderNO(orderNo);
-            registryOrderinfo.setRegisterName("4324324");
+
+        try {
+            ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+            if(ObjectUtils.isEmpty(userNo)){
+                return ComResponse.fail(ComResponse.ERROR_STATUS, "用户不存在");
+            }
+            if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+
+                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
+            }
+            if(ObjectUtils.isEmpty(userNo.getData()))
+            {
+                return  ComResponse.fail(ComResponse.ERROR_STATUS,"用户数据错误"+userNo.getCode());
+            }
+
+
+            StaffImageBaseInfoDto data = userNo.getData();
+
+            registryOrderinfo.setOrderNO(orderNo);
+            if(StringUtils.isEmpty(data.getName())){
+                return ComResponse.fail(ComResponse.ERROR_STATUS, "用户名不存在");
+            }
+            registryOrderinfo.setRegisterName(data.getName());
+
+        } catch (BizException e) {
+            ComResponse.fail(ComResponse.ERROR_STATUS, "获取用户认证！");
+        }
+//        RegistryOrderinfo registryOrderinfo  = new RegistryOrderinfo();
+//        registryOrderinfo.setOrderNO(orderNo);
+//        registryOrderinfo.setRegisterName("4324324");
 
 
         return logisticsFien.generateBillOrderNo(registryOrderinfo);
