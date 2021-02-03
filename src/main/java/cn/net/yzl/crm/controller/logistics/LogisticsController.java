@@ -87,6 +87,7 @@ public class LogisticsController {
                                                                 request){
         ComResponse<cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
         if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+
             throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
         }
         StaffImageBaseInfoDto data = userNo.getData();
