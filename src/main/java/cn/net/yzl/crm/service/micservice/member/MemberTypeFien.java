@@ -5,7 +5,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.customer.dto.member.MemberTypeDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -13,6 +13,6 @@ import java.util.List;
 public interface MemberTypeFien {
 
     @ApiOperation("获取顾客服用效果记录")
-    @PostMapping("/v1/queryMemberType")
+    @GetMapping("/v1/queryMemberType")
     ComResponse<List<MemberTypeDTO>> queryMemberType();
 }
