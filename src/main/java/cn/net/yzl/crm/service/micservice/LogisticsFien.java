@@ -40,7 +40,6 @@ import javax.validation.constraints.NotBlank;
  * 顾客服务接口
  */
 @FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
-//@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
 
 
@@ -56,12 +55,12 @@ public interface LogisticsFien {
 
 
     @ApiOperation(value = "物流-取消批量登记")
-    @PostMapping("v1/cancelbatch/registry/exceptioninfo")
+    @PostMapping("exp/company/v1/cancelbatch/registry/exceptioninfo")
     public ComResponse<Boolean> cancelBatchRegistryException(@RequestBody String ids);
 
     @ApiOperation(value = "物流-登记生产")
     @PostMapping("exp/company/v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody RegistryOrderinfo orderNo);
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody RegistryOrderinfo registryOrderinfo);
 
     @ApiOperation(value = "物流-登记查询")
     @PostMapping("exp/company/v1/searcha/exception")
