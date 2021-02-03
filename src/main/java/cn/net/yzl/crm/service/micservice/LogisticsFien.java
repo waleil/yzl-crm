@@ -15,10 +15,9 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.logistics.model.ExpressCompany;
 import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
 import cn.net.yzl.logistics.model.ExpressTraceResDTO;
+import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
-import cn.net.yzl.logistics.model.vo.ExpressCode;
-import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
-import cn.net.yzl.logistics.model.vo.SExceptionCondition;
+import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.vo.StoreVO;
 import feign.Response;
@@ -41,9 +40,13 @@ import javax.validation.constraints.NotBlank;
  * 顾客服务接口
  */
 @FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
-//@FeignClient(value = "yzl-crm-customer-api")
 public interface LogisticsFien {
 
+
+
+    @ApiOperation(value = "接口信息加载")
+    @GetMapping("exp/company/v1/express/company/interfaceinfo/list")
+    public ComResponse<List<InterFaceInfo>>  listInterfaceInfo(@RequestParam("id") String id);
 
 
     @ApiOperation(value = "物流-取消批量登记")
@@ -52,16 +55,16 @@ public interface LogisticsFien {
 
 
     @ApiOperation(value = "物流-取消批量登记")
-    @PostMapping("v1/cancelbatch/registry/exceptioninfo")
+    @PostMapping("exp/company/v1/cancelbatch/registry/exceptioninfo")
     public ComResponse<Boolean> cancelBatchRegistryException(@RequestBody String ids);
 
     @ApiOperation(value = "物流-登记生产")
-    @GetMapping("exp/company/v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo);
+    @PostMapping("exp/company/v1/generateBillOrderNo")
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody RegistryOrderinfo registryOrderinfo);
 
     @ApiOperation(value = "物流-登记查询")
     @PostMapping("exp/company/v1/searcha/exception")
-    public ComResponse<Page<StoreToLogisticsDto>> selectExceptionByCondition(@RequestBody SExceptionCondition sExceptionCondition);
+    public ComResponse<Page<TransPortExceptionRegistry>> selectExceptionByCondition(@RequestBody SExceptionCondition sExceptionCondition);
 
     @ApiOperation(value = "物流-登记查询")
     @PostMapping("exp/company/v1/cancel/registry/exceptioninfo")
@@ -156,6 +159,7 @@ public interface LogisticsFien {
     @GetMapping("/exp/company/v1/selectExpressComponyDetail")
     public ComResponse<List<ExpressCodeVo>> selectExpressComponyDetail() ;
 
-
-
+    @ApiOperation(value = "模糊搜索快递公司")
+    @GetMapping("exp/company/v1/like/search/expresscompany")
+    ComResponse<List<ObjectCommon>> getCompanyByName(@RequestParam("companyName") String companyName);
 }

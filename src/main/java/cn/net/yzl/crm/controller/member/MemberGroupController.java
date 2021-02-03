@@ -59,7 +59,7 @@ public class MemberGroupController {
         member_group.setActions(memberCrowdGroup.getActions());
         member_group.setCrowd_name(memberCrowdGroup.getCrowd_name());
         member_group.setActive_degree(memberCrowdGroup.getActive_degree());
-        member_group.setActive_order(member_group.getActive_order());
+        member_group.setActive_order(memberCrowdGroup.getActive_order());
         member_group.setActive_like(memberCrowdGroup.getActive_like());
         member_group.setAdvers(memberCrowdGroup.getAdvers());
         member_group.setAreas(memberCrowdGroup.getAreas());
@@ -146,7 +146,7 @@ public class MemberGroupController {
         member_group.setActions(memberCrowdGroup.getActions());
         member_group.setCrowd_name(memberCrowdGroup.getCrowd_name());
         member_group.setActive_degree(memberCrowdGroup.getActive_degree());
-        member_group.setActive_order(member_group.getActive_order());
+        member_group.setActive_order(memberCrowdGroup.getActive_order());
         member_group.setActive_like(memberCrowdGroup.getActive_like());
         member_group.setAdvers(memberCrowdGroup.getAdvers());
         member_group.setAreas(memberCrowdGroup.getAreas());

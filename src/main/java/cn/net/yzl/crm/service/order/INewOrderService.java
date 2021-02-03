@@ -10,4 +10,10 @@ public interface INewOrderService extends IExcelService {
      * @return
      */
     ComResponse<Boolean> newOrder(NewOrderDTO dto);
+
+    /**
+     * 发送订单消息 定时任务
+     * @return
+     */
+    ComResponse<Boolean> sendHKOrderTask();
 }

@@ -70,4 +70,6 @@ public interface ProductService {
     ComResponse<List<ProductDiseaseDTO>> queryDiseaseByProductCode(String productCode);
 
     ComResponse<List<ProductMainInfoDTO>> queryProducts(String ids);
+
+    ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(String diseaseName);
 }

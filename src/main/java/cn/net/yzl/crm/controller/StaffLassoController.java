@@ -35,7 +35,7 @@ public class StaffLassoController {
     @ApiOperation(value = "试算")
     @PostMapping("v1/calculationDto")
     public ComResponse<Integer> calculationDto(@RequestBody CalculationDto calculationDto) throws Exception {
-        Integer lassoCount = staffLassoService.calculationDto(calculationDto, new Date()).size();
+        Integer lassoCount = staffLassoService.calculationDto(calculationDto, 0L).size();
         return ComResponse.success(lassoCount);
     }
 

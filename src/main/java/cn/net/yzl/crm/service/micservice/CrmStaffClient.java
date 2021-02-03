@@ -108,10 +108,10 @@ public interface CrmStaffClient {
     ComResponse<StaffCrowdGroup> getStaffCrowdGroup(@RequestParam("groupId") long groupId);
 
     @GetMapping("/staff/v1/getStaffCrowdGroupList")
-    ComResponse<List<StaffCrowdGroup>> getStaffCrowdGroupList(@RequestParam(value = "date",required = false) Date  date);
+    ComResponse<List<StaffCrowdGroup>> getStaffCrowdGroupList(@RequestParam("id") Long id);
 
-    default List<StaffCrowdGroup> getStaffCrowdGroup(Date  date) {
-        ComResponse<List<StaffCrowdGroup>> staffCrowdGroupList = getStaffCrowdGroupList(date);
+    default List<StaffCrowdGroup> getStaffCrowdGroupDefault(Long id) {
+        ComResponse<List<StaffCrowdGroup>> staffCrowdGroupList = getStaffCrowdGroupList(id);
         if (null == staffCrowdGroupList || 200 != staffCrowdGroupList.getCode()) {
             return Collections.emptyList();
         }

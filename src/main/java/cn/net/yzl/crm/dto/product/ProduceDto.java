@@ -17,25 +17,43 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProduceDto {
 
-    @ApiModelProperty("商品唯一编码")
+    @ApiModelProperty(value = "商品唯一编码")
     private String productCode;
 
-    @ApiModelProperty("商品名称")
+    @ApiModelProperty(value = "商品名称")
     private String name;
 
-    @ApiModelProperty("商品主图片")
+    @ApiModelProperty(value = "商品主图片")
     private String imageUrl;
 
-    @ApiModelProperty("市场价(售卖价)单位为元")
+    @ApiModelProperty(value = "市场价(售卖价)单位为元")
     private String salePriceD;
 
-    @ApiModelProperty("库存,-1代表不限制库存")
-    private Integer stock;
+    @ApiModelProperty(value = "每天服用次数")
+    private Integer oneToTimes;
 
-    @ApiModelProperty("总药量")
-    private Integer totalUseNum;
+    @ApiModelProperty(value = "每次使用次数")
+    private Integer oneUseNum;
 
-    @ApiModelProperty("计量单位")
+    @ApiModelProperty(value = "禁用人群")
+    private String forbidden;
+
+    @ApiModelProperty(value = "适用人群")
+    private String applicable;
+
+    @ApiModelProperty(value = "主治病症")
+    private String diseaseName;
+
+    @ApiModelProperty(value = "主要原料")
+    private String rawStock;
+
+    @ApiModelProperty(value = "包装单位")
+    private String packagingUnit;
+
+    @ApiModelProperty(value = "计量单位")
     private String unit;
+
+    @ApiModelProperty(value = "商品总药量-规格")
+    private String totalUseNum;
 
 }

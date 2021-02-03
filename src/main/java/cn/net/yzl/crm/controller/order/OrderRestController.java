@@ -37,6 +37,8 @@ import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.model.order.CalcOrderIn;
+import cn.net.yzl.crm.model.order.CalcOrderOut;
 import cn.net.yzl.crm.model.order.OrderOut;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
@@ -44,6 +46,7 @@ import cn.net.yzl.crm.service.order.IOrderCommonService;
 import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.order.constant.CommonConstant;
+import cn.net.yzl.order.enums.PayType;
 import cn.net.yzl.order.enums.RedisKeys;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
@@ -70,6 +73,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/order")
 @Slf4j
 public class OrderRestController {
+	@PostMapping("/v1/calcorder")
+	@ApiOperation(value = "热线工单-购物车-计算订单金额", notes = "热线工单-购物车-计算订单金额")
+	public ComResponse<CalcOrderOut> calcorder(@RequestBody CalcOrderIn orderin) {
+		return ComResponse.success();
+	}
 
 	@PostMapping("/v1/submitorder")
 	@ApiOperation(value = "热线工单-购物车-提交订单", notes = "热线工单-购物车-提交订单")
@@ -359,11 +367,13 @@ public class OrderRestController {
 		}
 		orderm.setTotalAll(orderm.getTotal());
 		orderm.setSpend(orderm.getCash());
-		// 如果订单总金额大于账户剩余金额，单位分
-		if (orderm.getTotal() > account.getTotalMoney()) {
-			log.error("热线工单-购物车-提交订单>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
-					account.getTotalMoney());
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
+		if (this.hasAmountStored(orderin)) {
+			// 如果订单总金额大于账户剩余金额，单位分
+			if (orderm.getTotal() > account.getTotalMoney()) {
+				log.error("热线工单-购物车-提交订单>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
+						account.getTotalMoney());
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
+			}
 		}
 		// 统计订单明细中的每类商品的总数，key为商品编码，value为购买商品总数
 		Map<String, Integer> productCountMap = new HashMap<>();
@@ -382,9 +392,9 @@ public class OrderRestController {
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
 		orderm.setWorkBatchNo(orderin.getWorkBatchNo());// 工单流水号
 		orderm.setPayType(orderin.getPayType());// 支付方式
+		orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非免审
 		// 如果是款到发货
 		if (String.valueOf(orderin.getPayType()).equals(String.valueOf(CommonConstant.PAY_TYPE_1))) {
-			orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非免审
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_1);// 已收款
 		} else {
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
@@ -424,27 +434,29 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>调用扣减库存服务接口失败>>{}", productReduce);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
-		// 组装顾客账户消费参数
-		MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
-		memberAmountDetail.setDiscountMoney(orderm.getTotal());// 订单总金额，单位分
-		memberAmountDetail.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
-		memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);// 消费
-		memberAmountDetail.setOrderNo(orderm.getOrderNo());// 订单编号
-		memberAmountDetail.setRemark("热线工单-购物车-提交订单:坐席下单");// 备注
-		// 调用顾客账户消费服务接口
-		ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
-		// 如果调用服务接口失败
-		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
-			log.error("热线工单-购物车-提交订单>>调用顾客[{}]账户消费服务接口失败>>{}", orderm.getMemberCardNo(), customerAmountOperation);
-			// 恢复库存
-			ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
+		if (this.hasAmountStored(orderin)) {
+			// 组装顾客账户消费参数
+			MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
+			memberAmountDetail.setDiscountMoney(orderm.getTotal());// 订单总金额，单位分
+			memberAmountDetail.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+			memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);// 消费
+			memberAmountDetail.setOrderNo(orderm.getOrderNo());// 订单编号
+			memberAmountDetail.setRemark("热线工单-购物车-提交订单:坐席下单");// 备注
+			// 调用顾客账户消费服务接口
+			ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
 			// 如果调用服务接口失败
-			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
-				log.error("热线工单-购物车-提交订单>>恢复库存失败>>{}", increaseStock);
-				this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL, ProductClient.INCREASE_STOCK_URL,
-						orderm.getStaffCode(), orderm.getOrderNo());
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
+				log.error("热线工单-购物车-提交订单>>调用顾客[{}]账户消费服务接口失败>>{}", orderm.getMemberCardNo(), customerAmountOperation);
+				// 恢复库存
+				ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
+				// 如果调用服务接口失败
+				if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
+					log.error("热线工单-购物车-提交订单>>恢复库存失败>>{}", increaseStock);
+					this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL,
+							ProductClient.INCREASE_STOCK_URL, orderm.getStaffCode(), orderm.getOrderNo());
+				}
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 			}
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
 		log.info("订单: {}", JSON.toJSONString(orderm, true));
 		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
@@ -461,15 +473,21 @@ public class OrderRestController {
 				this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL, ProductClient.INCREASE_STOCK_URL,
 						orderm.getStaffCode(), orderm.getOrderNo());
 			}
-			// 恢复账户
-			memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 退回
-			memberAmountDetail.setRemark("热线工单-购物车-提交订单:退回金额");// 备注
-			ComResponse<?> customerAmountOperation2 = this.memberFien.customerAmountOperation(memberAmountDetail);
-			// 如果调用服务接口失败
-			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation2.getCode())) {
-				log.error("热线工单-购物车-提交订单>>恢复账户失败>>{}", customerAmountOperation2);
-				this.orderCommonService.insert(memberAmountDetail, MemberFien.SUFFIX_URL,
-						MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, orderm.getStaffCode(), orderm.getOrderNo());
+			if (this.hasAmountStored(orderin)) {
+				// 组装顾客账户退回参数
+				MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
+				memberAmountDetail.setDiscountMoney(orderm.getTotal());// 订单总金额，单位分
+				memberAmountDetail.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+				memberAmountDetail.setOrderNo(orderm.getOrderNo());// 订单编号
+				memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 退回
+				memberAmountDetail.setRemark("热线工单-购物车-提交订单:退回金额");// 备注
+				ComResponse<?> customerAmountOperation2 = this.memberFien.customerAmountOperation(memberAmountDetail);
+				// 如果调用服务接口失败
+				if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation2.getCode())) {
+					log.error("热线工单-购物车-提交订单>>恢复账户失败>>{}", customerAmountOperation2);
+					this.orderCommonService.insert(memberAmountDetail, MemberFien.SUFFIX_URL,
+							MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, orderm.getStaffCode(), orderm.getOrderNo());
+				}
 			}
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
@@ -480,6 +498,17 @@ public class OrderRestController {
 				orderm.getReveiverTelphoneNo(), BigDecimal.valueOf(orderm.getTotal()).divide(bd100).doubleValue(),
 				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100).doubleValue(),
 				orderm.getOrderNo()));
+	}
+
+	/**
+	 * @param orderin 订单
+	 * @return 是否使用账户金额
+	 * @author zhangweiwei
+	 * @date 2021年2月2日,下午7:15:59
+	 */
+	private boolean hasAmountStored(OrderIn orderin) {
+		return orderin.getAmountStored() != null && orderin.getAmountStored() > 0D
+				&& String.valueOf(PayType.PAY_TYPE_1.getCode()).equals(String.valueOf(orderin.getPayType()));
 	}
 
 	@PostMapping("/v1/updateorder")
