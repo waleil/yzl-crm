@@ -6,6 +6,9 @@ import java.util.List;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * 订单
@@ -14,6 +17,9 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2021年2月3日,下午4:22:32
  */
 @ApiModel(description = "订单")
+@Setter
+@Getter
+@ToString
 public class CalcOrderIn {
 
 	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
