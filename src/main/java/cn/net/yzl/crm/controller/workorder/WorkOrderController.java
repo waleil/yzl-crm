@@ -68,15 +68,16 @@ public class WorkOrderController {
     public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO) {
         isListPageDTO.setStaffNO(QueryIds.userNo.get());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isListPage(isListPageDTO);
-            Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
+        Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
         String productNames = new String();
         for (WorkOrderBean workOrderBean : workOrderBeans) {
-            workOrderBean.setProductName("");
             productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
+            workOrderBean.setFirstBuyProductCode("");
+            workOrderBean.setLastBuyProductCode("");
         }
         productNames = productNames.substring(1);
         List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
@@ -84,10 +85,20 @@ public class WorkOrderController {
             Map<String, ProductMainDTO> collect = data.stream().collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
                 if (workOrderBean.getFirstBuyProductCode().contains(collect.get(workOrderBean.getFirstBuyProductCode()).getProductCode())) {
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getFirstBuyProductCode())){
+                        workOrderBean.setFirstBuyProductCode(workOrderBean.getFirstBuyProductCode()+","+collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                    }else{
                         workOrderBean.setFirstBuyProductCode(collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                    }
+
                 }
                 if (workOrderBean.getLastBuyProductCode().contains(collect.get(workOrderBean.getLastBuyProductCode()).getProductCode())) {
-                    workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getLastBuyProductCode())){
+                        workOrderBean.setLastBuyProductCode(workOrderBean.getLastBuyProductCode()+","+collect.get(workOrderBean.getLastBuyProductCode()).getName());
+                    }else {
+                        workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
+                    }
+
                 }
             });
         }
@@ -121,7 +132,45 @@ public class WorkOrderController {
     @ApiOperation(value = "查询待领取顾客池", notes = "待领取顾客池")
     @PostMapping("v1/queryUnclaimedUsers")
     public ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(@RequestBody   WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO){
-        return workOrderClient.queryUnclaimedUsers(workOrderUnclaimedUserDTO);
+        ComResponse<Page<WorkOrderUnclaimedUserVO>> pageComResponse = workOrderClient.queryUnclaimedUsers(workOrderUnclaimedUserDTO);
+
+        Page<WorkOrderUnclaimedUserVO> pageWorkOrderUnclaimedUserVO = pageComResponse.getData();
+        if (null == pageWorkOrderUnclaimedUserVO) {
+            return ComResponse.success();
+        }
+        List<WorkOrderUnclaimedUserVO> workOrderUnclaimedUserVOS = pageWorkOrderUnclaimedUserVO.getItems();
+        String productNames = new String();
+        for (WorkOrderUnclaimedUserVO workOrderUnclaimedUserVO : workOrderUnclaimedUserVOS) {
+            productNames += "," + workOrderUnclaimedUserVO.getFirstBuyProductCode()+","+workOrderUnclaimedUserVO.getLastBuyProductCode();
+            workOrderUnclaimedUserVO.setFirstBuyProductCode("");
+            workOrderUnclaimedUserVO.setLastBuyProductCode("");
+        }
+        productNames = productNames.substring(1);
+        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
+        if (!CollectionUtils.isEmpty(data)) {
+            Map<String, ProductMainDTO> collect = data.stream().collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
+            workOrderUnclaimedUserVOS.stream().forEach(workOrderBean -> {
+                if (workOrderBean.getFirstBuyProductCode().contains(collect.get(workOrderBean.getFirstBuyProductCode()).getProductCode())) {
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getFirstBuyProductCode())){
+                        workOrderBean.setFirstBuyProductCode(workOrderBean.getFirstBuyProductCode()+","+collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                    }else{
+                        workOrderBean.setFirstBuyProductCode(collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                    }
+
+                }
+                if (workOrderBean.getLastBuyProductCode().contains(collect.get(workOrderBean.getLastBuyProductCode()).getProductCode())) {
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getLastBuyProductCode())){
+                        workOrderBean.setLastBuyProductCode(workOrderBean.getLastBuyProductCode()+","+collect.get(workOrderBean.getLastBuyProductCode()).getName());
+                    }else {
+                        workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
+                    }
+
+                }
+            });
+        }
+        pageWorkOrderUnclaimedUserVO.setItems(workOrderUnclaimedUserVOS);
+
+        return ComResponse.success(pageWorkOrderUnclaimedUserVO);
     }
 
 
@@ -136,15 +185,16 @@ public class WorkOrderController {
     @PostMapping(value = "v1/listPage")
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
-            Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
+        Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
         String productNames = new String();
         for (WorkOrderBean workOrderBean : workOrderBeans) {
-            workOrderBean.setProductName("");
             productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
+            workOrderBean.setFirstBuyProductCode("");
+            workOrderBean.setLastBuyProductCode("");
         }
         productNames = productNames.substring(1);
         List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
@@ -152,10 +202,20 @@ public class WorkOrderController {
             Map<String, ProductMainDTO> collect = data.stream().collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
             workOrderBeans.stream().forEach(workOrderBean -> {
                 if (workOrderBean.getFirstBuyProductCode().contains(collect.get(workOrderBean.getFirstBuyProductCode()).getProductCode())) {
-                    workOrderBean.setFirstBuyProductCode(collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getFirstBuyProductCode())){
+                        workOrderBean.setFirstBuyProductCode(workOrderBean.getFirstBuyProductCode()+","+collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                    }else{
+                        workOrderBean.setFirstBuyProductCode(collect.get(workOrderBean.getFirstBuyProductCode()).getName());
+                    }
+
                 }
                 if (workOrderBean.getLastBuyProductCode().contains(collect.get(workOrderBean.getLastBuyProductCode()).getProductCode())) {
-                    workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
+                    if(org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean.getLastBuyProductCode())){
+                        workOrderBean.setLastBuyProductCode(workOrderBean.getLastBuyProductCode()+","+collect.get(workOrderBean.getLastBuyProductCode()).getName());
+                    }else {
+                        workOrderBean.setLastBuyProductCode(collect.get(workOrderBean.getLastBuyProductCode()).getName());
+                    }
+
                 }
             });
         }
