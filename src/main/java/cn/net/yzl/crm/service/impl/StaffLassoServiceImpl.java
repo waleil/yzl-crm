@@ -46,7 +46,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
 
 
     @Override
-    public List<String> calculationDto(CalculationDto calculationDto, Date date) throws Exception {
+    public List<String> calculationDto(CalculationDto calculationDto, Long id) throws Exception {
         if (null == calculationDto) {
             return Collections.emptyList();
         }
@@ -164,7 +164,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             }
             return Collections.emptyList();
         });
-        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup(date);
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroupDefault(id);
 
         List<String> staffNoList = all.get();
         if (CollectionUtils.isEmpty(staffNoList)) {
@@ -219,7 +219,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         if (null == data) {
             return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE);
         }
-        return ComResponse.success(this.calculationDto(data.getCalculationDto(), data.getCreateTime()).size());
+        return ComResponse.success(this.calculationDto(data.getCalculationDto(), groupId).size());
     }
 
     @Override
@@ -249,10 +249,10 @@ public class StaffLassoServiceImpl implements StaffLassoService {
 
     @Override
     public void taskCalculation() {
-        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup(new Date());
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroupDefault(0L);
         staffCrowdGroup.forEach(staffGroup -> {
             try {
-                List<String> staffs = this.calculationDto(staffGroup.getCalculationDto(), staffGroup.getCreateTime());
+                List<String> staffs = this.calculationDto(staffGroup.getCalculationDto(), staffGroup.getId());
                 staffGroup.setStaffCodeList(staffs);
                 staffGroup.setPersonCount(staffs.size());
                 crmStaffClient.updateResult(staffGroup);

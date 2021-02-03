@@ -17,28 +17,31 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProduceDto {
 
-    @ApiModelProperty("商品唯一编码")
+    @ApiModelProperty(value = "商品唯一编码")
     private String productCode;
 
-    @ApiModelProperty("商品名称")
+    @ApiModelProperty(value = "商品名称")
     private String name;
 
-    @ApiModelProperty("商品主图片")
+    @ApiModelProperty(value = "商品主图片")
     private String imageUrl;
 
-    @ApiModelProperty("市场价(售卖价)单位为元")
+    @ApiModelProperty(value = "市场价(售卖价)单位为元")
     private String salePriceD;
 
-    @ApiModelProperty("每天服用次数")
+    @ApiModelProperty(value = "每天服用次数")
     private Integer oneToTimes;
 
-    @ApiModelProperty("每次使用次数")
+    @ApiModelProperty(value = "每次使用次数")
     private Integer oneUseNum;
 
-    @ApiModelProperty("禁用人群")
+    @ApiModelProperty(value = "禁用人群")
     private String forbidden;
 
-    @ApiModelProperty("适用人群")
+    @ApiModelProperty(value = "适用人群")
     private String applicable;
+
+    @ApiModelProperty(value = "主治病症")
+    private String diseaseName;
 
 }

@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
  **/
 public interface StaffLassoService {
 
-    List<String> calculationDto(CalculationDto calculationDto,Date date) throws ExecutionException, Exception;
+    List<String> calculationDto(CalculationDto calculationDto, Long id) throws Exception;
 
     ComResponse<Integer> trialStaffNo(long groupId) throws Exception;
 
