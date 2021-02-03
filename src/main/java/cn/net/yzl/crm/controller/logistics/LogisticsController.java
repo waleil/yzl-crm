@@ -50,6 +50,8 @@ public class LogisticsController {
         this.logisticsFien = logisticsFien;
     }
 
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
 
     @Autowired
     private FastdfsUtils fastdfsUtils;
@@ -77,23 +79,31 @@ public class LogisticsController {
     }
 
 
-    @Autowired
-    EhrStaffClient ehrStaffClient;
+
 
 
     @ApiOperation(value = "物流-登记生产")
-    @GetMapping("v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo, HttpServletRequest
+    @PostMapping("v1/generateBillOrderNo")
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody String orderNo, HttpServletRequest
                                                                 request){
-        ComResponse<cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
-        if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 
-            throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
-        }
-        StaffImageBaseInfoDto data = userNo.getData();
+//        return  ComResponse.fail(111,"33232");
         RegistryOrderinfo registryOrderinfo  = new RegistryOrderinfo();
-        registryOrderinfo.setOrderNO(orderNo);
-        registryOrderinfo.setRegisterName(data.getName());
+
+        try {
+            ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+            if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+
+                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
+            }
+            StaffImageBaseInfoDto data = userNo.getData();
+
+            registryOrderinfo.setOrderNO(orderNo);
+            registryOrderinfo.setRegisterName(data.getName());
+        } catch (BizException e) {
+            ComResponse.fail(12, "获取用户认证！");
+        }
+
         return logisticsFien.generateBillOrderNo(registryOrderinfo);
     }
 
