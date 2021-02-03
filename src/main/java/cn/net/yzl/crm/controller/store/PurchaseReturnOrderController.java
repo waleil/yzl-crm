@@ -119,4 +119,10 @@ public class PurchaseReturnOrderController {
         return purchaseReturnFeginService.updateWayBill(waybillUpdateDto);
     }
 
+    @ApiOperation(value = "退货物流信息详情", notes = "退货物流信息详情")
+    @ApiImplicitParam(name = "id", value = "采购退货单id", required = true, dataType = "Int", paramType = "query")
+    @GetMapping("v1/waybill/detail")
+    public ComResponse<WaybillDetailDto> selectWaybill(@RequestParam("id") Integer id){
+        return purchaseReturnFeginService.selectWaybill(id);
+    }
 }

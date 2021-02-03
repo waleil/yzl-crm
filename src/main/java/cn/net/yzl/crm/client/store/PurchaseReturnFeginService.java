@@ -90,4 +90,9 @@ public interface PurchaseReturnFeginService {
     @PostMapping("purchaseReturn/v1/update/waybill")
     ComResponse updateWayBill(@RequestBody WaybillUpdateDto waybillUpdateDto);
 
+    @ApiOperation(value = "退货物流信息详情", notes = "退货物流信息详情")
+    @ApiImplicitParam(name = "id", value = "采购退货单id", required = true, dataType = "Int", paramType = "query")
+    @GetMapping("purchaseReturn/v1/waybill/detail")
+    ComResponse<WaybillDetailDto> selectWaybill(@RequestParam("id") Integer id);
+
 }
