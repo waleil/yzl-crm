@@ -85,12 +85,7 @@ public class LogisticsController {
 
 
     @ApiOperation(value = "物流-登记生产")
-<<<<<<<<< Temporary merge branch 1
     @GetMapping("v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody RegistryOrderinfo orderNo){
-        return logisticsFien.generateBillOrderNo(orderNo);
-=========
-    @PostMapping("v1/generateBillOrderNo")
     public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody String orderNo, HttpServletRequest
                                                                 request){
 
