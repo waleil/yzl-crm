@@ -206,6 +206,9 @@ public class NewOrderServiceImpl implements INewOrderService {
             throw new BizException(listComResponse.getCode(),listComResponse.getMessage());
         }
         List<OrderTempVO> data = listComResponse.getData();
+        if(data ==null || data.size()==0){
+            return ComResponse.success(true);
+        }
         data.forEach(map->{
             AtomicInteger successCnt = new AtomicInteger(0);
             AtomicInteger failCnt = new AtomicInteger(0);
@@ -223,7 +226,7 @@ public class NewOrderServiceImpl implements INewOrderService {
             map.getOrderTemp().setFailCount(failCnt.intValue());
             map.getOrderTemp().setSuccessCount(successCnt.intValue());
             map.getOrderTemp().setOprCount(map.getOrderTemp().getFailCount()+map.getOrderTemp().getSuccessCount());
-            map.getOrderTemp().setOprStats(1);
+            map.getOrderTemp().setOprStats(2);
             //更新订单模板表
             ComResponse<Boolean> res = newOrderClient.updateResult(map.getOrderTemp());
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
