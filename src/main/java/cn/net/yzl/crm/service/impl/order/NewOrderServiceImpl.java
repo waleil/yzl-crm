@@ -206,6 +206,9 @@ public class NewOrderServiceImpl implements INewOrderService {
             throw new BizException(listComResponse.getCode(),listComResponse.getMessage());
         }
         List<OrderTempVO> data = listComResponse.getData();
+        if(data ==null || data.size()==0){
+            return ComResponse.success(true);
+        }
         data.forEach(map->{
             AtomicInteger successCnt = new AtomicInteger(0);
             AtomicInteger failCnt = new AtomicInteger(0);
