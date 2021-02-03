@@ -1,7 +1,5 @@
 package cn.net.yzl.crm.model.order;
 
-import java.io.Serializable;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -18,8 +16,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @ApiModel(description = "订单")
-@SuppressWarnings("serial")
-public class OrderOut implements Serializable {
+public class OrderOut {
 	@ApiModelProperty(value = "收货人地址")
 	private String reveiverAddress;
 	@ApiModelProperty(value = "收货人姓名")
