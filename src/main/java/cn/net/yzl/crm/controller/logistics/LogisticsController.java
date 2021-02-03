@@ -9,6 +9,7 @@ import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.logistics.model.ExpressCompany;
 import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
 import cn.net.yzl.logistics.model.ExpressTraceResDTO;
+import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.ExpressCode;
 import cn.net.yzl.logistics.model.vo.ExpressCodeVo;
@@ -82,7 +83,7 @@ public class LogisticsController {
 
     @ApiOperation(value = "物流-登记查询")
     @PostMapping("v1/searcha/exception")
-    public ComResponse<Page<StoreToLogisticsDto>> selectExceptionByCondition(@RequestBody SExceptionCondition sExceptionCondition){
+    public ComResponse<Page<TransPortExceptionRegistry>> selectExceptionByCondition(@RequestBody SExceptionCondition sExceptionCondition){
 
         return logisticsFien.selectExceptionByCondition(sExceptionCondition);
     }
