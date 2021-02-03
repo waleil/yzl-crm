@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.controller.workorder;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.product.ProductClient;
@@ -466,31 +468,45 @@ public class WorkOrderController {
     }
 
     @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
-   // @PostMapping(value = "v1/submitWorkOrder")
+    @PostMapping(value = "v1/submitWorkOrder")
     public ComResponse<Void> submitWorkOrder(@Validated @RequestBody SubmitWorkOrderDTO submitWorkOrderDTO){
         String userNo = QueryIds.userNo.get();
         String userName = QueryIds.userName.get();
         submitWorkOrderDTO.setUpdateId(userNo);
         submitWorkOrderDTO.setUpdateName(userName);
-        List<ProductConsultationInsertVO> productConsultationInsertVOS = new ArrayList<ProductConsultationInsertVO>();
+        //解析长字符
         String informationGoods = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoods();
-        String informationGoodNames = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoodNames();
-        String[] informationGoodsSplit = informationGoods.split(",");
-        String[] informationGoodNamesSplit = informationGoodNames.split(",");
-        for (int i = 0 ; i< informationGoodsSplit.length;i++){
-            ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
-            productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
-            productConsultationInsertVO.setProductCode(informationGoodsSplit[i]);
-            productConsultationInsertVO.setProductName(informationGoodNamesSplit[i]);
-            productConsultationInsertVO.setConsultationTime(new Date());
-            productConsultationInsertVOS.add(productConsultationInsertVO);
-        }
-        if(!CollectionUtils.isEmpty(productConsultationInsertVOS)){
-            memberFien.addProductConsultation(productConsultationInsertVOS);
-        }
+
+        List<ProductConsultationInsertVO> productConsultationInsertVOS = new ArrayList<ProductConsultationInsertVO>();
+//        String informationGoods = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoods();
+//        String informationGoodNames = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoodNames();
+//        String[] informationGoodsSplit = informationGoods.split(",");
+//        String[] informationGoodNamesSplit = informationGoodNames.split(",");
+//        for (int i = 0 ; i< informationGoodsSplit.length;i++){
+//            ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
+//            productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
+//            productConsultationInsertVO.setProductCode(informationGoodsSplit[i]);
+//            productConsultationInsertVO.setProductName(informationGoodNamesSplit[i]);
+//            productConsultationInsertVO.setConsultationTime(new Date());
+//            productConsultationInsertVOS.add(productConsultationInsertVO);
+//        }
+//        if(!CollectionUtils.isEmpty(productConsultationInsertVOS)){
+//            memberFien.addProductConsultation(productConsultationInsertVOS);
+//        }
         return workOrderClient.submitWorkOrder(submitWorkOrderDTO);
     }
 
+
+    public static void main(String[] args) {
+String str =  "{\"热销\":[{\"商品\":\"1\",\"名称\":\"name\"},{\"商品\":\"1\",\"名称\":\"name\"}]}";
+        JSONObject jsonObject = new JSONObject(str);
+        JSONArray objects= new JSONArray(jsonObject.get("热销"));
+        Object o = objects.get(0);
+
+        System.out.println(jsonObject);
+        System.out.println(objects);
+        System.out.println(o);
+    }
     @ApiOperation(value = "回访规则校验Job",notes = "回访规则校验Job")
     @GetMapping(value = "v1/returnVisitRules")
     public ComResponse<Boolean> returnVisitRules(){
