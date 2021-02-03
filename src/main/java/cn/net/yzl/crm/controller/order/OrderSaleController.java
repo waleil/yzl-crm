@@ -51,7 +51,7 @@ public class OrderSaleController {
         dto.setSaleOrderNo(seqNo);
         dto.setCreateCode(data.getStaffNo());
         dto.setCreateName(data.getName());
-        dto.setDepartId(data.getDepartId());
+        dto.setDepartId(String.valueOf(data.getDepartId()));
         return orderSaleClient.saveOrderSale(dto);
     }
 
@@ -59,7 +59,7 @@ public class OrderSaleController {
     @GetMapping("/v1/selectOrderSaleList")
     public ComResponse<Page<OrderSaleListVO>> selectOrderSaleList(
             @RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo,
-            @RequestParam(required = false) @ApiParam(value = "售后方式：0=退货，1=换货 2=拒收") Integer saleOrderType,
+            @RequestParam(required = false) @ApiParam(value = "售后方式：0=退货，1=换货 ,3=其他") Integer saleOrderType,
             @RequestParam(required = false) @ApiParam(value = "退款方式：0=快递代办，1=微信转账，2=支付宝转账，3=银行卡转账，4=退回账户余款") Integer refundType,
             @RequestParam(required = false) @ApiParam(value = "顾客名称") String memberName,
             @RequestParam(required = false) @ApiParam(value = "开始时间") String createStartTime,
@@ -79,7 +79,7 @@ public class OrderSaleController {
 
     @ApiOperation(value = "变更售后单物流信息 ")
     @PostMapping("/v1/updateExpress")
-    public ComResponse<Boolean> updateExpress(@RequestParam @Valid OrderSaleUpdateExpress express, HttpServletRequest request) {
+    public ComResponse<Boolean> updateExpress(@RequestBody @Valid OrderSaleUpdateExpress express, HttpServletRequest request) {
 
         ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
         if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
@@ -88,7 +88,7 @@ public class OrderSaleController {
         StaffImageBaseInfoDto data = userNo.getData();
         express.setCreateCode(data.getStaffNo());
         express.setCreateName(data.getName());
-        express.setDepartId(data.getDepartId());
+        express.setDepartId(String.valueOf(data.getDepartId()));
         return orderSaleClient.updateExpress(express);
     }
 
@@ -102,7 +102,7 @@ public class OrderSaleController {
         StaffImageBaseInfoDto data = userNo.getData();
         dto.setCreateCode(data.getStaffNo());
         dto.setCreateName(data.getName());
-        dto.setDepartId(data.getDepartId());
+        dto.setDepartId(String.valueOf(data.getDepartId()));
         return orderSaleClient.reviewSaleOrder(dto);
     }
 

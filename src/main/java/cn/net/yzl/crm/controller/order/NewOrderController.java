@@ -46,6 +46,13 @@ public class NewOrderController {
         return response;
     }
 
+    @ApiOperation(value = "发送会刊订单消息定时任务")
+    @PostMapping("v1/sendHKOrderTask")
+    public ComResponse<Boolean> sendHKOrderTask() {
+
+        return newOrderService.sendHKOrderTask();
+    }
+
     @ApiOperation(value = "查询群组列表",httpMethod = "POST")
     @PostMapping(value = "v1/getCrowdGroupByPaget")
     public ComResponse<Page<member_crowd_group>> getCrowdGroupByPaget(@RequestBody CrowdGroupDTO crowdGroupDTO) {

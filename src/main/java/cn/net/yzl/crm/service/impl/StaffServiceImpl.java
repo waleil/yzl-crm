@@ -174,13 +174,16 @@ public class StaffServiceImpl implements StaffService {
             return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE, "userNo不能为空!");
         }
         // 获取员工群，查看当前员工属于哪个群
-        List<StaffCrowdGroup> staffCrowdGroupList = crmStaffClient.getStaffCrowdGroup(new Date());
+        List<StaffCrowdGroup> staffCrowdGroupList = crmStaffClient.getStaffCrowdGroupDefault(0L);
         if (CollectionUtils.isEmpty(staffCrowdGroupList)) {
             return ComResponse.nodata("当前无营销目标！");
         }
-        Long groupId = staffCrowdGroupList.stream().filter(staffCrowdGroup ->
-                !CollectionUtils.isEmpty(staffCrowdGroup.getStaffCodeList()) && staffCrowdGroup.getStaffCodeList().contains(userNo))
-                .map(StaffCrowdGroup::getId).collect(Collectors.toList()).get(0);
+        Long groupId = null;
+        for (StaffCrowdGroup staffCrowdGroup : staffCrowdGroupList) {
+            if (!CollectionUtils.isEmpty(staffCrowdGroup.getStaffCodeList()) && staffCrowdGroup.getStaffCodeList().contains(userNo)) {
+                groupId = staffCrowdGroup.getId();
+            }
+        }
         if (null == groupId) {
             return ComResponse.nodata("当前无营销目标！");
         }
@@ -200,9 +203,15 @@ public class StaffServiceImpl implements StaffService {
                 List<ProductMainDTO> productMainDTOList = productClient.queryByProductCodesDefault(productCodes);
                 productMainDTOList.forEach(productMainDTO -> {
                     ProduceDto produceDto = ProduceDto.builder()
+                            .productCode(productMainDTO.getProductCode())
                             .name(productMainDTO.getName())
                             .salePriceD(productMainDTO.getSalePrice())
-                            .imageUrl(fastDFSConfig.getUrl() + productMainDTO.getImageUrl())
+                            .applicable(productMainDTO.getApplicable())
+                            .forbidden(productMainDTO.getForbidden())
+                            .oneToTimes(productMainDTO.getOneToTimes())
+                            .oneUseNum(productMainDTO.getOneUseNum())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
+                            .diseaseName(productMainDTO.getDiseaseName())
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -217,7 +226,7 @@ public class StaffServiceImpl implements StaffService {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
-                            .imageUrl(productMealListDTO.getFastDFSUrl())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -235,9 +244,15 @@ public class StaffServiceImpl implements StaffService {
                 List<ProductMainDTO> productMainDTOList = productClient.queryByProductCodesDefault(productCodes);
                 productMainDTOList.forEach(productMainDTO -> {
                     ProduceDto produceDto = ProduceDto.builder()
+                            .productCode(productMainDTO.getProductCode())
                             .name(productMainDTO.getName())
                             .salePriceD(productMainDTO.getSalePrice())
-                            .imageUrl(fastDFSConfig.getUrl() +"/"+ productMainDTO.getImageUrl())
+                            .applicable(productMainDTO.getApplicable())
+                            .forbidden(productMainDTO.getForbidden())
+                            .oneToTimes(productMainDTO.getOneToTimes())
+                            .oneUseNum(productMainDTO.getOneUseNum())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
+                            .diseaseName(productMainDTO.getDiseaseName())
                             .build();
                     activityProductList.add(produceDto);
                 });
@@ -252,7 +267,7 @@ public class StaffServiceImpl implements StaffService {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
-                            .imageUrl(fastDFSConfig.getUrl() +"/"+ productMealListDTO.getImageUrl())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
                             .build();
                     activityProductList.add(produceDto);
                 });

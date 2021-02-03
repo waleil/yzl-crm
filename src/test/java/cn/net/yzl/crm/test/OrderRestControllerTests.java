@@ -209,11 +209,11 @@ public class OrderRestControllerTests {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	public void testUpdateOrderForProduct() {
 		try {
-			UpdateOrderIn order=new UpdateOrderIn();
+			UpdateOrderIn order = new UpdateOrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
 			od1.setProductCode("10000156");
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
@@ -232,9 +232,27 @@ public class OrderRestControllerTests {
 			order.getOrderDetailIns().add(od1);
 			order.getOrderDetailIns().add(od2);
 			order.getOrderDetailIns().add(od3);
-			order.setOrderNo("ON1314020T202101311314180097");
+			order.setOrderNo("ON1314020T202102020009215927");
 			QueryIds.userNo.set("14020");
 			System.err.println(this.orderRestController.updateOrder(order));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testUpdateOrderForMeal() {
+		try {
+			UpdateOrderIn order = new UpdateOrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("T0000155");
+			od1.setProductCount(1);
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			order.getOrderDetailIns().add(od1);
+			order.setOrderNo("ON1314020T202102020019455929");
+			QueryIds.userNo.set("14020");
+			System.err.println(JSON.toJSONString(this.orderRestController.updateOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

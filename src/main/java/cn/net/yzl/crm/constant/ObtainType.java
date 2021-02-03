@@ -13,4 +13,10 @@ public interface ObtainType {
 	int OBTAIN_TYPE_2 = 2;
 	/** 充值 */
 	int OBTAIN_TYPE_3 = 3;
+	/** 退回 */
+	String OBTAIN_TYPE_1_STRING = "1";
+	/** 消费 */
+	String OBTAIN_TYPE_2_STRING = "2";
+	/** 充值 */
+	String OBTAIN_TYPE_3_STRING = "3";
 }
