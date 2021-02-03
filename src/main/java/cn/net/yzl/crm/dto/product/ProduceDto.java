@@ -47,4 +47,13 @@ public class ProduceDto {
     @ApiModelProperty(value = "主要原料")
     private String rawStock;
 
+    @ApiModelProperty(value = "包装单位")
+    private String packagingUnit;
+
+    @ApiModelProperty(value = "计量单位")
+    private String unit;
+
+    @ApiModelProperty(value = "商品总药量-规格")
+    private String totalUseNum;
+
 }
