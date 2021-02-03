@@ -55,6 +55,12 @@ public class LogisticsController {
 
 
 
+    @ApiOperation(value = "模糊搜索快递公司")
+    @GetMapping("v1/like/search/expresscompany")
+    public ComResponse<List<ObjectCommon>> getCompanyByName(@RequestParam("companyName") String companyName){
+        return logisticsFien.getCompanyByName(companyName);
+    }
+
     @ApiOperation(value = "接口信息加载")
     @GetMapping("/v1/express/company/interfaceinfo/list")
     public ComResponse<List<InterFaceInfo>>  listInterfaceInfo(@RequestParam("id") String id){
