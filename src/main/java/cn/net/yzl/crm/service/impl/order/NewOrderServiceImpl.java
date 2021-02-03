@@ -226,7 +226,7 @@ public class NewOrderServiceImpl implements INewOrderService {
             map.getOrderTemp().setFailCount(failCnt.intValue());
             map.getOrderTemp().setSuccessCount(successCnt.intValue());
             map.getOrderTemp().setOprCount(map.getOrderTemp().getFailCount()+map.getOrderTemp().getSuccessCount());
-            map.getOrderTemp().setOprStats(1);
+            map.getOrderTemp().setOprStats(2);
             //更新订单模板表
             ComResponse<Boolean> res = newOrderClient.updateResult(map.getOrderTemp());
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
