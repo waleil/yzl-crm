@@ -86,7 +86,7 @@ public class LogisticsController {
 
     @ApiOperation(value = "物流-登记生产")
     @GetMapping("v1/generateBillOrderNo")
-    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestBody String orderNo, HttpServletRequest
+    public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo, HttpServletRequest
                                                                 request){
 
 //        return  ComResponse.fail(111,"33232");
