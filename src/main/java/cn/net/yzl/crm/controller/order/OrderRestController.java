@@ -655,7 +655,7 @@ public class OrderRestController {
 		orderm.setOrderAfterIntegral(0);
 		orderm.setRelationReissueOrderTotal(0);
 		orderm.setLogisticsClaims(0);
-		orderm.setInvoiceFlag(CommonConstant.INVOICE_F);// 不开票
+		orderm.setInvoiceFlag(CommonConstant.INVOICE_0);// 不开票
 		orderm.setRelationReissueOrderNo("0");
 		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
 	}
