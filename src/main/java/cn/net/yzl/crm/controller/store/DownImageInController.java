@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ public class DownImageInController {
             String[] split = imageUrl.split("[.]");
             String[] splitPath = split[0].split("/");
             httpServletResponse.setContentType("image/" + split[split.length - 1]);
-            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + splitPath[splitPath.length - 1]+"."+split[split.length - 1]);
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("盘点信息"+System.currentTimeMillis(),"UTF-8") +".xlsx");
             outputStream = httpServletResponse.getOutputStream();
             //读取文件流
             int len = 0;
@@ -97,13 +98,13 @@ public class DownImageInController {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + storeName+ date+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("盘点信息"+System.currentTimeMillis(),"UTF-8") +".xlsx");
 
         if (status==1){
             //向前端写入文件流流
             EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
                     .sheet("盘点商品库存表").doWrite(listComResponseData);
-        }else if (status==2){
+        }else if (status==2 || status==3){
 
             List<InventoryProductResultExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
             for (InventoryProductExcelVo listComResponseDatum : listComResponseData) {
