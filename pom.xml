@@ -227,6 +227,13 @@
         <!--                        </exclusions>-->
         <!--        </dependency>-->
 
+
+        <dependency>
+            <groupId>cn.net.yzl.activity</groupId>
+            <artifactId>yzl-activity-model</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 

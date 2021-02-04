@@ -1,6 +1,9 @@
 package cn.net.yzl.crm.service.micservice;
 
 
+import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
+import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
+import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.dmc.*;
@@ -20,6 +23,15 @@ import java.util.List;
 public interface ActivityClient {
 
     Logger logger = LoggerFactory.getLogger(ActivityClient.class);
+
+
+    @ApiOperation(value = "根据多个商品唯一编码 查询当前的优惠方式、可用优惠券")
+    @PostMapping("db/v1/getProductDiscountByProductCodes")
+    ComResponse<List<ProductDiscountResponse>> getProductListDiscount(@RequestBody ProductListDiscountRequest request);
+
+    @ApiOperation(value = "根据商品唯一编码 查询当前的优惠方式、可用优惠券")
+    @PostMapping("db/v1/getProductDiscountByProductCode")
+    ComResponse<ProductDiscountResponse> getProductDiscount(@RequestBody ProductDiscountRequest request);
 
     @GetMapping("db/v1/launchManage/getAllLaunchManage")
     ComResponse<List<LaunchManageDto>> getAllLaunchManage();
