@@ -291,8 +291,7 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]信息>>{}", orderm.getStaffCode(), sresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
-		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, staffInfo.getWorkCode(),
-				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis生成订单号
+		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, RedisKeys.CREATE_ORDER_NO, 6));// 使用redis生成订单号
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
 		orderm.setDepartId(String.valueOf(staffInfo.getDepartId()));// 下单坐席所属部门id
 		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
@@ -725,8 +724,7 @@ public class OrderRestController {
 			log.error("订单列表-编辑>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
-		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, staffInfo.getWorkCode(),
-				orderm.getStaffCode(), RedisKeys.CREATE_ORDER_NO, 4));// 使用redis重新生成订单号
+		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, RedisKeys.CREATE_ORDER_NO, 6));// 使用redis重新生成订单号
 		orderm.setUpdateName(staffInfo.getName());// 更新人姓名
 		orderm.setStaffName(staffInfo.getName());// 下单坐席姓名
 		orderm.setDepartId(String.valueOf(staffInfo.getDepartId()));// 下单坐席所属部门id
