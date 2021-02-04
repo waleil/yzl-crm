@@ -42,15 +42,17 @@ public class StoreController {
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "storeNo", value = "仓库编号", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "sType", value = "仓库类型", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "mType", value = "经营类型", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "sType", value = "仓库类型", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "mType", value = "经营类型", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "仓库状态", required = false, dataType = "int", paramType = "query"),
     })
     public ComResponse<Page<StorePo>> selectStoreListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                           @RequestParam(value = "storeNo",required = false) String storeNo,
                                                           @RequestParam(value = "sType",required = false) Integer sType,
-                                                          @RequestParam(value = "mType",required = false) Integer mType){
+                                                          @RequestParam(value = "mType",required = false) Integer mType,
+                                                          @RequestParam(value = "status",required = false) Integer status){
 
-        return storeFeginService.selectStoreListPage(pageNo,pageSize,storeNo,sType,mType);
+        return storeFeginService.selectStoreListPage(pageNo,pageSize,storeNo,sType,mType,status);
     }
 
     @ApiOperation(value = "查询单个仓库信息", notes = "查询单个仓库信息")
