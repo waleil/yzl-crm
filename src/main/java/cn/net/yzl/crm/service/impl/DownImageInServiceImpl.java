@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +63,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=stock" + sysDate+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("库存信息"+System.currentTimeMillis(),"UTF-8") +".xlsx");
 
 
 
@@ -101,7 +102,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=stockWarn" + sysDate+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode("商品采购预警信息"+System.currentTimeMillis(),"UTF-8") +".xlsx");
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), ProductPurchaseWarnExcelDTO.class)
