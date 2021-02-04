@@ -68,22 +68,25 @@ public class WorkOrderServiceImpl implements WorkOrderService {
         if (null != list && list.size() > 0) {
             // 按员工号查询员工信息
             String staffNo = QueryIds.userNo.get();
+            String name ="";
             if(StringUtils.isNotBlank(staffNo)){
                 ComResponse<StaffImageBaseInfoDto> sresponse = EhrStaffClient.getDetailsByNo(staffNo);
                 StaffImageBaseInfoDto staffInfo = sresponse.getData();
                 YLoggerUtil.infoLog("待领取顾客池-领取-获取登录信息", JsonUtil.toJsonStr(staffInfo));
                 if(null != staffInfo){
                     WorkOrderReceiveUpdateDTO receiveUpdateDTO = new WorkOrderReceiveUpdateDTO();
+                    name = staffInfo.getName();
                     receiveUpdateDTO.setStaffNo(staffInfo.getStaffNo());
-                    receiveUpdateDTO.setStaffName(staffInfo.getName());
+                    receiveUpdateDTO.setStaffName(name);
                     receiveUpdateDTO.setDeptId(staffInfo.getDepartId());
+                    receiveUpdateDTO.setDeptName(staffInfo.getDepartName());
                     receiveUpdateDTO.setStaffLevel(staffInfo.getPostLevelName());
                     workOrderReceiveDTO.setReceiveUpdateDTO(receiveUpdateDTO);
                 }
             }
             for (WorkOrderFlowDTO workOrderFlowDTO : list) {
-                workOrderFlowDTO.setCreateId(QueryIds.userNo.get());
-                workOrderFlowDTO.setCreateName(QueryIds.userName.get());
+                workOrderFlowDTO.setCreateId(staffNo);
+                workOrderFlowDTO.setCreateName(org.springframework.util.StringUtils.isEmpty(name)?name:QueryIds.userName.get());
                 workOrderFlowDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
             }
             workOrderReceiveDTO.setWorkOrderFlows(list);

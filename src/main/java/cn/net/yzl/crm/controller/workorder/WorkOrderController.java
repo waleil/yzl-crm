@@ -11,11 +11,15 @@ import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.dto.ehr.EhrStaff;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
+import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
+import cn.net.yzl.workorder.common.CommonConstants;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
@@ -26,6 +30,9 @@ import cn.net.yzl.workorder.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -58,6 +65,9 @@ public class WorkOrderController {
 
     @Autowired
     private MemberFien memberFien;
+
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
 
     /**
      * 查询我的回访分页列表
@@ -124,8 +134,18 @@ public class WorkOrderController {
     @PostMapping("v1/pageList")
     @ApiOperation(value = "智能工单: 热线工单管理-列表", notes = "智能工单: 热线工单管理-列表")
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
+        //获取当前用户部门，以及员工
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        //智能工单--查询自己部门的数据
+        if(!StringUtils.isEmpty(detailsByNo) && !StringUtils.isEmpty(detailsByNo.getData())){
+            StaffImageBaseInfoDto data = detailsByNo.getData();
+            Integer departId = data.getDepartId();//当前登录人部门编码
+            findWorkOrderHotlinePageListDTO.setDeptId(departId);
+        }
+        //智能派单--默认查询所有部门的数据
         ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
+
     }
 
     /**
@@ -209,6 +229,8 @@ public class WorkOrderController {
     @ApiOperation(value = "回访工单管理列表", notes = "回访工单管理列表")
     @PostMapping(value = "v1/listPage")
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        workOrderVisitVO.setDeptId(detailsByNo.getData().getDepartId());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
         Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
@@ -311,7 +333,8 @@ public class WorkOrderController {
     @PostMapping(value = "v1/adjustment")
     public ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO) {
         updateWorkOrderVisitDTO.setCreateId(QueryIds.userNo.get());
-        updateWorkOrderVisitDTO.setCreateName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        updateWorkOrderVisitDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.adjustment(updateWorkOrderVisitDTO);
     }
 
@@ -319,7 +342,8 @@ public class WorkOrderController {
     @PostMapping(value = "v1/batchAdjustment")
     public ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO) {
         updateBatchDTO.setCreateId(QueryIds.userNo.get());
-        updateBatchDTO.setCreateName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        updateBatchDTO.setCreateName(detailsByNo.getData().getName());
         List<UpdateBatchWorkOrderDTO> updateBatchWorkOrderDTOS = updateBatchDTO.getUpdateBatchWorkOrderDTOS();
         int count = 0;
         for (UpdateBatchWorkOrderDTO updateBatchWorkOrderDTO : updateBatchWorkOrderDTOS) {
@@ -367,7 +391,31 @@ public class WorkOrderController {
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
-        return workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+        ComResponse<FindDWorkOrderHotlineDetailsVO> dWorkOrderHotlineDetails = workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+        FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
+        if(!StringUtils.isEmpty(data)){
+            //获取详情中的阶梯商品，通过商品编码获取商品列表
+            String firstBuyProductCode = data.getFirstBuyProductCode();//商品编码，多个是商品逗号拼接
+            if(!StringUtils.isEmpty(firstBuyProductCode)) {
+                String[] split = firstBuyProductCode.split(",");
+                //获取数组
+                Stream<String> distinct = Arrays.stream(split).distinct();
+                //创建Map集合
+                List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
+                distinct.forEach(s -> {
+                    //循环调用商品详情服务
+                    ComResponse<ProductDetailVO> productDetailVOComResponse = productClient.queryProductDetail(s);
+                    ProductDetailVO productDetailVO = productDetailVOComResponse.getData();
+                    if(!StringUtils.isEmpty(productDetailVO)){
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("productDetail",productDetailVO);
+                        maps.add(map);
+                    }
+                });
+                data.setProductDetailMaps(maps);
+            }
+        }
+        return dWorkOrderHotlineDetails;
     }
 
     /**
@@ -383,7 +431,7 @@ public class WorkOrderController {
 
     /**
      * 智能工单：热线工单管理-可分配员工
-     *
+     *回收
      * @param
      * @return
      */
@@ -424,7 +472,8 @@ public class WorkOrderController {
     @PostMapping(value = "v1/recovery")
     public ComResponse<Void> recovery(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
-        recoveryDTO.setStaffName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        recoveryDTO.setStaffName(detailsByNo.getData().getName());
         return workOrderClient.recovery(recoveryDTO);
     }
 
@@ -438,7 +487,10 @@ public class WorkOrderController {
     @PostMapping(value = "v1/handIn")
     public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
-        recoveryDTO.setStaffName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        recoveryDTO.setCreateName(detailsByNo.getData().getName());
+        recoveryDTO.setCreateId(QueryIds.userNo.get());
+        recoveryDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.handIn(recoveryDTO);
     }
 
@@ -468,7 +520,8 @@ public class WorkOrderController {
     @PostMapping(value = "v1/isHandIn")
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
         isHandInDTO.setStaffNo(QueryIds.userNo.get());
-        isHandInDTO.setStaffName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        isHandInDTO.setStaffName(detailsByNo.getData().getName());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
         if(CollectionUtils.isEmpty(listComResponse.getData())){
             return ComResponse.success(Boolean.TRUE);
@@ -568,9 +621,9 @@ public class WorkOrderController {
     @PostMapping(value = "v1/submitWorkOrder")
     public ComResponse<Void> submitWorkOrder(@Validated @RequestBody SubmitWorkOrderDTO submitWorkOrderDTO){
         String userNo = QueryIds.userNo.get();
-        String userName = QueryIds.userName.get();
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         submitWorkOrderDTO.setUpdateId(userNo);
-        submitWorkOrderDTO.setUpdateName(userName);
+        submitWorkOrderDTO.setUpdateName(detailsByNo.getData().getName());
         //解析长字符
         String informationGoods = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoods();
         if(StringUtils.isEmpty(informationGoods)) {
@@ -629,27 +682,6 @@ public class WorkOrderController {
             }
         }
         return workOrderClient.submitWorkOrder(submitWorkOrderDTO);
-    }
-
-    @ApiOperation(value = "回访规则校验Job",notes = "回访规则校验Job")
-    @GetMapping(value = "v1/returnVisitRules")
-    public ComResponse<Boolean> returnVisitRules(){
-        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(2, 2, 1, 0);
-        List<WorkOrderRuleConfigBean> data = listComResponse.getData();
-        if (CollectionUtils.isEmpty(data)){
-            return ComResponse.success();
-        }
-        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
-            switch (workOrderRuleConfigBean.getId()){
-                case 9:
-                    break;
-                case 10:
-                    String paramsValue = workOrderRuleConfigBean.getParamsValue();
-                    workOrderClient.visitDateLtCurrentDate(paramsValue);
-                    break;
-            }
-        }
-        return ComResponse.success();
     }
 
     @ApiOperation(value = "产品服用量小于规则配置:需回访",notes = "产品服用量小于规则配置:需回访")
