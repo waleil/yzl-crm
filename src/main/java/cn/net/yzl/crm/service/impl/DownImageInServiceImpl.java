@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -56,13 +57,13 @@ public class DownImageInServiceImpl implements DownImageInService {
 
         //系统时间
         Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sysDate = simpleDateFormat.format(date);
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=stock" + sysDate+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + "库存信息"+sysDate +".xlsx");
 
 
 
@@ -95,13 +96,13 @@ public class DownImageInServiceImpl implements DownImageInService {
         }
         //系统时间
         Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String sysDate = simpleDateFormat.format(date);
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=stockWarn" + sysDate+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +"商品采购预警信息"+sysDate +".xlsx");
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), ProductPurchaseWarnExcelDTO.class)

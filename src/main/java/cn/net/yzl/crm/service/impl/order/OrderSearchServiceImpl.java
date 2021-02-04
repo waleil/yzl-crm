@@ -14,6 +14,7 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 
 import cn.net.yzl.crm.service.order.IOrderSearchService;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.logistics.enums.OrderStatus;
 import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
 import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.order.model.vo.order.OrderInfoResDTO;
@@ -87,8 +88,8 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
             throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(),"该订单不存在");
         }
         OrderInfoResDTO order = respons.getData();
-        if(StringUtils.isBlank(order.getExpressNumber()) ){
-            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(),"订单尚未发货");
+        if(order.getOrderStatus() < OrderStatus.ORDER_STATUS_4.getCode()){
+           return ComResponse.success(null);
         }
         if (!StringUtils.isBlank(mailid) && !StringUtils.isBlank(companyCode) &&
                 !StringUtils.isBlank(order.getExpressNumber()) &&!mailid.equals(order.getExpressNumber())) {

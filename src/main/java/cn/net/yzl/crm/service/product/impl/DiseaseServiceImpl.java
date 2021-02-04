@@ -39,7 +39,8 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     @Override
     public ComResponse<List<DiseaseDTO>> queryByPid(Integer pid) {
-        return client.queryByPID(pid);
+        //查询，不允许空一级病症
+        return client.queryByPID(pid,false);
     }
 
     @Override

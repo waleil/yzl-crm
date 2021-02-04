@@ -99,7 +99,8 @@ public class MemberGroupController {
         member_group.setActiveTypeList(memberCrowdGroup.getActiveTypeList());
         member_group.setOrder_total_amount(memberCrowdGroup.getOrder_total_amount());
         member_group.setUpdate_time(DateHelper.getCurrentDate());
-        member_group.setEnable(0);
+        //默认是启用状态
+        member_group.setEnable(1);
         member_group.setCreate_name(memberCrowdGroup.getCreate_name());
         member_group.setAdvertProducts(memberCrowdGroup.getAdvertProducts());
         member_group.setLastCallDays(memberCrowdGroup.getLastCallDays());

@@ -72,7 +72,7 @@
         <dependency>
             <groupId>cn.net.yzl</groupId>
             <artifactId>yzl-common</artifactId>
-            <version>1.0-RELEASE</version>
+            <version>1.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.github.pagehelper</groupId>
