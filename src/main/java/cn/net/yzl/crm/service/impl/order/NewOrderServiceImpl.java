@@ -644,6 +644,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			product.setUnit(m.getUnit());
 			product.setStock(m.getStock());
 			product.setPackageunit(m.getPackagingUnit());
+			product.setProductNo(m.getProductNo());
 			return product;
 		}).collect(Collectors.toList());
 
