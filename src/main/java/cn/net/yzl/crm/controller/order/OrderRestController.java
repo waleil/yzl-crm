@@ -226,23 +226,7 @@ public class OrderRestController {
 	@ApiOperation(value = "热线工单-购物车-提交订单", notes = "热线工单-购物车-提交订单")
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
 		OrderM orderm = new OrderM();// 订单信息
-		orderm.setTotal(0);// 实收金额=应收金额+预存
-		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
-		orderm.setTotalAll(0);// 订单总额
-		orderm.setCash1(0);// 预存金额
-		orderm.setSpend(0);// 消费金额=订单总额-优惠
-		orderm.setPfee(0);// 邮费
-		orderm.setPfeeFlag(CommonConstant.PFEE_FLAG_0);// 邮费承担方
-		orderm.setAmountStored(0);
-		orderm.setAmountRedEnvelope(0);
-		orderm.setAmountCoupon(0);
-		orderm.setPointsDeduction(0);
-		orderm.setReturnAmountCoupon(0);
-		orderm.setReturnAmountRedEnvelope(0);
-		orderm.setReturnPointsDeduction(0);
-		orderm.setInvoiceFlag(CommonConstant.INVOICE_F);// 不开票
-		orderm.setRelationReissueOrderNo("0");
-		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
+		this.initOrder(orderm);
 		// 如果订单里没有商品
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin);
@@ -641,6 +625,39 @@ public class OrderRestController {
 				orderm.getReveiverTelphoneNo(), BigDecimal.valueOf(orderm.getTotal()).divide(bd100).doubleValue(),
 				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100).doubleValue(),
 				orderm.getOrderNo()));
+	}
+
+	/**
+	 * 初始化订单
+	 * 
+	 * @param orderm 订单
+	 * @author zhangweiwei
+	 * @date 2021年2月4日,上午10:29:31
+	 */
+	private void initOrder(OrderM orderm) {
+		orderm.setTotal(0);// 实收金额=应收金额+预存
+		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
+		orderm.setTotalAll(0);// 订单总额
+		orderm.setCash1(0);// 预存金额
+		orderm.setSpend(0);// 消费金额=订单总额-优惠
+		orderm.setPfee(0);// 邮费
+		orderm.setPfeeFlag(CommonConstant.PFEE_FLAG_0);// 邮费承担方
+		orderm.setAmountStored(0);
+		orderm.setAmountRedEnvelope(0);
+		orderm.setAmountCoupon(0);
+		orderm.setPointsDeduction(0);
+		orderm.setReturnAmountCoupon(0);
+		orderm.setReturnAmountRedEnvelope(0);
+		orderm.setReturnPointsDeduction(0);
+		orderm.setOrderAfterSpare(0);
+		orderm.setOrderAfterRed(0);
+		orderm.setOrderAfterRebate(0);
+		orderm.setOrderAfterIntegral(0);
+		orderm.setRelationReissueOrderTotal(0);
+		orderm.setLogisticsClaims(0);
+		orderm.setInvoiceFlag(CommonConstant.INVOICE_0);// 不开票
+		orderm.setRelationReissueOrderNo("0");
+		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
 	}
 
 	/**
