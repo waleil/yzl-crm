@@ -15,6 +15,7 @@ import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
+import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
@@ -26,6 +27,9 @@ import cn.net.yzl.workorder.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -367,7 +371,31 @@ public class WorkOrderController {
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
-        return workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+        ComResponse<FindDWorkOrderHotlineDetailsVO> dWorkOrderHotlineDetails = workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+        FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
+        if(!StringUtils.isEmpty(data)){
+            //获取详情中的阶梯商品，通过商品编码获取商品列表
+            String firstBuyProductCode = data.getFirstBuyProductCode();//商品编码，多个是商品逗号拼接
+            if(!StringUtils.isEmpty(firstBuyProductCode)) {
+                String[] split = firstBuyProductCode.split(",");
+                //获取数组
+                Stream<String> distinct = Arrays.stream(split).distinct();
+                //创建Map集合
+                List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
+                distinct.forEach(s -> {
+                    //循环调用商品详情服务
+                    ComResponse<ProductDetailVO> productDetailVOComResponse = productClient.queryProductDetail(s);
+                    ProductDetailVO productDetailVO = productDetailVOComResponse.getData();
+                    if(!StringUtils.isEmpty(productDetailVO)){
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("productDetail",productDetailVO);
+                        maps.add(map);
+                    }
+                });
+                data.setProductDetailMaps(maps);
+            }
+        }
+        return dWorkOrderHotlineDetails;
     }
 
     /**
