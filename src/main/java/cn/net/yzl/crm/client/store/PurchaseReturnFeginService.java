@@ -53,6 +53,10 @@ public interface PurchaseReturnFeginService {
     @GetMapping("purchaseReturn/v1/detail")
     ComResponse<PurReturnEditNotMergeDto> detail(@RequestParam("id") Integer id);
 
+    @ApiOperation(value = "采购退货单审核详情")
+    @ApiImplicitParam(name = "id", value = "采购退货单id", required = true, dataType = "Int", paramType = "query")
+    @GetMapping("purchaseReturn/v1/review/detail")
+    ComResponse<PurReturnEditNotMergeDto> reviewDetail(@RequestParam("id") Integer id);
 
 
     /**

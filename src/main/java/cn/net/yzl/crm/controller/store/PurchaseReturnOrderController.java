@@ -73,6 +73,12 @@ public class PurchaseReturnOrderController {
         return purchaseReturnFeginService.detail(id);
     }
 
+    @ApiOperation(value = "采购退货单审核详情")
+    @ApiImplicitParam(name = "id", value = "采购退货单id", required = true, dataType = "Int", paramType = "query")
+    @GetMapping("v1/review/detail")
+    public ComResponse<PurReturnEditNotMergeDto> reviewDetail(@RequestParam("id") Integer id){
+        return purchaseReturnFeginService.reviewDetail(id);
+    }
 
 
     /**

@@ -11,7 +11,9 @@ import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.dto.ehr.EhrStaff;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
@@ -62,6 +64,9 @@ public class WorkOrderController {
 
     @Autowired
     private MemberFien memberFien;
+
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
 
     /**
      * 查询我的回访分页列表
@@ -213,6 +218,8 @@ public class WorkOrderController {
     @ApiOperation(value = "回访工单管理列表", notes = "回访工单管理列表")
     @PostMapping(value = "v1/listPage")
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        workOrderVisitVO.setDeptId(detailsByNo.getData().getDepartId());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
         Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
@@ -315,7 +322,8 @@ public class WorkOrderController {
     @PostMapping(value = "v1/adjustment")
     public ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO) {
         updateWorkOrderVisitDTO.setCreateId(QueryIds.userNo.get());
-        updateWorkOrderVisitDTO.setCreateName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        updateWorkOrderVisitDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.adjustment(updateWorkOrderVisitDTO);
     }
 
@@ -323,7 +331,8 @@ public class WorkOrderController {
     @PostMapping(value = "v1/batchAdjustment")
     public ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO) {
         updateBatchDTO.setCreateId(QueryIds.userNo.get());
-        updateBatchDTO.setCreateName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        updateBatchDTO.setCreateName(detailsByNo.getData().getName());
         List<UpdateBatchWorkOrderDTO> updateBatchWorkOrderDTOS = updateBatchDTO.getUpdateBatchWorkOrderDTOS();
         int count = 0;
         for (UpdateBatchWorkOrderDTO updateBatchWorkOrderDTO : updateBatchWorkOrderDTOS) {
@@ -411,7 +420,7 @@ public class WorkOrderController {
 
     /**
      * 智能工单：热线工单管理-可分配员工
-     *
+     *回收
      * @param
      * @return
      */
@@ -452,7 +461,8 @@ public class WorkOrderController {
     @PostMapping(value = "v1/recovery")
     public ComResponse<Void> recovery(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
-        recoveryDTO.setStaffName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        recoveryDTO.setStaffName(detailsByNo.getData().getName());
         return workOrderClient.recovery(recoveryDTO);
     }
 
@@ -466,9 +476,10 @@ public class WorkOrderController {
     @PostMapping(value = "v1/handIn")
     public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
-        recoveryDTO.setStaffName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        recoveryDTO.setCreateName(detailsByNo.getData().getName());
         recoveryDTO.setCreateId(QueryIds.userNo.get());
-        recoveryDTO.setCreateName(QueryIds.userName.get());
+        recoveryDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.handIn(recoveryDTO);
     }
 
@@ -498,7 +509,8 @@ public class WorkOrderController {
     @PostMapping(value = "v1/isHandIn")
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
         isHandInDTO.setStaffNo(QueryIds.userNo.get());
-        isHandInDTO.setStaffName(QueryIds.userName.get());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        isHandInDTO.setStaffName(detailsByNo.getData().getName());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
         if(CollectionUtils.isEmpty(listComResponse.getData())){
             return ComResponse.success(Boolean.TRUE);
@@ -598,9 +610,9 @@ public class WorkOrderController {
     @PostMapping(value = "v1/submitWorkOrder")
     public ComResponse<Void> submitWorkOrder(@Validated @RequestBody SubmitWorkOrderDTO submitWorkOrderDTO){
         String userNo = QueryIds.userNo.get();
-        String userName = QueryIds.userName.get();
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         submitWorkOrderDTO.setUpdateId(userNo);
-        submitWorkOrderDTO.setUpdateName(userName);
+        submitWorkOrderDTO.setUpdateName(detailsByNo.getData().getName());
         //解析长字符
         String informationGoods = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoods();
         if(StringUtils.isEmpty(informationGoods)) {
@@ -687,7 +699,7 @@ public class WorkOrderController {
     public ComResponse<Boolean> productDosage(@ApiParam("顾客会员号")@RequestParam("memberCard") List<String> memberCard){
         return workOrderClient.productDosage(memberCard);
     }
-
+//·
     @ApiOperation(value = "新客户回访",notes = "新客户回访")
     @GetMapping(value = "v1/newMember")
     public ComResponse<Boolean> newMember(@ApiParam("顾客会员号")@RequestParam("memberCard") String memberCard,@ApiParam("状态:1新顾客;2:老顾客")@RequestParam("status")Integer status ){
