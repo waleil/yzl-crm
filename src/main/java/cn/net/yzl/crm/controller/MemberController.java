@@ -1,9 +1,7 @@
 package cn.net.yzl.crm.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
@@ -18,10 +16,7 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
-import cn.net.yzl.crm.customer.dto.member.MemberDiseaseCustomerDto;
-import cn.net.yzl.crm.customer.dto.member.MemberGradeRecordDto;
-import cn.net.yzl.crm.customer.dto.member.MemberProductEffectDTO;
-import cn.net.yzl.crm.customer.dto.member.MemberSerchConditionDTO;
+import cn.net.yzl.crm.customer.dto.member.*;
 import cn.net.yzl.crm.customer.model.*;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
@@ -29,14 +24,15 @@ import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
-import cn.net.yzl.crm.dto.member.customerJourney.MemberCustomerJourneyDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
+import cn.net.yzl.crm.dto.member.customerJourney.MemberCustomerJourneyDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
 import cn.net.yzl.crm.service.micservice.member.MemberProductEffectFien;
+import cn.net.yzl.crm.service.micservice.member.MemberTypeFien;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.PortraitOrderDetailDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
@@ -71,6 +67,9 @@ public class MemberController {
     WorkOrderClient workOrderClient;
     @Autowired
     MemberProductEffectFien memberProductEffectFien;
+
+    @Autowired
+    MemberTypeFien memberTypeFien;
 
 
     @ApiOperation(value = "顾客列表-分页查询顾客列表")
@@ -572,6 +571,14 @@ private ProductClient productClient;
     public ComResponse<List<MemberProductEffectDTO>> getProductEffects(
             @RequestBody MemberProductEffectSelectVO productEffect) {
         ComResponse<List<MemberProductEffectDTO>> result = memberProductEffectFien.getProductEffects(productEffect);
+        return result;
+    }
+
+
+    @ApiOperation(value = "顾客类别查询", notes = "顾客类别查询")
+    @GetMapping(value = "/v1/queryMemberType")
+    public ComResponse<List<MemberTypeDTO>> queryMemberType() {
+        ComResponse<List<MemberTypeDTO>> result = memberTypeFien.queryMemberType();
         return result;
     }
 

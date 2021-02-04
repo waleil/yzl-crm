@@ -15,6 +15,7 @@ import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.controller.order.OrderRestController;
+import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.order.constant.CommonConstant;
@@ -253,6 +254,51 @@ public class OrderRestControllerTests {
 			order.setOrderNo("ON1314020T202102020019455929");
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.updateOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCalcOrderForProduct() {
+		try {
+			CalcOrderIn order = new CalcOrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("10000156");
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od1.setProductCount(2);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_1);
+			OrderDetailIn od2 = new OrderDetailIn();
+			od2.setProductCode("10000155");
+			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od2.setProductCount(2);
+			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			OrderDetailIn od3 = new OrderDetailIn();
+			od3.setProductCode("10000152");
+			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od3.setProductCount(2);
+			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			order.getOrderDetailIns().add(od1);
+			order.getOrderDetailIns().add(od2);
+			order.getOrderDetailIns().add(od3);
+			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCalcOrderForMeal() {
+		try {
+
+			CalcOrderIn order = new CalcOrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("T0000155");
+			od1.setProductCount(2);
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			order.getOrderDetailIns().add(od1);
+			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
