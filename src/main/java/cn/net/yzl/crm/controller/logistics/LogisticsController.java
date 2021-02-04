@@ -108,10 +108,13 @@ public class LogisticsController {
 
             StaffImageBaseInfoDto data = userNo.getData();
 
-            registryOrderinfo.setOrderNO(orderNo);
+
+
             if(StringUtils.isEmpty(data.getName())){
                 return ComResponse.fail(ComResponse.ERROR_STATUS, "用户名不存在");
             }
+
+            registryOrderinfo.setOrderNO(orderNo);
             registryOrderinfo.setRegisterName(data.getName());
 
         } catch (BizException e) {
