@@ -8,8 +8,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@ApiModel("Ehr返回员工职场实体")
-public class StaffStatusDto {
+@ApiModel("Ehr返回数据字典实体")
+public class SysDictDto {
     @ApiModelProperty("字典编码")
     private String dictCode;
     @ApiModelProperty("字典排序")

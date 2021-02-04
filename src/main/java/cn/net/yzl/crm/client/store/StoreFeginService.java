@@ -72,7 +72,7 @@ public interface StoreFeginService {
 
     @GetMapping("store/v1/selectStoreLocalListPage")
     public ComResponse<Page<StoreLocalPo>> selectStoreLocalListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
-                                                                    @RequestParam(value = "storeNo",required = false) String storeNo,
+                                                                    @RequestParam(value = "storeLocalNo",required = false) String storeLocalNo,
                                                                     @RequestParam(value = "storeAreaKindId",required = false) Integer storeAreaKindId);
 
     @GetMapping("store/v1/delStoreArea")
@@ -103,8 +103,8 @@ public interface StoreFeginService {
 
     @GetMapping("store/v1/stockInquiry")
     public ComResponse<Page<ProductStockPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
-                                                          @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
-                                                          @RequestParam(value = "storeName",required = false) String storeNo);
+                                                          @RequestParam(value = "codeAndName",required = false) String codeAndName,
+                                                          @RequestParam(value = "storeNo",required = false) String storeNo);
 
 
     @ApiOperation(value = "获取已存在的财务归属", notes = "获取已存在的财务归属", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -128,7 +128,13 @@ public interface StoreFeginService {
     ComResponse<List<StorePo>> selectStoreAny();
 
     @ApiOperation(value = "新增仓库的时候下拉库位的查询",notes = "新增仓库的时候下拉库位的查询")
-    @GetMapping("store/v1/StoreLocalPullDown")
+    @GetMapping("store/v1/storeLocalPullDown")
     ComResponse<List<StoreLocalVo>> storeLocalPullDown();
+
+
+    @ApiOperation(value = "分页查询绑定的库位",notes = "分页查询绑定的库位")
+    @GetMapping("store/v1/storeLocalPageList")
+    public ComResponse<Page<StoreLocalPo>> storeLocalPageList(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                                        @RequestParam(value = "storeId",required = false) Integer storeI);
 
 }

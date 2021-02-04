@@ -5,20 +5,23 @@ import java.util.Arrays;
 import javax.annotation.Resource;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.net.yzl.crm.client.member.MemberAddressClient;
+import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.controller.order.OrderRestController;
+import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
+import cn.net.yzl.order.model.vo.order.UpdateOrderIn;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
 
@@ -37,11 +40,13 @@ public class OrderRestControllerTests {
 	@Resource
 	private MemberFien memberFien;
 	@Resource
-	private MemberAddressClient memberAddressClient;
-	@Resource
 	private EhrStaffClient ehrStaffClient;
 	@Resource
 	private OrderRestController orderRestController;
+	@Resource
+	private OrderFeignClient orderFeignClient;
+	@Value("${api.gateway.url}")
+	private String apiGateWayUrl;
 
 	@Test
 	public void testQueryListProductMealByCodes() {
@@ -56,6 +61,8 @@ public class OrderRestControllerTests {
 	@Test
 	public void testQueryByCodes() {
 		try {
+			System.err.println(String.format("%s%s%s", this.apiGateWayUrl, ProductClient.SUFFIX_URL,
+					ProductClient.INCREASE_STOCK_URL));
 			String codes = "10000130,10000114,10000106";
 			this.productClient.queryByProductCodes(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
@@ -66,6 +73,8 @@ public class OrderRestControllerTests {
 	@Test
 	public void testGetMember() {
 		try {
+			System.err.println(String.format("%s%s%s", this.apiGateWayUrl, MemberFien.SUFFIX_URL,
+					MemberFien.CUSTOMER_AMOUNT_OPERATION_URL));
 			String member = "100000002";
 			System.err.println(this.memberFien.getMember(member).getData());
 		} catch (Exception e) {
@@ -77,7 +86,7 @@ public class OrderRestControllerTests {
 	public void testGetReveiverAddress() {
 		try {
 			String member = "100000002";
-			this.memberAddressClient.getReveiverAddress(member).getData().forEach(System.err::println);
+			this.memberFien.getReveiverAddress(member).getData().forEach(System.err::println);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -118,17 +127,17 @@ public class OrderRestControllerTests {
 		try {
 			OrderIn order = new OrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
-			od1.setProductCode("10000140");
+			od1.setProductCode("10000156");
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(2);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_1);
 			OrderDetailIn od2 = new OrderDetailIn();
-			od2.setProductCode("10000138");
+			od2.setProductCode("10000155");
 			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od2.setProductCount(2);
 			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od3 = new OrderDetailIn();
-			od3.setProductCode("10000135");
+			od3.setProductCode("10000152");
 			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od3.setProductCount(2);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
@@ -137,6 +146,9 @@ public class OrderRestControllerTests {
 			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
 			order.setReveiverAddressNo(482416);
+			order.setMediaChannel(0);
+			order.setMemberTelphoneNo("12345678901");
+			order.setPayType(CommonConstant.PAY_TYPE_0);
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
@@ -149,24 +161,16 @@ public class OrderRestControllerTests {
 		try {
 			OrderIn order = new OrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
-			od1.setMealNo("T0000147");
+			od1.setProductCode("T0000155");
+			od1.setProductCount(2);
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-			OrderDetailIn od2 = new OrderDetailIn();
-			od2.setProductCode("10000140");
-			od2.setMealFlag(CommonConstant.MEAL_FLAG_1);
-			od2.setProductCount(3);
-			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-			OrderDetailIn od3 = new OrderDetailIn();
-			od3.setProductCode("10000139");
-			od3.setMealFlag(CommonConstant.MEAL_FLAG_1);
-			od3.setProductCount(2);
-			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
-//			order.getOrderDetailIns().add(od2);
-//			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
 			order.setReveiverAddressNo(482416);
+			order.setMediaChannel(0);
+			order.setMemberTelphoneNo("12345678901");
+			order.setPayType(CommonConstant.PAY_TYPE_0);
 			QueryIds.userNo.set("14020");
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
@@ -186,17 +190,115 @@ public class OrderRestControllerTests {
 			ProductReduceVO p2 = new ProductReduceVO();
 			p2.setNum(1);
 			p2.setOrderNo(vo.getOrderNo());
-			p2.setProductCode("10000139");
-			ProductReduceVO p3 = new ProductReduceVO();
-			p3.setNum(1);
-			p3.setOrderNo(vo.getOrderNo());
-			p3.setProductCode("10000138");
+			p2.setProductCode("10000144");
 			ProductReduceVO p4 = new ProductReduceVO();
 			p4.setNum(1);
 			p4.setOrderNo(vo.getOrderNo());
-			p4.setProductCode("10000136");
-			vo.setProductReduceVOS(Arrays.asList(p1, p2, p3, p4));
+			p4.setProductCode("10000139");
+			vo.setProductReduceVOS(Arrays.asList(p1, p2, p4));
 			System.err.println(this.productClient.productReduce(vo));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testQueryOrder() {
+		try {
+			System.err.println(this.orderFeignClient.queryOrder("ON1314020T202101301744350095").getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testUpdateOrderForProduct() {
+		try {
+			UpdateOrderIn order = new UpdateOrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("10000156");
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od1.setProductCount(3);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			OrderDetailIn od2 = new OrderDetailIn();
+			od2.setProductCode("10000155");
+			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od2.setProductCount(3);
+			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			OrderDetailIn od3 = new OrderDetailIn();
+			od3.setProductCode("10000152");
+			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od3.setProductCount(3);
+			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			order.getOrderDetailIns().add(od1);
+			order.getOrderDetailIns().add(od2);
+			order.getOrderDetailIns().add(od3);
+			order.setOrderNo("ON1314020T202102020009215927");
+			QueryIds.userNo.set("14020");
+			System.err.println(this.orderRestController.updateOrder(order));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testUpdateOrderForMeal() {
+		try {
+			UpdateOrderIn order = new UpdateOrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("T0000155");
+			od1.setProductCount(1);
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			order.getOrderDetailIns().add(od1);
+			order.setOrderNo("ON1314020T202102020019455929");
+			QueryIds.userNo.set("14020");
+			System.err.println(JSON.toJSONString(this.orderRestController.updateOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCalcOrderForProduct() {
+		try {
+			CalcOrderIn order = new CalcOrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("10000156");
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od1.setProductCount(2);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_1);
+			OrderDetailIn od2 = new OrderDetailIn();
+			od2.setProductCode("10000155");
+			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od2.setProductCount(2);
+			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			OrderDetailIn od3 = new OrderDetailIn();
+			od3.setProductCode("10000152");
+			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od3.setProductCount(2);
+			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			order.getOrderDetailIns().add(od1);
+			order.getOrderDetailIns().add(od2);
+			order.getOrderDetailIns().add(od3);
+			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCalcOrderForMeal() {
+		try {
+
+			CalcOrderIn order = new CalcOrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("T0000155");
+			od1.setProductCount(2);
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			order.getOrderDetailIns().add(od1);
+			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -63,7 +63,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     }
 
     @Override
-    public ComResponse<Void> receiveUsers(List<WorkOrderFlowDTO> list) {
+    public ComResponse<Boolean> receiveUsers(List<WorkOrderFlowDTO> list) {
         WorkOrderReceiveDTO workOrderReceiveDTO = new WorkOrderReceiveDTO();
         if (null != list && list.size() > 0) {
             // 按员工号查询员工信息
@@ -71,6 +71,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
             if(StringUtils.isNotBlank(staffNo)){
                 ComResponse<StaffImageBaseInfoDto> sresponse = EhrStaffClient.getDetailsByNo(staffNo);
                 StaffImageBaseInfoDto staffInfo = sresponse.getData();
+                YLoggerUtil.infoLog("待领取顾客池-领取-获取登录信息", JsonUtil.toJsonStr(staffInfo));
                 if(null != staffInfo){
                     WorkOrderReceiveUpdateDTO receiveUpdateDTO = new WorkOrderReceiveUpdateDTO();
                     receiveUpdateDTO.setStaffNo(staffInfo.getStaffNo());

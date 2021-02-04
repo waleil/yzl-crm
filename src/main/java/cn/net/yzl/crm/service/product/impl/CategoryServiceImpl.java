@@ -66,8 +66,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ComResponse<Page<CategoryTO>> selectAll(Integer pid, Integer pageNo, Integer pageSize) {
-        return categoryClient.queryPageByPid(pid, pageNo, pageSize);
+    public ComResponse<Page<CategoryTO>> selectAll(Integer pid, Integer pageNo, Integer pageSize, String keyword) {
+        return categoryClient.queryPageByPid(pid, pageNo, pageSize,keyword);
     }
 
     @Override

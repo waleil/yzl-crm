@@ -9,12 +9,13 @@ import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
 import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDiseaseInfo;
 
 import java.util.List;
 
 public interface DiseaseService {
 
-    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree();
+    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree(Boolean allowEmpty);
 
     ComResponse<Integer> insertDisease(DiseaseVo diseaseBean);
 
@@ -27,4 +28,6 @@ public interface DiseaseService {
     ComResponse<?> changeName(Integer id, String name, String userId);
 
     ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(int pageNo, int pageSize);
+
+    ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(String name);
 }

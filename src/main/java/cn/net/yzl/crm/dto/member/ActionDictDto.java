@@ -40,8 +40,7 @@ public class ActionDictDto implements Serializable {
     @ApiModelProperty(value = "创建人",hidden = true)
     private String creator;
 
-    @ApiModelProperty(value ="操作人")
-    @NotBlank
+    @ApiModelProperty(value ="操作人",hidden = true)
     private String updator;
 
 

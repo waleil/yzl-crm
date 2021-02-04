@@ -1,41 +1,48 @@
 package cn.net.yzl.crm.controller.workorder;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.util.BeanUtil;
 import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.dto.ehr.EhrStaff;
 import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
-import cn.net.yzl.crm.service.StaffService;
+import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
-import cn.net.yzl.product.model.vo.product.dto.ProductMainInfoDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.*;
-import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
-import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderUnclaimedUserVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
+import cn.net.yzl.workorder.model.enums.WorkOrderTypeEnums;
+import cn.net.yzl.workorder.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import io.swagger.annotations.ApiParam;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("workOrder")
@@ -50,6 +57,11 @@ public class WorkOrderController {
 
     @Autowired
     private WorkOrderService workOrderService;
+    @Autowired
+    private TurnRulnClient turnRulnClient;
+
+    @Autowired
+    private MemberFien memberFien;
 
     /**
      * 查询我的回访分页列表
@@ -67,19 +79,46 @@ public class WorkOrderController {
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
+        List<String> lastBuyProductCodes = new ArrayList<>();
+        List<String> firstBuyProductCodes = new ArrayList<>();
         String productNames = new String();
-        for (WorkOrderBean workOrderBean : workOrderBeans) {
-            productNames += "," + workOrderBean.getProductCode();
+        for (int i = 0 ; i < workOrderBeans.size();i++) {
+            WorkOrderBean workOrderBean = workOrderBeans.get(i);
+            String lastBuyProductCode = workOrderBean.getLastBuyProductCode();
+            String firstBuyProductCode = workOrderBean.getFirstBuyProductCode();
+            firstBuyProductCodes.add(firstBuyProductCode);
+            lastBuyProductCodes.add(lastBuyProductCode);
+            productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
+            workOrderBean.setFirstBuyProductCode("");
+            workOrderBean.setLastBuyProductCode("");
         }
         productNames = productNames.substring(1);
-        List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
+        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
-            Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
-            workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())) {
-                    workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+            for(int i = 0 ; i < workOrderBeans.size();i++) {
+                String lastBuyProductCode = lastBuyProductCodes.get(i);
+                String firstBuyProductCode = firstBuyProductCodes.get(i);
+                WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
+                for(ProductMainDTO productMainDTO : data) {
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
+                            workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
+                        } else {
+                            workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
+                        }
+
+                    }
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
+                            workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
+                        } else {
+                            workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
+                        }
+
+                    }
                 }
-            });
+
+            }
         }
         pageWorkOrderBean.setItems(workOrderBeans);
 
@@ -111,13 +150,62 @@ public class WorkOrderController {
     @ApiOperation(value = "查询待领取顾客池", notes = "待领取顾客池")
     @PostMapping("v1/queryUnclaimedUsers")
     public ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(@RequestBody   WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO){
-        return workOrderClient.queryUnclaimedUsers(workOrderUnclaimedUserDTO);
+        ComResponse<Page<WorkOrderUnclaimedUserVO>> pageComResponse = workOrderClient.queryUnclaimedUsers(workOrderUnclaimedUserDTO);
+
+        Page<WorkOrderUnclaimedUserVO> pageWorkOrderUnclaimedUserVO = pageComResponse.getData();
+        if (null == pageWorkOrderUnclaimedUserVO) {
+            return ComResponse.success();
+        }
+        List<WorkOrderUnclaimedUserVO> workOrderUnclaimedUserVOS = pageWorkOrderUnclaimedUserVO.getItems();
+        String productNames = new String();
+        List<String> lastBuyProductCodes = new ArrayList<>();
+        List<String> firstBuyProductCodes = new ArrayList<>();
+        for (WorkOrderUnclaimedUserVO workOrderUnclaimedUserVO : workOrderUnclaimedUserVOS) {
+            String lastBuyProductCode = workOrderUnclaimedUserVO.getLastBuyProductCode();
+            String firstBuyProductCode = workOrderUnclaimedUserVO.getFirstBuyProductCode();
+            firstBuyProductCodes.add(firstBuyProductCode);
+            lastBuyProductCodes.add(lastBuyProductCode);
+            productNames += "," + workOrderUnclaimedUserVO.getFirstBuyProductCode()+","+workOrderUnclaimedUserVO.getLastBuyProductCode();
+            workOrderUnclaimedUserVO.setFirstBuyProductCode("");
+            workOrderUnclaimedUserVO.setLastBuyProductCode("");
+        }
+        productNames = productNames.substring(1);
+        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
+        if (!CollectionUtils.isEmpty(data)) {
+            for(int i = 0 ; i < workOrderUnclaimedUserVOS.size();i++) {
+                String lastBuyProductCode = lastBuyProductCodes.get(i);
+                String firstBuyProductCode = firstBuyProductCodes.get(i);
+                WorkOrderUnclaimedUserVO workOrderBean1 = workOrderUnclaimedUserVOS.get(i);
+                for(ProductMainDTO productMainDTO : data) {
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
+                            workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
+                        } else {
+                            workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
+                        }
+
+                    }
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
+                            workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
+                        } else {
+                            workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
+                        }
+
+                    }
+                }
+
+            }
+        }
+        pageWorkOrderUnclaimedUserVO.setItems(workOrderUnclaimedUserVOS);
+
+        return ComResponse.success(pageWorkOrderUnclaimedUserVO);
     }
 
 
     @ApiOperation(value = "待领取顾客池-领取", notes = "待领取顾客池-领取")
     @PostMapping("v1/receiveUsers")
-    public ComResponse<Void> receiveUsers(@RequestBody List<WorkOrderFlowDTO> list) {
+    public ComResponse<Boolean> receiveUsers(@RequestBody List<WorkOrderFlowDTO> list) {
         return workOrderService.receiveUsers(list);
     }
 
@@ -131,19 +219,46 @@ public class WorkOrderController {
             return ComResponse.success();
         }
         List<WorkOrderBean> workOrderBeans = pageWorkOrderBean.getItems();
+        List<String> lastBuyProductCodes = new ArrayList<>();
+        List<String> firstBuyProductCodes = new ArrayList<>();
         String productNames = new String();
-        for (WorkOrderBean workOrderBean : workOrderBeans) {
-            productNames += "," + workOrderBean.getProductCode();
+        for (int i = 0 ; i < workOrderBeans.size();i++) {
+            WorkOrderBean workOrderBean = workOrderBeans.get(i);
+            String lastBuyProductCode = workOrderBean.getLastBuyProductCode();
+            String firstBuyProductCode = workOrderBean.getFirstBuyProductCode();
+            firstBuyProductCodes.add(firstBuyProductCode);
+            lastBuyProductCodes.add(lastBuyProductCode);
+            productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
+            workOrderBean.setFirstBuyProductCode("");
+            workOrderBean.setLastBuyProductCode("");
         }
         productNames = productNames.substring(1);
-        List<ProductMainInfoDTO> data = productClient.queryProducts(productNames).getData();
+        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
-            Map<String, ProductMainInfoDTO> collect = data.stream().collect(Collectors.toMap(ProductMainInfoDTO::getProductCode, Function.identity()));
-            workOrderBeans.stream().forEach(workOrderBean -> {
-                if (workOrderBean.getProductCode().equals(collect.get(workOrderBean.getProductCode()).getProductCode())) {
-                    workOrderBean.setProductName(collect.get(workOrderBean.getProductCode()).getName());
+            for(int i = 0 ; i < workOrderBeans.size();i++) {
+                String lastBuyProductCode = lastBuyProductCodes.get(i);
+                String firstBuyProductCode = firstBuyProductCodes.get(i);
+                WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
+                for(ProductMainDTO productMainDTO : data) {
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
+                            workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
+                        } else {
+                            workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
+                        }
+
+                    }
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
+                            workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
+                        } else {
+                            workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
+                        }
+
+                    }
                 }
-            });
+
+            }
         }
         pageWorkOrderBean.setItems(workOrderBeans);
 
@@ -168,16 +283,16 @@ public class WorkOrderController {
 
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
     @GetMapping("v1/queryFirstProduct")
-    public ComResponse<List<ProductMainInfoDTO>> queryFirstProduct() {
+    public ComResponse<List<ProductMainDTO>> queryFirstProduct() {
         String data = workOrderClient.queryFirstProduct().getData();
-        return productClient.queryProducts(data);
+        return productClient.queryByProductCodes(data);
     }
 
     @ApiOperation(value = "查询所有用户最后一次购买商品", notes = "查询所有用户最后一次购买商品")
     @GetMapping("v1/queryLastProduct")
-    public ComResponse<List<ProductMainInfoDTO>> queryLastProduct() {
+    public ComResponse<List<ProductMainDTO>> queryLastProduct() {
         String data = workOrderClient.queryLastProduct().getData();
-        return productClient.queryProducts(data);
+        return productClient.queryByProductCodes(data);
     }
 
     /**
@@ -256,7 +371,31 @@ public class WorkOrderController {
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
-        return workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+        ComResponse<FindDWorkOrderHotlineDetailsVO> dWorkOrderHotlineDetails = workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
+        FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
+        if(!StringUtils.isEmpty(data)){
+            //获取详情中的阶梯商品，通过商品编码获取商品列表
+            String firstBuyProductCode = data.getFirstBuyProductCode();//商品编码，多个是商品逗号拼接
+            if(!StringUtils.isEmpty(firstBuyProductCode)) {
+                String[] split = firstBuyProductCode.split(",");
+                //获取数组
+                Stream<String> distinct = Arrays.stream(split).distinct();
+                //创建Map集合
+                List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
+                distinct.forEach(s -> {
+                    //循环调用商品详情服务
+                    ComResponse<ProductDetailVO> productDetailVOComResponse = productClient.queryProductDetail(s);
+                    ProductDetailVO productDetailVO = productDetailVOComResponse.getData();
+                    if(!StringUtils.isEmpty(productDetailVO)){
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("productDetail",productDetailVO);
+                        maps.add(map);
+                    }
+                });
+                data.setProductDetailMaps(maps);
+            }
+        }
+        return dWorkOrderHotlineDetails;
     }
 
     /**
@@ -295,12 +434,12 @@ public class WorkOrderController {
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     @ApiOperation(value = "智能工单：我的热线工单-创建处理工单流水", notes = "智能工单：我的热线工单-创建处理工单流水")
-    public ComResponse<String> insertWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean) {
-        workOrderDisposeFlowBean.setCreateId(QueryIds.userNo.get());
-        workOrderDisposeFlowBean.setCreateName(QueryIds.userName.get());
-        workOrderDisposeFlowBean.setUpdateId(QueryIds.userNo.get());
-        workOrderDisposeFlowBean.setUpdateName(QueryIds.userName.get());
-        return workOrderClient.insertWorkOrderDisposeFlow(workOrderDisposeFlowBean);
+    public ComResponse<String> insertWorkOrderDisposeFlow(@Validated @RequestBody InsertWorkOrderDisposeFlowDTO insertWorkOrderDisposeFlowDTO) {
+        insertWorkOrderDisposeFlowDTO.setCreateId(QueryIds.userNo.get());
+        insertWorkOrderDisposeFlowDTO.setCreateName(QueryIds.userName.get());
+        insertWorkOrderDisposeFlowDTO.setUpdateId(QueryIds.userNo.get());
+        insertWorkOrderDisposeFlowDTO.setUpdateName(QueryIds.userName.get());
+        return workOrderClient.insertWorkOrderDisposeFlow(insertWorkOrderDisposeFlowDTO);
     }
 
     /**
@@ -328,6 +467,8 @@ public class WorkOrderController {
     public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
         recoveryDTO.setStaffName(QueryIds.userName.get());
+        recoveryDTO.setCreateId(QueryIds.userNo.get());
+        recoveryDTO.setCreateName(QueryIds.userName.get());
         return workOrderClient.handIn(recoveryDTO);
     }
 
@@ -347,23 +488,209 @@ public class WorkOrderController {
      * 智能工单：我的热线工单-修改处理工单流水
      * @return
      */
-    @PostMapping("v1/updateWorkOrderDisposeFlow")
-    @ApiOperation(value = "智能工单：我的热线工单-修改处理工单流水", notes = "智能工单：我的热线工单-修改处理工单流水")
-    public ComResponse<String> updateWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
-        return workOrderClient.updateWorkOrderDisposeFlow(workOrderDisposeFlowBean);
-    }
+//    @PostMapping("v1/updateWorkOrderDisposeFlow")
+//    @ApiOperation(value = "智能工单：我的热线工单-修改处理工单流水", notes = "智能工单：我的热线工单-修改处理工单流水")
+//    public ComResponse<String> updateWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
+//        return workOrderClient.updateWorkOrderDisposeFlow(workOrderDisposeFlowBean);
+//    }
 
     @ApiOperation(value = "智能工单-我的回访工单-单条上交",notes = "智能工单-我的回访工单-单条上交")
     @PostMapping(value = "v1/isHandIn")
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
-        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = workOrderClient.submissionRules();
+        isHandInDTO.setStaffNo(QueryIds.userNo.get());
+        isHandInDTO.setStaffName(QueryIds.userName.get());
+        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
         if(CollectionUtils.isEmpty(listComResponse.getData())){
             return ComResponse.success(Boolean.TRUE);
         }
+        List<WorkOrderRuleConfigBean> data = listComResponse.getData();
+        if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
+            WorkOrderRuleConfigBean workOrderRuleConfigBean1 = null;
+            for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data){
+                if(workOrderRuleConfigBean.getId() == 7)
+                    workOrderRuleConfigBean1 = workOrderRuleConfigBean;
+            }
+            if(null != workOrderRuleConfigBean1){
+                isHandInDTO.setApplyUpStatus(1);
+                turnRulnClient.rulesHandedIn(isHandInDTO);
+                return ComResponse.success(Boolean.TRUE);
+            }
+            RecoveryDTO recoveryDTO = new RecoveryDTO();
+            recoveryDTO.setStaffName(isHandInDTO.getStaffName());
+            recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());
+            recoveryDTO.setCreateId(isHandInDTO.getStaffNo());
+            recoveryDTO.setCreateName(isHandInDTO.getStaffName());
+            recoveryDTO.setCode(isHandInDTO.getCode());
+            recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
+            recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            workOrderClient.handIn(recoveryDTO);
+            return ComResponse.success(Boolean.TRUE);
+        }
+        WorkOrderRuleConfigBean wORCBean = null;
         HandInUtils handInUtils = new HandInUtils();
-        handInUtils.emptyNumberShutdown(isHandInDTO);
-        handInUtils.unableToContact(isHandInDTO,listComResponse.getData());
-        handInUtils.customerRefusedToVisit(isHandInDTO);
-        return ComResponse.success(Boolean.TRUE);
+        Boolean flag = Boolean.FALSE;
+        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
+            wORCBean = workOrderRuleConfigBean;
+            switch (workOrderRuleConfigBean.getId()){
+                case 1:
+                    flag = handInUtils.emptyNumberShutdown(isHandInDTO,wORCBean);
+                    break;
+
+                case 2:
+                    flag = handInUtils.unableToContact(isHandInDTO,wORCBean);
+                    break;
+
+                case 3:
+                    flag = handInUtils.customerRefusedToVisit(isHandInDTO,wORCBean);
+                    break;
+
+                case 4:
+                    flag = handInUtils.customerRefund(isHandInDTO,wORCBean);
+                    break;
+
+                case 5:
+                    flag = handInUtils.dormantCustomers(isHandInDTO,wORCBean);
+                    break;
+
+                case 6:
+                    flag = handInUtils.mCustomerLExceeded(isHandInDTO,wORCBean);
+                    break;
+
+                case 8:
+                    flag = handInUtils.overtimeReturnVisit(isHandInDTO,wORCBean);
+                    break;
+
+                default:{}
+                if(BooleanUtils.isTrue(flag)){
+                    break;
+                }
+            }
+        }
+        if(flag){
+            RecoveryDTO recoveryDTO = new RecoveryDTO();
+            recoveryDTO.setStaffName(isHandInDTO.getStaffName());
+            recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());
+            recoveryDTO.setCreateId(isHandInDTO.getStaffNo());
+            recoveryDTO.setCreateName(isHandInDTO.getStaffName());
+            recoveryDTO.setCode(isHandInDTO.getCode());
+            recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
+            recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            workOrderClient.handIn(recoveryDTO);
+        }else {
+            isHandInDTO.setApplyUpStatus(1);
+            turnRulnClient.rulesHandedIn(isHandInDTO);
+        }
+        return ComResponse.success(flag);
+    }
+
+    @ApiOperation(value = "智能工单-顾客旅程-根据顾客会员号查询顾客工单信息",notes = "智能工单-顾客旅程-根据顾客会员号查询顾客工单信息")
+    @GetMapping(value = "v1/queryWorkOrder")
+    public ComResponse<List<WorkOrderVo>> queryWorkOrder(@ApiParam(value = "顾客会员号")@RequestParam(value = "memberCard")String memberCard){
+        return workOrderClient.queryWorkOrder(memberCard);
+    }
+    @ApiOperation(value = "查询顾客旅程",notes = "查询顾客旅程")
+    @GetMapping(value = "v1/userRoute")
+    public ComResponse<List<WorkOrderFlowVO>> userRoute(@RequestParam(name = "memberCard",required = true)String memberCard){
+        return workOrderClient.userRoute(memberCard);
+    }
+
+    @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
+    @PostMapping(value = "v1/submitWorkOrder")
+    public ComResponse<Void> submitWorkOrder(@Validated @RequestBody SubmitWorkOrderDTO submitWorkOrderDTO){
+        String userNo = QueryIds.userNo.get();
+        String userName = QueryIds.userName.get();
+        submitWorkOrderDTO.setUpdateId(userNo);
+        submitWorkOrderDTO.setUpdateName(userName);
+        //解析长字符
+        String informationGoods = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoods();
+        if(StringUtils.isEmpty(informationGoods)) {
+            JSONObject jsonObject = new JSONObject(informationGoods);
+            JSONArray hotline400= new JSONArray(jsonObject.get(WorkOrderTypeEnums.HOTLINE_400.getName()));
+            List<ProductConsultationInsertVO> productConsultationInsertVOS = new ArrayList<ProductConsultationInsertVO>();
+            hotline400.stream().forEach(o -> {
+                ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
+                productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
+                JSONObject object = new JSONObject(o);
+                Object name = object.get("name");
+                Object code = object.get("code");
+                if(!StringUtils.isEmpty(name)) productConsultationInsertVO.setProductName((String) name);
+                if(!StringUtils.isEmpty(code)) productConsultationInsertVO.setProductCode((String) code);
+                productConsultationInsertVO.setConsultationTime(new Date());
+                productConsultationInsertVOS.add(productConsultationInsertVO);
+            });
+            JSONArray ladderSales= new JSONArray(jsonObject.get(WorkOrderTypeEnums.LADDER_SALES.getName()));
+            ladderSales.stream().forEach(o -> {
+                ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
+                productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
+                JSONObject object = new JSONObject(o);
+                Object name = object.get("name");
+                Object code = object.get("code");
+                if(!StringUtils.isEmpty(name)) productConsultationInsertVO.setProductName((String) name);
+                if(!StringUtils.isEmpty(code)) productConsultationInsertVO.setProductCode((String) code);
+                productConsultationInsertVO.setConsultationTime(new Date());
+                productConsultationInsertVOS.add(productConsultationInsertVO);
+            });
+            JSONArray regularReview= new JSONArray(jsonObject.get(WorkOrderTypeEnums.REGULAR_REVIEW.getName()));
+            regularReview.stream().forEach(o -> {
+                ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
+                productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
+                JSONObject object = new JSONObject(o);
+                Object name = object.get("name");
+                Object code = object.get("code");
+                if(!StringUtils.isEmpty(name)) productConsultationInsertVO.setProductName((String) name);
+                if(!StringUtils.isEmpty(code)) productConsultationInsertVO.setProductCode((String) code);
+                productConsultationInsertVO.setConsultationTime(new Date());
+                productConsultationInsertVOS.add(productConsultationInsertVO);
+            });
+            JSONArray eventMarketing= new JSONArray(jsonObject.get(WorkOrderTypeEnums.EVENT_MARKETING.getName()));
+            eventMarketing.stream().forEach(o -> {
+                ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
+                productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
+                JSONObject object = new JSONObject(o);
+                Object name = object.get("name");
+                Object code = object.get("code");
+                if(!StringUtils.isEmpty(name)) productConsultationInsertVO.setProductName((String) name);
+                if(!StringUtils.isEmpty(code)) productConsultationInsertVO.setProductCode((String) code);
+                productConsultationInsertVO.setConsultationTime(new Date());
+                productConsultationInsertVOS.add(productConsultationInsertVO);
+            });
+            if(!CollectionUtils.isEmpty(productConsultationInsertVOS)){
+                memberFien.addProductConsultation(productConsultationInsertVOS);
+            }
+        }
+        return workOrderClient.submitWorkOrder(submitWorkOrderDTO);
+    }
+
+    @ApiOperation(value = "回访规则校验Job",notes = "回访规则校验Job")
+    @GetMapping(value = "v1/returnVisitRules")
+    public ComResponse<Boolean> returnVisitRules(){
+        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(2, 2, 1, 0);
+        List<WorkOrderRuleConfigBean> data = listComResponse.getData();
+        if (CollectionUtils.isEmpty(data)){
+            return ComResponse.success();
+        }
+        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
+            switch (workOrderRuleConfigBean.getId()){
+                case 9:
+                    break;
+                case 10:
+                    String paramsValue = workOrderRuleConfigBean.getParamsValue();
+                    workOrderClient.visitDateLtCurrentDate(paramsValue);
+                    break;
+            }
+        }
+        return ComResponse.success();
+    }
+
+    @ApiOperation(value = "产品服用量小于规则配置:需回访",notes = "产品服用量小于规则配置:需回访")
+    @PostMapping(value = "v1/productDosage")
+    public ComResponse<Boolean> productDosage(@ApiParam("顾客会员号")@RequestParam("memberCard") List<String> memberCard){
+        return workOrderClient.productDosage(memberCard);
+    }
+
+    @ApiOperation(value = "新客户回访",notes = "新客户回访")
+    @GetMapping(value = "v1/newMember")
+    public ComResponse<Boolean> newMember(@ApiParam("顾客会员号")@RequestParam("memberCard") String memberCard,@ApiParam("状态:1新顾客;2:老顾客")@RequestParam("status")Integer status ){
+        return workOrderClient.newMember(memberCard,status);
     }
 }

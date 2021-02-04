@@ -2,12 +2,16 @@ package cn.net.yzl.crm.client.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
 import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
+import cn.net.yzl.product.model.vo.product.dto.ProductDiseaseInfo;
+import com.alibaba.nacos.common.utils.StringUtils;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +22,7 @@ import java.util.List;
 public interface DiseaseClient {
 
     @GetMapping("queryTreeNode")
-    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree();
+    ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree(@RequestParam("allowEmpty") Boolean allowEmpty);
 
     @PostMapping("insert")
     ComResponse<Integer> insertDisease(@RequestBody DiseaseVo diseaseVo);
@@ -30,7 +34,7 @@ public interface DiseaseClient {
     ComResponse selectAllDiseases();
 
     @GetMapping("queryByPID")
-    ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid);
+    ComResponse<List<DiseaseDTO>> queryByPID(@RequestParam("pid") Integer pid,@RequestParam("allowEmpty")Boolean allowEmpty);
 
     @GetMapping("changeName")
     ComResponse<?> changeName(@RequestParam("id") Integer id, @RequestParam("name") String name, @RequestParam("userId") String userId);
@@ -42,5 +46,12 @@ public interface DiseaseClient {
 
 
     @GetMapping("queryHierarchy")
-    public  ComResponse<List<DiseaseMainInfo>> queryHierarchy(@RequestParam("ids") String ids);
+    ComResponse<List<DiseaseMainInfo>> queryHierarchy(@RequestParam("ids") String ids);
+
+    @GetMapping("artificialSeatInput")
+    ComResponse<DiseaseMainInfo> artificialSeatInput(@RequestParam("pid") Integer pid ,@RequestParam("name")String name,@RequestParam("userId")String userId);
+
+    @GetMapping(value = "queryProductByDiseaseId")
+    ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(@RequestParam("name") String name);
+
 }

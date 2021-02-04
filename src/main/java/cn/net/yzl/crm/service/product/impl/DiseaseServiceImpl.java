@@ -10,6 +10,7 @@ import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
 import cn.net.yzl.product.model.vo.disease.DiseaseVo;
 import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDiseaseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,8 @@ public class DiseaseServiceImpl implements DiseaseService {
     private DiseaseClient client;
 
     @Override
-    public ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree() {
-        return client.getDiseaseSimpleTree();
+    public ComResponse<List<DiseaseTreeNode>> getDiseaseSimpleTree(Boolean allowEmpty) {
+        return client.getDiseaseSimpleTree(allowEmpty);
     }
 
     @Override
@@ -38,7 +39,8 @@ public class DiseaseServiceImpl implements DiseaseService {
 
     @Override
     public ComResponse<List<DiseaseDTO>> queryByPid(Integer pid) {
-        return client.queryByPID(pid);
+        //查询，不允许空一级病症
+        return client.queryByPID(pid,false);
     }
 
     @Override
@@ -54,5 +56,10 @@ public class DiseaseServiceImpl implements DiseaseService {
     @Override
     public ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(int pageNo, int pageSize) {
         return client.queryDiseaseTreePage(pageNo,pageSize);
+    }
+
+    @Override
+    public ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(String name) {
+        return client.queryProductByDiseaseId(name);
     }
 }

@@ -6,6 +6,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.staff.dto.lasso.Base;
 import cn.net.yzl.crm.staff.dto.lasso.ScheduleDto;
 import cn.net.yzl.crm.staff.dto.lasso.TrainProductDto;
@@ -13,11 +14,10 @@ import cn.net.yzl.crm.staff.dto.lasso.WorkOrderTypeDto;
 import cn.net.yzl.model.dto.DepartDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;
@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @FeignClient(name = "ehr-staff-api", url = "${api.gateway.url}/staffDB")
+//@FeignClient(name = "ehr-staff-api", url = "localhost:38080/")
 public interface EhrStaffClient {
 
     /**
@@ -66,13 +67,22 @@ public interface EhrStaffClient {
     ComResponse<StaffImageBaseInfoDto> getDetailsByNo(@RequestParam("staffNo") String staffNo);
 
     /**
+     * 根据staffno数组批量查询用户详情
+     *
+     * @param list
+     * @return
+     */
+    @PostMapping(value = "/staff/getDetailsListByNo")
+    ComResponse<List<StaffDetail>> getDetailsListByNo(@RequestBody List<String> list);
+
+    /**
      * 获取ehr字典表  员工在职状态
      *
      * @param dictType
      * @return
      */
     @GetMapping("/sysDic/getByType")
-    ComResponse<List<StaffStatusDto>> getAllStuffStatus(@RequestParam("dictType") String dictType);
+    ComResponse<List<SysDictDto>> getAllStuffStatus(@RequestParam("dictType") String dictType);
 
     /**
      * 获取岗位级别通过岗位
@@ -122,6 +132,20 @@ public interface EhrStaffClient {
     @GetMapping(value = "/businessPost/getPostByBussinessAttrCode")
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode);
 
+    /**
+     * 根据业务属性获取部门 list
+     * @param bussinessAttrId
+     * @return
+     */
+    @RequestMapping(value = "/depart/getListByBusinessAttrId", method = RequestMethod.GET)
+    ComResponse<List<DepartDto>> getListByBusinessAttrId(@RequestParam("bussinessAttrId") String bussinessAttrId);
+
+    /**
+     * 多条件获取 员工list
+     * @param staffParamsVO
+     * @return
+     */ @RequestMapping(value = "/staff/getListsByParams", method = RequestMethod.POST)
+    ComResponse<List<EhrStaff>> getListsByParams(@RequestBody  StaffQueryDto staffParamsVO);
     /**
      * 获取培训过的商品
      *

@@ -66,7 +66,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
                 throw new BizException(sresponse.getCode(),sresponse.getMessage());
             }
-            dto.setDepartId(sresponse.getData().getDepartId());
+            dto.setDepartId(String.valueOf(sresponse.getData().getDepartId()));
             dto.setOprCode(sresponse.getData().getStaffNo());
             dto.setOprName(sresponse.getData().getName());
 
@@ -144,10 +144,10 @@ public class OrderOprServiceImpl implements IOrderOprService {
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
             throw new BizException(sresponse.getCode(),sresponse.getMessage());
         }
-        dto.setDepartId(sresponse.getData().getDepartId());
+        dto.setDepartId(String.valueOf(sresponse.getData().getDepartId()));
         dto.setCheckDepartId(sresponse.getData().getDepartId());
         dto.setCheckUserName(sresponse.getData().getName());
-        dto.setCheckUserNo(sresponse.getData().getStaffNo());
+        dto.setCheckUserNo(QueryIds.userNo.get());
 
         //查询订单信息及当前状态
         ComResponse<OrderInfoVo> response = orderSearchClient.selectOrderInfo4Opr(dto.getOrderNo());
@@ -164,7 +164,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
         if(vo.getOrder().getOrderStatus().compareTo(Integer.valueOf(cn.net.yzl.order.enums.OrderStatus.ORDER_STATUS_1.getCode())) != 0 ){
             throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(), "订单号:[" + dto.getOrderNo() + "] 已审核，请勿重复提交！");
         }
-        if(vo.getOrder().getOrderNature().compareTo(Integer.valueOf(CommonConstant.ORDER_NATURE_F)) == 0) {
+        if(vo.getOrder().getOrderNature().compareTo(Integer.valueOf(CommonConstant.ORDER_NATURE_T)) == 0) {
             throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(), "订单号:[" + dto.getOrderNo() + "] 是免审订单，无需审核！");
 
         }
@@ -194,6 +194,8 @@ public class OrderOprServiceImpl implements IOrderOprService {
         //todo 给仓库发通知，生成出库单
         List<OrderDistributeExpressVO> list = new ArrayList<>();
         OrderDistributeExpressVO vo= orderCommonService.mkOrderDistributeExpressData(orderInfoVo);
+
+
         list.add(vo);
 
 

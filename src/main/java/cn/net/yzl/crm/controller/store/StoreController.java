@@ -121,14 +121,14 @@ public class StoreController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
-            @ApiImplicitParam(name = "storeNo", value = "库位编号", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "storeAreaKindId", value = "库位类型", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "storeLocalNo", value = "库位编号", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "storeAreaKindId", value = "库位类型id", required = false, dataType = "Int", paramType = "query"),
     })
     public ComResponse<Page<StoreLocalPo>> selectStoreLocalListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
-                                                                    @RequestParam(value = "storeNo",required = false) String storeNo,
+                                                                    @RequestParam(value = "storeLocalNo",required = false) String storeLocalNo,
                                                                     @RequestParam(value = "storeAreaKindId",required = false) Integer storeAreaKindId){
 
-        return storeFeginService.selectStoreLocalListPage(pageNo,pageSize,storeNo,storeAreaKindId);
+        return storeFeginService.selectStoreLocalListPage(pageNo,pageSize,storeLocalNo,storeAreaKindId);
     }
 
 
@@ -170,7 +170,7 @@ public class StoreController {
             @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
             @ApiImplicitParam(name = "codeAndName", value = "商品编码/条形码/商品名称", required = false, dataType = "String", paramType = "query"),
-            @ApiImplicitParam(name = "storeName", value = "仓库名称", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "storeNo", value = "仓库编号", required = false, dataType = "String", paramType = "query"),
     })
     public ComResponse<Page<ProductStockPo>> stockInquiry(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                           @RequestParam(value = "codeAndName",required = false) String codeAndName    ,
@@ -210,9 +210,24 @@ public class StoreController {
 
 
     @ApiOperation(value = "新增仓库的时候下拉库位的查询",notes = "新增仓库的时候下拉库位的查询")
-    @GetMapping("v1/StoreLocalPullDown")
-    public ComResponse<List<StoreLocalVo>> StoreLocalPullDown() {
+    @GetMapping("v1/storeLocalPullDown")
+    public ComResponse<List<StoreLocalVo>> storeLocalPullDown() {
         return storeFeginService.storeLocalPullDown();
+    }
+
+
+
+    @GetMapping("v1/storeLocalPageList")
+    @ApiOperation(value = "分页查询绑定的库位", notes = "分页查询绑定的库位")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "storeId", value = "仓库id", required = true, dataType = "Int", paramType = "query"),
+    })
+    public ComResponse<Page<StoreLocalPo>> storeLocalPageList(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+                                                        @RequestParam(value = "storeId",required = false) Integer storeId){
+
+        return storeFeginService.storeLocalPageList(pageNo,pageSize,storeId);
     }
 
 }

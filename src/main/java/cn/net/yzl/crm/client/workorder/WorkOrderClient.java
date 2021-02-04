@@ -4,14 +4,13 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
-import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.sound.midi.SoundbankResource;
 import java.util.List;
 
 /**
@@ -148,18 +147,18 @@ public interface WorkOrderClient {
     /**
      * 智能工单：我的热线工单-创建处理工单流水
      *
-     * @param workOrderDisposeFlowBean
+     * @param insertWorkOrderDisposeFlowDTO
      * @return
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
-    ComResponse<String> insertWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+    ComResponse<String> insertWorkOrderDisposeFlow(InsertWorkOrderDisposeFlowDTO insertWorkOrderDisposeFlowDTO);
 
     @PostMapping(value = "v1/queryUnclaimedUsers")
     ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO);
 
 
     @PostMapping(value = "v1/receiveUsers")
-    ComResponse<Void> receiveUsers(WorkOrderReceiveDTO workOrderReceiveDTO);
+    ComResponse<Boolean> receiveUsers(WorkOrderReceiveDTO workOrderReceiveDTO);
 
 
     /**
@@ -195,48 +194,62 @@ public interface WorkOrderClient {
      * @param workOrderDisposeFlowBean
      * @return
      */
-    @PostMapping("v1/updateWorkOrderDisposeFlow")
-    ComResponse<String> updateWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
+//    @PostMapping("v1/updateWorkOrderDisposeFlow")
+//    ComResponse<String> updateWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
 
     /**
-     * 智能工单-我的回访工单-查询上交规则
-     *
+     * 查询顾客旅程
+     * @param memberCard
      * @return
      */
-    @GetMapping("v1/submissionRules")
-    ComResponse<List<WorkOrderRuleConfigBean>> submissionRules();
+    @GetMapping(value = "v1/userRoute")
+    ComResponse<List<WorkOrderFlowVO>>  userRoute(@RequestParam(name = "memberCard", required = true)String memberCard);
 
     /**
-     * 智能工单-我的回访工单-上交规则-查询通话记录表某段时间未接通记录是否超出上交规则
-     *
-     * @param IsHandInDTO
+     * 智能工单-顾客旅程-根据顾客会员号查询顾客工单信息
+     * @param memberCard
      * @return
      */
-    @PostMapping(value = "v1/callInfoCount")
-    ComResponse<Boolean> callInfoCount(IsHandInDTO IsHandInDTO);
+    @GetMapping(value = "v1/queryWorkOrder")
+    ComResponse<List<WorkOrderVo>> queryWorkOrder(@RequestParam("memberCard") String memberCard);
 
     /**
-     * 智能工单-我的回访工单-上交规则-超出维护客户上限查询
-     *
+     * 智能工单-我的回访工单-处理工单-提交
+     * @param submitWorkOrderDTO
      * @return
      */
-    @PostMapping(value = "v1/mCustomerLExceeded")
-    ComResponse<Boolean> mCustomerLExceeded(IsHandInDTO isHandInDTO);
+    @PostMapping(value = "v1/submitWorkOrder")
+    ComResponse<Void> submitWorkOrder(SubmitWorkOrderDTO submitWorkOrderDTO);
 
     /**
-     * 智能工单-我的回访工单-上交规则-员工放弃自取顾客
-     *
+     * 智能工单-回访规则校验第一条
+     * @param memberCard
      * @return
      */
-    @PostMapping(value = "v1/eGiveUpTakingCustomersByThemselves")
-    ComResponse<Boolean> eGiveUpTakingCustomersByThemselves(IsHandInDTO isHandInDTO);
+    @PostMapping(value = "v1/productDosage")
+    ComResponse<Boolean> productDosage(@RequestParam("memberCard") List<String> memberCard);
 
     /**
-     * 智能工单-我的回访工单-上交规则-超时回访
-     *
-     * @param isHandInDTO
+     * 智能工单-回访规则校验第二条
+     * @param paramsValue
      * @return
      */
-    @PostMapping(value = "v1/overtimeReturnVisit")
-    ComResponse<Boolean> overtimeReturnVisit(IsHandInDTO isHandInDTO);
+    @GetMapping(value = "v1/visitDateLtCurrentDate")
+    ComResponse<Boolean> visitDateLtCurrentDate(@RequestParam("paramsValue")String paramsValue);
+
+    /**
+     * 智能工单-回访规则校验第5条
+     * @return
+     */
+    @GetMapping(value = "v1/currentDate")
+    ComResponse<Boolean> currentDate();
+
+    /**
+     * 智能工单-回访规则校验第3条-新客户回访
+     * @param memberCard
+     * @param status
+     * @return
+     */
+    @GetMapping(value = "v1/newMember")
+    ComResponse<Boolean> newMember(@RequestParam("memberCard") String memberCard,@RequestParam("status") Integer status);
 }
