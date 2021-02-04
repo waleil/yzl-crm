@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.controller;
 
+import cn.net.yzl.activity.model.requestModel.CalculateRequest;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
 import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -40,5 +43,17 @@ public class ActivityController {
     @PostMapping("/v1/getProductDiscountByProductCode")
     public ComResponse<ProductDiscountResponse> getProductDiscount(@RequestBody ProductDiscountRequest request) {
         return activityService.getProductDiscount(request);
+    }
+
+    @ApiOperation(value = "计算金额")
+    @PostMapping("v1/calculate")
+    public ComResponse<BigDecimal> calculate(@RequestBody CalculateRequest request) {
+        return activityService.calculate(request);
+    }
+
+    @ApiOperation(value = "校验订单金额")
+    @PostMapping("v1/checkOrderAmount")
+    public ComResponse<Boolean> checkOrderAmount(@RequestBody CheckOrderAmountRequest request) {
+        return activityService.checkOrderAmount(request);
     }
 }
