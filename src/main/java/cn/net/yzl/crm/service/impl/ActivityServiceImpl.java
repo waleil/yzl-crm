@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.service.impl;
 
+import cn.net.yzl.activity.model.requestModel.CalculateRequest;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
 import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -47,6 +50,24 @@ public class ActivityServiceImpl implements ActivityService {
             request.setGroupId(groupId);
         }
         return activityClient.getProductDiscount(request);
+    }
+
+    @Override
+    public ComResponse<BigDecimal> calculate(CalculateRequest request) {
+        Long groupId = this.getGroupIdByUserNo();
+        if(null != groupId){
+            request.setGroupId(groupId);
+        }
+        return activityClient.calculate(request);
+    }
+
+    @Override
+    public ComResponse<Boolean> checkOrderAmount(CheckOrderAmountRequest request) {
+        Long groupId = this.getGroupIdByUserNo();
+        if(null != groupId){
+            request.setGroupId(groupId);
+        }
+        return activityClient.checkOrderAmount(request);
     }
 
 

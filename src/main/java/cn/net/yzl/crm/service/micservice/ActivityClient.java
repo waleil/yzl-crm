@@ -1,6 +1,8 @@
 package cn.net.yzl.crm.service.micservice;
 
 
+import cn.net.yzl.activity.model.requestModel.CalculateRequest;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
 import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -32,6 +35,14 @@ public interface ActivityClient {
     @ApiOperation(value = "根据商品唯一编码 查询当前的优惠方式、可用优惠券")
     @PostMapping("db/v1/getProductDiscountByProductCode")
     ComResponse<ProductDiscountResponse> getProductDiscount(@RequestBody ProductDiscountRequest request);
+
+    @ApiOperation(value = "计算金额")
+    @PostMapping("db/v1/calculate")
+    ComResponse<BigDecimal> calculate(@RequestBody CalculateRequest request);
+
+    @ApiOperation(value = "校验订单金额")
+    @PostMapping("db/v1/checkOrderAmount")
+    ComResponse<Boolean> checkOrderAmount(@RequestBody CheckOrderAmountRequest request);
 
     @GetMapping("db/v1/launchManage/getAllLaunchManage")
     ComResponse<List<LaunchManageDto>> getAllLaunchManage();
@@ -63,4 +74,5 @@ public interface ActivityClient {
         }
         return null;
     }
+
 }
