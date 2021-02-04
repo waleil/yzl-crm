@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -77,9 +78,16 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
 		vo.setTotalAll(order.getTotalAll());
 		vo.setCash(order.getCash());
 		vo.setOrderTime(order.getCreateTime());
-		vo.setTargetProvince(order.getReveiverProvince());
+
+		vo.setTargetProvince(order.getReveiverProvinceName());
+		vo.setReveiverProvince(order.getReveiverProvince());
+
 		vo.setTargetCity(order.getReveiverCityName());
+		vo.setReveiverCity(order.getReveiverCity());
+
+		vo.setReveiverArea(order.getReveiverArea());
 		vo.setTargetArea(order.getReveiverAreaName());
+
 		vo.setAddr(order.getReveiverAddress());
 		vo.setFinancialOwnerId(order.getFinancialOwner());
 		vo.setFinancialOwner(order.getFinancialOwnerName());
