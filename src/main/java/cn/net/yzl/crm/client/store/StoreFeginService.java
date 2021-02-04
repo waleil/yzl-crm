@@ -11,6 +11,8 @@ import cn.net.yzl.model.pojo.StorePo;
 import cn.net.yzl.model.pojo.SysDictDataPo;
 import cn.net.yzl.model.vo.StoreLocalVo;
 import cn.net.yzl.model.vo.StoreVO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -28,10 +30,19 @@ import java.util.List;
 public interface StoreFeginService {
 
     @GetMapping("store/v1/selectStoreListPage")
-    public ComResponse<Page<StorePo>> selectStoreListPage(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNo", value = "分页开始页", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "分页数", required = true, dataType = "Int", paramType = "query"),
+            @ApiImplicitParam(name = "storeNo", value = "仓库编号", required = false, dataType = "String", paramType = "query"),
+            @ApiImplicitParam(name = "sType", value = "仓库类型", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "mType", value = "经营类型", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "仓库状态(0未启用 1已启用)", required = false, dataType = "Int", paramType = "query"),
+    })
+    public ComResponse<Page<StorePo>> selectStoreListPage(@RequestParam("pageNo") Integer pageNo,@RequestParam("pageSize") Integer pageSize,
                                                           @RequestParam(value = "storeNo",required = false) String storeNo,
                                                           @RequestParam(value = "sType",required = false) Integer sType,
-                                                          @RequestParam(value = "mType",required = false) Integer mType);
+                                                          @RequestParam(value = "mType",required = false) Integer mType,
+                                                          @RequestParam(value = "status",required = false) Integer status);
 
 
     @GetMapping("store/v1/selectStore")
@@ -136,5 +147,11 @@ public interface StoreFeginService {
     @GetMapping("store/v1/storeLocalPageList")
     public ComResponse<Page<StoreLocalPo>> storeLocalPageList(@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize,
                                                         @RequestParam(value = "storeId",required = false) Integer storeI);
+
+
+    @ApiOperation(value = "编号查询仓库所有",notes = "编号查询仓库所有")
+    @GetMapping("store/v1/selectStoreByNo")
+    public ComResponse<StoreVO> selectStoreByNo(@RequestParam("no") String no);
+
 
 }

@@ -34,7 +34,7 @@ public class SplitStoreRuleServiceImpl implements SplitStoreRuleService {
     public ComResponse<Page<SplitStoreRulePageDTO>> getSplitStoreRuleList(Integer pageSize, Integer pageNo) {
         Page<SplitStoreRulePageDTO> page = new Page<>();
         //仓库分页信息
-        ComResponse<Page<StorePo>> storeListPage = storeFeginService.selectStoreListPage(pageNo, pageSize, null, null, null);
+        ComResponse<Page<StorePo>> storeListPage = storeFeginService.selectStoreListPage(pageNo, pageSize, null, null, null,1);
         if (!storeListPage.getCode().equals(200)) {
             return ComResponse.success(page);
         }
