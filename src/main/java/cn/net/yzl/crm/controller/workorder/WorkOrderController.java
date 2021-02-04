@@ -19,6 +19,7 @@ import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
 import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
+import cn.net.yzl.workorder.common.CommonConstants;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
@@ -673,33 +674,12 @@ public class WorkOrderController {
         return workOrderClient.submitWorkOrder(submitWorkOrderDTO);
     }
 
-    @ApiOperation(value = "回访规则校验Job",notes = "回访规则校验Job")
-    @GetMapping(value = "v1/returnVisitRules")
-    public ComResponse<Boolean> returnVisitRules(){
-        ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(2, 2, 1, 0);
-        List<WorkOrderRuleConfigBean> data = listComResponse.getData();
-        if (CollectionUtils.isEmpty(data)){
-            return ComResponse.success();
-        }
-        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
-            switch (workOrderRuleConfigBean.getId()){
-                case 9:
-                    break;
-                case 10:
-                    String paramsValue = workOrderRuleConfigBean.getParamsValue();
-                    workOrderClient.visitDateLtCurrentDate(paramsValue);
-                    break;
-            }
-        }
-        return ComResponse.success();
-    }
-
     @ApiOperation(value = "产品服用量小于规则配置:需回访",notes = "产品服用量小于规则配置:需回访")
     @PostMapping(value = "v1/productDosage")
     public ComResponse<Boolean> productDosage(@ApiParam("顾客会员号")@RequestParam("memberCard") List<String> memberCard){
         return workOrderClient.productDosage(memberCard);
     }
-·
+
     @ApiOperation(value = "新客户回访",notes = "新客户回访")
     @GetMapping(value = "v1/newMember")
     public ComResponse<Boolean> newMember(@ApiParam("顾客会员号")@RequestParam("memberCard") String memberCard,@ApiParam("状态:1新顾客;2:老顾客")@RequestParam("status")Integer status ){

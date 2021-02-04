@@ -230,14 +230,6 @@ public interface WorkOrderClient {
     ComResponse<Boolean> productDosage(@RequestParam("memberCard") List<String> memberCard);
 
     /**
-     * 智能工单-回访规则校验第二条
-     * @param paramsValue
-     * @return
-     */
-    @GetMapping(value = "v1/visitDateLtCurrentDate")
-    ComResponse<Boolean> visitDateLtCurrentDate(@RequestParam("paramsValue")String paramsValue);
-
-    /**
      * 智能工单-回访规则校验第5条
      * @return
      */
