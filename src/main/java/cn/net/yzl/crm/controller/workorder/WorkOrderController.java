@@ -439,6 +439,8 @@ public class WorkOrderController {
     public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
         recoveryDTO.setStaffName(QueryIds.userName.get());
+        recoveryDTO.setCreateId(QueryIds.userNo.get());
+        recoveryDTO.setCreateName(QueryIds.userName.get());
         return workOrderClient.handIn(recoveryDTO);
     }
 
