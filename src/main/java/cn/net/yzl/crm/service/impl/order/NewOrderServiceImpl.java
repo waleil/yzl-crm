@@ -92,8 +92,6 @@ public class NewOrderServiceImpl implements INewOrderService {
     public ComResponse<Boolean> newOrder(NewOrderDTO dto) {
         ComResponse  orderRes = null;
         AtomicInteger totalCount = null;//总人数
-        AtomicInteger successCnt = new AtomicInteger();//成功人数
-        AtomicInteger failCnt = new AtomicInteger();//失败人数
         try{
             local.set(new ArrayList<>());
             //查询坐席时间
@@ -638,6 +636,7 @@ public class NewOrderServiceImpl implements INewOrderService {
             product.setUnit(m.getUnit());
             product.setStock(m.getStock());
             product.setPackageunit(m.getPackagingUnit());
+            product.setProductNo(m.getProductNo());
             return product;
         }).collect(Collectors.toList());
 
