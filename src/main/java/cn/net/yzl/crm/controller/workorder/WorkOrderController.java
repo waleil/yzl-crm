@@ -699,7 +699,7 @@ public class WorkOrderController {
     public ComResponse<Boolean> productDosage(@ApiParam("顾客会员号")@RequestParam("memberCard") List<String> memberCard){
         return workOrderClient.productDosage(memberCard);
     }
-·
+//·
     @ApiOperation(value = "新客户回访",notes = "新客户回访")
     @GetMapping(value = "v1/newMember")
     public ComResponse<Boolean> newMember(@ApiParam("顾客会员号")@RequestParam("memberCard") String memberCard,@ApiParam("状态:1新顾客;2:老顾客")@RequestParam("status")Integer status ){
