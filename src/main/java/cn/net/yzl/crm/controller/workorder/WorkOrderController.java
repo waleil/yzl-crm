@@ -134,8 +134,18 @@ public class WorkOrderController {
     @PostMapping("v1/pageList")
     @ApiOperation(value = "智能工单: 热线工单管理-列表", notes = "智能工单: 热线工单管理-列表")
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
+        //获取当前用户部门，以及员工
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        //智能工单--查询自己部门的数据
+        if(!StringUtils.isEmpty(detailsByNo) && !StringUtils.isEmpty(detailsByNo.getData())){
+            StaffImageBaseInfoDto data = detailsByNo.getData();
+            Integer departId = data.getDepartId();//当前登录人部门编码
+            findWorkOrderHotlinePageListDTO.setDeptId(departId);
+        }
+        //智能派单--默认查询所有部门的数据
         ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
+
     }
 
     /**
