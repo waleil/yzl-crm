@@ -24,7 +24,7 @@ public interface OutStoreWarningClient {
     ComResponse<OutStoreWarningDTO> getOutStoreWarningDetail();
 
     @GetMapping("v1/getPageList")
-    ComResponse<Page<OrderWarningOutStorePageDTO>> getPageList(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam String orderNo);
+    ComResponse<Page<OrderWarningOutStorePageDTO>> getPageList(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam(required = false) String orderNo);
 
     @GetMapping("v1/getByBusinessType")
     ComResponse<JSONObject> getByBusinessType(@RequestParam String businessType);

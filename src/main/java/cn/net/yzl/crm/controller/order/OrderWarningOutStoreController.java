@@ -32,7 +32,7 @@ public class OrderWarningOutStoreController {
     public ComResponse<Page<OrderWarningOutStorePageDTO>> getPageList(
             @RequestParam @ApiParam(value = "当前页码", required = true) Integer pageNo,
             @RequestParam @ApiParam(value = "每页总数量", required = true) Integer pageSize,
-            @RequestParam @ApiParam(value = "订单编号") String orderNo) {
+            @RequestParam(required = false) @ApiParam(value = "订单编号") String orderNo) {
         return this.outStoreWarningClient.getPageList(pageNo, pageSize, orderNo);
     }
 
