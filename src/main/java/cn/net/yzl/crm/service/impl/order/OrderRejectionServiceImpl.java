@@ -2,6 +2,8 @@ package cn.net.yzl.crm.service.impl.order;
 
 import java.util.Optional;
 
+import cn.net.yzl.crm.client.store.StoreFeginService;
+import cn.net.yzl.model.vo.StoreVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,8 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
 	private EhrStaffClient ehrStaffClient;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Autowired
+	private StoreFeginService storeFeginService;
 
 	/**
 	 * @param orderRejectionAddDTO
@@ -42,6 +46,19 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(detailsByNo.getCode())) {
 			log.error("拒收单-添加拒收单>>找不到该坐席信息>>{}", detailsByNo);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
+		}
+		//仓库信息
+		ComResponse<StoreVO> storeResponse = storeFeginService.selectStoreByNo(orderRejectionAddDTO.getStoreNo());
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(storeResponse.getCode())) {
+			log.error("拒收单-添加拒收单>>仓库服务异常>>{}", storeResponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "仓库服务异常。");
+		}
+		StoreVO storeVO = storeResponse.getData();
+		if (!Optional.ofNullable(storeVO).isPresent()){
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "未找到仓库信息。");
+		}
+		if (!storeVO.getStatus().equals(1)){
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "添加失败，仓库未启用。");
 		}
 		Integer departId = Optional.ofNullable(detailsByNo.getData()).map(StaffImageBaseInfoDto::getDepartId).orElse(0);
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(departId);
