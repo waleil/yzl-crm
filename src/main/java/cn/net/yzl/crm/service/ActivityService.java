@@ -1,10 +1,13 @@
 package cn.net.yzl.crm.service;
 
+import cn.net.yzl.activity.model.requestModel.CalculateRequest;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
 import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
 import cn.net.yzl.common.entity.ComResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -16,4 +19,8 @@ public interface ActivityService {
     ComResponse<List<ProductDiscountResponse>> getProductListDiscount(ProductListDiscountRequest request);
 
     ComResponse<ProductDiscountResponse> getProductDiscount(ProductDiscountRequest request);
+
+    ComResponse<BigDecimal> calculate(CalculateRequest request);
+
+    ComResponse<Boolean> checkOrderAmount(CheckOrderAmountRequest request);
 }
