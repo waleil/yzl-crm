@@ -353,9 +353,23 @@ public class NewOrderServiceImpl implements INewOrderService {
 			return result;
 		}
 		result = member.getReveiverInformations().stream()
-				.filter(p -> !StringUtils.isNullOrEmpty(p.getDetailedReceivingAddress())).findFirst().orElse(null);
+				.filter(p -> this.check(p)).findFirst().orElse(null);
 
 		return result;
+	}
+
+	private boolean check(ReveiverAddressMsgDTO p) {
+		if(StringUtils.isNullOrEmpty(p.getDetailedReceivingAddress()) ||
+				StringUtils.isNullOrEmpty(p.getCityName()) ||
+				p.getCityNo()==null ||
+				StringUtils.isNullOrEmpty(p.getProvinceName())||
+				p.getProvinceNo() == null ||
+				StringUtils.isNullOrEmpty(p.getCountyName())||
+				p.getCountyNo()== null  ){
+			return false;
+		}
+		return true;
+
 	}
 
 	/**
@@ -419,7 +433,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setExpressNumber(null);
 		orderM.setRelationOrder(orderTemp.getRelationOrder());
 		// todo 地址唯一标识
-		orderM.setReveiverAddressNo(0);
+		orderM.setReveiverAddressNo(addressMsgDTO.getId());
 		orderM.setReveiverProvince(String.valueOf(addressMsgDTO.getProvinceNo()));
 		orderM.setReveiverProvinceName(addressMsgDTO.getProvinceName());
 		orderM.setReveiverCity(String.valueOf(addressMsgDTO.getCityNo()));
