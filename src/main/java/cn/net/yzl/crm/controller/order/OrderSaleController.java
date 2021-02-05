@@ -3,8 +3,10 @@ package cn.net.yzl.crm.controller.order;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import cn.net.yzl.order.model.vo.order.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +27,6 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.order.enums.RedisKeys;
-import cn.net.yzl.order.model.vo.order.CreateOrderSaleForSearchDTO;
-import cn.net.yzl.order.model.vo.order.OrderSaleAddDTO;
-import cn.net.yzl.order.model.vo.order.OrderSaleCheckListVO;
-import cn.net.yzl.order.model.vo.order.OrderSaleDetailWatchDTO;
-import cn.net.yzl.order.model.vo.order.OrderSaleListVO;
-import cn.net.yzl.order.model.vo.order.OrderSaleUpdateExpress;
-import cn.net.yzl.order.model.vo.order.SaleOrderReviewDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -146,5 +141,12 @@ public class OrderSaleController {
 	public ComResponse<CreateOrderSaleForSearchDTO> selectOrderSaleProductInfoByOrderNo(
 			@RequestParam @ApiParam(value = "订单编号") String orderNo) {
 		return orderSaleClient.selectOrderSaleProductInfoByOrderNo(orderNo);
+	}
+
+	@ApiOperation(value = "结算中心-查询退款详情")
+	@GetMapping("/v1/selectRefundMoneyInfo")
+	public ComResponse<RefundMoneyApplyDetailDTO> selectRefundMoneyInfo(
+			@RequestParam @NotEmpty(message = "售后单号不能为空") @ApiParam(name = "saleOrderNo", value = "售后单号", required = true) String saleOrderNo) {
+		return orderSaleClient.selectRefundMoneyInfo(saleOrderNo);
 	}
 }

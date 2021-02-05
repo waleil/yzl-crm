@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 @FeignClient(name = "orderSale", url = "${api.gateway.url}/orderService/orderSale")
 //@FeignClient(name = "orderSale", url = "localhost:4455/orderSale")
@@ -58,7 +59,6 @@ public interface OrderSaleClient {
     public ComResponse<CreateOrderSaleForSearchDTO> selectOrderSaleProductInfoByOrderNo(@RequestParam String orderNo);
 
 
-
     /**
      * 查询待审核售后单列表
      */
@@ -68,6 +68,7 @@ public interface OrderSaleClient {
             @RequestParam(required = false) @ApiParam(name = "memberName", value = "顾客姓名") String memberName,
             @RequestParam @ApiParam(value = "页数", name = "pageSize") Integer pageSize,
             @RequestParam @ApiParam(value = "条数", name = "pageNo") Integer pageNo);
+
     /**
      * 查询已审核审核售后单列表
      */
@@ -107,4 +108,7 @@ public interface OrderSaleClient {
      */
     @PutMapping("/v1/reviewSaleOrder")
     ComResponse<Boolean> reviewSaleOrder(@RequestBody SaleOrderReviewDTO dto);
+
+    @GetMapping("/v1/selectRefundMoneyInfo")
+    ComResponse<RefundMoneyApplyDetailDTO> selectRefundMoneyInfo(@RequestParam @NotEmpty(message = "售后单号不能为空") @ApiParam(name = "saleOrderNo", value = "售后单号", required = true) String saleOrderNo);
 }
