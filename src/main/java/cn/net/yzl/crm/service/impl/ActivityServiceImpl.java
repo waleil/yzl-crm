@@ -7,9 +7,11 @@ import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
 import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.service.ActivityService;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
+import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,10 +35,13 @@ public class ActivityServiceImpl implements ActivityService {
     @Autowired
     private ActivityClient activityClient;
 
+    @Autowired
+    MemberFien memberFien;
+
     @Override
     public ComResponse<List<ProductDiscountResponse>> getProductListDiscount(ProductListDiscountRequest request) {
         Long groupId = this.getGroupIdByUserNo();
-        if(null != groupId){
+        if (null != groupId) {
             request.setGroupId(groupId);
         }
         return activityClient.getProductListDiscount(request);
@@ -46,7 +51,7 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ComResponse<ProductDiscountResponse> getProductDiscount(ProductDiscountRequest request) {
         Long groupId = this.getGroupIdByUserNo();
-        if(null != groupId){
+        if (null != groupId) {
             request.setGroupId(groupId);
         }
         return activityClient.getProductDiscount(request);
@@ -55,8 +60,12 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ComResponse<BigDecimal> calculate(CalculateRequest request) {
         Long groupId = this.getGroupIdByUserNo();
-        if(null != groupId){
+        if (null != groupId) {
             request.setGroupId(groupId);
+        }
+        Member member = memberFien.getMemberDefault(request.getMemberCard());
+        if (null != member) {
+            request.setMemberLevelGrade(member.getMGradeId());
         }
         return activityClient.calculate(request);
     }
@@ -64,8 +73,12 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public ComResponse<Boolean> checkOrderAmount(CheckOrderAmountRequest request) {
         Long groupId = this.getGroupIdByUserNo();
-        if(null != groupId){
+        if (null != groupId) {
             request.setGroupId(groupId);
+        }
+        Member member = memberFien.getMemberDefault(request.getMemberCard());
+        if (null != member) {
+            request.setMemberLevelGrade(member.getMGradeId());
         }
         return activityClient.checkOrderAmount(request);
     }
