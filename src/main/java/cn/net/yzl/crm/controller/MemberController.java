@@ -186,15 +186,14 @@ public class MemberController {
     @ApiOperation("顾客画像-服务旅程")
     @GetMapping("v1/getMemberServiceJourney")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "year", value = "年份", dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
     })
-    public ComResponse<MemberServiceJourneryDto> getMemberServiceJourney(String memberCard,String year) {
+    public ComResponse<MemberServiceJourneryDto> getMemberServiceJourney(String memberCard) {
 
         MemberServiceJourneryDto memberServiceJourneryDto = new MemberServiceJourneryDto();
 
         // 从 订单获取 顾客的 时间
-        ComResponse<List<WorkOrderFlowVO>> listComResponse = workOrderClients.userRoute(memberCard,year);
+        ComResponse<List<WorkOrderFlowVO>> listComResponse = workOrderClients.userRoute(memberCard);
         List<WorkOrderFlowVO> workOrderFlowVOList = listComResponse.getData();
         if(workOrderFlowVOList==null || workOrderFlowVOList.size()<1){
             return ComResponse.nodata();
@@ -312,12 +311,13 @@ public class MemberController {
     @ApiOperation("顾客画像-顾客旅程")
     @GetMapping("v1/getCustomerJourney")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "year", value = "年份", dataType = "string", paramType = "query")
     })
-    public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard) {
+    public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard,String year) {
 
         // 获取工单信息
-        ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard);
+        ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard,year);
         if(listComResponse.getData()==null || listComResponse.getData().size()<1){
             return ComResponse.nodata();
         }
