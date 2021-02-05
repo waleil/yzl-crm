@@ -320,10 +320,26 @@ public class WorkOrderController {
     @PostMapping("v1/updateSingleAdjust")
     @ApiOperation(value = "智能工单：热线工单管理-单数据调整", notes = "智能工单：热线工单管理-单数据调整")
     public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO) {
-        updateSingleAdjustDTO.setStaffNo(QueryIds.userNo.get());
-        updateSingleAdjustDTO.setOperator(QueryIds.userName.get());
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(!StringUtils.isEmpty(detailsByNo) && !StringUtils.isEmpty(detailsByNo.getData())){
+            StaffImageBaseInfoDto data = detailsByNo.getData();
+            updateSingleAdjustDTO.setOperatorCode(data.getStaffNo());//操作人编码
+            updateSingleAdjustDTO.setOperator(data.getName());//操作人名称
+        }
+        //获取被分配人的信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(updateSingleAdjustDTO.getStaffNo());
+        if(!StringUtils.isEmpty(detailsByNoOne) && !StringUtils.isEmpty(detailsByNoOne.getData())){
+            StaffImageBaseInfoDto data = detailsByNoOne.getData();
+            updateSingleAdjustDTO.setStaffNo(data.getStaffNo());//被分配人编码
+            updateSingleAdjustDTO.setStaffName(data.getName());//被分配人名称
+            updateSingleAdjustDTO.setStaffLevel(StringUtils.isEmpty(data.getPostLevelId())?"0":String.valueOf(data.getPostLevelId()));//被分配人级别
+            updateSingleAdjustDTO.setDeptId(data.getDepartId());//被分配人部门id
+            updateSingleAdjustDTO.setDeptName(data.getDepartName());//被分配人部门名称
+        }
+
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateSingleAdjustDTO.setAcceptStatus(2);//人工触发 改为已接受
+        updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为未接受（热线的不管自动分配还是人工分配都需要接收）
         return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
     }
 
