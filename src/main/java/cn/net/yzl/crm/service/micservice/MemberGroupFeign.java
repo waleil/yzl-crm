@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
+import cn.net.yzl.crm.customer.dto.label.MemberLabelDto;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.customer.mongomodel.crowd.CustomerCrowdGroupVO;
 import cn.net.yzl.crm.customer.mongomodel.crowd.MemberCrowdGroupOpVO;
@@ -69,8 +70,13 @@ public interface MemberGroupFeign {
     @GetMapping("/v1/query4Select")
     ComResponse<List<CustomerCrowdGroupVO>> query4Select();
 
+    @ApiOperation("圈选试算")
     @PostMapping("/v1/groupTrial")
     ComResponse<Integer> memberCrowdGroupTrial(@RequestBody member_crowd_group memberCrowdGroup);
+
+    @ApiOperation("圈选试算同时返回部分客户数据")
+    @PostMapping("/v1/groupTrialPullData")
+    ComResponse<Page<MemberLabelDto>> memberCrowdGroupTrialPullData(@RequestBody member_crowd_group memberCrowdGroup);
 
     @GetMapping("/v1/queryMemberByGroupId")
     ComResponse<List<GroupRefMember>> queryMembersByGroupId(@RequestParam("groupId") String groupId);
@@ -78,6 +84,10 @@ public interface MemberGroupFeign {
     @ApiOperation("通过群组Id圈选试算")
     @PostMapping("/v1/groupTrialById")
     ComResponse<Integer> memberCrowdGroupTrialById(@RequestBody MemberCrowdGroupOpVO crowdGroupOpVO);
+
+    @ApiOperation("通过群组Id圈选试算同时返回部分客户数据")
+    @PostMapping("/v1/groupTrialPullDataById")
+    ComResponse<Page<MemberLabelDto>> memberCrowdGroupTrialPullDataById(@RequestBody MemberCrowdGroupOpVO crowdGroupOpVO);
 
     @ApiOperation("通过群组Id圈选")
     @PostMapping("/v1/groupRunById")
