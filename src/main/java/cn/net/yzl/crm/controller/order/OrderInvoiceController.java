@@ -7,17 +7,24 @@ import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceListDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
 
 @RestController
 @RequestMapping("orderInvoice")
@@ -26,6 +33,9 @@ public class OrderInvoiceController {
 
     @Resource
     private OrderInvoiceClient orderInvoiceClient;
+
+    @Resource
+    private OrderInvoiceService orderInvoiceService;
     @Resource
     private EhrStaffClient ehrStaffClient;
 
@@ -80,5 +90,7 @@ public class OrderInvoiceController {
     public ComResponse<Page<OrderInvoiceListDTO>> selectInvoiceList (@RequestBody OrderInvoiceReqDTO dto ) {
         return this.orderInvoiceClient.selectInvoiceList(dto);
     }
+
+
 
 }
