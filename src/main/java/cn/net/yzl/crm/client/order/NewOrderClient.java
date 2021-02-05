@@ -17,8 +17,8 @@ import cn.net.yzl.order.model.vo.order.NewOrderDTO;
 
 import java.util.List;
 
-@FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/newOrdder")
-//@FeignClient(name = "newOrder",url = "localhost:4455/newOrdder")
+//@FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/newOrdder")
+@FeignClient(name = "newOrder",url = "localhost:4455/newOrdder")
 public interface NewOrderClient {
 
 
