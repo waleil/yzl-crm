@@ -189,15 +189,6 @@ public interface WorkOrderClient {
     ComResponse<Void> receive(ReceiveDTO receiveDTO);
 
     /**
-     * 智能工单：我的热线工单-修改处理工单流水
-     *
-     * @param workOrderDisposeFlowBean
-     * @return
-     */
-//    @PostMapping("v1/updateWorkOrderDisposeFlow")
-//    ComResponse<String> updateWorkOrderDisposeFlow(WorkOrderDisposeFlowBean workOrderDisposeFlowBean);
-
-    /**
      * 查询顾客旅程
      * @param memberCard
      * @return

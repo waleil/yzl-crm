@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import cn.net.yzl.crm.customer.vo.MemberDiseaseIdUpdateVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -168,4 +169,11 @@ public interface MemberFien {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query") })
 	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordList(@NotBlank String memberCard);
+
+	@ApiOperation("顾客病症-根据病症id更新顾客病症")
+	@GetMapping("/v1/updateMemberDiseaseByDiseaseId")
+	public GeneralResult<Integer> updateMemberDiseaseByDiseaseId(@RequestBody MemberDiseaseIdUpdateVO memberDiseaseIdUpdateVO);
+
+
+
 }

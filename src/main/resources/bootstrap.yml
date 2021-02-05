@@ -2,7 +2,7 @@ spring:
   application:
     name: yzl-crm
   profiles:
-    active: dev
+    active: test
   servlet:
     multipart:
       max-file-size: 500MB

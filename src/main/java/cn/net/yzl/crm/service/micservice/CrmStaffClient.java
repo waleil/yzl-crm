@@ -111,11 +111,15 @@ public interface CrmStaffClient {
     ComResponse<List<StaffCrowdGroup>> getStaffCrowdGroupList(@RequestParam("id") Long id);
 
     default List<StaffCrowdGroup> getStaffCrowdGroupDefault(Long id) {
-        ComResponse<List<StaffCrowdGroup>> staffCrowdGroupList = getStaffCrowdGroupList(id);
-        if (null == staffCrowdGroupList || 200 != staffCrowdGroupList.getCode()) {
+        try {
+            ComResponse<List<StaffCrowdGroup>> staffCrowdGroupList = getStaffCrowdGroupList(id);
+            if (null == staffCrowdGroupList || 200 != staffCrowdGroupList.getCode()) {
+                return Collections.emptyList();
+            }
+            return staffCrowdGroupList.getData();
+        } catch (Exception e) {
             return Collections.emptyList();
         }
-        return staffCrowdGroupList.getData();
     }
 
     @PostMapping("/staff/v1/updateResult")
