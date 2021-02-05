@@ -7,7 +7,9 @@ import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.StaffService;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.OrderClient;
+import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.IsHandInDTO;
 import cn.net.yzl.workorder.model.enums.RuleDescriptionEnums;
@@ -33,6 +35,9 @@ public class HandInUtils {
 
     @Autowired
     private StaffService staffService;
+
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
 
 
     /**
@@ -140,9 +145,26 @@ public class HandInUtils {
 
         String paramsValue = wORCBean.getParamsValue();
         isHandInDTO.setParamValue(paramsValue);
-        StaffImageBaseInfoDto staffImageBaseInfoByStaffNo = staffService.getStaffImageBaseInfoByStaffNo(isHandInDTO.getStaffNo());
-        isHandInDTO.setPostId(staffImageBaseInfoByStaffNo.getPostId());
-        isHandInDTO.setPostLevelId(staffImageBaseInfoByStaffNo.getPostLevelId());
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(isHandInDTO.getStaffNo());
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        if(null == data){
+            return Boolean.FALSE;
+        }
+        ComResponse<DepartDto> departById = ehrStaffClient.getDepartById(data.getDepartId());
+        DepartDto data1 = departById.getData();
+        if(null == data1){
+            return Boolean.FALSE;
+        }
+        ComResponse<StaffImageBaseInfoDto> detailsByNo1 = ehrStaffClient.getDetailsByNo(data1.getLeaderNo());
+        StaffImageBaseInfoDto data2 = detailsByNo1.getData();
+        if(null == data2){
+            return Boolean.FALSE;
+        }
+
+        isHandInDTO.setPostId(data2.getPostId());
+        //用来接收部门参数
+        isHandInDTO.setSouce(data2.getDepartId());
+        isHandInDTO.setPostLevelId(data2.getPostLevelId());
         return turnRulnClient.mCustomerLExceeded(isHandInDTO).getData();
 
     }
