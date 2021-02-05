@@ -186,14 +186,15 @@ public class MemberController {
     @ApiOperation("顾客画像-服务旅程")
     @GetMapping("v1/getMemberServiceJourney")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "year", value = "年份", dataType = "string", paramType = "query")
     })
-    public ComResponse<MemberServiceJourneryDto> getMemberServiceJourney(String memberCard) {
+    public ComResponse<MemberServiceJourneryDto> getMemberServiceJourney(String memberCard,String year) {
 
         MemberServiceJourneryDto memberServiceJourneryDto = new MemberServiceJourneryDto();
 
         // 从 订单获取 顾客的 时间
-        ComResponse<List<WorkOrderFlowVO>> listComResponse = workOrderClients.userRoute(memberCard);
+        ComResponse<List<WorkOrderFlowVO>> listComResponse = workOrderClients.userRoute(memberCard,year);
         List<WorkOrderFlowVO> workOrderFlowVOList = listComResponse.getData();
         if(workOrderFlowVOList==null || workOrderFlowVOList.size()<1){
             return ComResponse.nodata();

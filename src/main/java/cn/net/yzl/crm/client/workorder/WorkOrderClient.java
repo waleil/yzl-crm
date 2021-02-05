@@ -194,7 +194,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/userRoute")
-    ComResponse<List<WorkOrderFlowVO>>  userRoute(@RequestParam(name = "memberCard", required = true)String memberCard);
+    ComResponse<List<WorkOrderFlowVO>>  userRoute(@RequestParam(name = "memberCard", required = true)String memberCard,@RequestParam(name = "year")String year);
 
     /**
      * 智能工单-顾客旅程-根据顾客会员号查询顾客工单信息
