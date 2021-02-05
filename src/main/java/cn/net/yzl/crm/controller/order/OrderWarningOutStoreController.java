@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.crm.dto.order.OutStoreWarningConfigDTO;
+import cn.net.yzl.crm.service.order.OutStoreWarningService;
 import cn.net.yzl.crm.utils.BeanCopyUtils;
 import cn.net.yzl.order.enums.BusinessType;
 import com.alibaba.fastjson.JSONObject;
@@ -26,6 +27,8 @@ import javax.validation.Valid;
 public class OrderWarningOutStoreController {
     @Autowired
     private OutStoreWarningClient outStoreWarningClient;
+    @Autowired
+    private OutStoreWarningService outStoreWarningService;
 
     @GetMapping("v1/getPageList")
     @ApiOperation("出库预警分页")
@@ -42,12 +45,19 @@ public class OrderWarningOutStoreController {
     public ComResponse<JSONObject> getByBusinessType() {
         return outStoreWarningClient.getByBusinessType(BusinessType.ORDER_WARNING_OUT_STORE.getCode());
     }
-	@PostMapping("v1/saveSysConfig")
-	@ApiOperation(value = "添加出库预警配置", notes = "格式：{'delay':1,'noticeType':1}，delay预警时间，noticeType预警方式：1短信，2邮件，3短信+邮件")
-	public ComResponse<Integer> saveSysConfig(@RequestBody @Valid OutStoreWarningConfigDTO dto){
+
+    @PostMapping("v1/sendOutStoreWarningMsg")
+    @ApiOperation(value = "发送出库预警消息（邮件、短信）" )
+    public ComResponse<Boolean> sendOutStoreWarningMsg() {
+        return outStoreWarningService.sendOutStoreWarningMsg();
+    }
+
+    @PostMapping("v1/saveSysConfig")
+    @ApiOperation(value = "添加出库预警配置", notes = "格式：{'delay':1,'noticeType':1}，delay预警时间，noticeType预警方式：1短信，2邮件，3短信+邮件")
+    public ComResponse<Integer> saveSysConfig(@RequestBody @Valid OutStoreWarningConfigDTO dto) {
         JSONObject obj = new JSONObject();
-        obj.put("noticeType",dto.getNoticeType());
-        obj.put("delay",dto.getDelay());
-    	return outStoreWarningClient.saveSysConfig(String.valueOf(obj));
-	}
+        obj.put("noticeType", dto.getNoticeType());
+        obj.put("delay", dto.getDelay());
+        return outStoreWarningClient.saveSysConfig(String.valueOf(obj));
+    }
 }

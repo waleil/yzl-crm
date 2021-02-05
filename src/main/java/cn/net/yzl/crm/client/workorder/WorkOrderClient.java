@@ -71,7 +71,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/queryFirstProduct")
-    ComResponse<String> queryFirstProduct();
+    ComResponse<String> queryFirstProduct(@RequestParam("deptId") Integer deptId);
 
     /**
      * 智能工单:回访工单管理-查询所有用户最后一次购买商品
@@ -79,7 +79,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/queryLastProduct")
-    ComResponse<String> queryLastProduct();
+    ComResponse<String> queryLastProduct(@RequestParam("deptId") Integer deptId);
 
     /**
      * 智能工单：热线工单管理-多数据调整
@@ -194,7 +194,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/userRoute")
-    ComResponse<List<WorkOrderFlowVO>>  userRoute(@RequestParam(name = "memberCard", required = true)String memberCard);
+    ComResponse<List<WorkOrderFlowVO>>  userRoute(@RequestParam(name = "memberCard", required = true)String memberCard,@RequestParam(name = "year")String year);
 
     /**
      * 智能工单-顾客旅程-根据顾客会员号查询顾客工单信息
