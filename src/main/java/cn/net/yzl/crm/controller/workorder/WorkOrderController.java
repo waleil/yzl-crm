@@ -680,16 +680,11 @@ public class WorkOrderController {
         return ComResponse.success(flag);
     }
 
-    @ApiOperation(value = "智能工单-顾客旅程-根据顾客会员号查询顾客工单信息",notes = "智能工单-顾客旅程-根据顾客会员号查询顾客工单信息")
-    @GetMapping(value = "v1/queryWorkOrder")
-    public ComResponse<List<WorkOrderVo>> queryWorkOrder(@ApiParam(value = "顾客会员号")@RequestParam(value = "memberCard")String memberCard){
-        return workOrderClient.queryWorkOrder(memberCard);
-    }
-    @ApiOperation(value = "查询顾客旅程",notes = "查询顾客旅程")
-    @GetMapping(value = "v1/userRoute")
-    public ComResponse<List<WorkOrderFlowVO>> userRoute(@RequestParam(name = "memberCard",required = true)String memberCard){
-        return workOrderClient.userRoute(memberCard);
-    }
+//    @ApiOperation(value = "查询顾客旅程",notes = "查询顾客旅程")
+//    @GetMapping(value = "v1/userRoute")
+//    public ComResponse<List<WorkOrderFlowVO>> userRoute(@RequestParam(name = "memberCard",required = true)String memberCard){
+//        return workOrderClient.userRoute(memberCard);
+//    }
 
     @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
     @PostMapping(value = "v1/submitWorkOrder")
