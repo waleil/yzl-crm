@@ -4,7 +4,6 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.util.BeanUtil;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
@@ -19,33 +18,56 @@ import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
 import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
-import cn.net.yzl.workorder.common.CommonConstants;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
-import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
-import cn.net.yzl.workorder.model.dto.*;
+import cn.net.yzl.workorder.model.dto.FindByCalledPhoneIsEmptyDTO;
+import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
+import cn.net.yzl.workorder.model.dto.InsertWorkOrderDisposeFlowDTO;
+import cn.net.yzl.workorder.model.dto.IsHandInDTO;
+import cn.net.yzl.workorder.model.dto.IsListPageDTO;
+import cn.net.yzl.workorder.model.dto.MyWorkOrderHotlineListDTO;
+import cn.net.yzl.workorder.model.dto.ReceiveDTO;
+import cn.net.yzl.workorder.model.dto.RecoveryDTO;
+import cn.net.yzl.workorder.model.dto.SubmitWorkOrderDTO;
+import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
+import cn.net.yzl.workorder.model.dto.UpdateBatchDTO;
+import cn.net.yzl.workorder.model.dto.UpdateBatchWorkOrderDTO;
+import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
+import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
+import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
+import cn.net.yzl.workorder.model.dto.UpdateWorkOrderVisitDTO;
+import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
+import cn.net.yzl.workorder.model.dto.WorkOrderUnclaimedUserDTO;
 import cn.net.yzl.workorder.model.enums.WorkOrderTypeEnums;
-import cn.net.yzl.workorder.model.vo.*;
+import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
+import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
+import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
+import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
+import cn.net.yzl.workorder.model.vo.WorkOrderUnclaimedUserVO;
+import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
+import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("workOrder")
@@ -157,8 +179,14 @@ public class WorkOrderController {
     @ApiOperation(value = "智能工单：热线工单管理-回收", notes = "智能工单：热线工单管理-回收")
     @PostMapping("v1/updateRecycling")
     public ComResponse<Void> updateRecycling(@Validated @RequestBody UpdateRecyclingDTO updateRecyclingDTO) {
-        updateRecyclingDTO.setStaffNo(QueryIds.userNo.get());
-        updateRecyclingDTO.setOperator(QueryIds.userName.get());
+        //获取当前用户部门，以及员工
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        //智能工单--查询自己部门的数据
+        if(!StringUtils.isEmpty(detailsByNo) && !StringUtils.isEmpty(detailsByNo.getData())){
+            StaffImageBaseInfoDto data = detailsByNo.getData();
+            updateRecyclingDTO.setStaffNo(data.getStaffNo());
+            updateRecyclingDTO.setOperator(data.getName());
+        }
         updateRecyclingDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         return workOrderClient.updateRecycling(updateRecyclingDTO);
     }
@@ -292,10 +320,26 @@ public class WorkOrderController {
     @PostMapping("v1/updateSingleAdjust")
     @ApiOperation(value = "智能工单：热线工单管理-单数据调整", notes = "智能工单：热线工单管理-单数据调整")
     public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO) {
-        updateSingleAdjustDTO.setStaffNo(QueryIds.userNo.get());
-        updateSingleAdjustDTO.setOperator(QueryIds.userName.get());
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(!StringUtils.isEmpty(detailsByNo) && !StringUtils.isEmpty(detailsByNo.getData())){
+            StaffImageBaseInfoDto data = detailsByNo.getData();
+            updateSingleAdjustDTO.setOperatorCode(data.getStaffNo());//操作人编码
+            updateSingleAdjustDTO.setOperator(data.getName());//操作人名称
+        }
+        //获取被分配人的信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(updateSingleAdjustDTO.getStaffNo());
+        if(!StringUtils.isEmpty(detailsByNoOne) && !StringUtils.isEmpty(detailsByNoOne.getData())){
+            StaffImageBaseInfoDto data = detailsByNoOne.getData();
+            updateSingleAdjustDTO.setStaffNo(data.getStaffNo());//被分配人编码
+            updateSingleAdjustDTO.setStaffName(data.getName());//被分配人名称
+            updateSingleAdjustDTO.setStaffLevel(StringUtils.isEmpty(data.getPostLevelId())?"0":String.valueOf(data.getPostLevelId()));//被分配人级别
+            updateSingleAdjustDTO.setDeptId(data.getDepartId());//被分配人部门id
+            updateSingleAdjustDTO.setDeptName(data.getDepartName());//被分配人部门名称
+        }
+
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateSingleAdjustDTO.setAcceptStatus(2);//人工触发 改为已接受
+        updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为未接受（热线的不管自动分配还是人工分配都需要接收）
         return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
     }
 
