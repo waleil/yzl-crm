@@ -175,5 +175,16 @@ public interface MemberFien {
 	public GeneralResult<Integer> updateMemberDiseaseByDiseaseId(@RequestBody MemberDiseaseIdUpdateVO memberDiseaseIdUpdateVO);
 
 
+	default Member getMemberDefault(String memberCard) {
+		try {
+			GeneralResult<Member> member = this.getMember(memberCard);
+			if (null == member || 200 != member.getCode()) {
+				return null;
+			}
+			return member.getData();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
 }
