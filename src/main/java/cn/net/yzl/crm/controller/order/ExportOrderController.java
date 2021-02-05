@@ -40,20 +40,17 @@ import java.util.List;
  * @date 2021/2/5 10:07
  */
 @Controller
-@Api(value = "结算中心", tags = {"导出导出"})
+@Api(tags = "结算中心")
 @RequestMapping("down")
 public class ExportOrderController {
 
 
     @Resource
-    private OrderInvoiceClient orderInvoiceClient;
-
-    @Resource
     private OrderInvoiceService orderInvoiceService;
 
-    @PostMapping
-
-    public ComResponse<Boolean> exportInvoiceList(OrderInvoiceReqDTO dto, HttpServletResponse response) throws IOException {
+    @ApiOperation(value = "订单发票列表导出")
+    @PostMapping("v1/exportInvoiceList")
+    public ComResponse<Boolean> exportInvoiceList(@RequestBody  OrderInvoiceReqDTO dto, HttpServletResponse response) throws IOException {
         orderInvoiceService.exportInvoiceList(dto,response);
         return ComResponse.success(true);
     }

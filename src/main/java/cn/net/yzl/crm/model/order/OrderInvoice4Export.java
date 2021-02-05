@@ -1,7 +1,7 @@
 package cn.net.yzl.crm.model.order;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.metadata.BaseRowModel;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,32 +16,32 @@ import java.util.Date;
 @Accessors(chain = true)
 public class OrderInvoice4Export  implements Serializable {
 
-    @ExcelProperty(value = {"订单编号"},index = 1)
+    @ExcelProperty(value = {"订单编号"},index = 0)
     private String orderNo;
 
-    @ExcelProperty(value = {"财务归属"} ,index = 2)
+    @ExcelProperty(value = {"财务归属"} ,index = 1)
     private String financialOwnerName;
 
-    @ExcelProperty(value = {"开票方式"} ,index = 3)
+    @ExcelProperty(value = {"开票方式"} ,index = 2)
     private String taxMode;
 
-    @ExcelProperty(value = {"开票状态"} ,index = 4)
+    @ExcelProperty(value = {"开票状态"} ,index = 3)
     private String statsStr;
 
-    @ExcelProperty(value = {"付款方式"},index = 5)
+    @ExcelProperty(value = {"付款方式"},index = 4)
     private String payType;
 
-    @ExcelProperty(value = {"发货状态"},index = 6)
+    @ExcelProperty(value = {"发货状态"},index = 5)
     private String logisticsStatus;
 
-    @ExcelProperty(value = {"客户地址"},index = 7)
+    @ExcelProperty(value = {"客户地址"},index = 6)
     private String reveiverAddress;
 
-    @ExcelProperty(value = {"创建时间"},index = 8)
+    @ExcelProperty(value = {"创建时间"},index = 7)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createTime;
 
-    @ExcelProperty(value = {"开票时间"},index = 9)
+    @ExcelProperty(value = {"开票时间"},index = 8)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date invoiceTime;
 

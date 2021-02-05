@@ -51,9 +51,7 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
             out.write(JSON.toJSONString(res));
             return;
         }
-        res.getData().getItems().forEach(map->{
 
-        });
         //系统时间
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
