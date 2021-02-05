@@ -34,6 +34,7 @@ import cn.net.yzl.workorder.model.dto.UpdateAcceptStatusReceiveDTO;
 import cn.net.yzl.workorder.model.dto.UpdateBatchDTO;
 import cn.net.yzl.workorder.model.dto.UpdateBatchWorkOrderDTO;
 import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustDTO;
+import cn.net.yzl.workorder.model.dto.UpdateMoreAdjustSubTDTO;
 import cn.net.yzl.workorder.model.dto.UpdateRecyclingDTO;
 import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateWorkOrderVisitDTO;
@@ -159,11 +160,12 @@ public class WorkOrderController {
         //获取当前用户部门，以及员工
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         //智能工单--查询自己部门的数据
-        if(!StringUtils.isEmpty(detailsByNo) && !StringUtils.isEmpty(detailsByNo.getData())){
-            StaffImageBaseInfoDto data = detailsByNo.getData();
-            Integer departId = data.getDepartId();//当前登录人部门编码
-            findWorkOrderHotlinePageListDTO.setDeptId(departId);
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
         }
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        Integer departId = data.getDepartId();//当前登录人部门编码
+        findWorkOrderHotlinePageListDTO.setDeptId(departId);
         //智能派单--默认查询所有部门的数据
         ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
@@ -182,11 +184,12 @@ public class WorkOrderController {
         //获取当前用户部门，以及员工
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         //智能工单--查询自己部门的数据
-        if(!StringUtils.isEmpty(detailsByNo) && !StringUtils.isEmpty(detailsByNo.getData())){
-            StaffImageBaseInfoDto data = detailsByNo.getData();
-            updateRecyclingDTO.setStaffNo(data.getStaffNo());
-            updateRecyclingDTO.setOperator(data.getName());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
         }
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        updateRecyclingDTO.setStaffNo(data.getStaffNo());
+        updateRecyclingDTO.setOperator(data.getName());
         updateRecyclingDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         return workOrderClient.updateRecycling(updateRecyclingDTO);
     }
@@ -322,20 +325,21 @@ public class WorkOrderController {
     public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO) {
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
-        if(!StringUtils.isEmpty(detailsByNo) && !StringUtils.isEmpty(detailsByNo.getData())){
-            StaffImageBaseInfoDto data = detailsByNo.getData();
-            updateSingleAdjustDTO.setOperatorCode(data.getStaffNo());//操作人编码
-            updateSingleAdjustDTO.setOperator(data.getName());//操作人名称
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
         }
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        updateSingleAdjustDTO.setOperatorCode(data.getStaffNo());//操作人编码
+        updateSingleAdjustDTO.setOperator(data.getName());//操作人名称
         //获取被分配人的信息
         ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(updateSingleAdjustDTO.getStaffNo());
         if(!StringUtils.isEmpty(detailsByNoOne) && !StringUtils.isEmpty(detailsByNoOne.getData())){
-            StaffImageBaseInfoDto data = detailsByNoOne.getData();
-            updateSingleAdjustDTO.setStaffNo(data.getStaffNo());//被分配人编码
-            updateSingleAdjustDTO.setStaffName(data.getName());//被分配人名称
-            updateSingleAdjustDTO.setStaffLevel(StringUtils.isEmpty(data.getPostLevelId())?"0":String.valueOf(data.getPostLevelId()));//被分配人级别
-            updateSingleAdjustDTO.setDeptId(data.getDepartId());//被分配人部门id
-            updateSingleAdjustDTO.setDeptName(data.getDepartName());//被分配人部门名称
+            StaffImageBaseInfoDto dataOne = detailsByNoOne.getData();
+            updateSingleAdjustDTO.setStaffNo(dataOne.getStaffNo());//被分配人编码
+            updateSingleAdjustDTO.setStaffName(dataOne.getName());//被分配人名称
+            updateSingleAdjustDTO.setStaffLevel(StringUtils.isEmpty(dataOne.getPostLevelName())?"":String.valueOf(dataOne.getPostLevelName()));//被分配人级别
+            updateSingleAdjustDTO.setDeptId(dataOne.getDepartId());//被分配人部门id
+            updateSingleAdjustDTO.setDeptName(dataOne.getDepartName());//被分配人部门名称
         }
 
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
@@ -366,10 +370,32 @@ public class WorkOrderController {
     @PostMapping("v1/updateMoreAdjust")
     @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
     public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO) {
-        updateMoreAdjustDTO.setAcceptStatus(2);//人工触发 改为已接受
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        }
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        updateMoreAdjustDTO.setOperatorCode(data.getStaffNo());
+        updateMoreAdjustDTO.setOperator(data.getName());
+        //获取被分配人的信息
+        List<UpdateMoreAdjustSubTDTO> names = updateMoreAdjustDTO.getNames();
+        if(!CollectionUtils.isEmpty(names)){
+            names.stream().forEach(updateMoreAdjustSubTDTO -> {
+                ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(updateMoreAdjustSubTDTO.getStaffNo());
+                if(!StringUtils.isEmpty(detailsByNoOne) && !StringUtils.isEmpty(detailsByNoOne.getData())){
+                    StaffImageBaseInfoDto dataOne = detailsByNoOne.getData();
+                    updateMoreAdjustSubTDTO.setStaffNo(dataOne.getStaffNo());//被分配人编码
+                    updateMoreAdjustSubTDTO.setStaffName(dataOne.getName());//被分配人名称
+                    updateMoreAdjustSubTDTO.setStaffLevel(StringUtils.isEmpty(dataOne.getPostLevelName())?"":String.valueOf(dataOne.getPostLevelName()));//被分配人级别
+                    updateMoreAdjustSubTDTO.setDeptId(dataOne.getDepartId());//被分配人部门id
+                    updateMoreAdjustSubTDTO.setDeptName(dataOne.getDepartName());//被分配人部门名称
+                    updateMoreAdjustSubTDTO.setAcceptStatus(1);//不管是人工还是自动分配都是未接收
+                }
+            });
+        }
+        updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为未接收，不管是人工还是自动分配都是未接收
         updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateMoreAdjustDTO.setOperatorCode(QueryIds.userNo.get());
-        updateMoreAdjustDTO.setOperator(QueryIds.userName.get());
         return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO);
     }
 
@@ -420,9 +446,15 @@ public class WorkOrderController {
     @PostMapping("v1/updateAcceptStatusReceive")
     @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
     public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        }
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        updateAcceptStatusReceiveDTO.setOperatorCode(data.getStaffNo());
+        updateAcceptStatusReceiveDTO.setOperator(data.getName());
         updateAcceptStatusReceiveDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        updateAcceptStatusReceiveDTO.setOperator(QueryIds.userName.get());
-        updateAcceptStatusReceiveDTO.setOperatorCode(QueryIds.userNo.get());
         return workOrderClient.updateAcceptStatusReceive(updateAcceptStatusReceiveDTO);
     }
 
@@ -499,10 +531,18 @@ public class WorkOrderController {
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     @ApiOperation(value = "智能工单：我的热线工单-创建处理工单流水", notes = "智能工单：我的热线工单-创建处理工单流水")
     public ComResponse<String> insertWorkOrderDisposeFlow(@Validated @RequestBody InsertWorkOrderDisposeFlowDTO insertWorkOrderDisposeFlowDTO) {
-        insertWorkOrderDisposeFlowDTO.setCreateId(QueryIds.userNo.get());
-        insertWorkOrderDisposeFlowDTO.setCreateName(QueryIds.userName.get());
-        insertWorkOrderDisposeFlowDTO.setUpdateId(QueryIds.userNo.get());
-        insertWorkOrderDisposeFlowDTO.setUpdateName(QueryIds.userName.get());
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        }
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        String staffNo = data.getStaffNo();
+        String name = data.getName();
+        insertWorkOrderDisposeFlowDTO.setCreateId(staffNo);
+        insertWorkOrderDisposeFlowDTO.setCreateName(name);
+        insertWorkOrderDisposeFlowDTO.setUpdateId(staffNo);
+        insertWorkOrderDisposeFlowDTO.setUpdateName(name);
         return workOrderClient.insertWorkOrderDisposeFlow(insertWorkOrderDisposeFlowDTO);
     }
 
@@ -549,16 +589,6 @@ public class WorkOrderController {
     public ComResponse<Void> receive(@RequestBody ReceiveDTO receiveDTO) {
         return workOrderClient.receive(receiveDTO);
     }
-
-    /**
-     * 智能工单：我的热线工单-修改处理工单流水
-     * @return
-     */
-//    @PostMapping("v1/updateWorkOrderDisposeFlow")
-//    @ApiOperation(value = "智能工单：我的热线工单-修改处理工单流水", notes = "智能工单：我的热线工单-修改处理工单流水")
-//    public ComResponse<String> updateWorkOrderDisposeFlow(@RequestBody WorkOrderDisposeFlowBean workOrderDisposeFlowBean){
-//        return workOrderClient.updateWorkOrderDisposeFlow(workOrderDisposeFlowBean);
-//    }
 
     @ApiOperation(value = "智能工单-我的回访工单-单条上交",notes = "智能工单-我的回访工单-单条上交")
     @PostMapping(value = "v1/isHandIn")
@@ -666,6 +696,9 @@ public class WorkOrderController {
     public ComResponse<Void> submitWorkOrder(@Validated @RequestBody SubmitWorkOrderDTO submitWorkOrderDTO){
         String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户信息不存在");
+        }
         submitWorkOrderDTO.setUpdateId(userNo);
         submitWorkOrderDTO.setUpdateName(detailsByNo.getData().getName());
         //解析长字符
