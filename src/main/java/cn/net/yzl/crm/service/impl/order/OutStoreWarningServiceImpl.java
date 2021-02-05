@@ -36,7 +36,7 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
         if (Optional.ofNullable(detail.getData()).isPresent()) {
             List<String> mobile = new ArrayList<>();
             List<String> email = new ArrayList<>();
-            //角色ID
+            //TODO 等待菜单权限标识
             List<Integer> ids = outStoreWarningMapper.getRoleIdsByMenuPerms("");
             if (ids.size() > 0) {
                 //用户code

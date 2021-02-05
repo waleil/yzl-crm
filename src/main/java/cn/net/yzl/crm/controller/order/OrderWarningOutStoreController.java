@@ -46,7 +46,7 @@ public class OrderWarningOutStoreController {
         return outStoreWarningClient.getByBusinessType(BusinessType.ORDER_WARNING_OUT_STORE.getCode());
     }
 
-    @GetMapping("v1/sendOutStoreWarningMsg")
+    @PostMapping("v1/sendOutStoreWarningMsg")
     @ApiOperation(value = "发送出库预警消息（邮件、短信）" )
     public ComResponse<Boolean> sendOutStoreWarningMsg() {
         return outStoreWarningService.sendOutStoreWarningMsg();
