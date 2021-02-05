@@ -18,6 +18,7 @@ import cn.net.yzl.crm.service.workorder.WorkOrderService;
 import cn.net.yzl.crm.utils.HandInUtils;
 import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
+import cn.net.yzl.workorder.common.CommonConstants;
 import cn.net.yzl.workorder.common.Constant;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
@@ -262,6 +263,9 @@ public class WorkOrderController {
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         workOrderVisitVO.setDeptId(detailsByNo.getData().getDepartId());
+        if(null == detailsByNo.getData()){
+            return ComResponse.nodata();
+        }
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
         Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
@@ -350,14 +354,26 @@ public class WorkOrderController {
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
     @GetMapping("v1/queryFirstProduct")
     public ComResponse<List<ProductMainDTO>> queryFirstProduct() {
-        String data = workOrderClient.queryFirstProduct().getData();
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        StaffImageBaseInfoDto data1 = detailsByNo.getData();
+        Integer deptId = null;
+        if(null != data1){
+            deptId = data1.getDepartId();
+        }
+        String data = workOrderClient.queryFirstProduct(deptId).getData();
         return productClient.queryByProductCodes(data);
     }
 
     @ApiOperation(value = "查询所有用户最后一次购买商品", notes = "查询所有用户最后一次购买商品")
     @GetMapping("v1/queryLastProduct")
     public ComResponse<List<ProductMainDTO>> queryLastProduct() {
-        String data = workOrderClient.queryLastProduct().getData();
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        StaffImageBaseInfoDto data1 = detailsByNo.getData();
+        Integer deptId = null;
+        if(null != data1){
+            deptId = data1.getDepartId();
+        }
+        String data = workOrderClient.queryLastProduct(deptId).getData();
         return productClient.queryByProductCodes(data);
     }
 
@@ -404,6 +420,9 @@ public class WorkOrderController {
     public ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO) {
         updateWorkOrderVisitDTO.setCreateId(QueryIds.userNo.get());
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(null == detailsByNo.getData()){
+            return ComResponse.nodata();
+        }
         updateWorkOrderVisitDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.adjustment(updateWorkOrderVisitDTO);
     }
@@ -413,6 +432,9 @@ public class WorkOrderController {
     public ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO) {
         updateBatchDTO.setCreateId(QueryIds.userNo.get());
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(null == detailsByNo.getData()){
+            return ComResponse.nodata();
+        }
         updateBatchDTO.setCreateName(detailsByNo.getData().getName());
         List<UpdateBatchWorkOrderDTO> updateBatchWorkOrderDTOS = updateBatchDTO.getUpdateBatchWorkOrderDTOS();
         int count = 0;
@@ -557,6 +579,9 @@ public class WorkOrderController {
     public ComResponse<Void> recovery(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(null == detailsByNo.getData()){
+            return ComResponse.nodata();
+        }
         recoveryDTO.setStaffName(detailsByNo.getData().getName());
         return workOrderClient.recovery(recoveryDTO);
     }
@@ -572,6 +597,9 @@ public class WorkOrderController {
     public ComResponse<Void> handIn(@RequestBody RecoveryDTO recoveryDTO) {
         recoveryDTO.setStaffNo(QueryIds.userNo.get());
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(null == detailsByNo.getData()){
+            return ComResponse.nodata();
+        }
         recoveryDTO.setCreateName(detailsByNo.getData().getName());
         recoveryDTO.setCreateId(QueryIds.userNo.get());
         recoveryDTO.setCreateName(detailsByNo.getData().getName());
@@ -595,6 +623,9 @@ public class WorkOrderController {
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
         isHandInDTO.setStaffNo(QueryIds.userNo.get());
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(null == detailsByNo.getData()){
+            return ComResponse.nodata();
+        }
         isHandInDTO.setStaffName(detailsByNo.getData().getName());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
         if(CollectionUtils.isEmpty(listComResponse.getData())){
@@ -649,9 +680,9 @@ public class WorkOrderController {
                     flag = handInUtils.dormantCustomers(isHandInDTO,wORCBean);
                     break;
 
-                case 6:
+                /*case 6:
                     flag = handInUtils.mCustomerLExceeded(isHandInDTO,wORCBean);
-                    break;
+                    break;*/
 
                 case 8:
                     flag = handInUtils.overtimeReturnVisit(isHandInDTO,wORCBean);
@@ -672,6 +703,7 @@ public class WorkOrderController {
             recoveryDTO.setCode(isHandInDTO.getCode());
             recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
             recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            recoveryDTO.setStatus(CommonConstants.ONE);
             workOrderClient.handIn(recoveryDTO);
         }else {
             isHandInDTO.setApplyUpStatus(1);
