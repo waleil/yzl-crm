@@ -56,7 +56,7 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
                 SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()));
                 SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastShippingTimeWarning()));
             }
-            //TODO 邮件，没有员工邮件地址
+            // 邮件
             if (dto.getSendType().equals(2) || dto.getSendType().equals(3)) {
                 List<MailVo> mailVos = new ArrayList<>();
                 email.forEach(m -> mailVos.add(new MailVo(m, "出库预警", SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()))));
