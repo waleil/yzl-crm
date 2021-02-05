@@ -6,11 +6,14 @@ import cn.net.yzl.crm.client.store.InventoryFeginService;
 import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
+import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
 import cn.net.yzl.model.vo.InventoryExcelVo;
 import cn.net.yzl.model.vo.InventoryProductExcelVo;
 import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
 import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
+import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -25,6 +28,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +42,7 @@ import java.util.List;
 @Controller
 @Api(value = "结算中心", tags = {"导出导出"})
 @RequestMapping("down")
-public class ExportController {
+public class ExportOrderController {
 
 
     @Resource
@@ -47,7 +51,12 @@ public class ExportController {
     @Resource
     private OrderInvoiceService orderInvoiceService;
 
+    @PostMapping
 
+    public ComResponse<Boolean> exportInvoiceList(OrderInvoiceReqDTO dto, HttpServletResponse response) throws IOException {
+        orderInvoiceService.exportInvoiceList(dto,response);
+        return ComResponse.success(true);
+    }
 
 
 
