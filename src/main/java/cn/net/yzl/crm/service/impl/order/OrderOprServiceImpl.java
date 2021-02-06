@@ -106,9 +106,9 @@ public class OrderOprServiceImpl implements IOrderOprService {
             }
 
             //释放已使用的余额
+             MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
             if(vo.getOrder().getAmountStored() >0){
                 // 组装顾客账户消费参数
-                MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
                 memberAmountDetail.setDiscountMoney(vo.getOrder().getAmountStored());// 使用充值金额
                 memberAmountDetail.setMemberCard(vo.getOrder().getMemberCardNo());// 顾客卡号
                 memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 消费
@@ -119,6 +119,8 @@ public class OrderOprServiceImpl implements IOrderOprService {
                 // 如果调用服务接口失败
                 if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
                     log.error("取消订单>>调用顾客账户消费服务接口失败>>{}", customerAmountOperation);
+                    this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
+                            ProductClient.INCREASE_STOCK_URL, dto.getOprCode(), dto.getOrderNo());
                     throw new BizException(customerAmountOperation.getCode(),customerAmountOperation.getMessage());
                 }
 
@@ -130,7 +132,19 @@ public class OrderOprServiceImpl implements IOrderOprService {
 
             }
             //更新订单状态
-            ComResponse<?> res = orderOprClient.cancleOrderM(dto.getOrderNo());
+            ComResponse<?> res = orderOprClient.cancleOrderM(dto);
+            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
+                log.error("取消订单>>调用订单服务接口失败>>{}", res);
+                this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
+                        ProductClient.INCREASE_STOCK_URL, dto.getOprCode(), dto.getOrderNo());
+                if(vo.getOrder().getAmountStored() >0){
+                    memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);//
+                    this.orderCommonService.insert(memberAmountDetail, MemberFien.CUSTOMER_AMOUNT_OPERATION_URL,
+                            MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, dto.getOprCode(), dto.getOrderNo());
+                }
+
+                throw new BizException(res.getCode(),res.getMessage());
+            }
 
             return ComResponse.success(true);
 

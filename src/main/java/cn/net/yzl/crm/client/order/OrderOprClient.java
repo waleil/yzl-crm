@@ -2,6 +2,7 @@ package cn.net.yzl.crm.client.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.order.model.vo.order.OrderCheckDetailDTO;
+import cn.net.yzl.order.model.vo.order.OrderOprDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,7 @@ public interface OrderOprClient {
 
     @ApiOperation(value = "取消订单")
     @PostMapping("v1/cancleOrderM")
-    public ComResponse<Boolean> cancleOrderM( @RequestParam("orderNo") String orderNo);
+    public ComResponse cancleOrderM(@RequestBody OrderOprDTO dto);
 
     /**
      * 订单审批

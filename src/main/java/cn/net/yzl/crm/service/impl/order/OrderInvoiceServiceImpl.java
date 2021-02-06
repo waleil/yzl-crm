@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,13 +55,11 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
         }
 
         //系统时间
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sysDate = simpleDateFormat.format(date);
+        String sysDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
         response.setCharacterEncoding("UTF-8");
         //响应内容格式
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "attachment;fileName=" +"订单发票列表"+sysDate +".xlsx");
+        response.setHeader("Content-Disposition", String.format("attachment;fileName=订单发票列表%s.xlsx", sysDate));
         List<OrderInvoice4Export> list = new ArrayList<>();
         res.getData().getItems().forEach(map ->{
             OrderInvoice4Export orderInvoice4Export = new OrderInvoice4Export();

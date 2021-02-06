@@ -17,6 +17,7 @@ import java.util.List;
 
 @Api(tags = "订单管理")
 @FeignClient(name = "OrderTranckDetailClient", url = "${api.gateway.url}/orderService/orderTranck")
+//@FeignClient(name = "OrderTranckDetailClient", url = "localhost:4455/orderTranck")
 public interface OrderTranckDetailClient {
 
 
