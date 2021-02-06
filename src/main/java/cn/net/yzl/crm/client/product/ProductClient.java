@@ -48,6 +48,7 @@ public interface ProductClient {
 
 	String SUFFIX_URL = "/productServer/product";
 	String INCREASE_STOCK_URL = "/v1/increaseStock";
+	String DECREASE_STOCK_URL = "/v1/productReduce";
 
 	@GetMapping(value = "v1/queryCountByStatus")
 	ComResponse<List<ProductStatusCountDTO>> queryCountByStatus();
@@ -86,7 +87,7 @@ public interface ProductClient {
 	 * @param orderProductVO
 	 * @return
 	 */
-	@PostMapping(value = "v1/productReduce")
+	@PostMapping(value = DECREASE_STOCK_URL)
 	ComResponse<?> productReduce(@RequestBody @Valid OrderProductVO orderProductVO);
 
 	/**

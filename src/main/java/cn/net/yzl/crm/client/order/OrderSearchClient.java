@@ -12,8 +12,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@FeignClient(name = "orderSerch", url = "${api.gateway.url}/orderService/orderSearch")
-//@FeignClient(name = "orderSerch", url = "localhost:4455/orderSearch")
+//@FeignClient(name = "orderSerch", url = "${api.gateway.url}/orderService/orderSearch")
+@FeignClient(name = "orderSerch", url = "localhost:4455/orderSearch")
 public interface OrderSearchClient {
 
     /**
