@@ -64,7 +64,7 @@ public class DownImageInController {
             String[] split = imageUrl.split("[.]");
             String[] splitPath = split[0].split("/");
             httpServletResponse.setContentType("image/" + split[split.length - 1]);
-            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +"图片"+date+".xlsx");
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +new String("供应商".getBytes(),"iso-8859-1")+date+".xlsx");
             outputStream = httpServletResponse.getOutputStream();
             //读取文件流
             int len = 0;
@@ -101,8 +101,9 @@ public class DownImageInController {
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
+
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + "盘点信息"+date+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +new String(("盘点仓库"+storeName).getBytes(),"iso-8859-1")+date+".xlsx");
 
         if (status==1){
             //向前端写入文件流流
