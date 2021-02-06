@@ -284,7 +284,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 					String membercards = data.subList(offset, toIndex).stream().map(GroupRefMember::getMemberCard)
 							.collect(Collectors.joining(","));
-					offset = toIndex + 1;
+					offset = toIndex ;
 					ComResponse<List<MemberAddressAndLevelDTO>> res = memberFien
 							.getMembereAddressAndLevelByMemberCards(membercards);
 					if (res.getCode().compareTo(Integer.valueOf(200)) != 0) {
@@ -353,9 +353,23 @@ public class NewOrderServiceImpl implements INewOrderService {
 			return result;
 		}
 		result = member.getReveiverInformations().stream()
-				.filter(p -> !StringUtils.isNullOrEmpty(p.getDetailedReceivingAddress())).findFirst().orElse(null);
+				.filter(p -> this.check(p)).findFirst().orElse(null);
 
 		return result;
+	}
+
+	private boolean check(ReveiverAddressMsgDTO p) {
+		if(StringUtils.isNullOrEmpty(p.getDetailedReceivingAddress()) ||
+				StringUtils.isNullOrEmpty(p.getCityName()) ||
+				p.getCityNo()==null ||
+				StringUtils.isNullOrEmpty(p.getProvinceName())||
+				p.getProvinceNo() == null ||
+				StringUtils.isNullOrEmpty(p.getCountyName())||
+				p.getCountyNo()== null  ){
+			return false;
+		}
+		return true;
+
 	}
 
 	/**
@@ -392,8 +406,8 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setTotalAll(orderTemp.getTotalAllAmt());// 订单总额
 		orderM.setPfee(0);
 		orderM.setPfeeFlag(0);
-		orderM.setCash(orderTemp.getTotalAmt());// 应收
-		orderM.setCash1(orderTemp.getTotalAmt());// 预存
+		orderM.setCash(orderTemp.getTotalAllAmt());// 应收
+		orderM.setCash1(0);// 预存
 		orderM.setSpend(orderTemp.getTotalAmt());// 消费金额
 
 		orderM.setLogisticsStatus(OrderLogisticsStatus.ORDER_LOGIST_STATUS_0.getCode());
@@ -410,7 +424,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setInvoiceFlag(0);
 		orderM.setPayType(CommonConstant.PAY_TYPE_0);// 支付方式 货到付款
 		orderM.setPayMode(CommonConstant.PAY_MODE_K);// 快递代收
-		orderM.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
+		orderM.setPayStatus(null);// 未收款
 		orderM.setDistrubutionMode(CommonConstant.DISTRUBUTION_MODE_KD);// 配送方式 快递
 
 		orderM.setExpressCompanyFlag(0);
@@ -419,7 +433,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setExpressNumber(null);
 		orderM.setRelationOrder(orderTemp.getRelationOrder());
 		// todo 地址唯一标识
-		orderM.setReveiverAddressNo(0);
+		orderM.setReveiverAddressNo(addressMsgDTO.getId());
 		orderM.setReveiverProvince(String.valueOf(addressMsgDTO.getProvinceNo()));
 		orderM.setReveiverProvinceName(addressMsgDTO.getProvinceName());
 		orderM.setReveiverCity(String.valueOf(addressMsgDTO.getCityNo()));
@@ -561,7 +575,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 	/**
 	 * 查询群组信息
-	 * 
+	 *
 	 * @param groupCodes
 	 * @return
 	 */
@@ -573,8 +587,14 @@ public class NewOrderServiceImpl implements INewOrderService {
 			throw new BizException(response.getCode(), response.getMessage());
 		}
 		if (response.getData() != null && (groupCodes.size() != response.getData().size())) {
-			throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(), "部分群组已失效");
+			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "部分群组已失效");
 		}
+		response.getData().forEach(map ->{
+			if(map.getEnable() == 0){
+				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),
+						"群组：" + map.get_id() + " 群组名称： " + map.getName() +",已失效" );
+			}
+		});
 
 		return response.getData();
 	}
