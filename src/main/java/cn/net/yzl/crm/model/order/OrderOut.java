@@ -24,9 +24,9 @@ public class OrderOut {
 	@ApiModelProperty(value = "收货人电话")
 	private String reveiverTelphoneNo;
 	@ApiModelProperty(value = "实收金额，单位元")
-	private double total;
+	private Double total;
 	@ApiModelProperty(value = "账户余额，单位元")
-	private double totalMoney;
+	private Double totalMoney;
 	@ApiModelProperty(value = "订单号")
 	private String orderNo;
 }
