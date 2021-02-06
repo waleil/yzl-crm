@@ -262,10 +262,10 @@ public class WorkOrderController {
     @PostMapping(value = "v1/listPage")
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
-        workOrderVisitVO.setDeptId(detailsByNo.getData().getDepartId());
         if(null == detailsByNo.getData()){
             return ComResponse.nodata();
         }
+        workOrderVisitVO.setDeptId(detailsByNo.getData().getDepartId());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
         Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
