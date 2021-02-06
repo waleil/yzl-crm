@@ -194,7 +194,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/userRoute")
-    ComResponse<List<WorkOrderFlowVO>>  userRoute(@RequestParam(name = "memberCard", required = true)String memberCard,@RequestParam(name = "year")String year);
+    ComResponse<List<WorkOrderFlowVO>>  userRoute(@RequestParam(name = "memberCard", required = true)String memberCard);
 
     /**
      * 智能工单-顾客旅程-根据顾客会员号查询顾客工单信息
@@ -202,7 +202,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/queryWorkOrder")
-    ComResponse<List<WorkOrderVo>> queryWorkOrder(@RequestParam("memberCard") String memberCard);
+    ComResponse<List<WorkOrderVo>> queryWorkOrder(@RequestParam("memberCard") String memberCard,@RequestParam(name = "year")String year);
 
     /**
      * 智能工单-我的回访工单-处理工单-提交
