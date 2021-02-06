@@ -132,7 +132,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
 
             }
             //更新订单状态
-            ComResponse<?> res = orderOprClient.cancleOrderM(dto.getOrderNo());
+            ComResponse<?> res = orderOprClient.cancleOrderM(dto);
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
                 log.error("取消订单>>调用订单服务接口失败>>{}", res);
                 this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
