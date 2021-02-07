@@ -22,6 +22,9 @@ public class CallInfoDTO {
     @ApiModelProperty(value = "员工号")
     private String staffNo;
 
+    @ApiModelProperty(value = "年（yyyy）,可以为空，默认至获取当年的数据")
+    private String year;
+
     @ApiModelProperty(value = "当前页",required = true)
     private int pageNo;
 

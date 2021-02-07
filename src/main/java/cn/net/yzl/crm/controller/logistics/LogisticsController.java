@@ -17,6 +17,7 @@ import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
+import cn.net.yzl.model.pojo.OrderStatusInfo;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +38,9 @@ import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -59,6 +62,148 @@ public class LogisticsController {
     private FastdfsUtils fastdfsUtils;
     @Autowired
     private FastDFSConfig fastDFSConfig;
+
+
+
+    @ApiOperation(value = "快递运单查询")
+    @PostMapping("v1/search/orderexpress")
+    public ComResponse<Page<TransPortExceptionRegistry>> searchOrderExpress(@RequestBody @Valid ExpressTraceNumSearchVo searchVo) {
+
+        return logisticsFien.searchOrderExpress(searchVo);
+    }
+
+
+    @ApiOperation(value = "补登签单")
+    @PostMapping("v1/signed/order")
+    public ComResponse<Boolean> signedOrder(@RequestBody @Valid List<StoreToLogisticsDtoTrace> storeToLogisticsDtoTrace,HttpServletRequest request)
+    {
+
+
+            ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+            if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+
+                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
+            }
+            if(ObjectUtils.isEmpty(userNo.getData()))
+            {
+                return  ComResponse.fail(ComResponse.ERROR_STATUS,"用户数据错误"+userNo.getCode());
+            }
+
+
+            StaffImageBaseInfoDto data = userNo.getData();
+
+
+
+            if(StringUtils.isEmpty(data.getName())){
+                return ComResponse.fail(ComResponse.ERROR_STATUS, "用户名不存在");
+            }
+
+
+
+
+        boolean isSucess = false;
+
+        for (int i = 0; i < storeToLogisticsDtoTrace.size(); i++) {
+            //参数错误
+            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace))
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
+            //更新订单状态的信息为空
+            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry())
+                    || StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getExpressNum())
+                    ||StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor())
+            )
+                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
+
+            //登记人空
+            if(StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor()))
+                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
+
+            //人工操作的轨迹信息为空
+            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getTraceInfo()))
+                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
+
+            String userName = data.getName();
+            String template = userName+"执行了补登操作";
+            storeToLogisticsDtoTrace.get(i).getTraceInfo().setDescription(template);
+            //操作信息为空
+//        if(StringUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo().getDescription()))
+//            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
+
+
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementor(data.getStaffNo());   // user code
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSignTime(new Date());  // signTime
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setDepartId(data.getDepartId());
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setOrderStatus(5);
+        }
+
+
+            return logisticsFien.signedOrder(storeToLogisticsDtoTrace);
+    }
+
+
+
+    @ApiOperation(value = "取消补登")
+    @PostMapping("v1/cancel/signed/order")
+    public ComResponse<Boolean> cancelSignOrder(@RequestBody @Valid  StoreToLogisticsDtoTrace storeToLogisticsDtoTrace,
+                                                HttpServletRequest request){
+
+
+        ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+        if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+
+            throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
+        }
+        if(ObjectUtils.isEmpty(userNo.getData()))
+        {
+            return  ComResponse.fail(ComResponse.ERROR_STATUS,"用户数据错误"+userNo.getCode());
+        }
+
+
+        StaffImageBaseInfoDto data = userNo.getData();
+
+
+
+        if(StringUtils.isEmpty(data.getName())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS, "用户名不存在");
+        }
+
+
+
+
+        boolean isSucess = false;
+        //参数错误
+        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace))
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
+        //更新订单状态的信息为空
+        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry())
+                || StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getExpressNum())
+                ||StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getSupplementor())
+        )
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
+
+        //登记人空
+        if(StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getSupplementor()))
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
+
+        //人工操作的轨迹信息为空
+        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo()))
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
+
+        String userName = data.getName();
+        String template = userName+"执行了补登操作";
+        storeToLogisticsDtoTrace.getTraceInfo().setDescription(template);
+        //操作信息为空
+//        if(StringUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo().getDescription()))
+//            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
+
+
+        storeToLogisticsDtoTrace.getSupplementRegistry().setSupplementor(data.getStaffNo());   // user code
+        storeToLogisticsDtoTrace.getSupplementRegistry().setSignTime(new Date());  // signTime
+        storeToLogisticsDtoTrace.getSupplementRegistry().setDepartId(data.getDepartId());
+        storeToLogisticsDtoTrace.getSupplementRegistry().setOrderStatus(1);
+        return logisticsFien.cancelSignOrder(storeToLogisticsDtoTrace);
+
+    }
 
 
 

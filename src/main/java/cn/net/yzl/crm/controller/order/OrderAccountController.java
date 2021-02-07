@@ -5,6 +5,8 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderAccountClient;
 
+import cn.net.yzl.crm.client.order.OrderFinanceClient;
+import cn.net.yzl.order.model.db.order.OrderFinance;
 import cn.net.yzl.order.model.vo.order.OrderAccoundInfoDTO;
 import cn.net.yzl.order.model.vo.order.OrderListAccuntDTO;
 import cn.net.yzl.order.model.vo.order.PaymentInfoDTO;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author cuileilei
@@ -29,7 +32,15 @@ import javax.validation.constraints.NotNull;
 public class OrderAccountController {
     @Autowired
     private OrderAccountClient orderAccountClient;
+    @Autowired
+    private OrderFinanceClient orderFinanceClient;
 
+
+    @GetMapping("v1/getOrderFinanceList")
+    @ApiOperation(value = "财务归属接口")
+    public ComResponse<List<OrderFinance>> getOrderFinanceList() {
+        return orderFinanceClient.getOrderFinanceList();
+    }
 
     @GetMapping("v1/getOrderAccountList")
     @ApiOperation(value = "查询退款订单分页")
