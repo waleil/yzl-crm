@@ -44,6 +44,20 @@ public interface LogisticsFien {
 
 
 
+
+    @ApiOperation(value = "快递运单查询")
+    @PostMapping("v1/search/orderexpress")
+    public ComResponse<Page<TransPortExceptionRegistry>> searchOrderExpress(@RequestBody @Valid ExpressTraceNumSearchVo searchVo) ;
+
+    @ApiOperation(value = "补登签单")
+    @PostMapping("/track/v1/signed/order")
+    public ComResponse<Boolean> signedOrder(@RequestBody @Valid  StoreToLogisticsDtoTrace storeToLogisticsDtoTrace);
+
+
+    @ApiOperation(value = "取消补登")
+    @PostMapping("/track/v1/cancel/signed/order")
+    public ComResponse<Boolean> cancelSignOrder(@RequestBody @Valid  StoreToLogisticsDtoTrace storeToLogisticsDtoTrace);
+
     @ApiOperation(value = "接口信息加载")
     @GetMapping("exp/company/v1/express/company/interfaceinfo/list")
     public ComResponse<List<InterFaceInfo>>  listInterfaceInfo(@RequestParam("id") String id);
