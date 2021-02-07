@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 上交规则
  */
-//@FeignClient(name = "turnRulnClient", url = "${api.gateway.url}/workorderServer/turnRuln")
-@FeignClient(name = "turnRulnClient", url = "127.0.0.1:4602/turnRuln")
+@FeignClient(name = "turnRulnClient", url = "${api.gateway.url}/workorderServer/turnRuln")
+//@FeignClient(name = "turnRulnClient", url = "127.0.0.1:4602/turnRuln")
 public interface TurnRulnClient {
 
 
