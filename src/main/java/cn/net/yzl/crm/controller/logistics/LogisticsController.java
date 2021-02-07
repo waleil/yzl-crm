@@ -67,7 +67,7 @@ public class LogisticsController {
 
     @ApiOperation(value = "快递运单查询")
     @PostMapping("v1/search/orderexpress")
-    public ComResponse<Page<LogisticsOrderInofo>> searchOrderExpress(@RequestBody @Valid ExpressTraceNumSearchVo searchVo) {
+    public ComResponse<Page<LogisticsOrderInofoReturn>> searchOrderExpress(@RequestBody @Valid ExpressTraceNumSearchVo searchVo) {
 
         return logisticsFien.searchOrderExpress(searchVo);
     }
