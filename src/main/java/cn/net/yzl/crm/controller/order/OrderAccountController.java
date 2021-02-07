@@ -50,8 +50,9 @@ public class OrderAccountController {
                                                                        @ApiParam(value = "财务归属") @RequestParam("financialOwnerName") String financialOwnerName,
                                                                        @ApiParam(value = "顾客姓名或会员卡号") @RequestParam("nameOrCard") String nameOrCard,
                                                                        @ApiParam(value = "开始时间") @RequestParam("startTime") String startTime,
-                                                                       @ApiParam(value = "结束时间") @RequestParam("endTime") String endTime) {
-        return orderAccountClient.getOrderAccountList(orderNo, pageNo, pageSize,nameOrCard,financialOwnerName,startTime,endTime);
+                                                                       @ApiParam(value = "结束时间") @RequestParam("endTime") String endTime,
+                                                                       @ApiParam(value = "退款或待退款") @RequestParam("stats") String stats) {
+        return orderAccountClient.getOrderAccountList(orderNo, pageNo, pageSize,nameOrCard,financialOwnerName,startTime,endTime,stats);
     }
 
     @ApiOperation(value = "退款管理查看订单基本信息")
