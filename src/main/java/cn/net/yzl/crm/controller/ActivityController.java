@@ -59,19 +59,19 @@ public class ActivityController {
     }
 
     @ApiOperation(value = "顾客积分明细表")
-    @PostMapping("db/v1/getMemberIntegralRecords")
+    @PostMapping("v1/getMemberIntegralRecords")
     public ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(AccountRequest request) {
         return activityService.getMemberIntegralRecords(request);
     }
 
     @ApiOperation(value = "顾客红包明细表")
-    @PostMapping("db/v1/getMemberRedBagRecords")
+    @PostMapping("v1/getMemberRedBagRecords")
     public ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(AccountRequest request) {
         return activityService.getMemberRedBagRecords(request);
     }
 
     @ApiOperation(value = "顾客优惠券明细表")
-    @PostMapping("db/v1/getMemberCoupon")
+    @PostMapping("v1/getMemberCoupon")
     public ComResponse<Page<MemberCouponResponse>> getMemberCoupon(AccountRequest request) {
         return activityService.getMemberCoupon(request);
     }
