@@ -1,9 +1,7 @@
 package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.activity.model.requestModel.*;
-import cn.net.yzl.activity.model.responseModel.MemberAccountHistoryResponse;
-import cn.net.yzl.activity.model.responseModel.MemberAccountResponse;
-import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
+import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.service.ActivityService;
@@ -58,6 +56,24 @@ public class ActivityController {
     @PostMapping("v1/getAccountHistoryByMemberCard")
     public ComResponse<Page<MemberAccountHistoryResponse>> getAccountHistoryByMemberCard(AccountHistoryRequest request) {
         return activityService.getAccountHistoryByMemberCard(request);
+    }
+
+    @ApiOperation(value = "顾客积分明细表")
+    @PostMapping("v1/getMemberIntegralRecords")
+    public ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(AccountRequest request) {
+        return activityService.getMemberIntegralRecords(request);
+    }
+
+    @ApiOperation(value = "顾客红包明细表")
+    @PostMapping("v1/getMemberRedBagRecords")
+    public ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(AccountRequest request) {
+        return activityService.getMemberRedBagRecords(request);
+    }
+
+    @ApiOperation(value = "顾客优惠券明细表")
+    @PostMapping("v1/getMemberCoupon")
+    public ComResponse<Page<MemberCouponResponse>> getMemberCoupon(AccountRequest request) {
+        return activityService.getMemberCoupon(request);
     }
 
 }
