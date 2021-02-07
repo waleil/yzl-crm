@@ -639,7 +639,7 @@ public class OrderRestController {
 		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
 				orderm.getReveiverTelphoneNo(), BigDecimal.valueOf(orderm.getTotal()).divide(bd100).doubleValue(),
 				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100).doubleValue(),
-				orderm.getOrderNo()));
+				orderm.getOrderNo(), orderm.getCreateTime()));
 	}
 
 	/**
@@ -673,6 +673,7 @@ public class OrderRestController {
 		orderm.setInvoiceFlag(CommonConstant.INVOICE_0);// 不开票
 		orderm.setRelationReissueOrderNo("0");
 		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
+		orderm.setCreateTime(new Date());// 下单时间
 	}
 
 	/**
