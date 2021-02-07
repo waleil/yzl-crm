@@ -75,7 +75,7 @@ public class LogisticsController {
 
     @ApiOperation(value = "补登签单")
     @PostMapping("v1/signed/order")
-    public ComResponse<Boolean> signedOrder(@RequestBody @Valid StoreToLogisticsDtoTrace storeToLogisticsDtoTrace,HttpServletRequest request)
+    public ComResponse<Boolean> signedOrder(@RequestBody @Valid List<StoreToLogisticsDtoTrace> storeToLogisticsDtoTrace,HttpServletRequest request)
     {
 
 
@@ -102,36 +102,40 @@ public class LogisticsController {
 
 
         boolean isSucess = false;
-        //参数错误
-        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace))
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
-        //更新订单状态的信息为空
-        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry())
-                || StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getExpressNum())
-                ||StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getSupplementor())
-        )
-            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
-        //登记人空
-        if(StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getSupplementor()))
-            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
+        for (int i = 0; i < storeToLogisticsDtoTrace.size(); i++) {
+            //参数错误
+            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace))
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
+            //更新订单状态的信息为空
+            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry())
+                    || StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getExpressNum())
+                    ||StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor())
+            )
+                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
-        //人工操作的轨迹信息为空
-        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo()))
-            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
+            //登记人空
+            if(StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor()))
+                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
+
+            //人工操作的轨迹信息为空
+            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getTraceInfo()))
+                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
             String userName = data.getName();
             String template = userName+"执行了补登操作";
-            storeToLogisticsDtoTrace.getTraceInfo().setDescription(template);
-        //操作信息为空
+            storeToLogisticsDtoTrace.get(i).getTraceInfo().setDescription(template);
+            //操作信息为空
 //        if(StringUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo().getDescription()))
 //            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
 
-            storeToLogisticsDtoTrace.getSupplementRegistry().setSupplementor(data.getStaffNo());   // user code
-            storeToLogisticsDtoTrace.getSupplementRegistry().setSignTime(new Date());  // signTime
-            storeToLogisticsDtoTrace.getSupplementRegistry().setDepartId(data.getDepartId());
-            storeToLogisticsDtoTrace.getSupplementRegistry().setOrderStatus(5);
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementor(data.getStaffNo());   // user code
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSignTime(new Date());  // signTime
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setDepartId(data.getDepartId());
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setOrderStatus(5);
+        }
+
 
             return logisticsFien.signedOrder(storeToLogisticsDtoTrace);
     }
