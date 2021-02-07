@@ -186,11 +186,11 @@
             <version>1.26.6</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>easyexcel</artifactId>
-            <version>2.2.7</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba</groupId>-->
+<!--            <artifactId>easyexcel</artifactId>-->
+<!--            <version>2.2.7</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>net.logstash.logback</groupId>

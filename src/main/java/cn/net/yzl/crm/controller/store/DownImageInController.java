@@ -103,7 +103,7 @@ public class DownImageInController {
         //响应内容格式
 
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +new String(("盘点仓库"+storeName).getBytes(),"iso-8859-1")+date+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+URLEncoder.encode("盘点","UTF-8")+date+".xlsx");
 
         if (status==1){
             //向前端写入文件流流
