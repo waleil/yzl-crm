@@ -46,8 +46,8 @@ public interface LogisticsFien {
 
 
     @ApiOperation(value = "快递运单查询")
-    @PostMapping("v1/search/orderexpress")
-    public ComResponse<Page<TransPortExceptionRegistry>> searchOrderExpress(@RequestBody @Valid ExpressTraceNumSearchVo searchVo) ;
+    @PostMapping("/track/v1/search/orderexpress")
+    public ComResponse<Page<LogisticsOrderInofo>> searchOrderExpress(@RequestBody @Valid ExpressTraceNumSearchVo searchVo) ;
 
     @ApiOperation(value = "补登签单")
     @PostMapping("/track/v1/signed/order")
