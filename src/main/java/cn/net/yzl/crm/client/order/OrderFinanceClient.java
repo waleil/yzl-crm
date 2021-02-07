@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-//@FeignClient(name = "OrderFinanceClient", url = "${api.gateway.url}/staffDB")
-@FeignClient(name = "OrderFinanceClient", url = "localhost:38080/")
+@FeignClient(name = "OrderFinanceClient", url = "${api.gateway.url}/staffDB")
+//@FeignClient(name = "OrderFinanceClient", url = "localhost:38080/")
 public interface OrderFinanceClient {
 
     /**
