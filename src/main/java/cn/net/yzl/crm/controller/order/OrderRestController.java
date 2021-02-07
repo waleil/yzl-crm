@@ -113,11 +113,11 @@ public class OrderRestController {
 			// 组装订单明细信息
 			for (OrderDetailIn in : orderProductList) {
 				ProductMainDTO p = pmap.get(in.getProductCode());
-				// TODO zww 如果商品已下架
-//				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p))) {
-//					log.error("热线工单-购物车-计算订单金额>>该商品[{}]已下架>>{}", p);
-//					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
-//				}
+				// 如果商品已下架
+				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p.getStatus()))) {
+					log.error("热线工单-购物车-计算订单金额>>该商品[{}]已下架>>{}", p);
+					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
+				}
 				OrderDetail od = new OrderDetail();
 				// 按主订单号生成订单明细编号
 				od.setGiftFlag(in.getGiftFlag());// 是否赠品
@@ -363,11 +363,11 @@ public class OrderRestController {
 			// 组装订单明细信息
 			for (OrderDetailIn in : orderProductList) {
 				ProductMainDTO p = pmap.get(in.getProductCode());
-				// TODO zww 如果商品已下架
-//				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p))) {
-//					log.error("热线工单-购物车-提交订单>>该商品[{}]已下架>>{}", p);
-//					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
-//				}
+				// 如果商品已下架
+				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p.getStatus()))) {
+					log.error("热线工单-购物车-提交订单>>该商品[{}]已下架>>{}", p);
+					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
+				}
 				OrderDetail od = new OrderDetail();
 				// 按主订单号生成订单明细编号
 				od.setOrderDetailCode(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
@@ -808,11 +808,11 @@ public class OrderRestController {
 			// 组装订单明细信息
 			for (OrderDetailIn in : orderProductList) {
 				ProductMainDTO p = pmap.get(in.getProductCode());
-				// TODO zww 如果商品已下架
-//				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p))) {
-//					log.error("订单列表-编辑>>该商品[{}]已下架>>{}", p);
-//					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
-//				}
+				// 如果商品已下架
+				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p.getStatus()))) {
+					log.error("订单列表-编辑>>该商品[{}]已下架>>{}", p);
+					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
+				}
 				OrderDetail od = new OrderDetail();
 				// 按主订单号生成订单明细编号
 				od.setOrderDetailCode(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
