@@ -51,7 +51,7 @@ public interface LogisticsFien {
 
     @ApiOperation(value = "补登签单")
     @PostMapping("/track/v1/signed/order")
-    public ComResponse<Boolean> signedOrder(@RequestBody @Valid  StoreToLogisticsDtoTrace storeToLogisticsDtoTrace);
+    public ComResponse<Boolean> signedOrder(@RequestBody @Valid  List<StoreToLogisticsDtoTrace> storeToLogisticsDtoTrace);
 
 
     @ApiOperation(value = "取消补登")
