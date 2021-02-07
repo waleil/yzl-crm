@@ -527,9 +527,7 @@ public class OrderRestController {
 		}
 		orderm.setRemark(orderin.getRemark());// 订单备注
 		orderm.setReveiverAddressNo(orderin.getReveiverAddressNo());// 配送地址唯一标识
-		orderm.setReveiverAddress(String.format("%s %s %s %s", reveiverAddress.getMemberProvinceName(),
-				reveiverAddress.getMemberCityName(), reveiverAddress.getMemberCountyName(),
-				reveiverAddress.getMemberAddress()));// 收货人地址
+		orderm.setReveiverAddress(reveiverAddress.getMemberAddress());// 收货人地址
 		orderm.setReveiverName(reveiverAddress.getMemberName());// 收货人姓名
 		orderm.setReveiverTelphoneNo(reveiverAddress.getMemberMobile());// 收货人电话
 		orderm.setReveiverProvince(String.valueOf(reveiverAddress.getMemberProvinceNo()));// 省份编码
