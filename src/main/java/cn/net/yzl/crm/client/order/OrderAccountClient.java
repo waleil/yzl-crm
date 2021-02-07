@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 
-@FeignClient(name = "orderRefund", url = "${api.gateway.url}/orderService/orderRefund")
-//@FeignClient(name = "orderRefund", url = "localhost:4455/orderRefund")
+//@FeignClient(name = "orderRefund", url = "${api.gateway.url}/orderService/orderRefund")
+@FeignClient(name = "orderRefund", url = "localhost:4455/orderRefund")
 public interface OrderAccountClient {
 
     //新建退款订单分页查询
@@ -25,7 +25,8 @@ public interface OrderAccountClient {
                                                               @RequestParam String nameOrCard,
                                                               @RequestParam String financialOwnerName,
                                                               @RequestParam String startTime,
-                                                              @RequestParam String endTime);
+                                                              @RequestParam String endTime,
+                                                              @RequestParam String stats);
     //退款商品信息查询
     @GetMapping("v1/selectAccountOrderInfo")
     ComResponse<OrderAccoundInfoDTO> selectAccountOrderInfo(@RequestParam String saleOrderNo,@RequestParam String orderNo);
