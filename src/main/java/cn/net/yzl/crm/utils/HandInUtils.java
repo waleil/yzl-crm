@@ -5,6 +5,7 @@ import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
+import cn.net.yzl.crm.controller.workorder.WorkOrderController;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
@@ -16,13 +17,14 @@ import cn.net.yzl.workorder.model.enums.RuleDescriptionEnums;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Component
-public class HandInUtils {
+public class HandInUtils{
 
     @Autowired
     private WorkOrderClient workOrderClient;
@@ -50,12 +52,16 @@ public class HandInUtils {
     public Boolean emptyNumberShutdown(IsHandInDTO emptyNumberShutdown, WorkOrderRuleConfigBean wORCBean) {
         String paramsValue = wORCBean.getParamsValue();
         Date date = new Date();
-        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_FORMAT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.MONTH, -Integer.valueOf(paramsValue));
+        String[] split = paramsValue.split(",");
+        if(null == split || 0 == split.length){
+            return  Boolean.FALSE;
+        }
+        calendar.add(Calendar.MONTH, -Integer.valueOf(split[0]));
         Date time = calendar.getTime();
-        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
         return orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData().getNearNoSignStatus();
 
     }
@@ -75,13 +81,16 @@ public class HandInUtils {
             return Boolean.FALSE;
         }
         Date date = new Date();
-        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_FORMAT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         String[] split = paramsValue.split(",");
+        if(null == split || 0 == split.length){
+            return  Boolean.FALSE;
+        }
         calendar.add(Calendar.MONTH, -Integer.valueOf(split[2]));
         Date time = calendar.getTime();
-        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
         return orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData().getNearNoContinuityShoppingStatus();
     }
 
@@ -108,12 +117,16 @@ public class HandInUtils {
     public Boolean customerRefund(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
         String paramsValue = wORCBean.getParamsValue();
         Date date = new Date();
-        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_FORMAT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.MONTH, -Integer.valueOf(paramsValue));
+        String[] split = paramsValue.split(",");
+        if(null == split || 0 == split.length){
+            return  Boolean.FALSE;
+        }
+        calendar.add(Calendar.MONTH, -Integer.valueOf(split[0]));
         Date time = calendar.getTime();
-        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
         return orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), startDate, endDate).getData().getIsGuestComplaint();
     }
 
@@ -126,12 +139,16 @@ public class HandInUtils {
     public Boolean dormantCustomers(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
         String paramsValue = wORCBean.getParamsValue();
         Date date = new Date();
-        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_FORMAT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.MONTH, -Integer.valueOf(paramsValue));
+        String[] split = paramsValue.split(",");
+        if(null == split || 0 == split.length){
+            return  Boolean.FALSE;
+        }
+        calendar.add(Calendar.MONTH, -Integer.valueOf(split[0]));
         Date time = calendar.getTime();
-        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_DETAIL_FORMAT);
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
         return orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), startDate, endDate).getData().getNearNoSignStatus();
     }
 
