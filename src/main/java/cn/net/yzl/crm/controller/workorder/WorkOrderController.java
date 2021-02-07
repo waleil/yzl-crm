@@ -93,6 +93,9 @@ public class WorkOrderController {
     @Autowired
     private EhrStaffClient ehrStaffClient;
 
+    @Autowired
+    private HandInUtils handInUtils;
+
     /**
      * 查询我的回访分页列表
      *
@@ -624,15 +627,12 @@ public class WorkOrderController {
         isHandInDTO.setStaffNo(QueryIds.userNo.get());
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         if(null == detailsByNo.getData()){
-            return ComResponse.nodata();
+            return ComResponse.nodata("用户信息不存在!");
         }
         isHandInDTO.setStaffName(detailsByNo.getData().getName());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
-        if(CollectionUtils.isEmpty(listComResponse.getData())){
-            return ComResponse.success(Boolean.TRUE);
-        }
         List<WorkOrderRuleConfigBean> data = listComResponse.getData();
-        if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
+            if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
             WorkOrderRuleConfigBean workOrderRuleConfigBean1 = null;
             for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data){
                 if(workOrderRuleConfigBean.getId() == 7)
@@ -655,44 +655,48 @@ public class WorkOrderController {
             return ComResponse.success(Boolean.TRUE);
         }
         WorkOrderRuleConfigBean wORCBean = null;
-        HandInUtils handInUtils = new HandInUtils();
         Boolean flag = Boolean.FALSE;
-        for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
-            wORCBean = workOrderRuleConfigBean;
-            switch (workOrderRuleConfigBean.getId()){
-                case 1:
-                    flag = handInUtils.emptyNumberShutdown(isHandInDTO,wORCBean);
-                    break;
+        if(!CollectionUtils.isEmpty(listComResponse.getData())) {
+            for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data) {
+                wORCBean = workOrderRuleConfigBean;
+                switch (workOrderRuleConfigBean.getId()) {
+                    case 1:
+                        flag = handInUtils.emptyNumberShutdown(isHandInDTO, wORCBean);
+                        break;
 
-                case 2:
-                    flag = handInUtils.unableToContact(isHandInDTO,wORCBean);
-                    break;
+                    case 2:
+                        flag = handInUtils.unableToContact(isHandInDTO, wORCBean);
+                        break;
 
-                case 3:
-                    flag = handInUtils.customerRefusedToVisit(isHandInDTO,wORCBean);
-                    break;
+                    case 3:
+                        flag = handInUtils.customerRefusedToVisit(isHandInDTO, wORCBean);
+                        break;
 
-                case 4:
-                    flag = handInUtils.customerRefund(isHandInDTO,wORCBean);
-                    break;
+                    case 4:
+                        flag = handInUtils.customerRefund(isHandInDTO, wORCBean);
+                        break;
 
-                case 5:
-                    flag = handInUtils.dormantCustomers(isHandInDTO,wORCBean);
-                    break;
+                    case 5:
+                        flag = handInUtils.dormantCustomers(isHandInDTO, wORCBean);
+                        break;
 
                 /*case 6:
                     flag = handInUtils.mCustomerLExceeded(isHandInDTO,wORCBean);
                     break;*/
 
-                case 8:
-                    flag = handInUtils.overtimeReturnVisit(isHandInDTO,wORCBean);
-                    break;
+                    case 8:
+                        flag = handInUtils.overtimeReturnVisit(isHandInDTO, wORCBean);
+                        break;
 
-                default:{}
-                if(BooleanUtils.isTrue(flag)){
+                    default: {
+                    }
+                }
+                if (BooleanUtils.isTrue(flag)) {
                     break;
                 }
             }
+        }else{
+            flag = Boolean.TRUE;
         }
         if(flag){
             RecoveryDTO recoveryDTO = new RecoveryDTO();
