@@ -2,12 +2,11 @@ package cn.net.yzl.crm.service.micservice;
 
 
 import cn.net.yzl.activity.model.requestModel.*;
-import cn.net.yzl.activity.model.responseModel.MemberAccountHistoryResponse;
-import cn.net.yzl.activity.model.responseModel.MemberAccountResponse;
-import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
+import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.dmc.*;
+import cn.net.yzl.crm.dto.dmc.ActivityDetailResponse;
 import cn.net.yzl.crm.dto.dmc.PageModel;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -26,6 +25,18 @@ import java.util.List;
 public interface ActivityClient {
 
     Logger logger = LoggerFactory.getLogger(ActivityClient.class);
+
+    @ApiOperation(value = "顾客积分明细表")
+    @PostMapping("db/v1/getMemberIntegralRecords")
+    ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(AccountRequest request);
+
+    @ApiOperation(value = "顾客红包明细表")
+    @PostMapping("db/v1/getMemberRedBagRecords")
+    ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(AccountRequest request);
+
+    @ApiOperation(value = "顾客优惠券明细表")
+    @PostMapping("db/v1/getMemberCoupon")
+    ComResponse<Page<MemberCouponResponse>> getMemberCoupon(AccountRequest request);
 
     @ApiOperation(value = "根据单个会员卡号获取 每个顾客的优惠券 积分 红包")
     @GetMapping("db/v1/getAccountByMemberCard")

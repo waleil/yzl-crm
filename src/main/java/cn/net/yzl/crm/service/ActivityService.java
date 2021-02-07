@@ -1,9 +1,7 @@
 package cn.net.yzl.crm.service;
 
 import cn.net.yzl.activity.model.requestModel.*;
-import cn.net.yzl.activity.model.responseModel.MemberAccountHistoryResponse;
-import cn.net.yzl.activity.model.responseModel.MemberAccountResponse;
-import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
+import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 
@@ -27,4 +25,10 @@ public interface ActivityService {
     ComResponse<MemberAccountResponse> getAccountByMemberCard(String memberCard);
 
     ComResponse<Page<MemberAccountHistoryResponse>> getAccountHistoryByMemberCard(AccountHistoryRequest request);
+
+    ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(AccountRequest request);
+
+    ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(AccountRequest request);
+
+    ComResponse<Page<MemberCouponResponse>> getMemberCoupon(AccountRequest request);
 }
