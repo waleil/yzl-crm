@@ -1,8 +1,9 @@
 package cn.net.yzl.crm.test;
 
+import java.math.BigDecimal;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,8 +14,7 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 
-import cn.net.yzl.crm.model.order.OrderInvoice4Export;
-import cn.net.yzl.order.enums.OrderLogisticsStatus;
+import cn.net.yzl.order.model.vo.member.AccountDetailOut;
 
 /**
  * 单元测试类
@@ -25,17 +25,15 @@ import cn.net.yzl.order.enums.OrderLogisticsStatus;
 public class EasyExcelTests {
 	private AtomicInteger index = new AtomicInteger(0);
 
-	private List<OrderInvoice4Export> queryData() {
-		List<OrderInvoice4Export> list = new ArrayList<>();
+	private List<AccountDetailOut> queryData() {
+		List<AccountDetailOut> list = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
-			list.add(new OrderInvoice4Export().setOrderNo(String.valueOf(index.incrementAndGet()))
-					.setFinancialOwnerName(String.format("FinancialOwnerName%s", index.get()))
-					.setTaxMode(String.format("电子发票纸质发票%s", index.get()))
-					.setStatsStr(String.format("已开票未开票%s", index.get()))
-					.setPayType(String.format("货到付款款到发货%s", index.get()))
-					.setLogisticsStatus(OrderLogisticsStatus.ORDER_LOGIST_STATUS_0.getName())
-					.setReveiverAddress(String.format("ReveiverAddress%s", index.get())).setCreateTime(new Date())
-					.setInvoiceTime(new Date()));
+			list.add(new AccountDetailOut(String.format("MemberCardNo%s", index.incrementAndGet()),
+					String.format("MemberName%s", index.get()), LocalDateTime.now(),
+					String.format("OrderNo%s", index.get()), String.format("ExpressCompanyName%s", index.get()),
+					String.format("ExpressNumber%s", index.get()), LocalDateTime.now(), LocalDateTime.now(),
+					String.format("BusinessType%s", index.get()), BigDecimal.valueOf(index.get()),
+					BigDecimal.valueOf(index.get()), LocalDateTime.now()));
 		}
 		return list;
 	}
@@ -46,7 +44,7 @@ public class EasyExcelTests {
 		ExcelWriter excelWriter = null;
 		try {
 			// 这里 需要指定写用哪个class去写
-			excelWriter = EasyExcel.write(Paths.get("d:", "test.xlsx").toFile(), OrderInvoice4Export.class)
+			excelWriter = EasyExcel.write(Paths.get("d:", "test.xlsx").toFile(), AccountDetailOut.class)
 					.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).build();
 			// 这里注意 如果同一个sheet只要创建一次
 			WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
