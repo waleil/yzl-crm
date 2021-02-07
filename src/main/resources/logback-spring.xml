@@ -11,10 +11,10 @@
     <!-- %m输出的信息,%p日志级别,%t线程名,%d日期,%c类的全名,%i索引【从数字0开始递增】,,, -->
     <!-- appender是configuration的子节点，是负责写日志的组件。 -->
     <!-- ConsoleAppender：把日志输出到控制台 -->
+    <!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${PATTERN}</pattern>
-            <!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -34,7 +34,15 @@
             <fileNamePattern>${LOG_HOME}/INFO/INFO-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        <springProfile name="prod">
+        	<encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        </springProfile>
+        <springProfile name="test,dev">
+	        <encoder>
+	            <pattern>${PATTERN}</pattern>
+	            <charset>UTF-8</charset>
+	        </encoder>
+        </springProfile>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
             <onMatch>ACCEPT</onMatch>
@@ -47,7 +55,15 @@
             <fileNamePattern>${LOG_HOME}/ERROR/ERROR-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        <springProfile name="prod">
+        	<encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        </springProfile>
+        <springProfile name="test,dev">
+	        <encoder>
+	            <pattern>${PATTERN}</pattern>
+	            <charset>UTF-8</charset>
+	        </encoder>
+        </springProfile>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
