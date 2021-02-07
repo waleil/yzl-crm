@@ -43,6 +43,16 @@
             <groupId>cn.net.yzl.workorder</groupId>
             <artifactId>yzl-workorder-common</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+            	<exclusion>
+	            	<groupId>org.apache.poi</groupId>
+	      			<artifactId>poi</artifactId>
+            	</exclusion>
+            	<exclusion>
+	            	<groupId>org.apache.poi</groupId>
+	      			<artifactId>poi-ooxml</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <!--订单中心服务common依赖-->
         <dependency>
