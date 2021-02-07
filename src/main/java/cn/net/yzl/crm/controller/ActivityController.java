@@ -1,20 +1,15 @@
 package cn.net.yzl.crm.controller;
 
-import cn.net.yzl.activity.model.requestModel.CalculateRequest;
-import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
-import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
-import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
-import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
+import cn.net.yzl.activity.model.requestModel.*;
+import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.service.ActivityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -51,9 +46,34 @@ public class ActivityController {
         return activityService.calculate(request);
     }
 
-    @ApiOperation(value = "校验订单金额")
-    @PostMapping("v1/checkOrderAmount")
-    public ComResponse<Boolean> checkOrderAmount(@RequestBody CheckOrderAmountRequest request) {
-        return activityService.checkOrderAmount(request);
+    @ApiOperation(value = "根据单个会员卡号获取 每个顾客的优惠券 积分 红包")
+    @GetMapping("v1/getAccountByMemberCard")
+    public ComResponse<MemberAccountResponse> getAccountByMemberCard(@RequestParam("memberCard") String memberCard) {
+        return activityService.getAccountByMemberCard(memberCard);
     }
+
+    @ApiOperation(value = "根据单个会员卡号获取 每个顾客的优惠券 积分 红包的历史记录")
+    @PostMapping("v1/getAccountHistoryByMemberCard")
+    public ComResponse<Page<MemberAccountHistoryResponse>> getAccountHistoryByMemberCard(AccountHistoryRequest request) {
+        return activityService.getAccountHistoryByMemberCard(request);
+    }
+
+    @ApiOperation(value = "顾客积分明细表")
+    @PostMapping("v1/getMemberIntegralRecords")
+    public ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(AccountRequest request) {
+        return activityService.getMemberIntegralRecords(request);
+    }
+
+    @ApiOperation(value = "顾客红包明细表")
+    @PostMapping("v1/getMemberRedBagRecords")
+    public ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(AccountRequest request) {
+        return activityService.getMemberRedBagRecords(request);
+    }
+
+    @ApiOperation(value = "顾客优惠券明细表")
+    @PostMapping("v1/getMemberCoupon")
+    public ComResponse<Page<MemberCouponResponse>> getMemberCoupon(AccountRequest request) {
+        return activityService.getMemberCoupon(request);
+    }
+
 }

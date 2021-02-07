@@ -1,11 +1,9 @@
 package cn.net.yzl.crm.service.impl;
 
-import cn.net.yzl.activity.model.requestModel.CalculateRequest;
-import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
-import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
-import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
-import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
+import cn.net.yzl.activity.model.requestModel.*;
+import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.service.ActivityService;
@@ -81,6 +79,31 @@ public class ActivityServiceImpl implements ActivityService {
             request.setMemberLevelGrade(member.getMGradeId());
         }
         return activityClient.checkOrderAmount(request);
+    }
+
+    @Override
+    public ComResponse<MemberAccountResponse> getAccountByMemberCard(String memberCard) {
+        return activityClient.getAccountByMemberCard(memberCard);
+    }
+
+    @Override
+    public ComResponse<Page<MemberAccountHistoryResponse>> getAccountHistoryByMemberCard(AccountHistoryRequest request) {
+        return activityClient.getAccountHistoryByMemberCard(request);
+    }
+
+    @Override
+    public ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(AccountRequest request) {
+        return activityClient.getMemberIntegralRecords(request);
+    }
+
+    @Override
+    public ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(AccountRequest request) {
+        return activityClient.getMemberRedBagRecords(request);
+    }
+
+    @Override
+    public ComResponse<Page<MemberCouponResponse>> getMemberCoupon(AccountRequest request) {
+        return activityClient.getMemberCoupon(request);
     }
 
 
