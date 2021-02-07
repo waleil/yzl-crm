@@ -122,7 +122,7 @@ public class OrderRestController {
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价，单位分
 				od.setProductCount(in.getProductCount());// 商品数量
 				// 如果是非赠品
-				if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+				if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				} else {// 如果是赠品，将金额设置为0
@@ -165,6 +165,11 @@ public class OrderRestController {
 					.collect(Collectors.toMap(Entry::getKey,
 							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
+				// 如果套餐已下架
+				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(meal.getStatus()))) {
+					log.error("热线工单-购物车-计算订单金额>>该套餐已下架>>{}", meal);
+					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐已下架。");
+				}
 				// 如果套餐里没有商品
 				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
 					log.error("热线工单-购物车-计算订单金额>>该套餐没有包含商品信息>>{}", meal);
@@ -188,7 +193,7 @@ public class OrderRestController {
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					// 如果是非赠品
-					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
@@ -203,7 +208,7 @@ public class OrderRestController {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
-					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
@@ -377,7 +382,7 @@ public class OrderRestController {
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 				// 如果是非赠品
-				if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+				if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				} else {// 如果是赠品，将金额设置为0
@@ -421,6 +426,11 @@ public class OrderRestController {
 					.collect(Collectors.toMap(Entry::getKey,
 							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
+				// 如果套餐已下架
+				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(meal.getStatus()))) {
+					log.error("热线工单-购物车-提交订单>>该套餐已下架>>{}", meal);
+					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐已下架。");
+				}
 				// 如果套餐里没有商品
 				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
 					log.error("热线工单-购物车-提交订单>>该套餐没有包含商品信息>>{}", meal);
@@ -459,7 +469,7 @@ public class OrderRestController {
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 					// 如果是非赠品
-					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
@@ -474,7 +484,7 @@ public class OrderRestController {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
-					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
@@ -851,6 +861,11 @@ public class OrderRestController {
 					.collect(Collectors.toMap(Entry::getKey,
 							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
+				// 如果套餐已下架
+				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(meal.getStatus()))) {
+					log.error("订单列表-编辑>>该套餐已下架>>{}", meal);
+					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐已下架。");
+				}
 				// 如果套餐里没有商品
 				if (CollectionUtils.isEmpty(meal.getMealProductList())) {
 					log.error("订单列表-编辑>>该套餐没有包含商品信息>>{}", meal);
@@ -889,7 +904,7 @@ public class OrderRestController {
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 					// 如果是非赠品
-					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
@@ -904,7 +919,7 @@ public class OrderRestController {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
-					if (CommonConstant.GIFT_FLAG_0.equals(od.getGiftFlag())) {
+					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
