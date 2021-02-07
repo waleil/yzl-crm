@@ -25,6 +25,7 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.AccountDetailFeignClient;
 import cn.net.yzl.order.model.vo.member.AccountDetailIn;
 import cn.net.yzl.order.model.vo.member.AccountDetailOut;
+import cn.net.yzl.order.model.vo.member.AccountDetailOut.DetailSummary;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -96,5 +97,11 @@ public class AccountDetailController {
 				excelWriter.finish();
 			}
 		}
+	}
+
+	@PostMapping("/v1/querysummary")
+	@ApiOperation(value = "查询账户余额明细列表汇总", notes = "查询账户余额明细列表汇总")
+	public ComResponse<DetailSummary> querySummary(@RequestBody AccountDetailIn accountDetailIn) {
+		return this.accountDetailFeignClient.querySummary(accountDetailIn);
 	}
 }
