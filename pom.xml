@@ -76,7 +76,7 @@
         <dependency>
             <groupId>cn.net.yzl</groupId>
             <artifactId>yzl-common-pm</artifactId>
-            <version>1.1-RELEASE</version>
+            <version>1.2-RELEASE</version>
         </dependency>
         <!--中台服务common依赖-->
         <dependency>

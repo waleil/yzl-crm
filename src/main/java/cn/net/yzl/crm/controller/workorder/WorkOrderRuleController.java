@@ -44,9 +44,9 @@ public class WorkOrderRuleController {
     @GetMapping(value = "/getPostByBussinessAttrCode")
     ComResponse<List<PostDto>> getPostByBussinessAttrCode(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode){
         if(bussinessAtrrCode == DeptTypeEnums.HOTLINE_CENTER.getCode()){
-            bussinessAtrrCode=41;//热线工单 42
+            bussinessAtrrCode=41;//热线工单 41
         } else {
-            bussinessAtrrCode=42;//回访工单 43
+            bussinessAtrrCode=42;//回访工单 42
         }
         return ehrStaffClient.getPostByBussinessAttrCode(bussinessAtrrCode);
     }
@@ -63,9 +63,9 @@ public class WorkOrderRuleController {
     ComResponse<List<BusinessPostDto>> getBusiPostListByAttr(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode, @RequestParam("postId") Integer postId){
         if (bussinessAtrrCode!=null && postId!=null){
             if(bussinessAtrrCode == DeptTypeEnums.HOTLINE_CENTER.getCode()){
-                bussinessAtrrCode=41;//热线工单 42
+                bussinessAtrrCode=41;//热线工单 41
             } else {
-                bussinessAtrrCode=42;//回访工单 43
+                bussinessAtrrCode=42;//回访工单 42
             }
             ComResponse<List<BusinessPostDto>> posts = ehrStaffClient.getBusiPostListByAttr(bussinessAtrrCode, postId);
             return posts;
@@ -116,9 +116,9 @@ public class WorkOrderRuleController {
     @GetMapping(value = "v1/getBusiPostListByAttr")
     public ComResponse<List<DepartDto>> getListByBusinessAttrId(@RequestParam("bussinessAtrrCode") Integer bussinessAtrrCode){
         if(bussinessAtrrCode == DeptTypeEnums.HOTLINE_CENTER.getCode()){
-            bussinessAtrrCode=41;//热线工单 42
+            bussinessAtrrCode=41;//热线工单 41
         } else {
-            bussinessAtrrCode=42;//回访工单 43
+            bussinessAtrrCode=42;//回访工单 42
         }
         ComResponse<List<DepartDto>> posts = ehrStaffClient.getListByBusinessAttrId(bussinessAtrrCode.toString());
         return posts;
