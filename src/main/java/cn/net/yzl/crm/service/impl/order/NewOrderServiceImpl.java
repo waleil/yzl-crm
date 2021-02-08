@@ -520,6 +520,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			orderDetail.setDepartId("0");
 			orderDetail.setMemberName(member.getMemberName());
 			orderDetail.setMemberCardNo(member.getMemberCard());
+			orderDetail.setReturnGoodsCnt(0);
 
 			orderDetail.setShippingTime(null);
 			orderDetail.setCreateTime(null);
