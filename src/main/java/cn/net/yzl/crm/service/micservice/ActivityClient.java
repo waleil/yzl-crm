@@ -28,15 +28,15 @@ public interface ActivityClient {
 
     @ApiOperation(value = "顾客积分明细表")
     @PostMapping("db/v1/getMemberIntegralRecords")
-    ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(AccountRequest request);
+    ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(@RequestBody AccountRequest request);
 
     @ApiOperation(value = "顾客红包明细表")
     @PostMapping("db/v1/getMemberRedBagRecords")
-    ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(AccountRequest request);
+    ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(@RequestBody AccountRequest request);
 
     @ApiOperation(value = "顾客优惠券明细表")
     @PostMapping("db/v1/getMemberCoupon")
-    ComResponse<Page<MemberCouponResponse>> getMemberCoupon(AccountRequest request);
+    ComResponse<Page<MemberCouponResponse>> getMemberCoupon(@RequestBody AccountRequest request);
 
     @ApiOperation(value = "根据单个会员卡号获取 每个顾客的优惠券 积分 红包")
     @GetMapping("db/v1/getAccountByMemberCard")
@@ -44,7 +44,7 @@ public interface ActivityClient {
 
     @ApiOperation(value = "根据单个会员卡号获取 每个顾客的优惠券 积分 红包的历史记录")
     @PostMapping("db/v1/getAccountHistoryByMemberCard")
-    ComResponse<Page<MemberAccountHistoryResponse>> getAccountHistoryByMemberCard(AccountHistoryRequest request);
+    ComResponse<Page<MemberAccountHistoryResponse>> getAccountHistoryByMemberCard(@RequestBody AccountHistoryRequest request);
 
     @ApiOperation(value = "根据多个商品唯一编码 查询当前的优惠方式、可用优惠券")
     @PostMapping("db/v1/getProductDiscountByProductCodes")
