@@ -110,13 +110,13 @@ public class LogisticsController {
             //更新订单状态的信息为空
             if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry())
                     || StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getExpressNum())
-                    ||StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor())
+//                    ||StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor())
             )
                 return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
-            //登记人空
-            if(StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor()))
-                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
+//            //登记人空
+//            if(StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor()))
+//                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
 
             //人工操作的轨迹信息为空
             if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getTraceInfo()))
@@ -125,12 +125,13 @@ public class LogisticsController {
             String userName = data.getName();
             String template = userName+"执行了补登操作";
             storeToLogisticsDtoTrace.get(i).getTraceInfo().setDescription(template);
+//            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementor(userName); // 补登人
             //操作信息为空
 //        if(StringUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo().getDescription()))
 //            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
 
-            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementor(data.getStaffNo());   // user code
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementor(data.getStaffNo());   //补登人 user code
             storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSignTime(new Date());  // signTime
             storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setDepartId(data.getDepartId());
             storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setOrderStatus(5);
