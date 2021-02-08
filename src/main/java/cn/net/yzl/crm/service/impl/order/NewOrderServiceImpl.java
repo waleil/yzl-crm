@@ -652,7 +652,12 @@ public class NewOrderServiceImpl implements INewOrderService {
 		if (prd.getData() != null && (prodCnt != prd.getData().size())) {
 			throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(), "部分商品已下架");
 		}
+
 		List<OrderTempProduct> list = prd.getData().stream().map(m -> {
+			if(CommonConstant.PRODUCT_AND_MEAL_STATUS_0 == m.getStatus()){
+				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),
+						m.getName()+",商品已下架");
+			}
 			OrderTempProduct product = new OrderTempProduct();
 			product.setOrderTempProductCode(SnowFlakeUtil.getId() + "");
 			product.setOrderTempCode(tempCode);
