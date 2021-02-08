@@ -32,9 +32,9 @@ public interface ActivityClient {
     @PostMapping("db/v1/getMemberIntegralRecords")
     ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(@RequestBody AccountRequest request);
 
-    @ApiOperation(value = "顾客积分明细表")
+    @ApiOperation(value = "顾客积分明细表 - 不分页")
     @PostMapping("db/v1/getMemberIntegralRecordsWithOutPage")
-    ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecordsWithOutPage(@RequestBody AccountWithOutPageRequest request);
+    ComResponse<List<MemberIntegralRecordsResponse>> getMemberIntegralRecordsWithOutPage(@RequestBody AccountWithOutPageRequest request);
 
     @ApiOperation(value = "顾客红包明细表")
     @PostMapping("db/v1/getMemberRedBagRecords")
@@ -42,7 +42,7 @@ public interface ActivityClient {
 
     @ApiOperation(value = "顾客红包明细表 - 不分页")
     @PostMapping("db/v1/getMemberRedBagRecordsWithOutPage")
-    ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecordsWithOutPage(@RequestBody AccountWithOutPageRequest request);
+    ComResponse<List<MemberRedBagRecordsResponse>> getMemberRedBagRecordsWithOutPage(@RequestBody AccountWithOutPageRequest request);
 
     @ApiOperation(value = "顾客优惠券明细表")
     @PostMapping("db/v1/getMemberCoupon")
@@ -50,7 +50,7 @@ public interface ActivityClient {
 
     @ApiOperation(value = "顾客优惠券明细表 - 不分页")
     @PostMapping("db/v1/getMemberCouponWithOutPage")
-    ComResponse<List<MemberIntegralRecordsResponse>> getMemberCouponWithOutPage(@RequestBody AccountWithOutPageRequest request);
+    ComResponse<List<MemberCouponResponse>> getMemberCouponWithOutPage(@RequestBody AccountWithOutPageRequest request);
 
     @ApiOperation(value = "根据单个会员卡号获取 每个顾客的优惠券 积分 红包")
     @GetMapping("db/v1/getAccountByMemberCard")
