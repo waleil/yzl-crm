@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,12 +29,10 @@ public class AttributeController {
 
     @ApiOperation(value = "添加属性")
     @PostMapping("insertAttribute")
-    public ComResponse<?> insertProductAttribute(@NotNull(message = "数据不能为空！")@RequestBody AttributeBean attributeBean) {
-        if (attributeBean.getId() == null) {
-            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), ResponseCodeEnums.SYSTEM_ERROR_CODE.getMessage());
-        }else {
-            return attributeService.insertProductAttribute(attributeBean);
-        }
+    public ComResponse<?> insertProductAttribute(HttpServletRequest request) {
+        System.out.println(request.getHeader("userId"));
+        System.out.println(request.getHeader("userNo"));
+        return null;
     }
 
     @ApiOperation(value = "通过页码和每页条数查询属性")
