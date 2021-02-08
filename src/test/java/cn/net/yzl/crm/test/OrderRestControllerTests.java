@@ -1,10 +1,16 @@
 package cn.net.yzl.crm.test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.crm.client.order.SettlementFein;
+import cn.net.yzl.order.model.vo.order.SettlementDetailDistinctListDTO;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -47,6 +53,13 @@ public class OrderRestControllerTests {
 	private OrderFeignClient orderFeignClient;
 	@Value("${api.gateway.url}")
 	private String apiGateWayUrl;
+	@Autowired
+	private SettlementFein settlementFein;
+	@Test
+	public void testSettlementFein(){
+		ComResponse<List<SettlementDetailDistinctListDTO>> list = settlementFein.getSettlementDetailGroupByOrderNo(new ArrayList<>());
+		System.out.println(list.getData());
+	}
 
 	@Test
 	public void testQueryListProductMealByCodes() {

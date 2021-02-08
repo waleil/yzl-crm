@@ -191,7 +191,7 @@ public class LogisticsController {
             return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
         String userName = data.getName();
-        String template = userName+"执行了补登操作";
+        String template = userName+"执行了取消补登签收";
         storeToLogisticsDtoTrace.getTraceInfo().setDescription(template);
         //操作信息为空
 //        if(StringUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo().getDescription()))
