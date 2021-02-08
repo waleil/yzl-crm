@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.service.micservice;
 
 
+import cn.net.yzl.activity.model.dto.CouponDiscountRulesDto;
 import cn.net.yzl.activity.model.requestModel.*;
 import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
@@ -8,6 +9,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.dmc.*;
 import cn.net.yzl.crm.dto.dmc.ActivityDetailResponse;
 import cn.net.yzl.crm.dto.dmc.PageModel;
+import cn.net.yzl.crm.dto.order.MemberRedBagRecordsDTO;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +32,25 @@ public interface ActivityClient {
     @PostMapping("db/v1/getMemberIntegralRecords")
     ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(@RequestBody AccountRequest request);
 
+    @ApiOperation(value = "顾客积分明细表")
+    @PostMapping("db/v1/getMemberIntegralRecordsWithOutPage")
+    ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecordsWithOutPage(@RequestBody AccountWithOutPageRequest request);
+
     @ApiOperation(value = "顾客红包明细表")
     @PostMapping("db/v1/getMemberRedBagRecords")
     ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(@RequestBody AccountRequest request);
 
+    @ApiOperation(value = "顾客红包明细表 - 不分页")
+    @PostMapping("db/v1/getMemberRedBagRecordsWithOutPage")
+    ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecordsWithOutPage(@RequestBody AccountWithOutPageRequest request);
+
     @ApiOperation(value = "顾客优惠券明细表")
     @PostMapping("db/v1/getMemberCoupon")
     ComResponse<Page<MemberCouponResponse>> getMemberCoupon(@RequestBody AccountRequest request);
+
+    @ApiOperation(value = "顾客优惠券明细表 - 不分页")
+    @PostMapping("db/v1/getMemberCouponWithOutPage")
+    ComResponse<List<MemberIntegralRecordsResponse>> getMemberCouponWithOutPage(@RequestBody AccountWithOutPageRequest request);
 
     @ApiOperation(value = "根据单个会员卡号获取 每个顾客的优惠券 积分 红包")
     @GetMapping("db/v1/getAccountByMemberCard")
@@ -48,7 +62,7 @@ public interface ActivityClient {
 
     @ApiOperation(value = "根据多个商品唯一编码 查询当前的优惠方式、可用优惠券")
     @PostMapping("db/v1/getProductDiscountByProductCodes")
-    ComResponse<List<ProductDiscountResponse>> getProductListDiscount(@RequestBody ProductListDiscountRequest request);
+    ComResponse<ProductListDiscountResponse> getProductListDiscount(@RequestBody ProductListDiscountRequest request);
 
     @ApiOperation(value = "根据商品唯一编码 查询当前的优惠方式、可用优惠券")
     @PostMapping("db/v1/getProductDiscountByProductCode")

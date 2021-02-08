@@ -40,7 +40,7 @@ public class ActivityServiceImpl implements ActivityService {
     MemberFien memberFien;
 
     @Override
-    public ComResponse<List<ProductDiscountResponse>> getProductListDiscount(ProductListDiscountRequest request) {
+    public ComResponse<ProductListDiscountResponse> getProductListDiscount(ProductListDiscountRequest request) {
         Long groupId = this.getGroupIdByUserNo();
         if (null != groupId) {
             request.setGroupId(groupId);

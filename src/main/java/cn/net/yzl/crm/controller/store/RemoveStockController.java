@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -39,7 +40,12 @@ public class RemoveStockController {
 
     @ApiOperation(value = "生成出库单",notes = "生成出库单")
     @PostMapping("v1/createOutStoreOrder")
-    public ComResponse createOutStoreOrder(@RequestBody List<OutStoreOrderVo> outStoreOrderVoList){
+    public ComResponse createOutStoreOrder(@RequestBody List<OutStoreOrderVo> outStoreOrderVoList, HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
+        for (OutStoreOrderVo outStoreOrderVo : outStoreOrderVoList) {
+            outStoreOrderVo.setUserNo(userNo);
+        }
+
         return removeStockFeignService.createOutStoreOrder(outStoreOrderVoList);
     }
 

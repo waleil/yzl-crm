@@ -134,4 +134,7 @@ public interface ProductClient {
 
 	@GetMapping("v1/queryProductListAtlasByDiseaseName")
 	ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(@RequestParam(value = "diseaseName") String diseaseName);
+
+	@GetMapping(value = "v1/queryCategoryCountByCodes")
+	ComResponse<Integer> queryCategoryCountByCodes(@RequestParam("productCodes") String[] productCodes);
 }
