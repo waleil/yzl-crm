@@ -36,4 +36,5 @@ public interface BrandClient {
 
     @GetMapping("query4Select")
     ComResponse<List<BrandBeanTO>> query4Select();
+
 }

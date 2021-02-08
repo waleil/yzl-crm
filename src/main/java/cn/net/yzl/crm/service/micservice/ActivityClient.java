@@ -48,7 +48,7 @@ public interface ActivityClient {
 
     @ApiOperation(value = "根据多个商品唯一编码 查询当前的优惠方式、可用优惠券")
     @PostMapping("db/v1/getProductDiscountByProductCodes")
-    ComResponse<List<ProductDiscountResponse>> getProductListDiscount(@RequestBody ProductListDiscountRequest request);
+    ComResponse<ProductListDiscountResponse> getProductListDiscount(@RequestBody ProductListDiscountRequest request);
 
     @ApiOperation(value = "根据商品唯一编码 查询当前的优惠方式、可用优惠券")
     @PostMapping("db/v1/getProductDiscountByProductCode")

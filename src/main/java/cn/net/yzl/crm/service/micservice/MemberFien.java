@@ -144,7 +144,7 @@ public interface MemberFien {
 
 	/**
 	 * 顾客账户-冻结金额确认(消费/退回)
-	 * 
+	 *
 	 * @param orderNo    订单号
 	 * @param obtainType 操作类型(1 退回 2 消费,3:充值(目前先不考虑)
 	 * @return

@@ -30,7 +30,7 @@ public class ActivityController {
 
     @ApiOperation(value = "根据多个商品唯一编码 查询当前的优惠方式、可用优惠券")
     @PostMapping("/v1/getProductDiscountByProductCodes")
-    public ComResponse<List<ProductDiscountResponse>> getProductListDiscount(@RequestBody ProductListDiscountRequest request) {
+    public ComResponse<ProductListDiscountResponse> getProductListDiscount(@RequestBody ProductListDiscountRequest request) {
         return activityService.getProductListDiscount(request);
     }
 
