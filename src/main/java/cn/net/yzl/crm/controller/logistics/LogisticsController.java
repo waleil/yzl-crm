@@ -78,8 +78,15 @@ public class LogisticsController {
     public ComResponse<Boolean> signedOrder(@RequestBody @Valid List<StoreToLogisticsDtoTrace> storeToLogisticsDtoTrace,HttpServletRequest request)
     {
 
-
+        log.info("=============================");
+        log.info("Logistics info ===> userNo:===>" + request.getHeader("userNo"));
+        log.info("before");
             ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+        log.info("after");
+        log.info(String.valueOf(ObjectUtils.isEmpty(userNo.getData())));
+        log.info("user info " +userNo.getData().getName());
+
+
             if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 
                 throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
