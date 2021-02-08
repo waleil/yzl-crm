@@ -17,30 +17,22 @@ import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
-import cn.net.yzl.model.pojo.OrderStatusInfo;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -83,7 +75,7 @@ public class LogisticsController {
         log.info("before");
             ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
         log.info("after");
-        log.info(String.valueOf(ObjectUtils.isEmpty(userNo.getData())));
+        log.info(String.valueOf(null==(userNo.getData())));
         log.info("user info " +userNo.getData().getName());
 
 
@@ -91,7 +83,7 @@ public class LogisticsController {
 
                 throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
             }
-            if(ObjectUtils.isEmpty(userNo.getData()))
+            if(null==userNo.getData())
             {
                 return  ComResponse.fail(ComResponse.ERROR_STATUS,"用户数据错误"+userNo.getCode());
             }
@@ -112,10 +104,10 @@ public class LogisticsController {
 
         for (int i = 0; i < storeToLogisticsDtoTrace.size(); i++) {
             //参数错误
-            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace))
+            if(null==(storeToLogisticsDtoTrace))
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
             //更新订单状态的信息为空
-            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry())
+            if(null==(storeToLogisticsDtoTrace.get(i).getSupplementRegistry())
                     || StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getExpressNum())
 //                    ||StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getSupplementor())
             )
@@ -126,7 +118,7 @@ public class LogisticsController {
 //                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
 
             //人工操作的轨迹信息为空
-            if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getTraceInfo()))
+            if(null==(storeToLogisticsDtoTrace.get(i).getTraceInfo()))
                 return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
             String userName = data.getName();
@@ -163,7 +155,7 @@ public class LogisticsController {
 
             throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
         }
-        if(ObjectUtils.isEmpty(userNo.getData()))
+        if(null==userNo.getData())
         {
             return  ComResponse.fail(ComResponse.ERROR_STATUS,"用户数据错误"+userNo.getCode());
         }
@@ -182,10 +174,10 @@ public class LogisticsController {
 
         boolean isSucess = false;
         //参数错误
-        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace))
+        if(null==storeToLogisticsDtoTrace)
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
         //更新订单状态的信息为空
-        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry())
+        if(null==storeToLogisticsDtoTrace.getSupplementRegistry()
                 || StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getExpressNum())
                 ||StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getSupplementor())
         )
@@ -196,7 +188,7 @@ public class LogisticsController {
             return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
 
         //人工操作的轨迹信息为空
-        if(ObjectUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo()))
+        if(null==storeToLogisticsDtoTrace.getTraceInfo())
             return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);  // 没有操作的登记信息
 
         String userName = data.getName();
@@ -253,7 +245,7 @@ public class LogisticsController {
 
                 throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
             }
-            if(ObjectUtils.isEmpty(userNo.getData()))
+            if(null==(userNo.getData()))
             {
                 return  ComResponse.fail(ComResponse.ERROR_STATUS,"用户数据错误"+userNo.getCode());
             }
