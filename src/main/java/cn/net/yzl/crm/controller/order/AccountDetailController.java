@@ -54,6 +54,8 @@ public class AccountDetailController {
 	@PostMapping("/v1/export")
 	@ApiOperation(value = "导出账户余额明细列表", notes = "导出账户余额明细列表")
 	public void export(@RequestBody AccountDetailIn accountDetailIn, HttpServletResponse response) throws Exception {
+		accountDetailIn.setPageNo(1);// 默认第1页
+		accountDetailIn.setPageSize(1000);// 默认每页1000条数据
 		ComResponse<Page<AccountDetailOut>> data = this.accountDetailFeignClient.queryPageList(accountDetailIn);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
 			log.error("导出账户余额明细列表异常>>>{}", data);

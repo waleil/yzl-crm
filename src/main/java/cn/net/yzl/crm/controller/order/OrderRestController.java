@@ -671,7 +671,7 @@ public class OrderRestController {
 		orderm.setRelationReissueOrderTotal(0);
 		orderm.setLogisticsClaims(0);
 		orderm.setInvoiceFlag(CommonConstant.INVOICE_0);// 不开票
-		orderm.setRelationReissueOrderNo("0");
+		orderm.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);
 		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
 		orderm.setCreateTime(new Date());// 下单时间
 	}

@@ -461,7 +461,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 		orderM.setFinancialOwner(orderTemp.getFinancialOwner());
 		orderM.setFinancialOwnerName(orderTemp.getFinancialOwnerName());
-		orderM.setRelationReissueOrderNo("0");
+		orderM.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);
 		orderM.setLogisticsClaims(null);
 		orderM.setRelationReissueOrderTotal(null);
 		// todo 等dmc数据
