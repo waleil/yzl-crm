@@ -2,10 +2,7 @@ package cn.net.yzl.crm.client.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.order.model.vo.order.SettlementDTO;
-import cn.net.yzl.order.model.vo.order.SettlementFlowDTO;
-import cn.net.yzl.order.model.vo.order.SettlementListReqDTO;
-import cn.net.yzl.order.model.vo.order.SettlementReqDTO;
+import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,7 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@FeignClient(name = "settlementFein", url = "${api.gateway.url}/orderService/SettlementFein")
+@FeignClient(name = "settlementFein", url = "${api.gateway.url}/orderService/settlement")
 public interface SettlementFein {
 
     @PostMapping("v1/createSettlement")
@@ -49,4 +46,8 @@ public interface SettlementFein {
     @PostMapping("v1/exportSettlementList")
     @ApiOperation("导出结算列表")
     public ComResponse<List<SettlementDTO>> exportSettlementList(@RequestBody SettlementListReqDTO dto);
+
+    @PostMapping("v1/getSettlementDetailGroupByOrderNo")
+    @ApiOperation("根据订单编号查询订单明细信息，并去重")
+    ComResponse<List<SettlementDetailDistinctListDTO>> getSettlementDetailGroupByOrderNo(@RequestBody List<String> orderNoList);
 }
