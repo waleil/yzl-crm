@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.activity.model.requestModel.AccountRequest;
+import cn.net.yzl.activity.model.requestModel.AccountWithOutPageRequest;
 import cn.net.yzl.activity.model.responseModel.MemberCouponResponse;
 import cn.net.yzl.activity.model.responseModel.MemberIntegralRecordsResponse;
 import cn.net.yzl.activity.model.responseModel.MemberRedBagRecordsResponse;
@@ -15,6 +16,7 @@ import cn.net.yzl.crm.dto.order.MemberIntegralRecordsDTO;
 import cn.net.yzl.crm.dto.order.MemberRedBagRecordsDTO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.ActivityService;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.crm.sys.BizException;
@@ -55,6 +57,8 @@ public class OrderInvoiceController {
 
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private ActivityClient activityClient;
     @Autowired
     private SettlementFein settlementFein;
 
@@ -110,6 +114,8 @@ public class OrderInvoiceController {
         return this.orderInvoiceClient.selectInvoiceList(dto);
     }
 
+
+
     @ApiOperation(value = "顾客积分明细表")
     @PostMapping("v1/getMemberIntegralRecords")
     public ComResponse<Page<MemberIntegralRecordsDTO>> getMemberIntegralRecords(@RequestBody AccountRequest request) {
@@ -145,6 +151,43 @@ public class OrderInvoiceController {
         }
         page.setItems(list);
         return ComResponse.success(page);
+    }
+
+    @ApiOperation(value = "顾客积分明细表")
+    @PostMapping("v1/exportMemberIntegralRecords")
+    public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+        ComResponse<Page<MemberIntegralRecordsResponse>> records = activityClient.getMemberIntegralRecordsWithOutPage(request);
+        if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + records.getMessage());
+        }
+//        Page<MemberIntegralRecordsResponse> responseData = records.getData();
+//        if (responseData.getItems().size() == 0) {
+//            return ComResponse.success();
+//        }
+//        List<String> orderNoList = responseData.getItems().stream().map(MemberIntegralRecordsResponse::getOrderNo).distinct().collect(Collectors.toList());
+//        //查询订单服务积分数据
+//        ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein.getSettlementDetailGroupByOrderNo(orderNoList);
+//        List<SettlementDetailDistinctListDTO> data = dtos.getData();
+//        Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
+//        if (data != null) {
+//            collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
+//        }
+//
+//        Page<MemberIntegralRecordsDTO> page = new Page<>();
+//        page.setPageParam(responseData.getPageParam());
+//        List<MemberIntegralRecordsDTO> list = new ArrayList<>();
+//        for (MemberIntegralRecordsResponse item : responseData.getItems()) {
+//            MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
+//            List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
+//            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+//                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
+//                dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
+//                dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
+//            }
+//            list.add(dto);
+//        }
+//        page.setItems(list);
+//        return ComResponse.success(page);
     }
 
     @ApiOperation(value = "顾客红包明细表")
