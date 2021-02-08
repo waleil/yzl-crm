@@ -1,6 +1,5 @@
 package cn.net.yzl.crm.dto.order;
 
-import cn.net.yzl.order.converters.LocalDateTimeConverter;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -8,17 +7,17 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
  * @author zhouchangsong
  */
 @Data
-@ApiModel("顾客积分——导出对象")
-public class MemberIntegralRecordsExportDTO implements Serializable {
+@ApiModel("顾客优惠券——导出对象")
+public class MemberCouponExportDTO implements Serializable {
 
-
-    private static final long serialVersionUID = 5735940745020654012L;
+    private static final long serialVersionUID = -1245816293063228944L;
     @ExcelProperty(value = {"会员卡号"}, index = 0)
     @ApiModelProperty("会员卡号")
     private String memberCard;
@@ -39,17 +38,22 @@ public class MemberIntegralRecordsExportDTO implements Serializable {
     @ApiModelProperty("业务环节（0、领取 1、可用 2、冻结 3、已使用 4、失效）")
     private String statusName;
 
-    @ExcelProperty(value = {"使用积分"}, index = 5)
-    @ApiModelProperty("使用积分")
-    private Integer integral;
+    @ExcelProperty(value = {"优惠券码"}, index = 5)
+    @ApiModelProperty("优惠券码")
+    private Long couponBusNo;
 
-    @ExcelProperty(value = {"创建时间"}, index = 6)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    @ApiModelProperty("创建时间")
+    @ExcelProperty(value = {"面值"}, index = 6)
+    @ApiModelProperty("面值")
+    private BigDecimal reduceAmount;
+
+    @ExcelProperty(value = {"创建时间"}, index = 7)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty("创建时间 ")
     private Date createTime;
 
-    @ExcelProperty(value = {"对账时间"}, index = 7)
+    @ExcelProperty(value = {"对账时间"}, index = 8)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty("对账时间")
     private Date reconciliationTime;
+
 }
