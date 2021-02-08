@@ -11,9 +11,8 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.config.QueryIds;
-import cn.net.yzl.crm.dto.order.MemberCouponDTO;
-import cn.net.yzl.crm.dto.order.MemberIntegralRecordsDTO;
-import cn.net.yzl.crm.dto.order.MemberRedBagRecordsDTO;
+import cn.net.yzl.crm.constant.EhrActivityStatus;
+import cn.net.yzl.crm.dto.order.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.ActivityService;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
@@ -27,25 +26,33 @@ import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
 import cn.net.yzl.order.model.vo.order.SettlementDetailDistinctListDTO;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.io.BufferedOutputStream;
-import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("orderInvoice")
 @Api(tags = "结算中心")
+@Slf4j
 public class OrderInvoiceController {
+
+    private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 
     @Resource
     private OrderInvoiceClient orderInvoiceClient;
@@ -115,7 +122,6 @@ public class OrderInvoiceController {
     }
 
 
-
     @ApiOperation(value = "顾客积分明细表")
     @PostMapping("v1/getMemberIntegralRecords")
     public ComResponse<Page<MemberIntegralRecordsDTO>> getMemberIntegralRecords(@RequestBody AccountRequest request) {
@@ -153,42 +159,42 @@ public class OrderInvoiceController {
         return ComResponse.success(page);
     }
 
-    @ApiOperation(value = "顾客积分明细表")
+    @ApiOperation(value = "顾客积分明细表——导出")
     @PostMapping("v1/exportMemberIntegralRecords")
     public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
         ComResponse<List<MemberIntegralRecordsResponse>> records = activityClient.getMemberIntegralRecordsWithOutPage(request);
         if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + records.getMessage());
         }
-//        Page<MemberIntegralRecordsResponse> responseData = records.getData();
-//        if (responseData.getItems().size() == 0) {
-//            return ComResponse.success();
-//        }
-//        List<String> orderNoList = responseData.getItems().stream().map(MemberIntegralRecordsResponse::getOrderNo).distinct().collect(Collectors.toList());
-//        //查询订单服务积分数据
-//        ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein.getSettlementDetailGroupByOrderNo(orderNoList);
-//        List<SettlementDetailDistinctListDTO> data = dtos.getData();
-//        Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
-//        if (data != null) {
-//            collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
-//        }
-//
-//        Page<MemberIntegralRecordsDTO> page = new Page<>();
-//        page.setPageParam(responseData.getPageParam());
-//        List<MemberIntegralRecordsDTO> list = new ArrayList<>();
-//        for (MemberIntegralRecordsResponse item : responseData.getItems()) {
-//            MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
-//            List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-//            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
-//                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
-//                dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
-//                dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
-//            }
-//            list.add(dto);
-//        }
-//        page.setItems(list);
-//        return ComResponse.success(page);
+        List<MemberIntegralRecordsResponse> responseData = records.getData();
+        if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR未查询出数据");
+        }
+        List<String> orderNoList = responseData.stream().map(MemberIntegralRecordsResponse::getOrderNo).distinct().collect(Collectors.toList());
+        //查询订单服务积分数据
+        ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein.getSettlementDetailGroupByOrderNo(orderNoList);
+        List<SettlementDetailDistinctListDTO> data = dtos.getData();
+        Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
+        if (data != null) {
+            collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
+        }
+        //组装数据
+        List<MemberIntegralRecordsExportDTO> list = new ArrayList<>();
+        for (MemberIntegralRecordsResponse item : responseData) {
+            MemberIntegralRecordsExportDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsExportDTO.class);
+            dto.setStatusName(EhrActivityStatus.getName(item.getStatus()));
+            List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
+            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
+                dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
+                dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
+            }
+            list.add(dto);
+        }
+        String title = "顾客积分明细表";
+        this.export(list, MemberIntegralRecordsExportDTO.class, title, response);
     }
+
 
     @ApiOperation(value = "顾客红包明细表")
     @PostMapping("v1/getMemberRedBagRecords")
@@ -227,6 +233,42 @@ public class OrderInvoiceController {
         return ComResponse.success(page);
     }
 
+    @ApiOperation(value = "顾客红包明细表——导出")
+    @PostMapping("v1/exportMemberRedBagRecords")
+    public void exportMemberRedBagRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+        ComResponse<List<MemberRedBagRecordsResponse>> records = activityClient.getMemberRedBagRecordsWithOutPage(request);
+        if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + records.getMessage());
+        }
+        List<MemberRedBagRecordsResponse> responseData = records.getData();
+        if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR未查询出数据");
+        }
+        List<String> orderNoList = responseData.stream().map(MemberRedBagRecordsResponse::getOrderNo).distinct().collect(Collectors.toList());
+        //查询订单服务积分数据
+        ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein.getSettlementDetailGroupByOrderNo(orderNoList);
+        List<SettlementDetailDistinctListDTO> data = dtos.getData();
+        Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
+        if (data != null) {
+            collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
+        }
+        //组装数据
+        List<MemberRedBagRecordsExportDTO> list = new ArrayList<>();
+        for (MemberRedBagRecordsResponse item : responseData) {
+            MemberRedBagRecordsExportDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsExportDTO.class);
+            dto.setStatusName(EhrActivityStatus.getName(item.getStatus()));
+            List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
+            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
+                dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
+                dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
+            }
+            list.add(dto);
+        }
+        String title = "顾客红包明细表";
+        this.export(list, MemberRedBagRecordsExportDTO.class, title, response);
+    }
+
     @ApiOperation(value = "顾客优惠券明细表")
     @PostMapping("v1/getMemberCoupon")
     public ComResponse<Page<MemberCouponDTO>> getMemberCoupon(@RequestBody AccountRequest request) {
@@ -252,7 +294,7 @@ public class OrderInvoiceController {
         List<MemberCouponDTO> list = new ArrayList<>();
         for (MemberCouponResponse item : responseData.getItems()) {
             MemberCouponDTO dto = BeanCopyUtils.transfer(item, MemberCouponDTO.class);
-            if (item.getCouponDiscountRulesDto().size() > 0){
+            if (item.getCouponDiscountRulesDto().size() > 0) {
                 dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getReduceAmount());
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
@@ -268,5 +310,80 @@ public class OrderInvoiceController {
         return ComResponse.success(page);
     }
 
+    @ApiOperation(value = "顾客优惠券明细表——导出")
+    @PostMapping("v1/exportMemberCoupon")
+    public void exportMemberCoupon(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+        ComResponse<List<MemberCouponResponse>> records = activityClient.getMemberCouponWithOutPage(request);
+        if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + records.getMessage());
+        }
+        List<MemberCouponResponse> responseData = records.getData();
+        if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR未查询出数据");
+        }
+        List<String> orderNoList = responseData.stream().map(MemberCouponResponse::getOrderNo).distinct().collect(Collectors.toList());
+        //查询订单服务积分数据
+        ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein.getSettlementDetailGroupByOrderNo(orderNoList);
+        List<SettlementDetailDistinctListDTO> data = dtos.getData();
+        Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
+        if (data != null) {
+            collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
+        }
+        //组装数据
+        List<MemberCouponExportDTO> list = new ArrayList<>();
+        for (MemberCouponResponse item : responseData) {
+            MemberCouponExportDTO dto = BeanCopyUtils.transfer(item, MemberCouponExportDTO.class);
+            if (item.getCouponDiscountRulesDto().size() > 0) {
+                dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getReduceAmount());
+                dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
+            }
+            dto.setStatusName(EhrActivityStatus.getName(item.getStatus()));
+            List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
+            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
+                dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
+                dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
+            }
+            list.add(dto);
+        }
+        String title = "顾客红包明细表";
+        this.export(list, MemberCouponExportDTO.class, title, response);
+    }
+
+    /**
+     * 导出
+     *
+     * @param list
+     * @param clazz
+     * @param title
+     * @param response
+     * @param <T>
+     */
+    private <T> void export(List<?> list, Class<T> clazz, String title, HttpServletResponse response) {
+        //导出
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        try {
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
+                    URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "相应头信息Content-Disposition设置异常");
+        }
+        ExcelWriter excelWriter = null;
+        try {
+            excelWriter = EasyExcel.write(response.getOutputStream(), clazz).registerWriteHandler(this.writeHandler).build();
+            WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
+            excelWriter.write(list, writeSheet);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "报表导出异常，请稍后再试");
+        } finally {
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
+        }
+    }
 
 }
