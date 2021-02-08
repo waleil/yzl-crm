@@ -40,8 +40,10 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
+import java.time.Year;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -315,7 +317,6 @@ public class MemberController {
             @ApiImplicitParam(name = "year", value = "年份", dataType = "string", paramType = "query")
     })
     public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard,String year) {
-
         // 获取工单信息
         ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard,year);
         if(listComResponse.getData()==null || listComResponse.getData().size()<1){
@@ -329,8 +330,9 @@ public class MemberController {
             String id = memberCustomerJourneyDto.get_id();
             Integer workOrderCode = memberCustomerJourneyDto.getWorkOrderCode();
             ComResponse<List<PortraitOrderDetailDTO>> portraitOrderDetail = orderSearchClient.getPortraitOrderDetail(workOrderCode + "", id);
-            if(portraitOrderDetail.getData()!=null || portraitOrderDetail.getData().size()>0){
-                memberCustomerJourneyDto.setPortraitOrderDetailList(portraitOrderDetail.getData());
+            List<PortraitOrderDetailDTO> data1 = portraitOrderDetail.getData();
+            if(!StringUtils.isEmpty(data1)){
+                memberCustomerJourneyDto.setPortraitOrderDetailList(data1);
             }
 
         }
@@ -345,13 +347,13 @@ public class MemberController {
                 list.add(memberCustomerJourneyDto);
             }
         }
-
         // 根据时间排序
        list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
-        return ComResponse.success(list);
+        if(StringUtils.isEmpty(year)){
+            year = DateFormatUtil.dateToString(new Date(),"yyyy");
+        }
+        return ComResponse.success(list).setMessage(year);
     }
-
-
 
     @ApiOperation("顾客画像-获取顾客病症(诊疗结果)")
     @GetMapping("v1/getMemberDisease")
