@@ -125,6 +125,8 @@ public class LogisticsController {
             String userName = data.getName();
             String template = userName+"执行了补登操作";
             storeToLogisticsDtoTrace.get(i).getTraceInfo().setDescription(template);
+
+            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementorName(data.getName());
 //            storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementor(userName); // 补登人
             //操作信息为空
 //        if(StringUtils.isEmpty(storeToLogisticsDtoTrace.getTraceInfo().getDescription()))
