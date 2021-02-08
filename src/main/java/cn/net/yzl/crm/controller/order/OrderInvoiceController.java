@@ -156,7 +156,7 @@ public class OrderInvoiceController {
     @ApiOperation(value = "顾客积分明细表")
     @PostMapping("v1/exportMemberIntegralRecords")
     public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
-        ComResponse<Page<MemberIntegralRecordsResponse>> records = activityClient.getMemberIntegralRecordsWithOutPage(request);
+        ComResponse<List<MemberIntegralRecordsResponse>> records = activityClient.getMemberIntegralRecordsWithOutPage(request);
         if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + records.getMessage());
         }
