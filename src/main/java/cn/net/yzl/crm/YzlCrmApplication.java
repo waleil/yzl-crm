@@ -12,6 +12,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.net.yzl.common.swagger2.EnableSwagger;
@@ -31,9 +32,13 @@ public class YzlCrmApplication implements CommandLineRunner {
 
 	@Resource
 	private RabbitTemplate rabbitTemplate;
+	@Resource
+	private ObjectMapper objectMapper;
 
 	@Override
 	public void run(String... args) throws Exception {
+		// 忽略未知属性
+		this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		// 设置消息发布确认回调
 		this.rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
 			if (ack) {

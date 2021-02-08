@@ -103,7 +103,7 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping(value = "v1/isListPage")
-    @ApiOperation(value = "查询我的回访分页列表", notes = "查询我的回访分页列表")
+    @ApiOperation(value = "我的回访工单-列表", notes = "我的回访工单-列表")
     public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO) {
         isListPageDTO.setStaffNO(QueryIds.userNo.get());
         ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isListPage(isListPageDTO);
@@ -159,7 +159,7 @@ public class WorkOrderController {
     }
 
     @PostMapping("v1/pageList")
-    @ApiOperation(value = "智能工单: 热线工单管理-列表", notes = "智能工单: 热线工单管理-列表")
+    @ApiOperation(value = "热线工单管理-列表", notes = "热线工单管理-列表")
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
         //获取当前用户部门，以及员工
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
@@ -182,7 +182,7 @@ public class WorkOrderController {
      * @param updateRecyclingDTO
      * @return
      */
-    @ApiOperation(value = "智能工单：热线工单管理-回收", notes = "智能工单：热线工单管理-回收")
+    @ApiOperation(value = "热线工单管理-回收", notes = "热线工单管理-回收")
     @PostMapping("v1/updateRecycling")
     public ComResponse<Void> updateRecycling(@Validated @RequestBody UpdateRecyclingDTO updateRecyclingDTO) {
         //获取当前用户部门，以及员工
@@ -198,7 +198,7 @@ public class WorkOrderController {
         return workOrderClient.updateRecycling(updateRecyclingDTO);
     }
 
-    @ApiOperation(value = "查询待领取顾客池", notes = "待领取顾客池")
+    @ApiOperation(value = "待领取顾客池-列表", notes = "待领取顾客池-列表")
     @PostMapping("v1/queryUnclaimedUsers")
     public ComResponse<Page<WorkOrderUnclaimedUserVO>> queryUnclaimedUsers(@RequestBody   WorkOrderUnclaimedUserDTO workOrderUnclaimedUserDTO){
         ComResponse<Page<WorkOrderUnclaimedUserVO>> pageComResponse = workOrderClient.queryUnclaimedUsers(workOrderUnclaimedUserDTO);
@@ -261,7 +261,7 @@ public class WorkOrderController {
     }
 
 
-    @ApiOperation(value = "回访工单管理列表", notes = "回访工单管理列表")
+    @ApiOperation(value = "回访工单管理-列表", notes = "回访工单管理-列表")
     @PostMapping(value = "v1/listPage")
     public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
@@ -328,7 +328,7 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping("v1/updateSingleAdjust")
-    @ApiOperation(value = "智能工单：热线工单管理-单数据调整", notes = "智能工单：热线工单管理-单数据调整")
+    @ApiOperation(value = "热线工单管理-单数据调整", notes = "热线工单管理-单数据调整")
     public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO) {
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
@@ -367,7 +367,7 @@ public class WorkOrderController {
         return productClient.queryByProductCodes(data);
     }
 
-    @ApiOperation(value = "查询所有用户最后一次购买商品", notes = "查询所有用户最后一次购买商品")
+    @ApiOperation(value = "所有用户最后一次购买商品-列表", notes = "所有用户最后一次购买商品-列表")
     @GetMapping("v1/queryLastProduct")
     public ComResponse<List<ProductMainDTO>> queryLastProduct() {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
@@ -387,7 +387,7 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping("v1/updateMoreAdjust")
-    @ApiOperation(value = "智能工单：热线工单管理-多数据调整", notes = "智能工单：热线工单管理-多数据调整")
+    @ApiOperation(value = "热线工单管理-多数据调整", notes = "热线工单管理-多数据调整")
     public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO) {
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
@@ -418,7 +418,7 @@ public class WorkOrderController {
         return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO);
     }
 
-    @ApiOperation(value = "回访工单单条分配工单", notes = "回访工单单条分配工单")
+    @ApiOperation(value = "我的回访工单-单条分配", notes = "我的回访工单-单条分配")
     @PostMapping(value = "v1/adjustment")
     public ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO) {
         updateWorkOrderVisitDTO.setCreateId(QueryIds.userNo.get());
@@ -430,7 +430,7 @@ public class WorkOrderController {
         return workOrderClient.adjustment(updateWorkOrderVisitDTO);
     }
 
-    @ApiOperation(value = "回访工单多条分配工单", notes = "回访工单多条分配工单")
+    @ApiOperation(value = "我的回访工单-多条分配", notes = "我的回访工单-多条分配")
     @PostMapping(value = "v1/batchAdjustment")
     public ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO) {
         updateBatchDTO.setCreateId(QueryIds.userNo.get());
@@ -452,7 +452,7 @@ public class WorkOrderController {
     }
 
     @PostMapping("v1/findMyWorkOrderHotlinePageList")
-    @ApiOperation(value = "智能工单：我的热线工单-列表", notes = "智能工单：我的热线工单-列表")
+    @ApiOperation(value = "我的热线工单-列表", notes = "我的热线工单-列表")
     public ComResponse<Page<MyWorkOrderHotlineListVO>> findMyWorkOrderHotlinePageList(@RequestBody MyWorkOrderHotlineListDTO myWorkOrderHotlineListDTO) {
         String userId = QueryIds.userNo.get();
         if (StringUtils.isEmpty(userId)) {
@@ -469,7 +469,7 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping("v1/updateAcceptStatusReceive")
-    @ApiOperation(value = "智能工单：我的热线工单-接收", notes = "智能工单：我的热线工单-接收")
+    @ApiOperation(value = "我的热线工单-接收", notes = "我的热线工单-接收")
     public ComResponse<Void> updateAcceptStatusReceive(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
@@ -490,7 +490,7 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping("v1/findDWorkOrderHotlineDetails")
-    @ApiOperation(value = "我的热线工单-处理工单详情", notes = "我的热线工单-处理工单详情")
+    @ApiOperation(value = "热线&&回访-处理工单详情", notes = "热线&&回访-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
         ComResponse<FindDWorkOrderHotlineDetailsVO> dWorkOrderHotlineDetails = workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
         FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
@@ -525,7 +525,7 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping("v1/findByCalledPhoneIsEmpty")
-    @ApiOperation(value = "智能工单：我的热线工单-被叫号码查询工单是否存在", notes = "智能工单：我的热线工单-被叫号码查询工单是否存在")
+    @ApiOperation(value = "热线&&回访-被叫号码查询工单是否存在", notes = "热线&&回访-被叫号码查询工单是否存在")
     public ComResponse<Boolean> findByCalledPhoneIsEmpty(@Validated @RequestBody FindByCalledPhoneIsEmptyDTO findByCalledPhoneIsEmptyDTO) {
         return workOrderClient.findByCalledPhoneIsEmpty(findByCalledPhoneIsEmptyDTO);
     }
@@ -537,7 +537,7 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping("v1/getDistributionStaff")
-    @ApiOperation(value = "智能工单：热线工单管理-可分配员工", notes = "智能工单：热线工单管理-可分配员工")
+    @ApiOperation(value = "热线工单管理-可分配员工", notes = "热线工单管理-可分配员工")
     public ComResponse<Page<EhrStaff>> getDistributionStaff(@RequestBody GetDistributionStaffDTO getDistributionStaffDTO) {
         String userId = QueryIds.userNo.get();
         if (StringUtils.isEmpty(userId)) {
@@ -554,7 +554,7 @@ public class WorkOrderController {
      * @return
      */
     @PostMapping("v1/insertWorkOrderDisposeFlow")
-    @ApiOperation(value = "智能工单：我的热线工单-创建处理工单流水", notes = "智能工单：我的热线工单-创建处理工单流水")
+    @ApiOperation(value = "热线&&回访-创建处理工单流水", notes = "热线&&回访-创建处理工单流水")
     public ComResponse<String> insertWorkOrderDisposeFlow(@Validated @RequestBody InsertWorkOrderDisposeFlowDTO insertWorkOrderDisposeFlowDTO) {
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
@@ -615,13 +615,13 @@ public class WorkOrderController {
      * @param receiveDTO
      * @return
      */
-    @ApiOperation(value = "智能工单-我的回访工单-接收", notes = "智能工单-我的回访工单-接收")
+    @ApiOperation(value = "我的回访工单-接收", notes = "我的回访工单-接收")
     @PostMapping(value = "v1/receive")
     public ComResponse<Void> receive(@RequestBody ReceiveDTO receiveDTO) {
         return workOrderClient.receive(receiveDTO);
     }
 
-    @ApiOperation(value = "智能工单-我的回访工单-单条上交",notes = "智能工单-我的回访工单-单条上交")
+    @ApiOperation(value = "我的回访工单-单条上交",notes = "我的回访工单-单条上交")
     @PostMapping(value = "v1/isHandIn")
     public ComResponse<Boolean> isHandIn(@RequestBody IsHandInDTO isHandInDTO){
         isHandInDTO.setStaffNo(QueryIds.userNo.get());
@@ -716,13 +716,7 @@ public class WorkOrderController {
         return ComResponse.success(flag);
     }
 
-//    @ApiOperation(value = "查询顾客旅程",notes = "查询顾客旅程")
-//    @GetMapping(value = "v1/userRoute")
-//    public ComResponse<List<WorkOrderFlowVO>> userRoute(@RequestParam(name = "memberCard",required = true)String memberCard){
-//        return workOrderClient.userRoute(memberCard);
-//    }
-
-    @ApiOperation(value = "智能工单-我的回访工单-处理工单-提交",notes = "智能工单-我的回访工单-处理工单-提交")
+    @ApiOperation(value = "热线&&回访-处理工单提交",notes = "热线&&回访-处理工单提交")
     @PostMapping(value = "v1/submitWorkOrder")
     public ComResponse<Void> submitWorkOrder(@Validated @RequestBody SubmitWorkOrderDTO submitWorkOrderDTO){
         String userNo = QueryIds.userNo.get();
