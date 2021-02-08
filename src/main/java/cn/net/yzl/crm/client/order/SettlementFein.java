@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@FeignClient(name = "settlementFein", url = "${api.gateway.url}/orderService/SettlementFein")
+@FeignClient(name = "settlementFein", url = "${api.gateway.url}/orderService/Settlement")
 public interface SettlementFein {
 
     @PostMapping("v1/createSettlement")
