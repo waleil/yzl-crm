@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -65,15 +66,15 @@ public class StoreController {
 
     @ApiOperation(value = "编辑/修改仓库", notes = "编辑/修改仓库")
     @PostMapping("v1/updateStore")
-    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO){
-        return storeFeginService.updateStore(storeVO);
+    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO, HttpServletRequest request){
+        return storeFeginService.updateStore(storeVO,request);
     }
 
 
     @ApiOperation(value = "新增仓库", notes = "新增仓库")
     @PostMapping("v1/insertStore")
-    public ComResponse insertStore(@RequestBody StoreVO storeVO){
-        return storeFeginService.insertStore(storeVO);
+    public ComResponse insertStore(@RequestBody StoreVO storeVO,HttpServletRequest request){
+        return storeFeginService.insertStore(storeVO,request);
     }
 
 
@@ -85,8 +86,8 @@ public class StoreController {
 
     @ApiOperation(value = "新增库位", notes = "新增库位")
     @PostMapping("v1/insertStoreLocal")
-    public ComResponse insertStoreLocal(@RequestBody StoreLocalVo storeLocalVo){
-        return storeFeginService.insertStoreLocal(storeLocalVo);
+    public ComResponse insertStoreLocal(@RequestBody StoreLocalVo storeLocalVo,HttpServletRequest request){
+        return storeFeginService.insertStoreLocal(storeLocalVo,request);
     }
 
     @ApiOperation(value = "查询库位详情",notes = "查询库位详情")
@@ -98,8 +99,8 @@ public class StoreController {
 
     @ApiOperation(value = "编辑库位", notes = "编辑库位")
     @PostMapping("v1/updateStoreLocal")
-    public ComResponse updateStoreLocal(@RequestBody StoreLocalVo storeLocalVo){
-        return storeFeginService.updateStoreLocal(storeLocalVo);
+    public ComResponse updateStoreLocal(@RequestBody StoreLocalVo storeLocalVo,HttpServletRequest request){
+        return storeFeginService.updateStoreLocal(storeLocalVo,request);
     }
 
     @ApiOperation(value = "查询库区类型", notes = "查询库区类型")

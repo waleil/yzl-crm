@@ -18,6 +18,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -51,11 +52,11 @@ public interface StoreFeginService {
 
     @ApiOperation(value = "编辑/修改仓库", notes = "编辑/修改仓库")
     @PostMapping("store/v1/updateStore")
-    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO);
+    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO,HttpServletRequest request);
 
 
     @PostMapping("store/v1/insertStore")
-    public ComResponse insertStore(@RequestBody StoreVO storeVO);
+    public ComResponse insertStore(@RequestBody StoreVO storeVO, HttpServletRequest request);
 
 
     @ApiOperation(value = "开启/关闭仓库状态", notes = "开启/关闭仓库状态")
@@ -64,7 +65,7 @@ public interface StoreFeginService {
 
 
     @PostMapping("store/v1/insertStoreLocal")
-    public ComResponse insertStoreLocal(@RequestBody StoreLocalVo storeLocalVo);
+    public ComResponse insertStoreLocal(@RequestBody StoreLocalVo storeLocalVo,HttpServletRequest request);
 
 
 
@@ -72,7 +73,7 @@ public interface StoreFeginService {
     public ComResponse<StoreLocalDto> selectStoreLocalInfo(@RequestParam("id") Integer id);
 
     @PostMapping("store/v1/updateStoreLocal")
-    public ComResponse updateStoreLocal(@RequestBody StoreLocalVo storeLocalVo);
+    public ComResponse updateStoreLocal(@RequestBody StoreLocalVo storeLocalVo,HttpServletRequest request);
 
 
     @ApiOperation(value = "开启/关闭库位状态", notes = "开启/关闭库位状态")
