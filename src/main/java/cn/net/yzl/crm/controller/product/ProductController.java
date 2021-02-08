@@ -217,8 +217,6 @@ public class ProductController {
         if (productDetailVOComResponse.getData()==null){
             return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE);
         }
-
-
         return productDetailVOComResponse;
     }
     @GetMapping(value = "v1/queryProductPortrait")
