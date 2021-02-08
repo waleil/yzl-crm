@@ -176,6 +176,8 @@ public class LogisticsController {
         //参数错误
         if(null==storeToLogisticsDtoTrace)
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
+
+        storeToLogisticsDtoTrace.getSupplementRegistry().setSupplementor(data.getName());
         //更新订单状态的信息为空
         if(null==storeToLogisticsDtoTrace.getSupplementRegistry()
                 || StringUtils.isEmpty(storeToLogisticsDtoTrace.getSupplementRegistry().getExpressNum())
@@ -203,6 +205,8 @@ public class LogisticsController {
         storeToLogisticsDtoTrace.getSupplementRegistry().setSignTime(new Date());  // signTime
         storeToLogisticsDtoTrace.getSupplementRegistry().setDepartId(data.getDepartId());
         storeToLogisticsDtoTrace.getSupplementRegistry().setOrderStatus(1);
+
+
         return logisticsFien.cancelSignOrder(storeToLogisticsDtoTrace);
 
     }
