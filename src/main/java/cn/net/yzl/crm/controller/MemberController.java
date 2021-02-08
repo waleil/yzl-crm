@@ -389,15 +389,15 @@ public class MemberController {
     @ApiOperation("诊疗结果-新增顾客病症")
     @PostMapping("v1/insertMemberDisease")
     public ComResponse<Integer> getMemberDisease(@RequestBody @Validated MemberDiseaseDto memberDiseaseDto) {
-        DiseaseMainInfo diseaseMainInfo=null;
+        Integer id = null;
         String staffNo= QueryIds.userNo.get();
-        ComResponse<DiseaseMainInfo> diseaseMainInfoComResponse = diseaseClient.artificialSeatInput(memberDiseaseDto.getParDiseaseId(), memberDiseaseDto.getDiseaseName(), staffNo);
+        ComResponse<Integer> diseaseMainInfoComResponse = diseaseClient.artificialSeatInput(memberDiseaseDto.getParDiseaseId(), memberDiseaseDto.getDiseaseName(), staffNo);
         if(diseaseMainInfoComResponse!=null && diseaseMainInfoComResponse.getCode()==200 && diseaseMainInfoComResponse.getData()!=null){
-            diseaseMainInfo=diseaseMainInfoComResponse.getData();
+            id=diseaseMainInfoComResponse.getData();
         }else{
             return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(),ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getMessage());
         }
-        memberDiseaseDto.setDiseaseId(diseaseMainInfo.getId());
+        memberDiseaseDto.setDiseaseId(id);
         memberDiseaseDto.setCreateNo(staffNo);
         ComResponse<Integer> integerComResponse = memberFien.insertMemberDisease(memberDiseaseDto);
         if(integerComResponse!=null || integerComResponse.getCode()!=200){
