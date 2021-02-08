@@ -38,6 +38,6 @@ public interface AccountDetailFeignClient {
 	 * @author zhangweiwei
 	 * @date 2021年2月8日,上午3:59:12
 	 */
-	@PostMapping("/v1/querysummary")
+	@PostMapping("/accountdetail/v1/querysummary")
 	ComResponse<DetailSummary> querySummary(@RequestBody AccountDetailIn accountDetailIn);
 }
