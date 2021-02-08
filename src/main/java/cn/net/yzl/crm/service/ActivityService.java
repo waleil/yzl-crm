@@ -14,7 +14,7 @@ import java.util.List;
  * @desc: //TODO  请说明该类的用途
  **/
 public interface ActivityService {
-    ComResponse<List<ProductDiscountResponse>> getProductListDiscount(ProductListDiscountRequest request);
+    ComResponse<ProductListDiscountResponse> getProductListDiscount(ProductListDiscountRequest request);
 
     ComResponse<ProductDiscountResponse> getProductDiscount(ProductDiscountRequest request);
 
