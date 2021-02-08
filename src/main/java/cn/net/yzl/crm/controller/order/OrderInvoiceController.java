@@ -136,7 +136,7 @@ public class OrderInvoiceController {
         for (MemberIntegralRecordsResponse item : responseData.getItems()) {
             MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (settlementDetailDistinctListDTOS.size() > 0) {
+            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
                 dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
@@ -173,7 +173,7 @@ public class OrderInvoiceController {
         for (MemberRedBagRecordsResponse item : responseData.getItems()) {
             MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (settlementDetailDistinctListDTOS.size() > 0) {
+            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
                 dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
@@ -214,7 +214,7 @@ public class OrderInvoiceController {
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (settlementDetailDistinctListDTOS.size() > 0) {
+            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
                 dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
