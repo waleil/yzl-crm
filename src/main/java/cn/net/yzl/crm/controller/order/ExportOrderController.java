@@ -1,38 +1,24 @@
 package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.client.order.OrderInvoiceClient;
-import cn.net.yzl.crm.client.store.InventoryFeginService;
-import cn.net.yzl.crm.service.DownImageInService;
+import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
-import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
-import cn.net.yzl.model.vo.InventoryExcelVo;
-import cn.net.yzl.model.vo.InventoryProductExcelVo;
-import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
-import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.fastjson.JSON;
+import cn.net.yzl.order.model.vo.order.SettlementDTO;
+import cn.net.yzl.order.model.vo.order.SettlementListReqDTO;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+//import cn.net.yzl.crm.client.order.ExportOrderService;
 
 /**
  * @author chengyu
@@ -47,6 +33,11 @@ public class ExportOrderController {
 
     @Resource
     private OrderInvoiceService orderInvoiceService;
+    @Resource
+    private SettlementFein settlementFein;
+
+//    @Resource
+//    private ExportOrderService service;
 
     @ApiOperation(value = "订单发票列表导出")
     @PostMapping("v1/exportInvoiceList")
@@ -55,6 +46,13 @@ public class ExportOrderController {
         return ComResponse.success(true);
     }
 
+    @PostMapping("v1/exportSettlementList")
+    @ApiOperation("导出结算列表")
+    public ComResponse<List<SettlementDTO>> exportSettlementList(@RequestBody SettlementListReqDTO dto){
+
+        return settlementFein.exportSettlementList(dto);
+
+    }
 
 
 
