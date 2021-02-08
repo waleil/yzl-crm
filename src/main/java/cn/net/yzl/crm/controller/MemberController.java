@@ -42,6 +42,7 @@ import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -329,8 +330,9 @@ public class MemberController {
             String id = memberCustomerJourneyDto.get_id();
             Integer workOrderCode = memberCustomerJourneyDto.getWorkOrderCode();
             ComResponse<List<PortraitOrderDetailDTO>> portraitOrderDetail = orderSearchClient.getPortraitOrderDetail(workOrderCode + "", id);
-            if(portraitOrderDetail.getData()!=null || portraitOrderDetail.getData().size()>0){
-                memberCustomerJourneyDto.setPortraitOrderDetailList(portraitOrderDetail.getData());
+            List<PortraitOrderDetailDTO> data1 = portraitOrderDetail.getData();
+            if(!StringUtils.isEmpty(data1)){
+                memberCustomerJourneyDto.setPortraitOrderDetailList(data1);
             }
 
         }
