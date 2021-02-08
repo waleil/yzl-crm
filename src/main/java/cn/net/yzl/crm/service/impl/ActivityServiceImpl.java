@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.service.impl;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateUtil;
 import cn.net.yzl.activity.model.requestModel.*;
 import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
@@ -17,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -93,16 +96,52 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(AccountRequest request) {
+        if (null != request.getSearchDate()) {
+            if (0 == request.getSearchDate()) {
+                Date endTime = new Date();
+                Date beginTime = DateUtil.offset(endTime, DateField.MONTH, -3);
+                request.setBeginTime(beginTime);
+                request.setEndTime(endTime);
+            }else{
+                Date now = new Date();
+                Date endTime = DateUtil.offset(now, DateField.MONTH, -3);
+                request.setEndTime(endTime);
+            }
+        }
         return activityClient.getMemberIntegralRecords(request);
     }
 
     @Override
     public ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(AccountRequest request) {
+        if (null != request.getSearchDate()) {
+            if (0 == request.getSearchDate()) {
+                Date endTime = new Date();
+                Date beginTime = DateUtil.offset(endTime, DateField.MONTH, -3);
+                request.setBeginTime(beginTime);
+                request.setEndTime(endTime);
+            }else{
+                Date now = new Date();
+                Date endTime = DateUtil.offset(now, DateField.MONTH, -3);
+                request.setEndTime(endTime);
+            }
+        }
         return activityClient.getMemberRedBagRecords(request);
     }
 
     @Override
     public ComResponse<Page<MemberCouponResponse>> getMemberCoupon(AccountRequest request) {
+        if (null != request.getSearchDate()) {
+            if (0 == request.getSearchDate()) {
+                Date endTime = new Date();
+                Date beginTime = DateUtil.offset(endTime, DateField.MONTH, -3);
+                request.setBeginTime(beginTime);
+                request.setEndTime(endTime);
+            }else{
+                Date now = new Date();
+                Date endTime = DateUtil.offset(now, DateField.MONTH, -3);
+                request.setEndTime(endTime);
+            }
+        }
         return activityClient.getMemberCoupon(request);
     }
 
