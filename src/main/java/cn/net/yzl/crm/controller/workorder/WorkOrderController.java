@@ -351,7 +351,7 @@ public class WorkOrderController {
 
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为未接受（热线的不管自动分配还是人工分配都需要接收）
-        return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
+        return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO).setMessage("成功");
     }
 
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
@@ -417,7 +417,7 @@ public class WorkOrderController {
         }
         updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为未接收，不管是人工还是自动分配都是未接收
         updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO);
+        return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO).setMessage("成功");
     }
 
     @ApiOperation(value = "我的回访工单-单条分配", notes = "我的回访工单-单条分配")
