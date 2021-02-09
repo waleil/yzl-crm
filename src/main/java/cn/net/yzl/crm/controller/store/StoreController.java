@@ -83,9 +83,10 @@ public class StoreController {
     @ApiOperation(value = "新增仓库", notes = "新增仓库")
     @PostMapping("v1/insertStore")
     public ComResponse insertStore(@RequestBody StoreVO storeVO,HttpServletRequest request){
-        ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
-        storeVO.setCreator(userNo.getData().getStaffNo());
-        storeVO.setCreatorName(userNo.getData().getName());
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> ehrStaffClientDetailsByNo = ehrStaffClient.getDetailsByNo(userNo);
+        storeVO.setCreator(userNo);
+        storeVO.setCreatorName(ehrStaffClientDetailsByNo.getData().getName());
         return storeFeginService.insertStore(storeVO);
     }
 
