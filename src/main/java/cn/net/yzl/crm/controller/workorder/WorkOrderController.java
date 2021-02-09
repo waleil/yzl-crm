@@ -400,18 +400,20 @@ public class WorkOrderController {
         //获取被分配人的信息
         List<UpdateMoreAdjustSubTDTO> names = updateMoreAdjustDTO.getNames();
         if(!CollectionUtils.isEmpty(names)){
-            names.stream().forEach(updateMoreAdjustSubTDTO -> {
-                ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(updateMoreAdjustSubTDTO.getStaffNo());
+            for (int i = 0; i < names.size(); i++) {
+                ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(names.get(i).getStaffNo());
                 if(!StringUtils.isEmpty(detailsByNoOne) && !StringUtils.isEmpty(detailsByNoOne.getData())){
                     StaffImageBaseInfoDto dataOne = detailsByNoOne.getData();
-                    updateMoreAdjustSubTDTO.setStaffNo(dataOne.getStaffNo());//被分配人编码
-                    updateMoreAdjustSubTDTO.setStaffName(dataOne.getName());//被分配人名称
-                    updateMoreAdjustSubTDTO.setStaffLevel(StringUtils.isEmpty(dataOne.getPostLevelName())?"":String.valueOf(dataOne.getPostLevelName()));//被分配人级别
-                    updateMoreAdjustSubTDTO.setDeptId(dataOne.getDepartId());//被分配人部门id
-                    updateMoreAdjustSubTDTO.setDeptName(dataOne.getDepartName());//被分配人部门名称
-                    updateMoreAdjustSubTDTO.setAcceptStatus(1);//不管是人工还是自动分配都是未接收
+                    names.get(i).setStaffNo(dataOne.getStaffNo());//被分配人编码
+                    names.get(i).setStaffName(dataOne.getName());//被分配人名称
+                    names.get(i).setStaffLevel(StringUtils.isEmpty(dataOne.getPostLevelName())?"":String.valueOf(dataOne.getPostLevelName()));//被分配人级别
+                    names.get(i).setDeptId(dataOne.getDepartId());//被分配人部门id
+                    names.get(i).setDeptName(dataOne.getDepartName());//被分配人部门名称
+                    names.get(i).setAcceptStatus(1);//不管是人工还是自动分配都是未接收
+                } else {
+                    return ComResponse.fail(ComResponse.ERROR_STATUS,"被分配的员工信息不存在");
                 }
-            });
+            }
         }
         updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为未接收，不管是人工还是自动分配都是未接收
         updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
