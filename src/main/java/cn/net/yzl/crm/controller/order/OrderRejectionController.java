@@ -40,7 +40,7 @@ public class OrderRejectionController {
     }
 
     @GetMapping("v1/getOrderList")
-    @ApiOperation(value = "查询已发货、待发货订单")
+    @ApiOperation(value = "查询待发货订单")
     public ComResponse<Page<OderListResDTO>> selectOrderList(@ApiParam(value = "订单号") @RequestParam String orderNo,
                                                              @ApiParam(value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
                                                              @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize) {

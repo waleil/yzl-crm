@@ -75,7 +75,6 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
 		dto.setDepartId(String.valueOf(departId));
 		dto.setRejectionNo(seqNo);
 		dto.setStoreNo(String.valueOf(orderRejectionAddDTO.getStoreNo()));
-//        dto.setStoreName();
 		dto.setUserNo(userNo);
 		dto.setFinancialOwner(
 				Long.valueOf(Optional.ofNullable(dresponse.getData()).map(DepartDto::getFinanceDepartId).orElse(0)));
