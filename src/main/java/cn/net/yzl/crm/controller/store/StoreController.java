@@ -83,9 +83,10 @@ public class StoreController {
     @ApiOperation(value = "新增仓库", notes = "新增仓库")
     @PostMapping("v1/insertStore")
     public ComResponse insertStore(@RequestBody StoreVO storeVO,HttpServletRequest request){
-        ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
-        storeVO.setCreator(userNo.getData().getStaffNo());
-        storeVO.setCreatorName(userNo.getData().getName());
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> ehrStaffClientDetailsByNo = ehrStaffClient.getDetailsByNo(userNo);
+        storeVO.setCreator(userNo);
+        storeVO.setCreatorName(ehrStaffClientDetailsByNo.getData().getName());
         return storeFeginService.insertStore(storeVO);
     }
 
@@ -99,7 +100,9 @@ public class StoreController {
     @ApiOperation(value = "新增库位", notes = "新增库位")
     @PostMapping("v1/insertStoreLocal")
     public ComResponse insertStoreLocal(@RequestBody StoreLocalVo storeLocalVo, HttpServletRequest request){
-        ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+        String staffNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(staffNo);
+        //ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
         storeLocalVo.setCreator(userNo.getData().getStaffNo());
         storeLocalVo.setCreatorName(userNo.getData().getName());
         return storeFeginService.insertStoreLocal(storeLocalVo);
