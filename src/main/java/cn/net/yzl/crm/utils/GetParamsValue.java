@@ -1,6 +1,5 @@
 package cn.net.yzl.crm.utils;
 
-import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
