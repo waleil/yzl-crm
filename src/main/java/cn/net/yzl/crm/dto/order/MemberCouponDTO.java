@@ -1,6 +1,5 @@
 package cn.net.yzl.crm.dto.order;
 
-import cn.net.yzl.activity.model.dto.CouponDiscountRulesDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,7 +8,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author zhouchangsong
