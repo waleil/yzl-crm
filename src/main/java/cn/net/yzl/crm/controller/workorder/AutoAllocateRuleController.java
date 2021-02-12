@@ -1,28 +1,19 @@
 package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.workorder.AutoAllocateRuleClient;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
-import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
-import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
-import cn.net.yzl.workorder.model.db.AutoAllocateConfigBean;
 import cn.net.yzl.workorder.model.db.AutoAllocateRuleBean;
-import cn.net.yzl.workorder.model.vo.AutoAllocateConfigVO;
 import cn.net.yzl.workorder.model.vo.AutoAllocateRuleCriteriaTO;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
