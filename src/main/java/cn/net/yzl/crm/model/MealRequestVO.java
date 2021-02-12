@@ -4,6 +4,8 @@ import cn.net.yzl.product.model.BaseObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.DecimalMin;
@@ -19,6 +21,7 @@ import java.util.List;
  * @date: 2021/1/10 14:40 下午
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "MealRequestVO",description = "套餐信息")
 public class MealRequestVO extends BaseObject {
 
