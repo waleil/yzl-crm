@@ -16,7 +16,9 @@ import java.util.List;
 @ApiModel(value = "MemberCustomerJourneyDto", description = "顾客旅程实体")
 @Data
 public class MemberCustomerJourneyDto implements Serializable {
-    @ApiModelProperty("工单id")
+    /**  */
+	private static final long serialVersionUID = 4957765480022077476L;
+	@ApiModelProperty("工单id")
     private String _id;
     @ApiModelProperty("工单号")
     private Integer workOrderCode;
