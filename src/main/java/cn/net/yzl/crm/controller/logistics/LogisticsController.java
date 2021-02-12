@@ -100,7 +100,7 @@ public class LogisticsController {
 
 
 
-        boolean isSucess = false;
+//        boolean isSucess = false;
 
         for (int i = 0; i < storeToLogisticsDtoTrace.size(); i++) {
             //参数错误
@@ -172,7 +172,7 @@ public class LogisticsController {
 
 
 
-        boolean isSucess = false;
+//        boolean isSucess = false;
         //参数错误
         if(null==storeToLogisticsDtoTrace)
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
