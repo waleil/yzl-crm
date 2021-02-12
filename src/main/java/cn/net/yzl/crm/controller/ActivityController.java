@@ -7,7 +7,6 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.service.ActivityService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,6 @@ import java.math.BigDecimal;
  * @date: 2021/2/4 11:55
  * @desc: //TODO  请说明该类的用途
  **/
-@Slf4j
 @RestController
 @RequestMapping("activity/")
 @Api(tags = "商品活动相关")
