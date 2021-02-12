@@ -7,7 +7,6 @@ import cn.net.yzl.crm.client.order.SplitStoreRuleClient;
 import cn.net.yzl.crm.client.store.StoreFeginService;
 import cn.net.yzl.crm.dto.order.SplitStoreRulePageDTO;
 import cn.net.yzl.crm.service.SplitStoreRuleService;
-import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.utils.BeanCopyUtils;
 import cn.net.yzl.model.pojo.StorePo;
 import cn.net.yzl.order.model.vo.order.SplitStoreProvinceNamesDTO;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
