@@ -10,7 +10,6 @@ import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
-@Slf4j
 @RequestMapping("newOrdder")
 @Api(tags = "订单管理")
 public class NewOrderController {
