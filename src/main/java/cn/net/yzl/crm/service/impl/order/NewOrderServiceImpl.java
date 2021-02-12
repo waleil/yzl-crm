@@ -571,7 +571,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 	 * 发送http请求，用于回调
 	 */
 	protected void sentHttpRequest(String url, Object param) {
-		ComResponse responseBean = template.postForObject(url, param, ComResponse.class);
+		template.postForObject(url, param, ComResponse.class);
 	}
 
 	/**
