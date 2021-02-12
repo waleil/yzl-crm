@@ -54,8 +54,8 @@ public class GetParamsValue {
     }
 
     public static Map<String,String> getProductMarketingMap() {
-        StringBuffer staffTalk = new StringBuffer("productCode,productName," +
-                "marketingContent,keyword,punishDescription" );
+//        StringBuffer staffTalk = new StringBuffer("productCode,productName," +
+//                "marketingContent,keyword,punishDescription" );
         Map<String,String> map = new HashMap<>();
         map.put("productMarketingCode","编号");
         map.put("productCode","商品编号");
@@ -67,8 +67,8 @@ public class GetParamsValue {
     }
 
     public static Map<String,String> getWordQualityMap() {
-        StringBuffer staffTalk = new StringBuffer("qualityDepartmentCode,qualityDepartmentName," +
-                "prohibitedLevel,keyword,punishDescription" );
+//        StringBuffer staffTalk = new StringBuffer("qualityDepartmentCode,qualityDepartmentName," +
+//                "prohibitedLevel,keyword,punishDescription" );
         Map<String,String> map = new HashMap<>();
         map.put("wordCode","编号");
         map.put("qualityDepartmentCode","质检中心编号");
@@ -80,15 +80,15 @@ public class GetParamsValue {
     }
 
 
-    public <E ,T> E toModelMapping(T t,Class<E> clazz) {
-
-        Class<? extends Object> e=clazz.getClass();
-
-        Class<? extends Object> tClass=t.getClass();
-
-        Field[] fields = tClass.getDeclaredFields();
-        return null;
-    }
+//    public <E ,T> E toModelMapping(T t,Class<E> clazz) {
+//
+//        Class<? extends Object> e=clazz.getClass();
+//
+//        Class<? extends Object> tClass=t.getClass();
+//
+//        Field[] fields = tClass.getDeclaredFields();
+//        return null;
+//    }
 
 
 
