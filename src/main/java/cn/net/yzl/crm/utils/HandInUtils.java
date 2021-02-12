@@ -4,9 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.workorder.TurnRulnClient;
-import cn.net.yzl.crm.client.workorder.WorkOrderClient;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
-import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
@@ -19,8 +17,8 @@ import java.util.Date;
 @Component
 public class HandInUtils{
 
-    @Autowired
-    private WorkOrderClient workOrderClient;
+//    @Autowired
+//    private WorkOrderClient workOrderClient;
 
     @Autowired
     private TurnRulnClient turnRulnClient;
@@ -28,8 +26,8 @@ public class HandInUtils{
     @Autowired
     private OrderSearchClient orderSearchClient;
 
-    @Autowired
-    private StaffService staffService;
+//    @Autowired
+//    private StaffService staffService;
 
     @Autowired
     private EhrStaffClient ehrStaffClient;
