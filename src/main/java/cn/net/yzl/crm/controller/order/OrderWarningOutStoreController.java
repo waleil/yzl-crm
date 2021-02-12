@@ -2,7 +2,6 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.crm.dto.order.OutStoreWarningConfigDTO;
 import cn.net.yzl.crm.service.order.OutStoreWarningService;
-import cn.net.yzl.crm.utils.BeanCopyUtils;
 import cn.net.yzl.order.enums.BusinessType;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
