@@ -5,23 +5,16 @@ import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
-import cn.net.yzl.crm.controller.workorder.WorkOrderController;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.crm.service.micservice.OrderClient;
 import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.IsHandInDTO;
-import cn.net.yzl.workorder.model.enums.RuleDescriptionEnums;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class HandInUtils{
