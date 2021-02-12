@@ -4,7 +4,6 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.workorder.AutoAllocateRuleClient;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
-import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.workorder.model.db.AutoAllocateRuleBean;
 import cn.net.yzl.workorder.model.vo.AutoAllocateRuleCriteriaTO;
@@ -32,8 +31,8 @@ public class AutoAllocateRuleController {
     @Autowired
     private MemberGroupFeign memberClient;
 
-    @Autowired
-    private CrmStaffClient staffClient;
+//    @Autowired
+//    private CrmStaffClient staffClient;
 
     @GetMapping(value = "/v1/list")
     @ApiOperation(value = "查询智能派单规则列表")
