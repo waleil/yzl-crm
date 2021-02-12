@@ -1,11 +1,5 @@
 package cn.net.yzl.crm.service.impl.order.listener;
 
-import cn.net.yzl.crm.service.order.IExcelService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -13,25 +7,25 @@ import java.util.List;
  * @Version: 1
  */
 public class NewOrderListioner  {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewOrderListioner.class);
+//    private static final Logger LOGGER = LoggerFactory.getLogger(NewOrderListioner.class);
     /**
      * 每隔5条存储数据库，实际使用中可以3000条，然后清理list ，方便内存回收
      */
-    private static final int BATCH_COUNT = 3000;
-    List<Object> list = new ArrayList<Object>();
+//    private static final int BATCH_COUNT = 3000;
+//    List<Object> list = new ArrayList<Object>();
     /**
      *
      */
-    private IExcelService defaultService;
+//    private IExcelService defaultService;
 
     /**
      * 传入处理类
      *
      * @param service
      */
-    public NewOrderListioner(IExcelService service) {
-        this.defaultService = service;
-    }
+//    public NewOrderListioner(IExcelService service) {
+//        this.defaultService = service;
+//    }
 
 
     /**
