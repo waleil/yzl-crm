@@ -401,7 +401,7 @@ public class MemberController {
         memberDiseaseDto.setDiseaseId(id);
         memberDiseaseDto.setCreateNo(staffNo);
         ComResponse<Integer> integerComResponse = memberFien.insertMemberDisease(memberDiseaseDto);
-        if(integerComResponse!=null || integerComResponse.getCode()!=200){
+        if(integerComResponse==null || integerComResponse.getCode()!=200){
             return integerComResponse;
         }
         return ComResponse.success(integerComResponse.getData());
