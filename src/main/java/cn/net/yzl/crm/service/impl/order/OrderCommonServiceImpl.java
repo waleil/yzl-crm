@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
