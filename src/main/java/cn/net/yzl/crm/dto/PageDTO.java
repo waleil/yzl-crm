@@ -12,7 +12,10 @@ import java.io.Serializable;
 @Data
 public class PageDTO implements Serializable {
 
-    @NotNull(message = "当前页码不能为空")
+    /**  */
+	private static final long serialVersionUID = -3448637764722816419L;
+
+	@NotNull(message = "当前页码不能为空")
     @ApiModelProperty(value = "当前页码",required = true)
     private Integer currentPage;
 
