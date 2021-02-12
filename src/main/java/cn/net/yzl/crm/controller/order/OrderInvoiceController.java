@@ -32,7 +32,6 @@ import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +48,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("orderInvoice")
 @Api(tags = "结算中心")
-@Slf4j
 public class OrderInvoiceController {
 
     private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
