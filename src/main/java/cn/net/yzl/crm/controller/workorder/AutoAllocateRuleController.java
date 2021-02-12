@@ -9,7 +9,6 @@ import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
 import cn.net.yzl.workorder.model.db.AutoAllocateRuleBean;
 import cn.net.yzl.workorder.model.vo.AutoAllocateRuleCriteriaTO;
 import io.swagger.annotations.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +22,6 @@ import java.util.List;
  * @Date: 2021/1/9 4:16 下午
  */
 @Api(tags = "智能派单管理")
-@Slf4j
 @RestController
 @RequestMapping("/workorder/autoAllocateRule")
 public class AutoAllocateRuleController {
