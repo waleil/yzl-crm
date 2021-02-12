@@ -3,7 +3,6 @@ package cn.net.yzl.crm.filters;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 //暂时去掉，如果对参数处理的话，需要放开
