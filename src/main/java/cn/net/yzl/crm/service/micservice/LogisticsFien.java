@@ -1,13 +1,6 @@
 package cn.net.yzl.crm.service.micservice;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import cn.hutool.core.bean.BeanUtil;
 import cn.net.yzl.common.entity.ComResponse;
 
 import cn.net.yzl.common.entity.GeneralResult;
@@ -19,20 +12,13 @@ import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
-import cn.net.yzl.model.vo.StoreVO;
-import feign.Response;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.io.IOUtils;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
