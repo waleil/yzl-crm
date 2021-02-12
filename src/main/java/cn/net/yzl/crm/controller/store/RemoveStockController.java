@@ -9,7 +9,6 @@ import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +21,6 @@ import java.util.List;
  * @date 2021/1/25 21:36
  */
 @RestController
-@Slf4j
 @Api(value = "仓储中心心心心心-出库制单", tags = {"仓储中心心心心心-出库制单"})
 @RequestMapping("removestock")
 public class RemoveStockController {
