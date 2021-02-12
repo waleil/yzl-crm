@@ -1,12 +1,7 @@
 package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.client.store.ProductStockDetailFeignService;
 import cn.net.yzl.crm.client.store.WarehousingFeignService;
-import cn.net.yzl.model.dto.ProductStockDetailDTO;
-import cn.net.yzl.model.pojo.StockDetailType;
-import cn.net.yzl.model.vo.ProductStockDetailSelectVO;
 import cn.net.yzl.model.vo.WarehousingSelectVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
