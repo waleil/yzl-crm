@@ -10,7 +10,6 @@ import cn.net.yzl.model.dto.InventoryProductDto;
 import cn.net.yzl.model.vo.InventoryExcelVo;
 import cn.net.yzl.model.vo.InventoryProductVo;
 import cn.net.yzl.model.vo.ReadExcelInventoryProductVo;
-import com.alibaba.druid.sql.visitor.functions.If;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import org.springframework.beans.factory.annotation.Autowired;
