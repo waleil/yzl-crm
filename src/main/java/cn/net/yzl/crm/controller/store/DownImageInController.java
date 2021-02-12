@@ -92,7 +92,7 @@ public class DownImageInController {
         String date = simpleDateFormat.format(inventoryDate);
 //        String date = inventoryDate.toString();
         //仓库名称
-        String storeName = inventoryExcelVo.getStoreName();
+//        String storeName = inventoryExcelVo.getStoreName();
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
