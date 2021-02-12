@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-
 @FeignClient(name = "orderRefund", url = "${api.gateway.url}/orderService/orderRefund")
 //@FeignClient(name = "orderRefund", url = "localhost:4455/orderRefund")
 public interface OrderAccountClient {
