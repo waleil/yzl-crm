@@ -21,8 +21,8 @@ import java.io.PrintWriter;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private NacosValue nacosValue;
+//    @Autowired
+//    private NacosValue nacosValue;
 
     @Autowired
     private IgnoreUrlConfig ignoreUrlConfig;
