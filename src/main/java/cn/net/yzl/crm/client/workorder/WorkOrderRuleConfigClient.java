@@ -2,11 +2,9 @@ package cn.net.yzl.crm.client.workorder;
 
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.workorder.model.db.WorkOrderRuleBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.vo.WorkOrderRuleConfigTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
