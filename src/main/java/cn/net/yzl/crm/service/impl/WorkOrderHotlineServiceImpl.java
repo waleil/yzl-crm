@@ -1,13 +1,5 @@
 package cn.net.yzl.crm.service.impl;
 
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.util.JsonUtil;
-import cn.net.yzl.common.util.YLoggerUtil;
-import cn.net.yzl.crm.dto.ehr.EhrStaff;
-import cn.net.yzl.crm.dto.ehr.StaffQueryDto;
-import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
-import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.workorder.WorkOrderHotlineService;
 import org.springframework.beans.factory.annotation.Autowired;
