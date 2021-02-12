@@ -1,7 +1,5 @@
 package cn.net.yzl.crm.utils;
 
-import lombok.Data;
-
 /**
  * 用户信息
  */
