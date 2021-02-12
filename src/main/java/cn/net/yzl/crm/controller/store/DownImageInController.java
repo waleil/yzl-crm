@@ -57,7 +57,7 @@ public class DownImageInController {
 
             inputStream = fastdfsUtils.download(imageUrl, null);
             String[] split = imageUrl.split("[.]");
-            String[] splitPath = split[0].split("/");
+//            String[] splitPath = split[0].split("/");
             httpServletResponse.setContentType("image/" + split[split.length - 1]);
             httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +new String("供应商".getBytes(),"iso-8859-1")+date+".xlsx");
             outputStream = httpServletResponse.getOutputStream();
