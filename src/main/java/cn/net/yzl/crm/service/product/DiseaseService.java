@@ -3,7 +3,6 @@ package cn.net.yzl.crm.service.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.product.model.db.DiseaseBean;
-import cn.net.yzl.product.model.db.ProductDiseaseBean;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;

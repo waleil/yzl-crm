@@ -1,6 +1,5 @@
 package cn.net.yzl.crm.model.meal;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

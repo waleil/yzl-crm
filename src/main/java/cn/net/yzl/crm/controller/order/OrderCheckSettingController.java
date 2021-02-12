@@ -12,7 +12,6 @@ import cn.net.yzl.product.model.vo.product.vo.ProductSelectVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +21,6 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController
-@Slf4j
 @RequestMapping("orderCheckSetting")
 @Api(tags = "订单管理")
 public class OrderCheckSettingController {

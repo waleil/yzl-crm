@@ -40,8 +40,6 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
-import java.time.Year;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -53,7 +51,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "顾客管理")
-@Slf4j
 @RestController
 @RequestMapping(value = MemberController.PATH)
 public class MemberController {
@@ -239,8 +236,8 @@ public class MemberController {
         for (int i = 0; i < workOrderFlowVOList.size(); i++) {
             WorkOrderFlowVO  workOrderFlowVO=  workOrderFlowVOList.get(i);
             String staffNo1 = workOrderFlowVO.getStaffNo();
-            Date startTime = workOrderFlowVO.getStartTime();
-            Date endTime = workOrderFlowVO.getEndTime();
+//            Date startTime = workOrderFlowVO.getStartTime();
+//            Date endTime = workOrderFlowVO.getEndTime();
 
             if(StrUtil.isBlank(staffNo)){
                 staffNo=staffNo1;
@@ -402,7 +399,7 @@ public class MemberController {
         memberDiseaseDto.setDiseaseId(id);
         memberDiseaseDto.setCreateNo(staffNo);
         ComResponse<Integer> integerComResponse = memberFien.insertMemberDisease(memberDiseaseDto);
-        if(integerComResponse!=null || integerComResponse.getCode()!=200){
+        if(integerComResponse==null || integerComResponse.getCode()!=200){
             return integerComResponse;
         }
         return ComResponse.success(integerComResponse.getData());

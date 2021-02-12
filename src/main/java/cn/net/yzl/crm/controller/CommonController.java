@@ -15,7 +15,6 @@ import cn.net.yzl.crm.service.micservice.CoopCompanyMediaClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +25,6 @@ import java.util.List;
  * @date: 2021/1/16 15:13
  * @desc: 共用请求方法
  **/
-@Slf4j
 @RestController
 @RequestMapping("common/")
 @Api(tags = "共用接口服务")

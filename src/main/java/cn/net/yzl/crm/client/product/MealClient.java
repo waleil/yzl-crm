@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
-import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;

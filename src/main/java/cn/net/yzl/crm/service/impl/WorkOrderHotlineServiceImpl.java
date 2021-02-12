@@ -1,16 +1,6 @@
 package cn.net.yzl.crm.service.impl;
 
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.util.JsonUtil;
-import cn.net.yzl.common.util.YLoggerUtil;
-import cn.net.yzl.crm.dto.ehr.EhrStaff;
-import cn.net.yzl.crm.dto.ehr.StaffQueryDto;
-import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
-import cn.net.yzl.crm.dto.workorder.GetDistributionStaffDTO;
-import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.workorder.WorkOrderHotlineService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,8 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class WorkOrderHotlineServiceImpl implements WorkOrderHotlineService {
 
-    @Autowired
-    private EhrStaffClient EhrStaffClient;
+//    @Autowired
+//    private EhrStaffClient EhrStaffClient;
     /**
      * 智能工单：热线工单管理-可分配员工
      * @param getDistributionStaffDTO

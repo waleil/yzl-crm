@@ -13,20 +13,17 @@ import cn.net.yzl.order.model.vo.order.PaymentInfoDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
  * @author cuileilei
  */
 @RestController
-@Slf4j
 @RequestMapping("orderAccount")
 @Api(tags = "结算中心退款管理")
 public class OrderAccountController {

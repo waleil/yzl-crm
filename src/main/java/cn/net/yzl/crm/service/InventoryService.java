@@ -6,8 +6,6 @@ import cn.net.yzl.model.dto.InventoryProductDto;
 import cn.net.yzl.model.vo.ReadExcelInventoryProductVo;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 /**
  * @author wangxiao
  * @version 1.0

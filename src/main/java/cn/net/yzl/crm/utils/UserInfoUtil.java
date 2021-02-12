@@ -1,7 +1,5 @@
 package cn.net.yzl.crm.utils;
 
-import lombok.Data;
-
 /**
  * 用户信息
  */
@@ -21,15 +19,15 @@ public class UserInfoUtil {
         return userId;
     }
 
-    public static void setUserId(String userId) {
-        UserInfoUtil.userId = userId;
+    public static void setUserId(String userid) {
+        userId = userid;
     }
 
     public static String getUserName() {
-        return userName="YZL";
+        return userName;
     }
 
-    public static void setUserName(String userName) {
-        UserInfoUtil.userName = userName;
+    public static void setUserName(String username) {
+        userName = username;
     }
 }

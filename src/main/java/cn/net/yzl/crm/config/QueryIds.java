@@ -1,7 +1,5 @@
 package cn.net.yzl.crm.config;
 
-import lombok.Data;
-
 /**
  * @author: wangxiao
  * @date: 2020/12/16 19:00

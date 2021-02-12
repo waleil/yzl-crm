@@ -6,7 +6,6 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author: liuChangFu

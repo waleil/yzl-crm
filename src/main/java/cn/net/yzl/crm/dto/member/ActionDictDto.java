@@ -18,7 +18,10 @@ import java.io.Serializable;
 @Data
 @Valid
 public class ActionDictDto implements Serializable {
-    @ApiModelProperty("主键,新增时不需填写;一类字典全部删除时,传id为0和type有值的数据")
+    /**  */
+	private static final long serialVersionUID = -7359462143473692624L;
+
+	@ApiModelProperty("主键,新增时不需填写;一类字典全部删除时,传id为0和type有值的数据")
     @Min(0)
     private Integer id;
 

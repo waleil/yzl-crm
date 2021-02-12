@@ -1,7 +1,6 @@
 package cn.net.yzl.crm.bean;
 
 
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -18,7 +17,6 @@ import java.lang.reflect.Method;
  * @date : 2020/12/8 17:58
  * @description:
  */
-@Slf4j
 @Aspect
 @Order(value = 1)
 @Component

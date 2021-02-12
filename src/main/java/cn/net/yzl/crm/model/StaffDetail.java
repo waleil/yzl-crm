@@ -14,7 +14,9 @@ import java.util.List;
 @Data
 @ApiModel(value = "StaffDetailsDto", description = "员工详情实体")
 public class StaffDetail implements Serializable {
-    @ApiModelProperty(value = "工号(用户工号)", name = "id")
+    /**  */
+	private static final long serialVersionUID = 6804961101281592931L;
+	@ApiModelProperty(value = "工号(用户工号)", name = "id")
     private String userNo;
     @ApiModelProperty(value = "用户名称", name = "name")
     private String name;

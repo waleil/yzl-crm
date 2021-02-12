@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * resume_edu
@@ -16,7 +15,9 @@ import java.util.Date;
 @JsonIgnoreProperties(value = {"handler"})
 @ApiModel(value = "BusinessPostDto", description = "业务属性岗位信息实体")
 public class BusinessPostDto implements Serializable {
-    @ApiModelProperty(value = "业务属性id", name = "bussinessAtrrCode")
+    /**  */
+	private static final long serialVersionUID = -1411153553897385933L;
+	@ApiModelProperty(value = "业务属性id", name = "bussinessAtrrCode")
     protected Integer bussinessAtrrCode;
     @ApiModelProperty(value = "业务属性名称", name = "bussinessAtrrName")
     protected String bussinessAtrrName;

@@ -14,10 +14,8 @@ import cn.net.yzl.crm.staff.dto.lasso.WorkOrderTypeDto;
 import cn.net.yzl.model.dto.DepartDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.CollectionUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;

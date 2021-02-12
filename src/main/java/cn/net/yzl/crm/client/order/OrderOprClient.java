@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "OrderOprClient",url = "${api.gateway.url}/orderService/orderOpr")
 //@FeignClient(name = "OrderOprClient",url = "localhost:4455/orderOpr")

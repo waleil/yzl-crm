@@ -1,8 +1,6 @@
 package cn.net.yzl.crm.service.micservice;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.crm.dto.ehr.StaffScheduleQueryDto;
-import cn.net.yzl.crm.staff.dto.lasso.Base;
 import cn.net.yzl.crm.staff.dto.lasso.OrderCalculationDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;

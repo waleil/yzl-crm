@@ -23,7 +23,6 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderSaleClient;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.order.enums.RedisKeys;
@@ -40,8 +39,8 @@ public class OrderSaleController {
 
 	@Autowired
 	private EhrStaffClient ehrStaffClient;
-	@Autowired
-	private MemberFien memberFien;
+//	@Autowired
+//	private MemberFien memberFien;
 	@Autowired
 	private RedisUtil redisUtil;
 

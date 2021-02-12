@@ -5,11 +5,14 @@ import cn.net.yzl.crm.dto.PageDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
+@SuppressWarnings("serial")
 @ApiModel(value="列表参数类",description="参数类" )
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ListParamsDTO extends PageDTO {
 
     @ApiModelProperty(value = "订单编号")

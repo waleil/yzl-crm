@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -117,8 +116,8 @@ public class CategoryController {
     @ApiImplicitParam(name = "pid",value = "根据父类id查询该父类下所有子类，如果需要查询一级分类，则输入0",paramType = "query",required = true)
     public ComResponse<List<CategoryTO>> getCategoriesByPid( @RequestParam("pid") Integer pid) {
         ComResponse comResponse = categoryService.getCategoriesByPid(pid);
-        List<?> list = new ArrayList<>();
-        if (comResponse.getData() == null||(list = (List<?>) comResponse.getData()).size() == 0) {
+//        List<?> list = new ArrayList<>();
+        if (comResponse.getData() == null||((List<?>) comResponse.getData()).size() == 0) {
             return ComResponse.nodata();
         }
         return comResponse;

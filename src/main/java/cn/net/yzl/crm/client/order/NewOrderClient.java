@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.order.model.vo.order.NewOrderDTO;
-
 import java.util.List;
 
 @FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/newOrdder")

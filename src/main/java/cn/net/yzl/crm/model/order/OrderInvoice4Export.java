@@ -1,7 +1,6 @@
 package cn.net.yzl.crm.model.order;
 
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +15,10 @@ import java.util.Date;
 @Accessors(chain = true)
 public class OrderInvoice4Export  implements Serializable {
 
-    @ExcelProperty(value = {"订单编号"},index = 0)
+    /**  */
+	private static final long serialVersionUID = -3701563596427421834L;
+
+	@ExcelProperty(value = {"订单编号"},index = 0)
     private String orderNo;
 
     @ExcelProperty(value = {"财务归属"} ,index = 1)

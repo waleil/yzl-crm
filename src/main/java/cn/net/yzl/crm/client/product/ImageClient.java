@@ -2,13 +2,10 @@ package cn.net.yzl.crm.client.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.product.model.db.Image;
-import cn.net.yzl.product.model.db.ImageStore;
 import cn.net.yzl.product.model.vo.image.ImageDTO;
 import cn.net.yzl.product.model.vo.image.ImageVO;
 import cn.net.yzl.product.model.vo.imageStore.ImageStoreDTO;
 import cn.net.yzl.product.model.vo.imageStore.ImageStoreVO;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -3,6 +3,7 @@ package cn.net.yzl.crm.dto.ehr;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 /**
@@ -10,6 +11,7 @@ import lombok.Data;
  * @author 
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "StaffScheduleDetailDto", description = "员工排班详细实体信息")
 public class StaffScheduleDetailDto extends StaffScheduleResutDto {
 

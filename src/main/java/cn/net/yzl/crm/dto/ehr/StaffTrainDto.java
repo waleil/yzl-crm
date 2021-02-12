@@ -12,7 +12,10 @@ import java.util.Date;
 @Data
 public class StaffTrainDto implements Serializable {
 
-    @ApiModelProperty("异动类型(字典表 )")
+    /**  */
+	private static final long serialVersionUID = -665759591466858638L;
+
+	@ApiModelProperty("异动类型(字典表 )")
     private Integer type;
 
     @ApiModelProperty("异动类型名称")

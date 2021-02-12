@@ -14,7 +14,10 @@ import java.io.Serializable;
 @ApiModel("出库预警配置对象")
 public class OutStoreWarningConfigDTO implements Serializable {
 
-    @ApiModelProperty("预警时间")
+    /**  */
+	private static final long serialVersionUID = 3549432958087629043L;
+
+	@ApiModelProperty("预警时间")
     @NotNull(message = "预警时间不可为空")
     private Integer delay;
 

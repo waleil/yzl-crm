@@ -1,11 +1,9 @@
 package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.InventoryFeginService;
 import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
 import cn.net.yzl.model.vo.*;
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
@@ -14,16 +12,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,7 +57,7 @@ public class DownImageInController {
 
             inputStream = fastdfsUtils.download(imageUrl, null);
             String[] split = imageUrl.split("[.]");
-            String[] splitPath = split[0].split("/");
+//            String[] splitPath = split[0].split("/");
             httpServletResponse.setContentType("image/" + split[split.length - 1]);
             httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +new String("供应商".getBytes(),"iso-8859-1")+date+".xlsx");
             outputStream = httpServletResponse.getOutputStream();
@@ -97,7 +92,7 @@ public class DownImageInController {
         String date = simpleDateFormat.format(inventoryDate);
 //        String date = inventoryDate.toString();
         //仓库名称
-        String storeName = inventoryExcelVo.getStoreName();
+//        String storeName = inventoryExcelVo.getStoreName();
 
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
