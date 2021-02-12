@@ -602,7 +602,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 	private OrderTemp mkOrderTemp(List<CrowdGroup> groups, String batchNo, NewOrderDTO dto, String departId,
 			Integer wordCode, Integer financialOwner, String financialOwnerName) {
-		List<OrderTemp> list = new ArrayList<>();
+//		List<OrderTemp> list = new ArrayList<>();
 
 		groups.forEach(map -> {
 			if (map.getPerson_count() == null) {
