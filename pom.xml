@@ -287,6 +287,8 @@
                     <include>**/*.xml</include>
                     <include>**/*.yml</include>
                     <include>**/*.tld</include>
+                    <include>**/*.xlsx</include>
+                    <include>**/*.xls</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>
