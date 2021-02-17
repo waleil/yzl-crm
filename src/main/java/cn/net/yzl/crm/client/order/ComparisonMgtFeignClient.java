@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.order.model.excel.ExcelResult;
 import cn.net.yzl.order.model.vo.order.CompareOrderIn;
 import cn.net.yzl.order.model.vo.order.CompareOrderType1Out;
 import cn.net.yzl.order.model.vo.order.CompareOrderType2Out;
+import cn.net.yzl.order.model.vo.order.ImportParam;
 
 /**
  * 对账订单管理feign客户端
@@ -39,4 +41,15 @@ public interface ComparisonMgtFeignClient {
 	 */
 	@PostMapping("/comparisonmgt/v1/querytype2pagelist")
 	ComResponse<Page<CompareOrderType2Out>> queryType2PageList(@RequestBody CompareOrderIn orderin);
+
+	/**
+	 * 快递对账单导入
+	 * 
+	 * @param param {@link ImportParam}
+	 * @return {@link ExcelResult}
+	 * @author zhangweiwei
+	 * @date 2021年2月17日,下午11:09:56
+	 */
+	@PostMapping("/comparisonmgt/v1/import")
+	ComResponse<ExcelResult> importFromExcel(@RequestBody ImportParam param);
 }
