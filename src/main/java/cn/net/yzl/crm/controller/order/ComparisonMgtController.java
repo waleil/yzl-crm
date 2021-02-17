@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
+import cn.net.yzl.order.model.excel.ExcelResult;
 import cn.net.yzl.order.model.vo.order.CompareOrderIn;
 import cn.net.yzl.order.model.vo.order.CompareOrderType1Out;
 import cn.net.yzl.order.model.vo.order.CompareOrderType2Out;
+import cn.net.yzl.order.model.vo.order.ImportParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -64,5 +66,11 @@ public class ComparisonMgtController {
 		headers.setContentDisposition(ContentDisposition.builder("attachment")
 				.filename(URLEncoder.encode(FILE_NAME, StandardCharsets.UTF_8.name())).build());
 		return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(FileCopyUtils.copyToByteArray(file));
+	}
+
+	@PostMapping("/v1/import")
+	@ApiOperation(value = "快递对账单导入", notes = "快递对账单导入")
+	public ComResponse<ExcelResult> importFromExcel(@RequestBody ImportParam param) {
+		return this.comparisonMgtFeignClient.importFromExcel(param);
 	}
 }
