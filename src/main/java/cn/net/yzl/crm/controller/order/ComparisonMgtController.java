@@ -23,7 +23,8 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
 import cn.net.yzl.order.model.vo.order.CompareOrderIn;
-import cn.net.yzl.order.model.vo.order.CompareOrderOut;
+import cn.net.yzl.order.model.vo.order.CompareOrderType1Out;
+import cn.net.yzl.order.model.vo.order.CompareOrderType2Out;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -42,10 +43,16 @@ public class ComparisonMgtController {
 	@Resource
 	private ComparisonMgtFeignClient comparisonMgtFeignClient;
 
-	@PostMapping("/v1/querypagelist")
-	@ApiOperation(value = "查询对账订单列表--支持分页", notes = "查询对账订单列表--支持分页")
-	public ComResponse<Page<CompareOrderOut>> queryPageList(@RequestBody CompareOrderIn orderin) {
-		return this.comparisonMgtFeignClient.queryPageList(orderin);
+	@PostMapping("/v1/querytype1pagelist")
+	@ApiOperation(value = "查询待对账订单列表--支持分页", notes = "查询待对账订单列表--支持分页")
+	public ComResponse<Page<CompareOrderType1Out>> queryType1PageList(@RequestBody CompareOrderIn orderin) {
+		return this.comparisonMgtFeignClient.queryType1PageList(orderin);
+	}
+
+	@PostMapping("/v1/querytype2pagelist")
+	@ApiOperation(value = "查询已对账订单列表--支持分页", notes = "查询已对账订单列表--支持分页")
+	public ComResponse<Page<CompareOrderType2Out>> queryType2PageList(@RequestBody CompareOrderIn orderin) {
+		return this.comparisonMgtFeignClient.queryType2PageList(orderin);
 	}
 
 	@GetMapping("/v1/download")
