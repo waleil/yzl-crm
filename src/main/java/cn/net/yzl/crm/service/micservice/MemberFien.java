@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
+import cn.net.yzl.crm.customer.vo.MemberAndAddWorkOrderVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -204,4 +205,8 @@ public interface MemberFien {
 	 */
 	@PostMapping(DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL)
 	ComResponse<Boolean> dealOrderCreateUpdateMemberData(@RequestBody OrderCreateInfoVO orderCreateInfoVO);
+
+	@ApiOperation("保存转介绍用户")
+	@PostMapping("/v1/saveMemberReferral")
+    void saveMemberReferral(MemberAndAddWorkOrderVO memberReferralVO);
 }

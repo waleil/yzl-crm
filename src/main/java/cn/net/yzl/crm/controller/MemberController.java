@@ -18,6 +18,7 @@ import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.dto.member.*;
 import cn.net.yzl.crm.customer.model.*;
+import cn.net.yzl.crm.customer.vo.MemberAndAddWorkOrderVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
@@ -84,6 +85,13 @@ public class MemberController {
     @PostMapping("v1/save")
     public GeneralResult<Boolean> save(@RequestBody Member dto) {
         memberFien.save(dto);
+        return GeneralResult.success();
+    }
+
+    @ApiOperation(value = "保存转介绍用户")
+    @PostMapping("v1/saveMemberReferral")
+    public GeneralResult<Boolean> saveMemberReferral(@RequestBody MemberAndAddWorkOrderVO memberReferralVO) {
+        memberFien.saveMemberReferral(memberReferralVO);
         return GeneralResult.success();
     }
 
