@@ -7,10 +7,7 @@ import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.ehr.*;
-import cn.net.yzl.crm.dto.staff.CallnfoCriteriaTO;
-import cn.net.yzl.crm.dto.staff.OrderCriteriaDto;
-import cn.net.yzl.crm.dto.staff.StaffCallRecord;
-import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.dto.staff.*;
 import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
@@ -322,6 +319,19 @@ public class StaffController {
     @GetMapping("/getMarketTarget")
     public ComResponse<MarketTargetDto> getMarketTarget() {
         return staffService.getMarketTarget();
+    }
+
+
+    @ApiOperation(value = "员工变动-查询员工最新变动后状态")
+    @GetMapping("/getStaffLastChangeRecord")
+    public ComResponse<StaffChangeRecordDto> getStaffLastChangeRecord(String staffNo) {
+        return ehrStaffClient.getStaffLastChangeRecord(staffNo);
+    }
+
+    @ApiOperation(value = "员工变动-查询员工最新变动后状态")
+    @GetMapping("/getStaffChangeRecordById")
+    public ComResponse<StaffChangeRecordDto> getStaffChangeRecordById(Integer id) {
+        return ehrStaffClient.getStaffChangeRecordById(id);
     }
 
 
