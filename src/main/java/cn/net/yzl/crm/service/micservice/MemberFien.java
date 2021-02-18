@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 
 import cn.net.yzl.crm.customer.vo.MemberDiseaseIdUpdateVO;
+import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -187,4 +188,7 @@ public interface MemberFien {
 		}
 	}
 
+	@ApiOperation("顾客管理-处理工单时更新顾客信息")
+	@PostMapping("/v1/dealWorkOrderUpdateMemberData")
+    ComResponse<Boolean> dealWorkOrderUpdateMemberData(@RequestBody MemberWorkOrderInfoVO workOrderInfoVO);
 }

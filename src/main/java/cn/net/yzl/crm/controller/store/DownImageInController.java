@@ -52,14 +52,14 @@ public class DownImageInController {
         InputStream inputStream = null;
         try {
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String date = simpleDateFormat.format(new Date());
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String date = simpleDateFormat.format(new Date());
 
             inputStream = fastdfsUtils.download(imageUrl, null);
             String[] split = imageUrl.split("[.]");
-//            String[] splitPath = split[0].split("/");
+            String[] splitPath = split[0].split("/");
             httpServletResponse.setContentType("image/" + split[split.length - 1]);
-            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +new String("供应商".getBytes(),"iso-8859-1")+date+".xlsx");
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+splitPath[splitPath.length-1]+"."+split[splitPath.length-1]);
             outputStream = httpServletResponse.getOutputStream();
             //读取文件流
             int len = 0;
