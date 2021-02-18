@@ -7,23 +7,38 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
+import cn.net.yzl.crm.client.product.MealClient;
+import cn.net.yzl.crm.client.product.ProductClient;
+import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.dto.dmc.ProductSalesProductResponse;
+import cn.net.yzl.crm.dto.dmc.RelationProductDto;
+import cn.net.yzl.crm.dto.dmc.TaskDto;
+import cn.net.yzl.crm.dto.ehr.MarketTargetDto;
+import cn.net.yzl.crm.dto.product.ProduceDto;
 import cn.net.yzl.crm.dto.staff.OrderCriteriaDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.service.StaffService;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.staff.dto.CustomerDto;
 import cn.net.yzl.crm.staff.dto.StaffProdcutTravelDto;
+import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.OderListReqDTO;
 import cn.net.yzl.order.model.vo.order.OderListResDTO;
-import com.mysql.cj.x.protobuf.MysqlxDatatypes;
+import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +56,19 @@ public class StaffServiceImpl implements StaffService {
     private CrmStaffClient crmStaffClient;
 
     @Autowired
+    private ActivityClient activityClient;
+
+    @Autowired
     private OrderSearchClient orderSearchClient;
+
+    @Autowired
+    private ProductClient productClient;
+
+    @Autowired
+    private MealClient mealClient;
+
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
 
     @Override
     public StaffImageBaseInfoDto getStaffImageBaseInfoByStaffNo(String staffNo) {
@@ -136,4 +163,133 @@ public class StaffServiceImpl implements StaffService {
    public ComResponse<List<StaffDetail>> getDetailsListByNo(List<String> list) {
         return ehrStaffClient.getDetailsListByNo(list);
     }
+
+    @Override
+    public ComResponse<MarketTargetDto> getMarketTarget() {
+        // 获取当前登录人
+        String userNo = QueryIds.userNo.get();
+        if (StringUtils.isEmpty(userNo)) {
+            return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE, "userNo不能为空!");
+        }
+        // 获取员工群，查看当前员工属于哪个群
+        List<StaffCrowdGroup> staffCrowdGroupList = crmStaffClient.getStaffCrowdGroupDefault(0L);
+        if (CollectionUtils.isEmpty(staffCrowdGroupList)) {
+            return ComResponse.nodata("当前无营销目标！");
+        }
+        Long groupId = null;
+        for (StaffCrowdGroup staffCrowdGroup : staffCrowdGroupList) {
+            if (!CollectionUtils.isEmpty(staffCrowdGroup.getStaffCodeList()) && staffCrowdGroup.getStaffCodeList().contains(userNo)) {
+                groupId = staffCrowdGroup.getId();
+            }
+        }
+        if (null == groupId) {
+            return ComResponse.nodata("当前无营销目标！");
+        }
+        TaskDto taskDto = activityClient.getMarketTargetDefault(groupId);
+        if (null == taskDto) {
+            return ComResponse.nodata("当前无营销目标！");
+        }
+        MarketTargetDto marketTargetDto = new MarketTargetDto();
+        List<RelationProductDto> productList = taskDto.getProductList();
+        if (!CollectionUtils.isEmpty(productList)) {
+            List<ProduceDto> marketTargetProductList = new ArrayList<>();
+            List<String> productCodeList = productList.stream().filter(productDto -> 0 == productDto.getProductType()).map(RelationProductDto::getProductCode).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(productCodeList)) {
+                // 用,拼接商品编码
+                String productCodes = String.join(",", productCodeList);
+                // 根据拼接后的商品编码查询商品列表
+                List<ProductMainDTO> productMainDTOList = productClient.queryByProductCodesDefault(productCodes);
+                productMainDTOList.forEach(productMainDTO -> {
+                    ProduceDto produceDto = ProduceDto.builder()
+                            .productCode(productMainDTO.getProductCode())
+                            .name(productMainDTO.getName())
+                            .salePriceD(productMainDTO.getSalePrice())
+                            .applicable(productMainDTO.getApplicable())
+                            .forbidden(productMainDTO.getForbidden())
+                            .oneToTimes(productMainDTO.getOneToTimes())
+                            .oneUseNum(productMainDTO.getOneUseNum())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
+                            .diseaseName(productMainDTO.getDiseaseName())
+                            .rawStock(productMainDTO.getRawStock())
+                            .packagingUnit(productMainDTO.getPackagingUnit())
+                            .totalUseNum(productMainDTO.getTotalUseNum())
+                            .unit(productMainDTO.getUnit())
+                            .build();
+                    marketTargetProductList.add(produceDto);
+                });
+            }
+            List<String> mealCodeList = productList.stream().filter(productDto -> 1 == productDto.getProductType()).map(RelationProductDto::getProductCode).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(mealCodeList)) {
+                // 用,拼接商品编码
+                String productCodes = String.join(",", mealCodeList);
+                // 根据拼接后的商品编码查询商品列表
+                List<ProductMealListDTO> productMealListDTOS = mealClient.queryByIdsDefault(productCodes);
+                productMealListDTOS.forEach(productMealListDTO -> {
+                    ProduceDto produceDto = ProduceDto.builder()
+                            .name(productMealListDTO.getName())
+                            .salePriceD(productMealListDTO.getPriceD().toString())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
+                            .applicable(String.join(",", productMealListDTO.getApplicable()))
+                            .forbidden(String.join(",", productMealListDTO.getForbidden()))
+                            .diseaseName(String.join(",", productMealListDTO.getDiseaseName()))
+                            .rawStock(String.join(",", productMealListDTO.getRawStock()))
+                            .build();
+                    marketTargetProductList.add(produceDto);
+                });
+            }
+            marketTargetDto.setProductList(marketTargetProductList);
+        }
+        List<ProductSalesProductResponse> activityList = taskDto.getActivityList();
+        if (!CollectionUtils.isEmpty(activityList)) {
+            List<ProduceDto> activityProductList = new ArrayList<>();
+            List<String> activityListCode = activityList.stream().filter(productDto -> 0 == productDto.getProductType()).map(ProductSalesProductResponse::getProductCode).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(activityListCode)) {
+                // 用,拼接商品编码
+                String productCodes = String.join(",", activityListCode);
+                // 根据拼接后的商品编码查询商品列表
+                List<ProductMainDTO> productMainDTOList = productClient.queryByProductCodesDefault(productCodes);
+                productMainDTOList.forEach(productMainDTO -> {
+                    ProduceDto produceDto = ProduceDto.builder()
+                            .productCode(productMainDTO.getProductCode())
+                            .name(productMainDTO.getName())
+                            .salePriceD(productMainDTO.getSalePrice())
+                            .applicable(productMainDTO.getApplicable())
+                            .forbidden(productMainDTO.getForbidden())
+                            .oneToTimes(productMainDTO.getOneToTimes())
+                            .oneUseNum(productMainDTO.getOneUseNum())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMainDTO.getImageUrl())
+                            .diseaseName(productMainDTO.getDiseaseName())
+                            .rawStock(productMainDTO.getRawStock())
+                            .packagingUnit(productMainDTO.getPackagingUnit())
+                            .totalUseNum(productMainDTO.getTotalUseNum())
+                            .unit(productMainDTO.getUnit())
+                            .build();
+                    activityProductList.add(produceDto);
+                });
+            }
+            List<String> mealCodeList = activityList.stream().filter(productDto -> 1 == productDto.getProductType()).map(ProductSalesProductResponse::getProductCode).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(mealCodeList)) {
+                // 用,拼接商品编码
+                String productCodes = String.join(",", mealCodeList);
+                // 根据拼接后的商品编码查询商品列表
+                List<ProductMealListDTO> productMealListDTOS = mealClient.queryByIdsDefault(productCodes);
+                productMealListDTOS.forEach(productMealListDTO -> {
+                    ProduceDto produceDto = ProduceDto.builder()
+                            .name(productMealListDTO.getName())
+                            .salePriceD(productMealListDTO.getPriceD().toString())
+                            .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
+                            .applicable(String.join(",", productMealListDTO.getApplicable()))
+                            .forbidden(String.join(",", productMealListDTO.getForbidden()))
+                            .diseaseName(String.join(",", productMealListDTO.getDiseaseName()))
+                            .rawStock(String.join(",", productMealListDTO.getRawStock()))
+                            .build();
+                    activityProductList.add(produceDto);
+                });
+            }
+            marketTargetDto.setActivityList(activityProductList);
+        }
+        return ComResponse.success(marketTargetDto);
+    }
+
+
 }
