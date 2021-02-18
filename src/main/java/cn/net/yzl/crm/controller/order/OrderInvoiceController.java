@@ -40,6 +40,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -293,7 +294,7 @@ public class OrderInvoiceController {
         for (MemberCouponResponse item : responseData.getItems()) {
             MemberCouponDTO dto = BeanCopyUtils.transfer(item, MemberCouponDTO.class);
             if (item.getCouponDiscountRulesDto().size() > 0) {
-                dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getReduceAmount());
+                dto.setReduceAmount(BigDecimal.valueOf(item.getCouponDiscountRulesDto().get(0).getReduceAmount()/100));
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
@@ -332,7 +333,7 @@ public class OrderInvoiceController {
         for (MemberCouponResponse item : responseData) {
             MemberCouponExportDTO dto = BeanCopyUtils.transfer(item, MemberCouponExportDTO.class);
             if (item.getCouponDiscountRulesDto().size() > 0) {
-                dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getReduceAmount());
+                dto.setReduceAmount(BigDecimal.valueOf(item.getCouponDiscountRulesDto().get(0).getReduceAmount()/100));
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
             dto.setStatusName(EhrActivityStatus.getName(item.getStatus()));
