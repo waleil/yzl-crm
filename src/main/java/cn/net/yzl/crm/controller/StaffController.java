@@ -328,7 +328,7 @@ public class StaffController {
         return ehrStaffClient.getStaffLastChangeRecord(staffNo);
     }
 
-    @ApiOperation(value = "员工变动-查询员工最新变动后状态")
+    @ApiOperation(value = "员工变动-根据变动编号查询变动状态")
     @GetMapping("/getStaffChangeRecordById")
     public ComResponse<StaffChangeRecordDto> getStaffChangeRecordById(Integer id) {
         return ehrStaffClient.getStaffChangeRecordById(id);
