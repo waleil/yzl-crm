@@ -29,6 +29,7 @@ import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.member.customerJourney.MemberCustomerJourneyDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
+import cn.net.yzl.crm.dto.workorder.MemberFirstCallDetailsDTO;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
@@ -350,6 +351,19 @@ public class MemberController {
                 list.add(memberCustomerJourneyDto);
             }
         }
+
+        //获取首次呼入
+        ComResponse<MemberFirstCallDetailsDTO> cardResult = workOrderClient.getCallInDetailsByMemberCard(memberCard);
+        if (cardResult.getData() != null) {
+            MemberFirstCallDetailsDTO cardResultData = cardResult.getData();
+            MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
+            memberCustomerJourneyDto.setWorkOrderType(4);
+            memberCustomerJourneyDto.setCreateTime(cardResultData.getCreateTime());
+            memberCustomerJourneyDto.setMemberFirstCallDetailsDTO(cardResultData);
+            list.add(memberCustomerJourneyDto);
+        }
+
+
         // 根据时间排序
         list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
         if(StringUtils.isEmpty(year)){
