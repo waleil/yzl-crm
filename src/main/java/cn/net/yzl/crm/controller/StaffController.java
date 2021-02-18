@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Api(tags = "员工管理")
@@ -324,13 +326,13 @@ public class StaffController {
 
     @ApiOperation(value = "员工变动-查询员工最新变动后状态")
     @GetMapping("/getStaffLastChangeRecord")
-    public ComResponse<StaffChangeRecordDto> getStaffLastChangeRecord(String staffNo) {
+    public ComResponse<StaffChangeRecordDto> getStaffLastChangeRecord(@NotBlank @ApiParam(value="员工工号")String staffNo) {
         return ehrStaffClient.getStaffLastChangeRecord(staffNo);
     }
 
-    @ApiOperation(value = "员工变动-查询员工最新变动后状态")
+    @ApiOperation(value = "员工变动-根据员工变动编号查询变动状态")
     @GetMapping("/getStaffChangeRecordById")
-    public ComResponse<StaffChangeRecordDto> getStaffChangeRecordById(Integer id) {
+    public ComResponse<StaffChangeRecordDto> getStaffChangeRecordById(@NotNull @ApiParam(value="员工变动编号")  Integer id) {
         return ehrStaffClient.getStaffChangeRecordById(id);
     }
 
