@@ -50,6 +50,7 @@ public interface MemberFien {
 	String SUFFIX_URL = "/crmCustomer/member";
 	String CUSTOMER_AMOUNT_OPERATION_URL = "/customerAmount/operation";
 	String CUSTOMER_AMOUNT_OPERATION_CONFIRM_URL = "/customerAmount/operationConfirm";
+	String DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL = "/v1/dealOrderCreateUpdateMemberData";
 
 	@RequestMapping(method = RequestMethod.POST, value = "/v1/getMemberListByPage")
 	ComResponse<Page<Member>> listPage(@RequestBody MemberSerchConditionDTO dto);
@@ -201,6 +202,6 @@ public interface MemberFien {
 	 * @author zhangweiwei
 	 * @date 2021年2月18日,下午8:14:05
 	 */
-	@PostMapping("/v1/dealOrderCreateUpdateMemberData")
+	@PostMapping(DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL)
 	ComResponse<Boolean> dealOrderCreateUpdateMemberData(@RequestBody OrderCreateInfoVO orderCreateInfoVO);
 }
