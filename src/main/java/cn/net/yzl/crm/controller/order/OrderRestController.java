@@ -36,6 +36,7 @@ import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
+import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
@@ -103,7 +104,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-计算订单金额>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("热线工单-购物车-计算订单金额>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -159,7 +160,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-计算订单金额>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("热线工单-购物车-计算订单金额>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
@@ -353,7 +354,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("热线工单-购物车-提交订单>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -424,7 +425,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("热线工单-购物车-提交订单>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
@@ -634,6 +635,19 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
 		log.info("热线工单-购物车-提交订单>>创建订单成功[订单号：{}]", orderm.getOrderNo());
+		// 顾客管理-处理下单时更新顾客信息
+		OrderCreateInfoVO orderCreateInfoVO = new OrderCreateInfoVO();
+		orderCreateInfoVO.setCreateTime(orderm.getCreateTime());// 下单时间
+		orderCreateInfoVO.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+		orderCreateInfoVO.setOrderNo(orderm.getOrderNo());// 订单编号
+		orderCreateInfoVO.setStaffNo(orderm.getStaffCode());// 下单坐席编号
+		ComResponse<Boolean> createUpdateMember = this.memberFien.dealOrderCreateUpdateMemberData(orderCreateInfoVO);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(createUpdateMember.getCode())) {
+			log.error("热线工单-购物车-提交订单>>更新顾客信息失败>>{}", createUpdateMember);
+			this.orderCommonService.insert(createUpdateMember, MemberFien.SUFFIX_URL,
+					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
+		}
 		// 再次调用顾客账户余额
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
@@ -799,7 +813,7 @@ public class OrderRestController {
 				log.error("订单列表-编辑>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("订单列表-编辑>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -864,7 +878,7 @@ public class OrderRestController {
 				log.error("订单列表-编辑>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("订单列表-编辑>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
@@ -1037,6 +1051,19 @@ public class OrderRestController {
 						MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, orderm.getStaffCode(), orderm.getOrderNo());
 			}
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "修改订单失败，请稍后重试。");
+		}
+		// 顾客管理-处理下单时更新顾客信息
+		OrderCreateInfoVO orderCreateInfoVO = new OrderCreateInfoVO();
+		orderCreateInfoVO.setCreateTime(orderm.getCreateTime());// 下单时间
+		orderCreateInfoVO.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+		orderCreateInfoVO.setOrderNo(orderm.getOrderNo());// 订单编号
+		orderCreateInfoVO.setStaffNo(orderm.getStaffCode());// 下单坐席编号
+		ComResponse<Boolean> createUpdateMember = this.memberFien.dealOrderCreateUpdateMemberData(orderCreateInfoVO);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(createUpdateMember.getCode())) {
+			log.error("热线工单-购物车-提交订单>>更新顾客信息失败>>{}", createUpdateMember);
+			this.orderCommonService.insert(createUpdateMember, MemberFien.SUFFIX_URL,
+					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
 		log.info("订单列表-编辑>>修改订单成功[订单号：{}]", orderm.getOrderNo());
 		return ComResponse.success(orderm.getOrderNo());

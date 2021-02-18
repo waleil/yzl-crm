@@ -18,6 +18,7 @@ import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.dto.member.*;
 import cn.net.yzl.crm.customer.model.*;
+import cn.net.yzl.crm.customer.vo.MemberAndAddWorkOrderVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
@@ -29,6 +30,7 @@ import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.member.customerJourney.MemberCustomerJourneyDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
+import cn.net.yzl.crm.dto.workorder.MemberFirstCallDetailsDTO;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
@@ -83,6 +85,13 @@ public class MemberController {
     @PostMapping("v1/save")
     public GeneralResult<Boolean> save(@RequestBody Member dto) {
         memberFien.save(dto);
+        return GeneralResult.success();
+    }
+
+    @ApiOperation(value = "保存转介绍用户")
+    @PostMapping("v1/saveMemberReferral")
+    public GeneralResult<Boolean> saveMemberReferral(@RequestBody MemberAndAddWorkOrderVO memberReferralVO) {
+        memberFien.saveMemberReferral(memberReferralVO);
         return GeneralResult.success();
     }
 
@@ -350,6 +359,21 @@ public class MemberController {
                 list.add(memberCustomerJourneyDto);
             }
         }
+
+        //获取首次呼入
+        ComResponse<MemberFirstCallDetailsDTO> cardResult = workOrderClient.getCallInDetailsByMemberCard(memberCard);
+        if (cardResult.getData() != null) {
+            MemberFirstCallDetailsDTO cardResultData = cardResult.getData();
+            if (cardResultData.getCreateTime() != null) {
+                MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
+                memberCustomerJourneyDto.setWorkOrderType(4);
+                memberCustomerJourneyDto.setCreateTime(cardResultData.getCreateTime());
+                memberCustomerJourneyDto.setMemberFirstCallDetailsDTO(cardResultData);
+                list.add(memberCustomerJourneyDto);
+            }
+        }
+
+
         // 根据时间排序
         list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
         if(StringUtils.isEmpty(year)){

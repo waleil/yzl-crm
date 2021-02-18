@@ -6,12 +6,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.client.order.SettlementFein;
-import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
-import cn.net.yzl.crm.sys.BizException;
-import cn.net.yzl.order.model.vo.order.SettlementDetailDistinctListDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,17 +13,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
+import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.controller.order.OrderRestController;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
+import cn.net.yzl.order.model.vo.order.SettlementDetailDistinctListDTO;
 import cn.net.yzl.order.model.vo.order.UpdateOrderIn;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
@@ -58,13 +58,16 @@ public class OrderRestControllerTests {
 	private String apiGateWayUrl;
 	@Autowired
 	private SettlementFein settlementFein;
+
 	@Test
-	public void testSettlementFein(){
-		ComResponse<List<SettlementDetailDistinctListDTO>> list = settlementFein.getSettlementDetailGroupByOrderNo(new ArrayList<>());
+	public void testSettlementFein() {
+		ComResponse<List<SettlementDetailDistinctListDTO>> list = settlementFein
+				.getSettlementDetailGroupByOrderNo(new ArrayList<>());
 		System.out.println(list.getData());
 	}
+
 	@Test
-	public void getDetailsByNo(){
+	public void getDetailsByNo() {
 		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo("11803");
 		if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());

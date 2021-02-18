@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @date: 2021/1/18 13:27
  * @desc: //TODO  请说明该类的用途
  **/
-@FeignClient(name = "BiTask", url = "${api.gateway.url}/taskDB")
+@FeignClient(name = "BiTask", url = "${api.gateway.url}/taskServer")
 public interface BiTaskClient {
 
     @GetMapping("/indicatorsSetting/getBiIndicatorsSettingList")
