@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -1067,6 +1068,12 @@ public class OrderRestController {
 		}
 		log.info("订单列表-编辑>>修改订单成功[订单号：{}]", orderm.getOrderNo());
 		return ComResponse.success(orderm.getOrderNo());
+	}
+
+	@GetMapping("/v1/queryordertotal")
+	@ApiOperation(value = "成交金额", notes = "成交金额")
+	public ComResponse<BigDecimal> queryOrderTotal() {
+		return this.orderFeignClient.queryOrderTotal();
 	}
 
 	@Resource
