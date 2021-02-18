@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
@@ -32,8 +33,10 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.order.model.excel.ExcelResult;
 import cn.net.yzl.order.model.vo.order.CompareOrderIn;
+import cn.net.yzl.order.model.vo.order.CompareOrderParam;
 import cn.net.yzl.order.model.vo.order.CompareOrderType1Out;
 import cn.net.yzl.order.model.vo.order.CompareOrderType2Out;
 import cn.net.yzl.order.model.vo.order.ImportParam;
@@ -195,5 +198,26 @@ public class ComparisonMgtController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "上传文件URL不能为空");
 		}
 		return this.comparisonMgtFeignClient.importFromExcel(param);
+	}
+
+	@PostMapping("/v1/compare")
+	@ApiOperation(value = "对账", notes = "对账")
+	public ComResponse<Object> compareOrder(@RequestBody CompareOrderParam param) {
+		if (!StringUtils.hasText(param.getUserNo())) {
+			param.setUserNo(QueryIds.userNo.get());
+		}
+		if (!StringUtils.hasText(param.getUserNo())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "登录用户编码不能为空");
+		}
+		if (!StringUtils.hasText(param.getUserName())) {
+			param.setUserName(QueryIds.userName.get());
+		}
+		if (!StringUtils.hasText(param.getUserName())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "登录用户姓名不能为空");
+		}
+		if (CollectionUtils.isEmpty(param.getExpressNums())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "快递号不能为空");
+		}
+		return this.comparisonMgtFeignClient.compareOrder(param);
 	}
 }
