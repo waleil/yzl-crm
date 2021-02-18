@@ -103,7 +103,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-计算订单金额>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("热线工单-购物车-计算订单金额>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -159,7 +159,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-计算订单金额>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("热线工单-购物车-计算订单金额>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
@@ -353,7 +353,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("热线工单-购物车-提交订单>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -424,7 +424,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("热线工单-购物车-提交订单>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
@@ -799,7 +799,7 @@ public class OrderRestController {
 				log.error("订单列表-编辑>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("订单列表-编辑>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -864,7 +864,7 @@ public class OrderRestController {
 				log.error("订单列表-编辑>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("订单列表-编辑>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
