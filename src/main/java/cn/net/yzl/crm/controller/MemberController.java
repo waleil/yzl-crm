@@ -315,13 +315,18 @@ public class MemberController {
     })
     public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard,String year) {
         // 获取工单信息
+        List<MemberCustomerJourneyDto>  list = null;
+        if(StringUtils.isEmpty(year)){
+            year = DateFormatUtil.dateToString(new Date(),"yyyy");
+        }
+
         ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard,year);
         if(listComResponse.getData()==null || listComResponse.getData().size()<1){
-            return ComResponse.nodata();
+            return ComResponse.success(list).setMessage(year);
         }
         List<WorkOrderVo> data = listComResponse.getData();
         String sourcesJson = JSONUtil.toJsonStr(data);
-        List<MemberCustomerJourneyDto>  list = JsonUtil.jsonToList(sourcesJson, MemberCustomerJourneyDto.class);
+        list = JsonUtil.jsonToList(sourcesJson, MemberCustomerJourneyDto.class);
         // 获取订单信息
         for (MemberCustomerJourneyDto memberCustomerJourneyDto : list) {
             String id = memberCustomerJourneyDto.get_id();
@@ -345,10 +350,7 @@ public class MemberController {
             }
         }
         // 根据时间排序
-       list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
-        if(StringUtils.isEmpty(year)){
-            year = DateFormatUtil.dateToString(new Date(),"yyyy");
-        }
+        list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
         return ComResponse.success(list).setMessage(year);
     }
 
