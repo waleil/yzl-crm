@@ -57,7 +57,7 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
 			int row = this.requestMessageMapper.insert(message);
 			log.info("插入{}条本地消息记录", row);
 		} catch (Exception e) {
-			log.error("ERROR", e);
+			log.error(e.getLocalizedMessage(), e);
 		}
 	}
 

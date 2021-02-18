@@ -62,7 +62,7 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
             orderInvoice4Export.setTaxMode(CommonConstant.TAX_MODE_0 == map.getTaxMode()?"电子发票":"纸质发票");
             orderInvoice4Export.setStatsStr(CommonConstant.INVOICE_FLAG_T == map.getStats()?"已开票":"未开票");
             orderInvoice4Export.setPayType(CommonConstant.PAY_TYPE_0 == map.getPayType()?"货到付款":"款到发货");
-            orderInvoice4Export.setLogisticsStatus(OrderLogisticsStatus.getName(map.getLogisticsStatus()));
+            orderInvoice4Export.setLogisticsStatus(OrderLogisticsStatus.codeToName(map.getLogisticsStatus()));
             orderInvoice4Export.setReveiverAddress(map.getReveiverAddress());
             orderInvoice4Export.setCreateTime(map.getCreateTime());
             orderInvoice4Export.setInvoiceTime(map.getInvoiceTime());
