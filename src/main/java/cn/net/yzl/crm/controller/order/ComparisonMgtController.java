@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -187,6 +188,12 @@ public class ComparisonMgtController {
 	@PostMapping("/v1/import")
 	@ApiOperation(value = "快递对账单导入", notes = "快递对账单导入")
 	public ComResponse<ExcelResult> importFromExcel(@RequestBody ImportParam param) {
+		if (!StringUtils.hasText(param.getExpressCompanyCode())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "快递公司编码不能为空");
+		}
+		if (!StringUtils.hasText(param.getFileUrl())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "上传文件URL不能为空");
+		}
 		return this.comparisonMgtFeignClient.importFromExcel(param);
 	}
 }
