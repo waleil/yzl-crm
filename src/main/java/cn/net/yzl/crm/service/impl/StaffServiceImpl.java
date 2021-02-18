@@ -7,6 +7,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
+import cn.net.yzl.crm.dto.ehr.MarketTargetDto;
 import cn.net.yzl.crm.dto.staff.OrderCriteriaDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.StaffDetail;
@@ -136,4 +137,10 @@ public class StaffServiceImpl implements StaffService {
    public ComResponse<List<StaffDetail>> getDetailsListByNo(List<String> list) {
         return ehrStaffClient.getDetailsListByNo(list);
     }
+
+
+	@Override
+	public ComResponse<MarketTargetDto> getMarketTarget() {
+		return null;
+	}
 }
