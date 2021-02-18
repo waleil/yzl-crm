@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.client.order;
 
+import java.math.BigDecimal;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,4 +52,12 @@ public interface OrderFeignClient {
 	 */
 	@GetMapping("/order/v1/get/{orderNo}")
 	ComResponse<OrderM> queryOrder(@PathVariable String orderNo);
+
+	/**
+	 * @return 成交金额
+	 * @author zhangweiwei
+	 * @date 2021年2月18日,下午11:16:40
+	 */
+	@GetMapping("/order/v1/queryordertotal")
+	ComResponse<BigDecimal> queryOrderTotal();
 }
