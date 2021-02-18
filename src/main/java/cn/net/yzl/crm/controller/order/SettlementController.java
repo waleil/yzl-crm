@@ -8,10 +8,7 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.sys.BizException;
-import cn.net.yzl.order.model.vo.order.SettlementDTO;
-import cn.net.yzl.order.model.vo.order.SettlementFlowDTO;
-import cn.net.yzl.order.model.vo.order.SettlementListReqDTO;
-import cn.net.yzl.order.model.vo.order.SettlementReqDTO;
+import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -99,6 +96,14 @@ public class SettlementController {
 
         return settlementFein.settlementTotal(dto);
 
+    }
+
+    @GetMapping("v1/selectSettleProductList")
+    @ApiOperation("查询结算商品明细")
+    public ComResponse<Page<SettlementProductDetailDTO>> selectSettleProductList(@RequestParam(value ="settlementCode")String settlementCode,
+                                                                                 @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+                                                                                 @RequestParam(required = false, defaultValue = "10") Integer pageSize){
+        return settlementFein.selectSettleProductList(settlementCode,pageNo,pageSize);
     }
 
 
