@@ -634,6 +634,7 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
 		log.info("热线工单-购物车-提交订单>>创建订单成功[订单号：{}]", orderm.getOrderNo());
+		// TODO zww 顾客管理-处理下单时更新顾客信息
 		// 再次调用顾客账户余额
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
