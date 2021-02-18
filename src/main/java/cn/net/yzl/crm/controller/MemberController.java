@@ -316,12 +316,12 @@ public class MemberController {
     public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard,String year) {
         // 获取工单信息
         List<MemberCustomerJourneyDto>  list = null;
-        if(StringUtils.isEmpty(year)){
-            year = DateFormatUtil.dateToString(new Date(),"yyyy");
-        }
 
         ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard,year);
         if(listComResponse.getData()==null || listComResponse.getData().size()<1){
+            if(StringUtils.isEmpty(year)){
+                year = DateFormatUtil.dateToString(new Date(),"yyyy");
+            }
             return ComResponse.success(list).setMessage(year);
         }
         List<WorkOrderVo> data = listComResponse.getData();
@@ -351,6 +351,9 @@ public class MemberController {
         }
         // 根据时间排序
         list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
+        if(StringUtils.isEmpty(year)){
+            year = DateFormatUtil.dateToString(new Date(),"yyyy");
+        }
         return ComResponse.success(list).setMessage(year);
     }
 
