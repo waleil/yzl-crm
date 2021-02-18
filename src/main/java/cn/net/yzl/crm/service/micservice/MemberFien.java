@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import cn.net.yzl.crm.customer.vo.MemberDiseaseIdUpdateVO;
-import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +31,12 @@ import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.crm.customer.model.MemberProductEffect;
 import cn.net.yzl.crm.customer.model.ProductConsultation;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
+import cn.net.yzl.crm.customer.vo.MemberDiseaseIdUpdateVO;
 import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
+import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
+import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
 import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -173,8 +174,8 @@ public interface MemberFien {
 
 	@ApiOperation("顾客病症-根据病症id更新顾客病症")
 	@PostMapping("/v1/updateMemberDiseaseByDiseaseId")
-	public GeneralResult<Integer> updateMemberDiseaseByDiseaseId(@RequestBody MemberDiseaseIdUpdateVO memberDiseaseIdUpdateVO);
-
+	public GeneralResult<Integer> updateMemberDiseaseByDiseaseId(
+			@RequestBody MemberDiseaseIdUpdateVO memberDiseaseIdUpdateVO);
 
 	default Member getMemberDefault(String memberCard) {
 		try {
@@ -190,5 +191,16 @@ public interface MemberFien {
 
 	@ApiOperation("顾客管理-处理工单时更新顾客信息")
 	@PostMapping("/v1/dealWorkOrderUpdateMemberData")
-    ComResponse<Boolean> dealWorkOrderUpdateMemberData(@RequestBody MemberWorkOrderInfoVO workOrderInfoVO);
+	ComResponse<Boolean> dealWorkOrderUpdateMemberData(@RequestBody MemberWorkOrderInfoVO workOrderInfoVO);
+
+	/**
+	 * 顾客管理-处理下单时更新顾客信息
+	 * 
+	 * @param orderCreateInfoVO {@link OrderCreateInfoVO}
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月18日,下午8:14:05
+	 */
+	@PostMapping("/v1/dealOrderCreateUpdateMemberData")
+	ComResponse<Boolean> dealOrderCreateUpdateMemberData(@RequestBody OrderCreateInfoVO orderCreateInfoVO);
 }
