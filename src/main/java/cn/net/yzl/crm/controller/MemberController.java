@@ -356,11 +356,13 @@ public class MemberController {
         ComResponse<MemberFirstCallDetailsDTO> cardResult = workOrderClient.getCallInDetailsByMemberCard(memberCard);
         if (cardResult.getData() != null) {
             MemberFirstCallDetailsDTO cardResultData = cardResult.getData();
-            MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
-            memberCustomerJourneyDto.setWorkOrderType(4);
-            memberCustomerJourneyDto.setCreateTime(cardResultData.getCreateTime());
-            memberCustomerJourneyDto.setMemberFirstCallDetailsDTO(cardResultData);
-            list.add(memberCustomerJourneyDto);
+            if (cardResultData.getCreateTime() != null) {
+                MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
+                memberCustomerJourneyDto.setWorkOrderType(4);
+                memberCustomerJourneyDto.setCreateTime(cardResultData.getCreateTime());
+                memberCustomerJourneyDto.setMemberFirstCallDetailsDTO(cardResultData);
+                list.add(memberCustomerJourneyDto);
+            }
         }
 
 
