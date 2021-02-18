@@ -22,6 +22,7 @@ import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
+import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
@@ -584,6 +585,13 @@ private ProductClient productClient;
     @GetMapping(value = "/v1/queryMemberType")
     public ComResponse<List<MemberTypeDTO>> queryMemberType() {
         ComResponse<List<MemberTypeDTO>> result = memberTypeFien.queryMemberType();
+        return result;
+    }
+
+    @ApiOperation(value = "顾客管理-处理工单时更新顾客信息",notes = "顾客管理-处理工单时更新顾客信息")
+    @RequestMapping(value = "/v1/dealWorkOrderUpdateMemberData", method = RequestMethod.POST)
+    public ComResponse<Boolean> dealWorkOrderUpdateMemberData(@RequestBody @Validated  MemberWorkOrderInfoVO workOrderInfoVO) {
+        ComResponse<Boolean> result = memberFien.dealWorkOrderUpdateMemberData(workOrderInfoVO);
         return result;
     }
 
