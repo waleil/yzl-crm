@@ -159,15 +159,19 @@ public class WorkOrderController {
     @PostMapping("v1/pageList")
     @ApiOperation(value = "热线工单管理-列表", notes = "热线工单管理-列表")
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
-        //获取当前用户部门，以及员工
-        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
-        //智能工单--查询自己部门的数据
-        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
-            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        //是否是分线监控
+        Integer isMonitoring = findWorkOrderHotlinePageListDTO.getIsMonitoring();
+        if(0 == isMonitoring){
+            //获取当前用户部门，以及员工
+            ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+            //智能工单--查询自己部门的数据
+            if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+                return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+            }
+            StaffImageBaseInfoDto data = detailsByNo.getData();
+            Integer departId = data.getDepartId();//当前登录人部门编码
+            findWorkOrderHotlinePageListDTO.setDeptId(departId);
         }
-        StaffImageBaseInfoDto data = detailsByNo.getData();
-        Integer departId = data.getDepartId();//当前登录人部门编码
-        findWorkOrderHotlinePageListDTO.setDeptId(departId);
         //智能派单--默认查询所有部门的数据
         ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
