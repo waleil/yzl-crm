@@ -22,6 +22,7 @@ import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
+import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
@@ -315,13 +316,18 @@ public class MemberController {
     })
     public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard,String year) {
         // 获取工单信息
+        List<MemberCustomerJourneyDto>  list = null;
+
         ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard,year);
         if(listComResponse.getData()==null || listComResponse.getData().size()<1){
-            return ComResponse.nodata();
+            if(StringUtils.isEmpty(year)){
+                year = DateFormatUtil.dateToString(new Date(),"yyyy");
+            }
+            return ComResponse.success(list).setMessage(year);
         }
         List<WorkOrderVo> data = listComResponse.getData();
         String sourcesJson = JSONUtil.toJsonStr(data);
-        List<MemberCustomerJourneyDto>  list = JsonUtil.jsonToList(sourcesJson, MemberCustomerJourneyDto.class);
+        list = JsonUtil.jsonToList(sourcesJson, MemberCustomerJourneyDto.class);
         // 获取订单信息
         for (MemberCustomerJourneyDto memberCustomerJourneyDto : list) {
             String id = memberCustomerJourneyDto.get_id();
@@ -345,7 +351,7 @@ public class MemberController {
             }
         }
         // 根据时间排序
-       list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
+        list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
         if(StringUtils.isEmpty(year)){
             year = DateFormatUtil.dateToString(new Date(),"yyyy");
         }
@@ -579,6 +585,13 @@ private ProductClient productClient;
     @GetMapping(value = "/v1/queryMemberType")
     public ComResponse<List<MemberTypeDTO>> queryMemberType() {
         ComResponse<List<MemberTypeDTO>> result = memberTypeFien.queryMemberType();
+        return result;
+    }
+
+    @ApiOperation(value = "顾客管理-处理工单时更新顾客信息",notes = "顾客管理-处理工单时更新顾客信息")
+    @RequestMapping(value = "/v1/dealWorkOrderUpdateMemberData", method = RequestMethod.POST)
+    public ComResponse<Boolean> dealWorkOrderUpdateMemberData(@RequestBody @Validated  MemberWorkOrderInfoVO workOrderInfoVO) {
+        ComResponse<Boolean> result = memberFien.dealWorkOrderUpdateMemberData(workOrderInfoVO);
         return result;
     }
 

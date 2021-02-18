@@ -8,6 +8,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.order.model.excel.ExcelResult;
 import cn.net.yzl.order.model.vo.order.CompareOrderIn;
+import cn.net.yzl.order.model.vo.order.CompareOrderParam;
 import cn.net.yzl.order.model.vo.order.CompareOrderType1Out;
 import cn.net.yzl.order.model.vo.order.CompareOrderType2Out;
 import cn.net.yzl.order.model.vo.order.ImportParam;
@@ -52,4 +53,15 @@ public interface ComparisonMgtFeignClient {
 	 */
 	@PostMapping("/comparisonmgt/v1/import")
 	ComResponse<ExcelResult> importFromExcel(@RequestBody ImportParam param);
+
+	/**
+	 * 对账
+	 * 
+	 * @param param {@link CompareOrderParam}
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月18日,下午3:04:43
+	 */
+	@PostMapping("/comparisonmgt/v1/compare")
+	ComResponse<Object> compareOrder(@RequestBody CompareOrderParam param);
 }
