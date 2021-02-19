@@ -1,16 +1,10 @@
 package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.client.store.ProductStockDetailFeignService;
 import cn.net.yzl.crm.client.store.WarehousingFeignService;
-import cn.net.yzl.model.dto.ProductStockDetailDTO;
-import cn.net.yzl.model.pojo.StockDetailType;
-import cn.net.yzl.model.vo.ProductStockDetailSelectVO;
 import cn.net.yzl.model.vo.WarehousingSelectVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +18,6 @@ import java.util.List;
  * @description:
  */
 @RestController
-@Slf4j
 @Api(value = "仓储中心-入库单", tags = {"仓储中心-入库单"})
 @RequestMapping("warehousing")
 public class WarehousingController {

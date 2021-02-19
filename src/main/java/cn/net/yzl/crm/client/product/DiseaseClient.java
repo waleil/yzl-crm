@@ -2,7 +2,6 @@ package cn.net.yzl.crm.client.product;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.product.model.vo.disease.DiseaseDTO;
 import cn.net.yzl.product.model.vo.disease.DiseaseDelVo;
 import cn.net.yzl.product.model.vo.disease.DiseaseTreeNode;
@@ -10,9 +9,6 @@ import cn.net.yzl.product.model.vo.disease.DiseaseVo;
 import cn.net.yzl.product.model.vo.disease.dto.DiseaseTreePageDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
 import cn.net.yzl.product.model.vo.product.dto.ProductDiseaseInfo;
-import com.alibaba.nacos.common.utils.StringUtils;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

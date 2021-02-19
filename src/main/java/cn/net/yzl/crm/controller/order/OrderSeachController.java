@@ -10,7 +10,6 @@ import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@Slf4j
 @RequestMapping("orderSearch")
 @Api(tags = "订单管理")
 public class OrderSeachController {

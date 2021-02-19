@@ -80,6 +80,7 @@ public class AccountDetailController {
 			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
 			// 此处已经获取到第一页的数据
 			excelWriter.write(page.getItems(), writeSheet);
+			page.getItems().clear();// 存储完成后清理集合
 			// 如果总页数大于1
 			if (param.getPageTotal() > 1) {
 				// 直接从第二页开始获取
@@ -92,6 +93,7 @@ public class AccountDetailController {
 					}
 					page = data.getData();
 					excelWriter.write(page.getItems(), writeSheet);
+					page.getItems().clear();// 存储完成后清理集合
 				}
 			}
 		} finally {

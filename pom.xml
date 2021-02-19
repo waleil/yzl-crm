@@ -69,7 +69,7 @@
         <!--顾客服务common依赖-->
         <dependency>
             <groupId>cn.net.yzl.crm.customer</groupId>
-            <artifactId>yzl-crm-customer-common</artifactId>
+            <artifactId>yzl-customer-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--菜单角色权限服务common依赖-->
@@ -287,6 +287,8 @@
                     <include>**/*.xml</include>
                     <include>**/*.yml</include>
                     <include>**/*.tld</include>
+                    <include>**/*.xlsx</include>
+                    <include>**/*.xls</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

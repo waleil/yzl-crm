@@ -464,7 +464,7 @@ public class ValidateUtils {
         String format = Date2StringYyyyMMdd(date,"yyyy")+"-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         try {
-            LocalDateTime dt = LocalDateTime.now();
+//            LocalDateTime dt = LocalDateTime.now();
             sd = Date2StringYyyyMMdd(date,"yyyy") + "-" + sd;
             ed = Date2StringYyyyMMdd(date,"yyyy") + "-" + ed;
             String checkDate = sdf.format(date);

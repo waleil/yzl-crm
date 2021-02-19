@@ -11,7 +11,6 @@ import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupListDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,6 @@ import java.util.Date;
 @Api(tags = "员工圈选服务")
 @RestController
 @RequestMapping("staff")
-@Slf4j
 public class StaffLassoController {
 
 

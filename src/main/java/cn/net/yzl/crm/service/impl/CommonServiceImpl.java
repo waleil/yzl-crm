@@ -6,7 +6,6 @@ import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.dto.product.ProduceDto;
 import cn.net.yzl.crm.service.CommonService;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
-import cn.net.yzl.product.model.vo.product.dto.ProductDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;

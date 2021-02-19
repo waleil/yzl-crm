@@ -3,7 +3,6 @@ package cn.net.yzl.crm.config;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.UUIDGenerator;
-import cn.net.yzl.crm.utils.UserInfoUtil;
 import cn.net.yzl.logger.json.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,8 +21,8 @@ import java.io.PrintWriter;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    @Autowired
-    private NacosValue nacosValue;
+//    @Autowired
+//    private NacosValue nacosValue;
 
     @Autowired
     private IgnoreUrlConfig ignoreUrlConfig;

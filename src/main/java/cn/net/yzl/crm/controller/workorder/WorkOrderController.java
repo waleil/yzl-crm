@@ -45,10 +45,8 @@ import cn.net.yzl.workorder.model.enums.WorkOrderTypeEnums;
 import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
 import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
 import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderUnclaimedUserVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -161,15 +159,19 @@ public class WorkOrderController {
     @PostMapping("v1/pageList")
     @ApiOperation(value = "热线工单管理-列表", notes = "热线工单管理-列表")
     public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
-        //获取当前用户部门，以及员工
-        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
-        //智能工单--查询自己部门的数据
-        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
-            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        //是否是分线监控
+        Integer isMonitoring = findWorkOrderHotlinePageListDTO.getIsMonitoring();
+        if(0 == isMonitoring){
+            //获取当前用户部门，以及员工
+            ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+            //智能工单--查询自己部门的数据
+            if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+                return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+            }
+            StaffImageBaseInfoDto data = detailsByNo.getData();
+            Integer departId = data.getDepartId();//当前登录人部门编码
+            findWorkOrderHotlinePageListDTO.setDeptId(departId);
         }
-        StaffImageBaseInfoDto data = detailsByNo.getData();
-        Integer departId = data.getDepartId();//当前登录人部门编码
-        findWorkOrderHotlinePageListDTO.setDeptId(departId);
         //智能派单--默认查询所有部门的数据
         ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
@@ -351,7 +353,7 @@ public class WorkOrderController {
 
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为未接受（热线的不管自动分配还是人工分配都需要接收）
-        return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
+        return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO).setMessage("成功");
     }
 
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
@@ -400,22 +402,24 @@ public class WorkOrderController {
         //获取被分配人的信息
         List<UpdateMoreAdjustSubTDTO> names = updateMoreAdjustDTO.getNames();
         if(!CollectionUtils.isEmpty(names)){
-            names.stream().forEach(updateMoreAdjustSubTDTO -> {
-                ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(updateMoreAdjustSubTDTO.getStaffNo());
+            for (int i = 0; i < names.size(); i++) {
+                ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(names.get(i).getStaffNo());
                 if(!StringUtils.isEmpty(detailsByNoOne) && !StringUtils.isEmpty(detailsByNoOne.getData())){
                     StaffImageBaseInfoDto dataOne = detailsByNoOne.getData();
-                    updateMoreAdjustSubTDTO.setStaffNo(dataOne.getStaffNo());//被分配人编码
-                    updateMoreAdjustSubTDTO.setStaffName(dataOne.getName());//被分配人名称
-                    updateMoreAdjustSubTDTO.setStaffLevel(StringUtils.isEmpty(dataOne.getPostLevelName())?"":String.valueOf(dataOne.getPostLevelName()));//被分配人级别
-                    updateMoreAdjustSubTDTO.setDeptId(dataOne.getDepartId());//被分配人部门id
-                    updateMoreAdjustSubTDTO.setDeptName(dataOne.getDepartName());//被分配人部门名称
-                    updateMoreAdjustSubTDTO.setAcceptStatus(1);//不管是人工还是自动分配都是未接收
+                    names.get(i).setStaffNo(dataOne.getStaffNo());//被分配人编码
+                    names.get(i).setStaffName(dataOne.getName());//被分配人名称
+                    names.get(i).setStaffLevel(StringUtils.isEmpty(dataOne.getPostLevelName())?"":String.valueOf(dataOne.getPostLevelName()));//被分配人级别
+                    names.get(i).setDeptId(dataOne.getDepartId());//被分配人部门id
+                    names.get(i).setDeptName(dataOne.getDepartName());//被分配人部门名称
+                    names.get(i).setAcceptStatus(1);//不管是人工还是自动分配都是未接收
+                } else {
+                    return ComResponse.fail(ComResponse.ERROR_STATUS,"被分配的员工信息不存在");
                 }
-            });
+            }
         }
         updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为未接收，不管是人工还是自动分配都是未接收
         updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO);
+        return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO).setMessage("成功");
     }
 
     @ApiOperation(value = "我的回访工单-单条分配", notes = "我的回访工单-单条分配")

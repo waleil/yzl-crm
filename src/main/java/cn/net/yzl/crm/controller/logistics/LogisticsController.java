@@ -100,12 +100,12 @@ public class LogisticsController {
 
 
 
-        boolean isSucess = false;
+//        boolean isSucess = false;
 
         for (int i = 0; i < storeToLogisticsDtoTrace.size(); i++) {
             //参数错误
-            if(null==(storeToLogisticsDtoTrace))
-                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
+//            if(null==(storeToLogisticsDtoTrace))
+//                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);
             //更新订单状态的信息为空
             if(null==(storeToLogisticsDtoTrace.get(i).getSupplementRegistry())
                     || StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getExpressNum())
@@ -172,7 +172,7 @@ public class LogisticsController {
 
 
 
-        boolean isSucess = false;
+//        boolean isSucess = false;
         //参数错误
         if(null==storeToLogisticsDtoTrace)
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE);

@@ -1,7 +1,6 @@
 package cn.net.yzl.crm.service.micservice;
 
 
-import cn.net.yzl.activity.model.dto.CouponDiscountRulesDto;
 import cn.net.yzl.activity.model.requestModel.*;
 import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
@@ -9,7 +8,6 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.dmc.*;
 import cn.net.yzl.crm.dto.dmc.ActivityDetailResponse;
 import cn.net.yzl.crm.dto.dmc.PageModel;
-import cn.net.yzl.crm.dto.order.MemberRedBagRecordsDTO;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

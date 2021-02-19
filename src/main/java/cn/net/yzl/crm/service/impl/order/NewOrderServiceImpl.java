@@ -93,8 +93,8 @@ public class NewOrderServiceImpl implements INewOrderService {
 	public ComResponse<Boolean> newOrder(NewOrderDTO dto) {
 		ComResponse orderRes = null;
 		AtomicInteger totalCount = null;// 总人数
-		AtomicInteger successCnt = new AtomicInteger();// 成功人数
-		AtomicInteger failCnt = new AtomicInteger();// 失败人数
+//		AtomicInteger successCnt = new AtomicInteger();// 成功人数
+//		AtomicInteger failCnt = new AtomicInteger();// 失败人数
 		try {
 			local.set(new ArrayList<>());
 			// 查询坐席时间
@@ -571,7 +571,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 	 * 发送http请求，用于回调
 	 */
 	protected void sentHttpRequest(String url, Object param) {
-		ComResponse responseBean = template.postForObject(url, param, ComResponse.class);
+		template.postForObject(url, param, ComResponse.class);
 	}
 
 	/**
@@ -602,7 +602,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 	private OrderTemp mkOrderTemp(List<CrowdGroup> groups, String batchNo, NewOrderDTO dto, String departId,
 			Integer wordCode, Integer financialOwner, String financialOwnerName) {
-		List<OrderTemp> list = new ArrayList<>();
+//		List<OrderTemp> list = new ArrayList<>();
 
 		groups.forEach(map -> {
 			if (map.getPerson_count() == null) {

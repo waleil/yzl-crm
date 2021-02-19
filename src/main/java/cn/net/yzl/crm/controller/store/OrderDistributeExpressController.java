@@ -9,7 +9,6 @@ import cn.net.yzl.model.dto.OrderDistributeExpressRuleListDTO;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +22,6 @@ import java.util.List;
  * @description:
  */
 @RestController
-@Slf4j
 @Api(value = "仓储中心心心心心-订单分配快递", tags = {"仓储中心心心心心-订单分配快递"})
 @RequestMapping("orderDistributeExpress")
 public class OrderDistributeExpressController {

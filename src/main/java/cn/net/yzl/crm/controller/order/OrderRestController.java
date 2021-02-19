@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,7 @@ import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
+import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
@@ -103,7 +105,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-计算订单金额>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("热线工单-购物车-计算订单金额>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -114,7 +116,7 @@ public class OrderRestController {
 			for (OrderDetailIn in : orderProductList) {
 				ProductMainDTO p = pmap.get(in.getProductCode());
 				// 如果商品已下架
-				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p.getStatus()))) {
+				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, p.getStatus()) == 0) {
 					log.error("热线工单-购物车-计算订单金额>>该商品[{}]已下架>>{}", p);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
 				}
@@ -127,7 +129,7 @@ public class OrderRestController {
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价，单位分
 				od.setProductCount(in.getProductCount());// 商品数量
 				// 如果是非赠品
-				if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
+				if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				} else {// 如果是赠品，将金额设置为0
@@ -159,7 +161,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-计算订单金额>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("热线工单-购物车-计算订单金额>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
@@ -170,7 +172,7 @@ public class OrderRestController {
 							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
 				// 如果套餐已下架
-				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(meal.getStatus()))) {
+				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, meal.getStatus()) == 0) {
 					log.error("热线工单-购物车-计算订单金额>>该套餐已下架>>{}", meal);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐已下架。");
 				}
@@ -197,7 +199,7 @@ public class OrderRestController {
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					// 如果是非赠品
-					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
+					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
@@ -212,7 +214,7 @@ public class OrderRestController {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
-					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
+					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
@@ -353,7 +355,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("热线工单-购物车-提交订单>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -364,7 +366,7 @@ public class OrderRestController {
 			for (OrderDetailIn in : orderProductList) {
 				ProductMainDTO p = pmap.get(in.getProductCode());
 				// 如果商品已下架
-				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p.getStatus()))) {
+				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, p.getStatus()) == 0) {
 					log.error("热线工单-购物车-提交订单>>该商品[{}]已下架>>{}", p);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
 				}
@@ -391,7 +393,7 @@ public class OrderRestController {
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 				// 如果是非赠品
-				if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
+				if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				} else {// 如果是赠品，将金额设置为0
@@ -424,7 +426,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("热线工单-购物车-提交订单>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
@@ -435,7 +437,7 @@ public class OrderRestController {
 							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
 				// 如果套餐已下架
-				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(meal.getStatus()))) {
+				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, meal.getStatus()) == 0) {
 					log.error("热线工单-购物车-提交订单>>该套餐已下架>>{}", meal);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐已下架。");
 				}
@@ -477,7 +479,7 @@ public class OrderRestController {
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 					// 如果是非赠品
-					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
+					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
@@ -492,7 +494,7 @@ public class OrderRestController {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
-					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
+					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
@@ -538,7 +540,7 @@ public class OrderRestController {
 		orderm.setPayType(orderin.getPayType());// 支付方式
 		orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非免审
 		// 如果是款到发货
-		if (String.valueOf(orderin.getPayType()).equals(String.valueOf(CommonConstant.PAY_TYPE_1))) {
+		if (Integer.compare(CommonConstant.PAY_TYPE_1, orderin.getPayType()) == 0) {
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_1);// 已收款
 		} else {
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
@@ -634,6 +636,19 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
 		}
 		log.info("热线工单-购物车-提交订单>>创建订单成功[订单号：{}]", orderm.getOrderNo());
+		// 顾客管理-处理下单时更新顾客信息
+		OrderCreateInfoVO orderCreateInfoVO = new OrderCreateInfoVO();
+		orderCreateInfoVO.setCreateTime(orderm.getCreateTime());// 下单时间
+		orderCreateInfoVO.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+		orderCreateInfoVO.setOrderNo(orderm.getOrderNo());// 订单编号
+		orderCreateInfoVO.setStaffNo(orderm.getStaffCode());// 下单坐席编号
+		ComResponse<Boolean> createUpdateMember = this.memberFien.dealOrderCreateUpdateMemberData(orderCreateInfoVO);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(createUpdateMember.getCode())) {
+			log.error("热线工单-购物车-提交订单>>更新顾客信息失败>>{}", createUpdateMember);
+			this.orderCommonService.insert(createUpdateMember, MemberFien.SUFFIX_URL,
+					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
+		}
 		// 再次调用顾客账户余额
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
@@ -684,7 +699,7 @@ public class OrderRestController {
 	 */
 	private boolean hasAmountStored(OrderIn orderin) {
 		return orderin.getAmountStored() != null && orderin.getAmountStored() > 0D
-				&& String.valueOf(PayType.PAY_TYPE_1.getCode()).equals(String.valueOf(orderin.getPayType()));
+				&& Integer.compare(PayType.PAY_TYPE_1.getCode(), orderin.getPayType()) == 0;
 	}
 
 	@PostMapping("/v1/updateorder")
@@ -799,7 +814,7 @@ public class OrderRestController {
 				log.error("订单列表-编辑>>找不到商品[{}]信息>>{}", productCodes, presponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
-			if (plist.size() != productCodeList.size()) {
+			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
 				log.error("订单列表-编辑>>订单的商品编码总数[{}]与商品查询接口的商品编码总数[{}]不一致", productCodeList.size(), plist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的商品部分已下架。");
 			}
@@ -810,7 +825,7 @@ public class OrderRestController {
 			for (OrderDetailIn in : orderProductList) {
 				ProductMainDTO p = pmap.get(in.getProductCode());
 				// 如果商品已下架
-				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(p.getStatus()))) {
+				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, p.getStatus()) == 0) {
 					log.error("订单列表-编辑>>该商品[{}]已下架>>{}", p);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
 				}
@@ -864,7 +879,7 @@ public class OrderRestController {
 				log.error("订单列表-编辑>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
-			if (mlist.size() != mealNoList.size()) {
+			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
 				log.error("订单列表-编辑>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
@@ -875,7 +890,7 @@ public class OrderRestController {
 							v -> v.getValue().stream().mapToInt(OrderDetailIn::getProductCount).sum()));
 			for (ProductMealListDTO meal : mlist) {
 				// 如果套餐已下架
-				if (String.valueOf(CommonConstant.PRODUCT_AND_MEAL_STATUS_0).equals(String.valueOf(meal.getStatus()))) {
+				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, meal.getStatus()) == 0) {
 					log.error("订单列表-编辑>>该套餐已下架>>{}", meal);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该套餐已下架。");
 				}
@@ -917,7 +932,7 @@ public class OrderRestController {
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 					// 如果是非赠品
-					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
+					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
@@ -932,7 +947,7 @@ public class OrderRestController {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
-					if (String.valueOf(CommonConstant.GIFT_FLAG_0).equals(String.valueOf(od.getGiftFlag()))) {
+					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
@@ -1038,8 +1053,27 @@ public class OrderRestController {
 			}
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "修改订单失败，请稍后重试。");
 		}
+		// 顾客管理-处理下单时更新顾客信息
+		OrderCreateInfoVO orderCreateInfoVO = new OrderCreateInfoVO();
+		orderCreateInfoVO.setCreateTime(orderm.getCreateTime());// 下单时间
+		orderCreateInfoVO.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+		orderCreateInfoVO.setOrderNo(orderm.getOrderNo());// 订单编号
+		orderCreateInfoVO.setStaffNo(orderm.getStaffCode());// 下单坐席编号
+		ComResponse<Boolean> createUpdateMember = this.memberFien.dealOrderCreateUpdateMemberData(orderCreateInfoVO);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(createUpdateMember.getCode())) {
+			log.error("热线工单-购物车-提交订单>>更新顾客信息失败>>{}", createUpdateMember);
+			this.orderCommonService.insert(createUpdateMember, MemberFien.SUFFIX_URL,
+					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
+		}
 		log.info("订单列表-编辑>>修改订单成功[订单号：{}]", orderm.getOrderNo());
 		return ComResponse.success(orderm.getOrderNo());
+	}
+
+	@GetMapping("/v1/queryordertotal")
+	@ApiOperation(value = "成交金额", notes = "成交金额")
+	public ComResponse<BigDecimal> queryOrderTotal() {
+		return this.orderFeignClient.queryOrderTotal();
 	}
 
 	@Resource

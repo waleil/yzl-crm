@@ -5,6 +5,7 @@ import cn.hutool.json.JSONObject;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.ehr.*;
+import cn.net.yzl.crm.dto.staff.StaffChangeRecordDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.staff.dto.lasso.Base;
@@ -14,7 +15,6 @@ import cn.net.yzl.crm.staff.dto.lasso.WorkOrderTypeDto;
 import cn.net.yzl.model.dto.DepartDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.CollectionUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
@@ -213,6 +213,22 @@ public interface EhrStaffClient {
      */
     @GetMapping("/depart/getById")
     ComResponse<DepartDto> getDepartById(@RequestParam @NotNull Integer departId);
+
+    /**
+     * 员工变动-查询员工最新变动后状态
+     * @param staffNo
+     * @return
+     */
+    @GetMapping(value = "/staffChange/getStaffLastChangeRecord")
+    ComResponse<StaffChangeRecordDto> getStaffLastChangeRecord(@RequestParam String staffNo);
+
+    /**
+     * 员工变动-根据变动编号查询员工变动状态
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/staffChange/getStaffChangeRecordById")
+    ComResponse<StaffChangeRecordDto> getStaffChangeRecordById(@RequestParam Integer id);
 
 
     default List<String> getStaffBaseInfoList(Base base) {

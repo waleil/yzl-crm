@@ -9,6 +9,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.common.util.JsonUtil;
+import cn.net.yzl.common.util.YLoggerUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.product.DiseaseClient;
 import cn.net.yzl.crm.client.product.ProductClient;
@@ -18,16 +19,22 @@ import cn.net.yzl.crm.customer.dto.amount.MemberAmountDetailDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.dto.member.*;
 import cn.net.yzl.crm.customer.model.*;
+import cn.net.yzl.crm.customer.vo.MemberAndAddWorkOrderVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
+import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
+import cn.net.yzl.crm.customer.vo.work.WorkOrderBeanVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.member.customerJourney.MemberCustomerJourneyDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.dto.workorder.MemberFirstCallDetailsDTO;
+import cn.net.yzl.crm.model.customer.MemberReferral;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
@@ -40,8 +47,6 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
-import java.time.Year;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -53,7 +58,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "顾客管理")
-@Slf4j
 @RestController
 @RequestMapping(value = MemberController.PATH)
 public class MemberController {
@@ -72,6 +76,9 @@ public class MemberController {
 
     @Autowired
     MemberTypeFien memberTypeFien;
+    @Autowired
+    private cn.net.yzl.crm.service.micservice.EhrStaffClient ehrStaffClient;
+
 
 
     @ApiOperation(value = "顾客列表-分页查询顾客列表")
@@ -86,6 +93,82 @@ public class MemberController {
     public GeneralResult<Boolean> save(@RequestBody Member dto) {
         memberFien.save(dto);
         return GeneralResult.success();
+    }
+
+    @ApiOperation(value = "保存转介绍用户")
+    @PostMapping("v1/saveMemberReferral")
+    public ComResponse<Boolean> saveMemberReferral(@Validated @RequestBody MemberReferral memberReferralVO) throws IllegalAccessException {
+        String staffNo= QueryIds.userNo.get();
+        //根据员工编码获取部门
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(staffNo);
+        YLoggerUtil.infoLog("根据员工编码获取部门 Response", JsonUtil.toJsonStr(detailsByNo));
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        if(null == data){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"获取当前用户信息:"+detailsByNo.getMessage());
+        }
+        Integer departId = data.getDepartId();//部门id
+        if(null == departId){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"暂无部门数据");
+        }
+
+        MemberAndAddWorkOrderVO vo = new MemberAndAddWorkOrderVO();
+        Member member = new Member();
+        member.setMember_name(memberReferralVO.getMemberName());
+        member.setSex(memberReferralVO.getSex());
+        member.setAge(memberReferralVO.getAge());
+
+        List<MemberPhone> memberPhoneList = new ArrayList<>();
+        MemberPhone memberPhone = new MemberPhone();
+        memberPhone.setPhone_number(memberReferralVO.getMemberPhone());
+        memberPhone.setCreator_no(staffNo);
+        memberPhone.setUpdator_no(staffNo);
+        memberPhoneList.add(memberPhone);
+        member.setMemberPhoneList(memberPhoneList);
+
+        member.setEmail(memberReferralVO.getEmail());
+        member.setQq(memberReferralVO.getQq());
+        member.setWechat(memberReferralVO.getWechat());
+        member.setProvince_code(memberReferralVO.getProvinceCode());
+        member.setProvince_name(memberReferralVO.getProvinceName());
+
+        member.setCity_code(memberReferralVO.getCityCode());
+        member.setCity_name(memberReferralVO.getCityName());
+        member.setArea_code(memberReferralVO.getAreaCode());
+        member.setArea_name(memberReferralVO.getAreaName());
+
+        member.setAddress(memberReferralVO.getAddress());
+
+        member.setCreator_no(staffNo);
+        member.setUpdator_no(staffNo);
+        if (data != null) {
+            member.setCreator_name(data.getName());
+            member.setUpdator_name(data.getName());
+        }
+        //设置会员信息
+        vo.setMemberVO(member);
+
+        WorkOrderBeanVO workOrderBeanVO = new WorkOrderBeanVO();
+        workOrderBeanVO.setMemberName(memberReferralVO.getMemberName());
+        workOrderBeanVO.setCalledPhone(memberReferralVO.getMemberPhone());
+        workOrderBeanVO.setActivity(memberReferralVO.getActivity());
+        workOrderBeanVO.setAdvId(memberReferralVO.getAdvId());
+        workOrderBeanVO.setAdvName(memberReferralVO.getAdvName());
+        workOrderBeanVO.setAllocateStatus(memberReferralVO.getAllocateStatus());
+        workOrderBeanVO.setMediaId(memberReferralVO.getMediaId());
+        workOrderBeanVO.setMediaName(memberReferralVO.getMediaName());
+
+        if (data != null) {
+            workOrderBeanVO.setDeptId(data.getDepartId());
+            workOrderBeanVO.setDeptName(data.getDepartName());
+            workOrderBeanVO.setCreateName(data.getName());
+            workOrderBeanVO.setUpdateName(data.getName());
+        }
+        workOrderBeanVO.setCreateId(staffNo);
+        workOrderBeanVO.setUpdateId(staffNo);
+        //设置工单信息
+        vo.setWorkOrderBeanVO(workOrderBeanVO);
+        memberFien.saveMemberReferral(vo);
+        return ComResponse.success(true);
     }
 
     @ApiOperation(value = "修改顾客信息")
@@ -239,8 +322,8 @@ public class MemberController {
         for (int i = 0; i < workOrderFlowVOList.size(); i++) {
             WorkOrderFlowVO  workOrderFlowVO=  workOrderFlowVOList.get(i);
             String staffNo1 = workOrderFlowVO.getStaffNo();
-            Date startTime = workOrderFlowVO.getStartTime();
-            Date endTime = workOrderFlowVO.getEndTime();
+//            Date startTime = workOrderFlowVO.getStartTime();
+//            Date endTime = workOrderFlowVO.getEndTime();
 
             if(StrUtil.isBlank(staffNo)){
                 staffNo=staffNo1;
@@ -318,13 +401,18 @@ public class MemberController {
     })
     public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard,String year) {
         // 获取工单信息
+        List<MemberCustomerJourneyDto>  list = null;
+
         ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard,year);
         if(listComResponse.getData()==null || listComResponse.getData().size()<1){
-            return ComResponse.nodata();
+            if(StringUtils.isEmpty(year)){
+                year = DateFormatUtil.dateToString(new Date(),"yyyy");
+            }
+            return ComResponse.success(list).setMessage(year);
         }
         List<WorkOrderVo> data = listComResponse.getData();
         String sourcesJson = JSONUtil.toJsonStr(data);
-        List<MemberCustomerJourneyDto>  list = JsonUtil.jsonToList(sourcesJson, MemberCustomerJourneyDto.class);
+        list = JsonUtil.jsonToList(sourcesJson, MemberCustomerJourneyDto.class);
         // 获取订单信息
         for (MemberCustomerJourneyDto memberCustomerJourneyDto : list) {
             String id = memberCustomerJourneyDto.get_id();
@@ -347,8 +435,23 @@ public class MemberController {
                 list.add(memberCustomerJourneyDto);
             }
         }
+
+        //获取首次呼入
+        ComResponse<MemberFirstCallDetailsDTO> cardResult = workOrderClient.getCallInDetailsByMemberCard(memberCard);
+        if (cardResult.getData() != null) {
+            MemberFirstCallDetailsDTO cardResultData = cardResult.getData();
+            if (cardResultData.getCreateTime() != null) {
+                MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
+                memberCustomerJourneyDto.setWorkOrderType(4);
+                memberCustomerJourneyDto.setCreateTime(cardResultData.getCreateTime());
+                memberCustomerJourneyDto.setMemberFirstCallDetailsDTO(cardResultData);
+                list.add(memberCustomerJourneyDto);
+            }
+        }
+
+
         // 根据时间排序
-       list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
+        list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
         if(StringUtils.isEmpty(year)){
             year = DateFormatUtil.dateToString(new Date(),"yyyy");
         }
@@ -402,7 +505,7 @@ public class MemberController {
         memberDiseaseDto.setDiseaseId(id);
         memberDiseaseDto.setCreateNo(staffNo);
         ComResponse<Integer> integerComResponse = memberFien.insertMemberDisease(memberDiseaseDto);
-        if(integerComResponse!=null || integerComResponse.getCode()!=200){
+        if(integerComResponse==null || integerComResponse.getCode()!=200){
             return integerComResponse;
         }
         return ComResponse.success(integerComResponse.getData());
@@ -582,6 +685,13 @@ private ProductClient productClient;
     @GetMapping(value = "/v1/queryMemberType")
     public ComResponse<List<MemberTypeDTO>> queryMemberType() {
         ComResponse<List<MemberTypeDTO>> result = memberTypeFien.queryMemberType();
+        return result;
+    }
+
+    @ApiOperation(value = "顾客管理-处理工单时更新顾客信息",notes = "顾客管理-处理工单时更新顾客信息")
+    @RequestMapping(value = "/v1/dealWorkOrderUpdateMemberData", method = RequestMethod.POST)
+    public ComResponse<Boolean> dealWorkOrderUpdateMemberData(@RequestBody @Validated  MemberWorkOrderInfoVO workOrderInfoVO) {
+        ComResponse<Boolean> result = memberFien.dealWorkOrderUpdateMemberData(workOrderInfoVO);
         return result;
     }
 

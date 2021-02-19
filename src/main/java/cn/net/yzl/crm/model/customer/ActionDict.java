@@ -12,7 +12,10 @@ import java.io.Serializable;
 @Data
 public class ActionDict implements Serializable {
 
-    @ApiModelProperty("字典编号")
+    /**  */
+	private static final long serialVersionUID = 6713160067506233873L;
+
+	@ApiModelProperty("字典编号")
     private Integer id;
 
     @ApiModelProperty("名称")

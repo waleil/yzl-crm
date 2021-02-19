@@ -132,7 +132,7 @@ public class StaffServiceImpl implements StaffService {
         reqDTO.setPageSize(req.getPageSize());
         reqDTO.setStaffCode(req.getStaffNo());
         reqDTO.setOrderStatus(req.getStatus());
-        if (null != req.getTimeType()) {
+        if(null!=req.getTimeType()){
             switch (req.getTimeType()) {
                 case 1:
                     reqDTO.setStartTime(LocalDateTimeUtil.format(LocalDateTimeUtil.beginOfDay(LocalDateTime.now().minusDays(1)), DatePattern.NORM_DATETIME_FORMATTER));
@@ -156,12 +156,11 @@ public class StaffServiceImpl implements StaffService {
 
     /**
      * 根据员工工号数组获取员工信息
-     *
      * @param list
      * @return
      */
     @Override
-    public ComResponse<List<StaffDetail>> getDetailsListByNo(List<String> list) {
+   public ComResponse<List<StaffDetail>> getDetailsListByNo(List<String> list) {
         return ehrStaffClient.getDetailsListByNo(list);
     }
 
@@ -291,4 +290,6 @@ public class StaffServiceImpl implements StaffService {
         }
         return ComResponse.success(marketTargetDto);
     }
+
+
 }

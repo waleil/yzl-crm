@@ -13,7 +13,10 @@ import java.io.Serializable;
 @ApiModel("通话记录查询实体")
 public class CallnfoCriteriaTO implements Serializable {
 
-    @ApiModelProperty(value = "通话状态 0、正常 1、无效 2、掐线 3、未接听")
+    /**  */
+	private static final long serialVersionUID = 3201093705557612009L;
+
+	@ApiModelProperty(value = "通话状态 0、正常 1、无效 2、掐线 3、未接听")
     private Integer status;
 
     @ApiModelProperty(value = "通话开始时间")

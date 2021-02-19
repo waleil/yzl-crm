@@ -8,7 +8,6 @@ import cn.net.yzl.model.vo.SenderInfoEditVO;
 import cn.net.yzl.model.vo.SenderInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +21,6 @@ import java.util.List;
  * @description:
  */
 @RestController
-@Slf4j
 @Api(value = "仓储中心心心心心-发货人管理", tags = {"仓储中心心心心心-发货人管理"})
 @RequestMapping("senderInfo")
 public class SenderInfoController {

@@ -2,8 +2,11 @@ package cn.net.yzl.crm.sys;
 
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@SuppressWarnings("serial")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class BizException extends RuntimeException {
      /**
        * 错误码

@@ -1,19 +1,12 @@
 package cn.net.yzl.crm.client.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.customer.model.CrowdGroup;
-import cn.net.yzl.order.model.vo.order.OrderCheckSettingDTO;
-import cn.net.yzl.order.model.vo.order.OrderCheckSettingProduct;
-import cn.net.yzl.order.model.vo.order.UpdateOrderCheckSettingDTO;
 import cn.net.yzl.workorder.model.db.AutoAllocateRuleBean;
 import cn.net.yzl.workorder.model.vo.AutoAllocateRuleCriteriaTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @FeignClient(name = "autoAllocateRuleClient",url = "${api.gateway.url}/workorderServer/autoAllocateRule")

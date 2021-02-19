@@ -12,8 +12,6 @@ import cn.net.yzl.order.model.vo.order.OrderInvoiceListDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -21,16 +19,12 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-@Slf4j
 public class OrderInvoiceServiceImpl implements OrderInvoiceService {
 
     @Resource
@@ -68,7 +62,7 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
             orderInvoice4Export.setTaxMode(CommonConstant.TAX_MODE_0 == map.getTaxMode()?"电子发票":"纸质发票");
             orderInvoice4Export.setStatsStr(CommonConstant.INVOICE_FLAG_T == map.getStats()?"已开票":"未开票");
             orderInvoice4Export.setPayType(CommonConstant.PAY_TYPE_0 == map.getPayType()?"货到付款":"款到发货");
-            orderInvoice4Export.setLogisticsStatus(OrderLogisticsStatus.getName(map.getLogisticsStatus()));
+            orderInvoice4Export.setLogisticsStatus(OrderLogisticsStatus.codeToName(map.getLogisticsStatus()));
             orderInvoice4Export.setReveiverAddress(map.getReveiverAddress());
             orderInvoice4Export.setCreateTime(map.getCreateTime());
             orderInvoice4Export.setInvoiceTime(map.getInvoiceTime());

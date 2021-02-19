@@ -1,8 +1,6 @@
 package cn.net.yzl.crm.controller.product;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.service.product.AttributeService;
 import cn.net.yzl.product.model.db.AttributeBean;
 import io.swagger.annotations.Api;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -57,8 +53,8 @@ public class AttributeController {
     @GetMapping("selectByclassifyIdAttribute")
     public ComResponse<?> selectByclassifyIdAttribute(@RequestParam("id") @ApiParam("分类id") @NotNull(message = "id不能为空！") Integer id) {
         ComResponse<?> comResponse = attributeService.selectByclassifyIdAttribute(id);
-        List<?> list = new ArrayList<>();
-        if (comResponse.getData() == null||(list = (List<?>) comResponse.getData()).size() == 0) {
+//        List<?> list = new ArrayList<>();
+        if (comResponse.getData() == null||((List<?>) comResponse.getData()).size() == 0) {
             return ComResponse.nodata();
         }
         return comResponse;

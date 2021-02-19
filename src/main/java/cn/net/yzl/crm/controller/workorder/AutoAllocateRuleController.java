@@ -1,28 +1,17 @@
 package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.workorder.AutoAllocateRuleClient;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
-import cn.net.yzl.crm.customer.model.CrowdGroup;
-import cn.net.yzl.crm.service.micservice.CrmStaffClient;
-import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
-import cn.net.yzl.workorder.model.db.AutoAllocateConfigBean;
 import cn.net.yzl.workorder.model.db.AutoAllocateRuleBean;
-import cn.net.yzl.workorder.model.vo.AutoAllocateConfigVO;
 import cn.net.yzl.workorder.model.vo.AutoAllocateRuleCriteriaTO;
 import io.swagger.annotations.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -32,7 +21,6 @@ import java.util.Map;
  * @Date: 2021/1/9 4:16 下午
  */
 @Api(tags = "智能派单管理")
-@Slf4j
 @RestController
 @RequestMapping("/workorder/autoAllocateRule")
 public class AutoAllocateRuleController {
@@ -43,8 +31,8 @@ public class AutoAllocateRuleController {
     @Autowired
     private MemberGroupFeign memberClient;
 
-    @Autowired
-    private CrmStaffClient staffClient;
+//    @Autowired
+//    private CrmStaffClient staffClient;
 
     @GetMapping(value = "/v1/list")
     @ApiOperation(value = "查询智能派单规则列表")
