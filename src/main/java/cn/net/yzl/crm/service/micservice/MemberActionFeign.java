@@ -2,18 +2,22 @@ package cn.net.yzl.crm.service.micservice;
 
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.crm.customer.viewmodel.memberActionModel.MemberActionDictList;
 import cn.net.yzl.crm.customer.viewmodel.memberActionModel.MemberActionRelationList;
 import cn.net.yzl.crm.dto.member.ActionDictDto;
 import cn.net.yzl.crm.dto.member.MemberActionRelationDto;
 import cn.net.yzl.crm.model.customer.ActionDict;
 import cn.net.yzl.crm.model.customer.MemberActionRelation;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -46,5 +50,10 @@ public interface MemberActionFeign {
 
     @GetMapping("v1/deleteRelation")
     public ComResponse<Integer> deleteRelation(@RequestParam("rid") Integer rid);
+
+
+    @ApiOperation(value="客户行为关联-根据顾客编号查询行为字典")
+    @GetMapping("v1/getActionDictByMemberCard")
+    public ComResponse<List<MemberActionDictList>> getActionDictByMemberCard(@RequestParam("memberCard") @NotBlank String memberCard);
 
 }
