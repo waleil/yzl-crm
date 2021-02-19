@@ -526,7 +526,7 @@ public class MemberController {
     public ComResponse<Integer> getMemberDisease(@RequestBody @Validated MemberDiseaseDto memberDiseaseDto) {
         Integer id = null;
         String staffNo= QueryIds.userNo.get();
-        ComResponse<Integer> diseaseMainInfoComResponse = diseaseClient.artificialSeatInput(memberDiseaseDto.getParDiseaseId(), memberDiseaseDto.getDiseaseName(), staffNo);
+        ComResponse<Integer> diseaseMainInfoComResponse = diseaseClient.artificialSeatInput(memberDiseaseDto.getParDiseaseId(), memberDiseaseDto.getDiseaseName(), staffNo,memberDiseaseDto.getMemberCard());
         if(diseaseMainInfoComResponse!=null && diseaseMainInfoComResponse.getCode()==200 && diseaseMainInfoComResponse.getData()!=null){
             id=diseaseMainInfoComResponse.getData();
         }else{

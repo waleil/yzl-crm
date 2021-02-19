@@ -47,7 +47,8 @@ public interface DiseaseClient {
     @GetMapping("artificialSeatInput")
     ComResponse<Integer> artificialSeatInput(@RequestParam("pid") Integer pid ,
                                              @RequestParam("name")String name,
-                                             @RequestParam("userId")String userId);
+                                             @RequestParam("userId")String userId,
+                                             @RequestParam("memberCard")String memberCard);
 
     @GetMapping(value = "queryProductByDiseaseId")
     ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(@RequestParam("name") String name);
