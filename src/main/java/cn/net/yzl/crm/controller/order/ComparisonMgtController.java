@@ -3,17 +3,18 @@ package cn.net.yzl.crm.controller.order;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,8 +55,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/comparisonmgt")
 @Slf4j
 public class ComparisonMgtController {
+	private Resource templateResource = new ClassPathResource("excel/comparisonmgt/template.xlsx");
 	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
-	@Resource
+	@Autowired
 	private ComparisonMgtFeignClient comparisonMgtFeignClient;
 
 	@PostMapping("/v1/querytype1pagelist")
@@ -177,13 +179,12 @@ public class ComparisonMgtController {
 	@GetMapping("/v1/download")
 	@ApiOperation(value = "下载快递对账单模板", notes = "下载快递对账单模板")
 	public ResponseEntity<byte[]> download() throws Exception {
-		ClassPathResource resource = new ClassPathResource("excel/comparisonmgt/template.xlsx");
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		headers.setContentDisposition(ContentDisposition.builder("attachment")
 				.filename(URLEncoder.encode("快递对账单导入模板.xlsx", StandardCharsets.UTF_8.name())).build());
 		return ResponseEntity.status(HttpStatus.CREATED).headers(headers)
-				.body(FileCopyUtils.copyToByteArray(resource.getInputStream()));
+				.body(StreamUtils.copyToByteArray(this.templateResource.getInputStream()));
 	}
 
 	@PostMapping("/v1/import")
