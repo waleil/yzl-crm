@@ -1,6 +1,5 @@
 package cn.net.yzl.crm.controller.order;
 
-import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -178,12 +177,13 @@ public class ComparisonMgtController {
 	@GetMapping("/v1/download")
 	@ApiOperation(value = "下载快递对账单模板", notes = "下载快递对账单模板")
 	public ResponseEntity<byte[]> download() throws Exception {
-		File file = new ClassPathResource("excel/comparisonmgt/template.xlsx").getFile();
+		ClassPathResource resource = new ClassPathResource("excel/comparisonmgt/template.xlsx");
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		headers.setContentDisposition(ContentDisposition.builder("attachment")
 				.filename(URLEncoder.encode("快递对账单导入模板.xlsx", StandardCharsets.UTF_8.name())).build());
-		return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(FileCopyUtils.copyToByteArray(file));
+		return ResponseEntity.status(HttpStatus.CREATED).headers(headers)
+				.body(FileCopyUtils.copyToByteArray(resource.getInputStream()));
 	}
 
 	@PostMapping("/v1/import")
