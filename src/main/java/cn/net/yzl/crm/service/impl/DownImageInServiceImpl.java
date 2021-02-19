@@ -60,7 +60,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" + new String("库存信息".getBytes(),"iso-8859-1")+sysDate +".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +"productStock"+sysDate +".xlsx");
 
 
 
