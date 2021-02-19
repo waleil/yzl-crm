@@ -347,15 +347,15 @@ public class OrderRestControllerTests {
 			a1.setActivityBusNo(1L);
 			a1.setActivityProductBusNo(2L);
 			a1.setCouponDiscountId(3);
-//			a1.setDiscountChannel(2);
+			a1.setActivityTypeEnum(2);
 			a1.setDiscountId(5);
-//			a1.setDiscountType(2);
+			a1.setDiscountType(2);
 			a1.setLimitDownPrice(200L);
 			a1.setMemberCouponId(7);
 			a1.setProductCode("10000156");
 			a1.setProductCount(2);
 			a1.setSalePrice(300L);// 单位分
-//			a1.setUseDiscountType(3);
+			a1.setUseDiscountType(3);
 			request.setCalculateProductDto(Arrays.asList(a1));
 			System.err.println(this.activityClient.checkOrderAmount(request));
 		} catch (Exception e) {
