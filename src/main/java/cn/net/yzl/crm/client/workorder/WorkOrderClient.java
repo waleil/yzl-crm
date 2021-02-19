@@ -25,8 +25,8 @@ public interface WorkOrderClient {
      * @param isListPageDTO
      * @return
      */
-    @PostMapping(value = "v1/isListPage")
-    ComResponse<Page<WorkOrderBean>> isListPage(IsListPageDTO isListPageDTO);
+    @PostMapping(value = "v1/isVisitListPage")
+    ComResponse<Page<WorkOrderBean>> isVisitListPage(IsListPageDTO isListPageDTO);
 
     /**
      * 智能工单: 热线工单管理-列表
@@ -52,8 +52,8 @@ public interface WorkOrderClient {
      * @param workOrderVisitVO
      * @return
      */
-    @PostMapping(value = "v1/listPage")
-    ComResponse<Page<WorkOrderBean>> listPage(WorkOrderVisitVO workOrderVisitVO);
+    @PostMapping(value = "v1/visitAdministrationListPage")
+    ComResponse<Page<WorkOrderBean>> visitAdministrationListPage(WorkOrderVisitVO workOrderVisitVO);
 
     /**
      * 智能工单：热线工单管理-单数据调整

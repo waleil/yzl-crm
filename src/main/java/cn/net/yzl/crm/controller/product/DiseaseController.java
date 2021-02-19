@@ -137,4 +137,17 @@ public class DiseaseController {
         return diseaseService.queryProductByDiseaseId(name);
     }
 
+    @ApiOperation("查询树形结构，不包含商品信息,但可以根据顾客id和操作员id查询临时表")
+    @GetMapping("queryTreeNodeWithTemp")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberCard",value = "顾客id",paramType = "query",required = true)
+    })
+    public ComResponse<List<DiseaseTreeNode>> queryTreeNode(@RequestParam("memberCard")String memberCard,HttpServletRequest request){
+        String userId = request.getHeader("userId");
+        if (StringUtils.isBlank(userId)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取当前用户登录信息，请尝试重新登陆！");
+        }
+        return diseaseService.queryTreeNodeWithTemp(memberCard,userId);
+    }
+
 }

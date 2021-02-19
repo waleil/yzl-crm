@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "diseaseClient",url = "${api.gateway.url}/productServer/disease/v1")
+@FeignClient(name = "diseaseClient",url = "localhost:2077/disease/v1")
 public interface DiseaseClient {
 
     @GetMapping("queryTreeNode")
@@ -52,4 +52,6 @@ public interface DiseaseClient {
     @GetMapping(value = "queryProductByDiseaseId")
     ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(@RequestParam("name") String name);
 
+    @GetMapping("queryTreeNodeWithTemp")
+    ComResponse queryTreeNodeWithTemp(@RequestParam("memberCard") String memberCard,@RequestParam("userId") String userId);
 }

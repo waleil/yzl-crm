@@ -100,7 +100,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         //响应内容格式
 
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +new String("商品采购预警信息".getBytes(),"iso-8859-1")+sysDate +".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +"spcgyj"+sysDate +".xlsx");
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), ProductPurchaseWarnExcelDTO.class)
