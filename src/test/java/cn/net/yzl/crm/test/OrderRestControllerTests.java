@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.net.yzl.crm.service.order.OutStoreWarningService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,9 +62,16 @@ public class OrderRestControllerTests {
 	private String apiGateWayUrl;
 	@Autowired
 	private SettlementFein settlementFein;
+	@Autowired
+	private OutStoreWarningService outStoreWarningService;
 	@Resource
 	private ActivityClient activityClient;
+	@Test
+	public void sendOutStoreWarningMsg() {
+		ComResponse<Boolean> response = outStoreWarningService.sendOutStoreWarningMsg();
+		System.out.println("response = " + response);
 
+	}
 	@Test
 	public void testSettlementFein() {
 		ComResponse<List<SettlementDetailDistinctListDTO>> list = settlementFein
@@ -347,7 +355,7 @@ public class OrderRestControllerTests {
 			a1.setActivityBusNo(1L);
 			a1.setActivityProductBusNo(2L);
 			a1.setCouponDiscountId(3);
-			a1.setDiscountChannel(2);
+			a1.setActivityTypeEnum(2);
 			a1.setDiscountId(5);
 			a1.setDiscountType(2);
 			a1.setLimitDownPrice(200L);

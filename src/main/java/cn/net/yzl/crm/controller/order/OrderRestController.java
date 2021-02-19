@@ -41,6 +41,7 @@ import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
 import cn.net.yzl.crm.model.order.OrderOut;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.IOrderCommonService;
@@ -370,6 +371,7 @@ public class OrderRestController {
 					log.error("热线工单-购物车-提交订单>>该商品[{}]已下架>>{}", p);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
 				}
+//				in.setLimitDownPrice(Long.parseLong(p.getLimitDownPrice()));
 				OrderDetail od = new OrderDetail();
 				// 按主订单号生成订单明细编号
 				od.setOrderDetailCode(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
@@ -1375,4 +1377,6 @@ public class OrderRestController {
 	private RedisUtil redisUtil;
 	@Resource
 	private IOrderCommonService orderCommonService;
+	@Resource
+	private ActivityClient activityClient;
 }

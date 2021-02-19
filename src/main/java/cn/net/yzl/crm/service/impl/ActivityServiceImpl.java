@@ -59,7 +59,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public ComResponse<BigDecimal> calculate(CalculateRequest request) {
+    public ComResponse<ProductPriceResponse> calculate(CalculateRequest request) {
         Long groupId = this.getGroupIdByUserNo();
         if (null != groupId) {
             request.setGroupId(groupId);
@@ -71,18 +71,6 @@ public class ActivityServiceImpl implements ActivityService {
         return activityClient.calculate(request);
     }
 
-    @Override
-    public ComResponse<Boolean> checkOrderAmount(CheckOrderAmountRequest request) {
-        Long groupId = this.getGroupIdByUserNo();
-        if (null != groupId) {
-            request.setGroupId(groupId);
-        }
-        Member member = memberFien.getMemberDefault(request.getMemberCard());
-        if (null != member) {
-            request.setMemberLevelGrade(member.getMGradeId());
-        }
-        return activityClient.checkOrderAmount(request);
-    }
 
     @Override
     public ComResponse<MemberAccountResponse> getAccountByMemberCard(String memberCard) {
