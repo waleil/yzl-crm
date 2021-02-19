@@ -26,6 +26,10 @@ public interface ActivityClient {
 
     Logger logger = LoggerFactory.getLogger(ActivityClient.class);
 
+    @ApiOperation(value = "顾客拒收订单，将发放的、未使用的优惠券、积分扣除")
+    @PostMapping("db/v1/rejectionOrder")
+    ComResponse<Boolean> rejectionOrder(@RequestBody RejectionOrderRequest request);
+
     @ApiOperation(value = "顾客积分明细表")
     @PostMapping("db/v1/getMemberIntegralRecords")
     ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(@RequestBody AccountRequest request);
