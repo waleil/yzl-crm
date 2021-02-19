@@ -28,5 +28,5 @@ public class CalcOrderIn {
 	@ApiModelProperty(value = "使用优惠券 单位元", required = false)
 	private Double amountCoupon = 0d;
 	@ApiModelProperty(value = "订单明细", required = true)
-	private List<OrderDetailIn> orderDetailIns = new ArrayList<OrderDetailIn>(0);
+	private List<OrderDetailIn> orderDetailIns = new ArrayList<>(0);
 }
