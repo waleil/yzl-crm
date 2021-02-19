@@ -9,6 +9,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.common.util.JsonUtil;
+import cn.net.yzl.common.util.YLoggerUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.product.DiseaseClient;
 import cn.net.yzl.crm.client.product.ProductClient;
@@ -24,13 +25,16 @@ import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
+import cn.net.yzl.crm.customer.vo.work.WorkOrderBeanVO;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.member.customerJourney.MemberCustomerJourneyDto;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.dto.workorder.MemberFirstCallDetailsDTO;
+import cn.net.yzl.crm.model.customer.MemberReferral;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
@@ -72,6 +76,9 @@ public class MemberController {
 
     @Autowired
     MemberTypeFien memberTypeFien;
+    @Autowired
+    private cn.net.yzl.crm.service.micservice.EhrStaffClient ehrStaffClient;
+
 
 
     @ApiOperation(value = "顾客列表-分页查询顾客列表")
@@ -90,9 +97,78 @@ public class MemberController {
 
     @ApiOperation(value = "保存转介绍用户")
     @PostMapping("v1/saveMemberReferral")
-    public GeneralResult<Boolean> saveMemberReferral(@RequestBody MemberAndAddWorkOrderVO memberReferralVO) {
-        memberFien.saveMemberReferral(memberReferralVO);
-        return GeneralResult.success();
+    public ComResponse<Boolean> saveMemberReferral(@Validated @RequestBody MemberReferral memberReferralVO) throws IllegalAccessException {
+        String staffNo= QueryIds.userNo.get();
+        //根据员工编码获取部门
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(staffNo);
+        YLoggerUtil.infoLog("根据员工编码获取部门 Response", JsonUtil.toJsonStr(detailsByNo));
+        StaffImageBaseInfoDto data = detailsByNo.getData();
+        if(null == data){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"获取当前用户信息:"+detailsByNo.getMessage());
+        }
+        Integer departId = data.getDepartId();//部门id
+        if(null == departId){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"暂无部门数据");
+        }
+
+        MemberAndAddWorkOrderVO vo = new MemberAndAddWorkOrderVO();
+        Member member = new Member();
+        member.setMember_name(memberReferralVO.getMemberName());
+        member.setSex(memberReferralVO.getSex());
+        member.setAge(memberReferralVO.getAge());
+
+        List<MemberPhone> memberPhoneList = new ArrayList<>();
+        MemberPhone memberPhone = new MemberPhone();
+        memberPhone.setPhone_number(memberReferralVO.getMemberPhone());
+        memberPhone.setCreator_no(staffNo);
+        memberPhone.setUpdator_no(staffNo);
+        memberPhoneList.add(memberPhone);
+        member.setMemberPhoneList(memberPhoneList);
+
+        member.setEmail(memberReferralVO.getEmail());
+        member.setQq(memberReferralVO.getQq());
+        member.setWechat(memberReferralVO.getWechat());
+        member.setProvince_code(memberReferralVO.getProvinceCode());
+        member.setProvince_name(memberReferralVO.getProvinceName());
+
+        member.setCity_code(memberReferralVO.getCityCode());
+        member.setCity_name(memberReferralVO.getCityName());
+        member.setArea_code(memberReferralVO.getAreaCode());
+        member.setArea_name(memberReferralVO.getAreaName());
+
+        member.setAddress(memberReferralVO.getAddress());
+
+        member.setCreator_no(staffNo);
+        member.setUpdator_no(staffNo);
+        if (data != null) {
+            member.setCreator_name(data.getName());
+            member.setUpdator_name(data.getName());
+        }
+        //设置会员信息
+        vo.setMemberVO(member);
+
+        WorkOrderBeanVO workOrderBeanVO = new WorkOrderBeanVO();
+        workOrderBeanVO.setMemberName(memberReferralVO.getMemberName());
+        workOrderBeanVO.setCalledPhone(memberReferralVO.getMemberPhone());
+        workOrderBeanVO.setActivity(memberReferralVO.getActivity());
+        workOrderBeanVO.setAdvId(memberReferralVO.getAdvId());
+        workOrderBeanVO.setAdvName(memberReferralVO.getAdvName());
+        workOrderBeanVO.setAllocateStatus(memberReferralVO.getAllocateStatus());
+        workOrderBeanVO.setMediaId(memberReferralVO.getMediaId());
+        workOrderBeanVO.setMediaName(memberReferralVO.getMediaName());
+
+        if (data != null) {
+            workOrderBeanVO.setDeptId(data.getDepartId());
+            workOrderBeanVO.setDeptName(data.getDepartName());
+            workOrderBeanVO.setCreateName(data.getName());
+            workOrderBeanVO.setUpdateName(data.getName());
+        }
+        workOrderBeanVO.setCreateId(staffNo);
+        workOrderBeanVO.setUpdateId(staffNo);
+        //设置工单信息
+        vo.setWorkOrderBeanVO(workOrderBeanVO);
+        memberFien.saveMemberReferral(vo);
+        return ComResponse.success(true);
     }
 
     @ApiOperation(value = "修改顾客信息")
