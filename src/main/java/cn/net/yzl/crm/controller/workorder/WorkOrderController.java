@@ -422,7 +422,7 @@ public class WorkOrderController {
         return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO).setMessage("成功");
     }
 
-    @ApiOperation(value = "我的回访工单-单条分配", notes = "我的回访工单-单条分配")
+    @ApiOperation(value = "回访工单管理-单条分配", notes = "我的回访工单-单条分配")
     @PostMapping(value = "v1/adjustment")
     public ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO) {
         updateWorkOrderVisitDTO.setCreateId(QueryIds.userNo.get());
@@ -434,7 +434,7 @@ public class WorkOrderController {
         return workOrderClient.adjustment(updateWorkOrderVisitDTO);
     }
 
-    @ApiOperation(value = "我的回访工单-多条分配", notes = "我的回访工单-多条分配")
+    @ApiOperation(value = "回访工单管理-多条分配", notes = "我的回访工单-多条分配")
     @PostMapping(value = "v1/batchAdjustment")
     public ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO) {
         updateBatchDTO.setCreateId(QueryIds.userNo.get());
