@@ -59,7 +59,7 @@ public class DownImageInController {
             String[] split = imageUrl.split("[.]");
             String[] splitPath = split[0].split("/");
             httpServletResponse.setContentType("image/" + split[split.length - 1]);
-            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+splitPath[splitPath.length-1]+"."+split[splitPath.length-1]);
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+splitPath[splitPath.length-1]+"."+split[split.length-1]);
             outputStream = httpServletResponse.getOutputStream();
             //读取文件流
             int len = 0;
