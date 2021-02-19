@@ -354,7 +354,7 @@ public class OrderRestControllerTests {
 			a1.setMemberCouponId(7);
 			a1.setProductCode("10000156");
 			a1.setProductCount(2);
-			a1.setSalePrice(300L);
+			a1.setSalePrice(300L);// 单位分
 			a1.setUseDiscountType(3);
 			request.setCalculateProductDto(Arrays.asList(a1));
 			System.err.println(this.activityClient.checkOrderAmount(request));
