@@ -55,8 +55,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/comparisonmgt")
 @Slf4j
 public class ComparisonMgtController {
-	private static final String FILE_NAME = "快递对账单导入模板.xlsx";
-	private static final String FILE_PATH = String.format("%sexcel/%s", ResourceUtils.CLASSPATH_URL_PREFIX, FILE_NAME);
 	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 	@Resource
 	private ComparisonMgtFeignClient comparisonMgtFeignClient;
@@ -180,11 +178,12 @@ public class ComparisonMgtController {
 	@GetMapping("/v1/download")
 	@ApiOperation(value = "下载快递对账单模板", notes = "下载快递对账单模板")
 	public ResponseEntity<byte[]> download() throws Exception {
-		File file = ResourceUtils.getFile(FILE_PATH);
+		File file = ResourceUtils
+				.getFile(String.format("%sexcel/comparisonmgt/template.xlsx", ResourceUtils.CLASSPATH_URL_PREFIX));
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		headers.setContentDisposition(ContentDisposition.builder("attachment")
-				.filename(URLEncoder.encode(FILE_NAME, StandardCharsets.UTF_8.name())).build());
+				.filename(URLEncoder.encode("快递对账单导入模板.xlsx", StandardCharsets.UTF_8.name())).build());
 		return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(FileCopyUtils.copyToByteArray(file));
 	}
 
