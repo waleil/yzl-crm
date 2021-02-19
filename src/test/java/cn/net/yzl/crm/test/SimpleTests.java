@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import cn.hutool.core.lang.Tuple;
+import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.order.constant.CommonConstant;
@@ -279,4 +280,8 @@ public class SimpleTests {
 		System.err.println(map);
 	}
 
+	@Test
+	public void testPage() {
+		System.err.println(AssemblerResultUtil.resultAssembler(Arrays.asList(1, 2, 3)));
+	}
 }
