@@ -39,7 +39,7 @@ public class ActivityController {
 
     @ApiOperation(value = "计算金额")
     @PostMapping("v1/calculate")
-    public ComResponse<BigDecimal> calculate(@RequestBody CalculateRequest request) {
+    public ComResponse<ProductPriceResponse> calculate(@RequestBody CalculateRequest request) {
         return activityService.calculate(request);
     }
 

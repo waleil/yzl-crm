@@ -72,11 +72,8 @@ public interface ActivityClient {
 
     @ApiOperation(value = "计算金额")
     @PostMapping("db/v1/calculate")
-    ComResponse<BigDecimal> calculate(@RequestBody CalculateRequest request);
+    ComResponse<ProductPriceResponse> calculate(@RequestBody CalculateRequest request);
 
-    @ApiOperation(value = "校验订单金额")
-    @PostMapping("db/v1/checkOrderAmount")
-    ComResponse<Boolean> checkOrderAmount(@RequestBody CheckOrderAmountRequest request);
 
     @GetMapping("db/v1/launchManage/getAllLaunchManage")
     ComResponse<List<LaunchManageDto>> getAllLaunchManage();
