@@ -472,6 +472,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 		orderM.setCreateTime(new Date());
 		orderM.setUpdateTime(new Date());
+		orderM.setOrderChanal(CommonConstant.ORDER_CHANAL_2);
 
 		return orderM;
 	}
