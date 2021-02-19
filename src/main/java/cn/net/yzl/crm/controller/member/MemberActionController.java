@@ -28,7 +28,7 @@ import java.util.List;
  * @description 顾客综合行为接口
  * @date: 2021/1/22 3:07 下午
  */
-@Api(tags = "顾客圈选")
+@Api(tags = "顾客综合行为")
 @RestController(value = "memberAction")
 public class MemberActionController {
 

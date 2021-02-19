@@ -23,10 +23,6 @@ import lombok.ToString;
 public class CalcOrderIn {
 	@ApiModelProperty(hidden = true)
 	private Integer total = 0;
-	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
-	private Double amountStored = 0d;
-	@ApiModelProperty(value = "使用优惠券 单位元", required = false)
-	private Double amountCoupon = 0d;
 	@ApiModelProperty(value = "订单明细", required = true)
 	private List<OrderDetailIn> orderDetailIns = new ArrayList<>(0);
 }

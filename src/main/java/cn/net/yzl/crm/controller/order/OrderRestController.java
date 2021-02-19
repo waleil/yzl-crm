@@ -16,7 +16,6 @@ import javax.annotation.Resource;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +54,7 @@ import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
 import cn.net.yzl.order.model.vo.order.OrderRequest;
+import cn.net.yzl.order.model.vo.order.ReissueOrderIn;
 import cn.net.yzl.order.model.vo.order.UpdateOrderIn;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
@@ -1070,10 +1070,49 @@ public class OrderRestController {
 		return ComResponse.success(orderm.getOrderNo());
 	}
 
-	@GetMapping("/v1/queryordertotal")
-	@ApiOperation(value = "成交金额", notes = "成交金额")
-	public ComResponse<BigDecimal> queryOrderTotal() {
-		return this.orderFeignClient.queryOrderTotal();
+	@PostMapping("/v1/reissueorder")
+	@ApiOperation(value = "订单列表-异常处理-补发订单", notes = "订单列表-异常处理-补发订单")
+	public ComResponse<Object> reissueOrder(@RequestBody ReissueOrderIn orderin) {
+		// 判断是否传入订单号
+		if (!StringUtils.hasText(orderin.getOrderNo())) {
+			log.error("订单列表-异常处理-补发订单>>订单号不能为空>>{}", orderin);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单号不能为空。");
+		}
+		// 判断是否传入订单明细
+		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
+			log.error("订单列表-异常处理-补发订单>>订单明细集合里没有任何元素>>{}", orderin);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
+		}
+		// 按订单编号查询订单信息
+		ComResponse<OrderM> oresponse = this.orderFeignClient.queryOrder(orderin.getOrderNo());
+		// 如果调用异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(oresponse.getCode())) {
+			log.error("订单列表-异常处理-补发订单>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
+		}
+		OrderM orderm = oresponse.getData();
+		// 如果不存在
+		if (orderm == null) {
+			log.error("订单列表-异常处理-补发订单>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
+		}
+		orderm.setUpdateTime(new Date());// 修改时间
+		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
+		orderm.setCreateTime(orderm.getUpdateTime());
+		orderm.setStaffCode(orderm.getUpdateCode());
+		// 按员工号查询员工信息
+		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
+		// 如果服务调用异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
+			log.error("订单列表-异常处理-补发订单>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到该坐席信息[%s]", sresponse.getMessage()));
+		}
+		StaffImageBaseInfoDto staffInfo = sresponse.getData();
+		if (staffInfo == null) {
+			log.error("订单列表-异常处理-补发订单>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
+		}
+		return ComResponse.success();
 	}
 
 	@Resource
