@@ -371,7 +371,7 @@ public class OrderRestController {
 					log.error("热线工单-购物车-提交订单>>该商品[{}]已下架>>{}", p);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
 				}
-				in.setLimitDownPrice(Long.parseLong(p.getLimitDownPrice()));
+//				in.setLimitDownPrice(Long.parseLong(p.getLimitDownPrice()));
 				OrderDetail od = new OrderDetail();
 				// 按主订单号生成订单明细编号
 				od.setOrderDetailCode(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
