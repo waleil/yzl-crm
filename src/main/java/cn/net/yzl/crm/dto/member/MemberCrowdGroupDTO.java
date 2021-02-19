@@ -67,13 +67,13 @@ public class MemberCrowdGroupDTO {
     private List<crowd_activity_degree> active_degree;
 
     @ApiModelProperty("首次下单时间距离今天多少天")
-    private Integer first_order_to_days;
+    private DayParam first_order_to_days;
 
     @ApiModelProperty(value = "真正首单金额")
-    private Double first_order_am;
+    private AmountParam first_order_am;
 
     @ApiModelProperty("最后一次下单时间距离今天多少天")
-    private Integer last_order_to_days;
+    private DayParam last_order_to_days;
 
     @ApiModelProperty("生日月份,1 一月份，2二月份，3三月份")
     private List<crowd_base_value> member_month;
@@ -137,7 +137,7 @@ public class MemberCrowdGroupDTO {
     private List<crowd_base_value> pay_form;
 
     @ApiModelProperty("签收时间截止今日，-1表示不做条件统计")
-    private Integer sign_date_to_days;
+    private DayParam sign_date_to_days;
 
     @ApiModelProperty("订单状态：0.话务待审核 1.话务未通过 2. 物流部待审核 3.物流部审核未通过  4..物流已审核 5.已退 6.部分退 7.订单已取消 8.订单已完成 9.拒收")
     private List<crowd_base_value> order_state;
@@ -165,19 +165,19 @@ public class MemberCrowdGroupDTO {
     private List<crowd_base_value> logistics_company_id;
 
     @ApiModelProperty(value = "累计消费金额")
-    private Integer total_amount;
+    private AmountParam total_amount;
 
     @ApiModelProperty("订单总金额")
-    private Double order_total_amount;
+    private AmountParam order_total_amount;
 
     @ApiModelProperty("订单应收金额")
-    private Double order_rec_amount;
+    private AmountParam order_rec_amount;
 
     @ApiModelProperty("订单最高金额")
-    private Double order_high_am;
+    private AmountParam order_high_am;
 
     @ApiModelProperty("订单最低金额")
-    private Double order_low_am;
+    private AmountParam order_low_am;
 
     @ApiModelProperty("是否下单: 1是，0否，-1不做条件判断")
     private Integer have_order;
@@ -188,5 +188,5 @@ public class MemberCrowdGroupDTO {
     private List<crowd_product> advertProducts;
 
     @ApiModelProperty("最后一次进线截止天数")
-    private Integer lastCallDays;
+    private DayParam lastCallDays;
 }
