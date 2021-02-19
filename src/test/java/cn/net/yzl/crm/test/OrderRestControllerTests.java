@@ -342,7 +342,7 @@ public class OrderRestControllerTests {
 			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
 			request.setAdvertBusNo(1L);
 			request.setMemberCard("100000002");
-			request.setProductTotal(100L);
+			request.setProductTotal(100L);// 单位分
 			CalculateProductDto a1 = new CalculateProductDto();
 			a1.setActivityBusNo(1L);
 			a1.setActivityProductBusNo(2L);
