@@ -689,6 +689,7 @@ public class OrderRestController {
 		orderm.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);
 		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
 		orderm.setCreateTime(new Date());// 下单时间
+		orderm.setOrderChanal(CommonConstant.ORDER_CHANAL_1);// 购物车下单
 	}
 
 	/**
@@ -1355,6 +1356,8 @@ public class OrderRestController {
 		}
 		log.info("订单: {}", JSON.toJSONString(orderm, true));
 		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
+		// 调用补发订单服务接口
+//		ComResponse<Object> a = this.orderFeignClient.reissueOrder(new OrderRequest(orderm, orderdetailList, orderin.getOrderNo()));
 		return ComResponse.success();
 	}
 
