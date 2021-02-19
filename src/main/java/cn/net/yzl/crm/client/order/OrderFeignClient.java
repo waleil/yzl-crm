@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.client.order;
 
+import java.math.BigDecimal;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +43,17 @@ public interface OrderFeignClient {
 	ComResponse<Object> updateOrder(@RequestBody OrderRequest orderRequest);
 
 	/**
+	 * 订单列表-异常处理-补发订单
+	 * 
+	 * @param orderRequest 订单信息
+	 * @return 补发订单
+	 * @author zhangweiwei
+	 * @date 2021年2月19日,上午12:11:53
+	 */
+	@PostMapping("/order/v1/reissueorder")
+	ComResponse<Object> reissueOrder(@RequestBody OrderRequest orderRequest);
+
+	/**
 	 * 按订单编号查询订单信息
 	 * 
 	 * @param orderNo 订单编号
@@ -50,4 +63,12 @@ public interface OrderFeignClient {
 	 */
 	@GetMapping("/order/v1/get/{orderNo}")
 	ComResponse<OrderM> queryOrder(@PathVariable String orderNo);
+
+	/**
+	 * @return 成交金额
+	 * @author zhangweiwei
+	 * @date 2021年2月18日,下午11:16:40
+	 */
+	@GetMapping("/order/v1/queryordertotal")
+	ComResponse<BigDecimal> queryOrderTotal();
 }

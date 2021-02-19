@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.dto.member.customerJourney;
 
 import cn.net.yzl.crm.customer.dto.member.MemberGradeRecordDto;
+import cn.net.yzl.crm.dto.workorder.MemberFirstCallDetailsDTO;
 import cn.net.yzl.order.model.vo.order.PortraitOrderDetailDTO;
 import cn.net.yzl.workorder.model.db.CallInfoBean;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowSubBean;
@@ -51,6 +52,10 @@ public class MemberCustomerJourneyDto implements Serializable {
     private List<PortraitOrderDetailDTO> portraitOrderDetailList;
     @ApiModelProperty("顾客等级记录表")
     private MemberGradeRecordDto memberGradeRecordDto;
+
+    @ApiModelProperty("首次呼入明细")
+    private MemberFirstCallDetailsDTO memberFirstCallDetailsDTO;
+
 
 
 }

@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.order.SettlementFein;
+import cn.net.yzl.crm.service.order.ExportOrderService;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
 import cn.net.yzl.order.model.vo.order.SettlementDTO;
@@ -36,8 +37,8 @@ public class ExportOrderController {
     @Resource
     private SettlementFein settlementFein;
 
-//    @Resource
-//    private ExportOrderService service;
+    @Resource
+    private ExportOrderService service;
 
     @ApiOperation(value = "订单发票列表导出")
     @PostMapping("v1/exportInvoiceList")
@@ -48,9 +49,9 @@ public class ExportOrderController {
 
     @PostMapping("v1/exportSettlementList")
     @ApiOperation("导出结算列表")
-    public ComResponse<List<SettlementDTO>> exportSettlementList(@RequestBody SettlementListReqDTO dto){
-
-        return settlementFein.exportSettlementList(dto);
+    public ComResponse<Boolean> exportSettlementList(@RequestBody SettlementListReqDTO dto, HttpServletResponse response) {
+        service.exportSettlementList(dto,response);
+        return ComResponse.success(true);
 
     }
 
