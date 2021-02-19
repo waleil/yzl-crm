@@ -13,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.net.yzl.activity.model.dto.CalculateProductDto;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
@@ -23,6 +25,7 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.controller.order.OrderRestController;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.sys.BizException;
@@ -58,6 +61,8 @@ public class OrderRestControllerTests {
 	private String apiGateWayUrl;
 	@Autowired
 	private SettlementFein settlementFein;
+	@Resource
+	private ActivityClient activityClient;
 
 	@Test
 	public void testSettlementFein() {
@@ -90,7 +95,7 @@ public class OrderRestControllerTests {
 		try {
 			System.err.println(String.format("%s%s%s", this.apiGateWayUrl, ProductClient.SUFFIX_URL,
 					ProductClient.INCREASE_STOCK_URL));
-			String codes = "10000130,10000114,10000106";
+			String codes = "10000156,10000155,10000152";
 			this.productClient.queryByProductCodes(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -326,6 +331,33 @@ public class OrderRestControllerTests {
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
 			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCheckOrderAmount() {
+		try {
+			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
+			request.setAdvertBusNo(1L);
+			request.setMemberCard("100000002");
+			request.setProductTotal(100L);// 单位分
+			CalculateProductDto a1 = new CalculateProductDto();
+			a1.setActivityBusNo(1L);
+			a1.setActivityProductBusNo(2L);
+			a1.setCouponDiscountId(3);
+			a1.setDiscountChannel(2);
+			a1.setDiscountId(5);
+			a1.setDiscountType(2);
+			a1.setLimitDownPrice(200L);
+			a1.setMemberCouponId(7);
+			a1.setProductCode("10000156");
+			a1.setProductCount(2);
+			a1.setSalePrice(300L);// 单位分
+			a1.setUseDiscountType(3);
+			request.setCalculateProductDto(Arrays.asList(a1));
+			System.err.println(this.activityClient.checkOrderAmount(request));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
