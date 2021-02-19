@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -77,7 +76,7 @@ public class ComparisonMgtController {
 	public void exportType1List(@RequestBody CompareOrderIn orderin, HttpServletResponse response) throws Exception {
 		orderin.setPageNo(1);// 默认第1页
 		orderin.setPageSize(1000);// 默认每页1000条数据
-		ComResponse<Page<CompareOrderType1Out>> data = this.comparisonMgtFeignClient.queryType1PageList(orderin);
+		ComResponse<Page<CompareOrderType1Out>> data = this.queryType1PageList(orderin);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
 			log.error("导出待对账订单列表异常>>>{}", data);
 			return;
@@ -107,7 +106,7 @@ public class ComparisonMgtController {
 				// 直接从第二页开始获取
 				for (int i = 2; i <= param.getPageTotal(); i++) {
 					orderin.setPageNo(i);
-					data = this.comparisonMgtFeignClient.queryType1PageList(orderin);
+					data = this.queryType1PageList(orderin);
 					if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
 						log.error("导出待对账订单列表异常>>>{}", data);
 						return;
@@ -129,7 +128,7 @@ public class ComparisonMgtController {
 	public void exportType2List(@RequestBody CompareOrderIn orderin, HttpServletResponse response) throws Exception {
 		orderin.setPageNo(1);// 默认第1页
 		orderin.setPageSize(1000);// 默认每页1000条数据
-		ComResponse<Page<CompareOrderType2Out>> data = this.comparisonMgtFeignClient.queryType2PageList(orderin);
+		ComResponse<Page<CompareOrderType2Out>> data = this.queryType2PageList(orderin);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
 			log.error("导出已对账订单列表异常>>>{}", data);
 			return;
@@ -159,7 +158,7 @@ public class ComparisonMgtController {
 				// 直接从第二页开始获取
 				for (int i = 2; i <= param.getPageTotal(); i++) {
 					orderin.setPageNo(i);
-					data = this.comparisonMgtFeignClient.queryType2PageList(orderin);
+					data = this.queryType2PageList(orderin);
 					if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
 						log.error("导出已对账订单列表异常>>>{}", data);
 						return;
@@ -181,8 +180,8 @@ public class ComparisonMgtController {
 	public ResponseEntity<byte[]> download() throws Exception {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-		headers.setContentDisposition(ContentDisposition.builder("attachment")
-				.filename(URLEncoder.encode("快递对账单导入模板.xlsx", StandardCharsets.UTF_8.name())).build());
+		headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s.xlsx",
+				URLEncoder.encode("快递对账单导入模板", StandardCharsets.UTF_8.name())));
 		return ResponseEntity.status(HttpStatus.CREATED).headers(headers)
 				.body(StreamUtils.copyToByteArray(this.templateResource.getInputStream()));
 	}
