@@ -23,8 +23,8 @@ import java.util.List;
 /**
  * 顾客综合行为服务
  */
-//@FeignClient(name = "memberActionFeign", url = "${api.gateway.url}/crmCustomer/member/memberAction")
-@FeignClient(name = "memberActionFeign", url = "localhost:2070/member/memberAction")
+@FeignClient(name = "memberActionFeign", url = "${api.gateway.url}/crmCustomer/member/memberAction")
+//@FeignClient(name = "memberActionFeign", url = "localhost:2070/member/memberAction")
 public interface MemberActionFeign {
 
     @GetMapping("v1/getActionDictList")
