@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -178,8 +178,7 @@ public class ComparisonMgtController {
 	@GetMapping("/v1/download")
 	@ApiOperation(value = "下载快递对账单模板", notes = "下载快递对账单模板")
 	public ResponseEntity<byte[]> download() throws Exception {
-		File file = ResourceUtils
-				.getFile(String.format("%sexcel/comparisonmgt/template.xlsx", ResourceUtils.CLASSPATH_URL_PREFIX));
+		File file = new ClassPathResource("excel/comparisonmgt/template.xlsx").getFile();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		headers.setContentDisposition(ContentDisposition.builder("attachment")
