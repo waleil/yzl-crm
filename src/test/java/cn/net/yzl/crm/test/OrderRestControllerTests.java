@@ -355,7 +355,7 @@ public class OrderRestControllerTests {
 			a1.setActivityBusNo(1L);
 			a1.setActivityProductBusNo(2L);
 			a1.setCouponDiscountId(3);
-			a1.setActivityTypeEnum(2);
+			a1.setActivityType(2);
 			a1.setDiscountId(5);
 			a1.setDiscountType(2);
 			a1.setLimitDownPrice(200L);
