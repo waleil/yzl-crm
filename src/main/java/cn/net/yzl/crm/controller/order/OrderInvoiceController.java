@@ -39,9 +39,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -161,6 +159,7 @@ public class OrderInvoiceController {
     @ApiOperation(value = "顾客积分明细表——导出")
     @PostMapping("v1/exportMemberIntegralRecords")
     public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+        formatParams(request);
         ComResponse<List<MemberIntegralRecordsResponse>> records = activityClient.getMemberIntegralRecordsWithOutPage(request);
         if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
@@ -235,6 +234,7 @@ public class OrderInvoiceController {
     @ApiOperation(value = "顾客红包明细表——导出")
     @PostMapping("v1/exportMemberRedBagRecords")
     public void exportMemberRedBagRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+        formatParams(request);
         ComResponse<List<MemberRedBagRecordsResponse>> records = activityClient.getMemberRedBagRecordsWithOutPage(request);
         if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
@@ -312,6 +312,7 @@ public class OrderInvoiceController {
     @ApiOperation(value = "顾客优惠券明细表——导出")
     @PostMapping("v1/exportMemberCoupon")
     public void exportMemberCoupon(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+        formatParams(request);
         ComResponse<List<MemberCouponResponse>> records = activityClient.getMemberCouponWithOutPage(request);
         if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
@@ -347,6 +348,19 @@ public class OrderInvoiceController {
         }
         String title = "顾客红包明细表";
         this.export(list, MemberCouponExportDTO.class, title, response);
+    }
+
+    private void formatParams(AccountWithOutPageRequest request) {
+        //若不传起止时间，则默认一年的时间范围
+        if (null == request.getBeginTime() && null == request.getEndTime()){
+            Calendar c = Calendar.getInstance();
+            Date thisDate = new Date();
+            c.setTime(thisDate);
+            c.add(Calendar.YEAR, -1);
+            Date y = c.getTime();
+            request.setBeginTime(y);
+            request.setEndTime(thisDate);
+        }
     }
 
     /**
