@@ -1,14 +1,8 @@
 package cn.net.yzl.crm.service.micservice;
 
 
-import cn.net.yzl.activity.model.requestModel.*;
-import cn.net.yzl.activity.model.responseModel.*;
-import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.crm.dto.dmc.*;
-import cn.net.yzl.crm.dto.dmc.ActivityDetailResponse;
-import cn.net.yzl.crm.dto.dmc.PageModel;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,8 +11,30 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.math.BigDecimal;
-import java.util.List;
+import cn.net.yzl.activity.model.requestModel.AccountHistoryRequest;
+import cn.net.yzl.activity.model.requestModel.AccountRequest;
+import cn.net.yzl.activity.model.requestModel.AccountWithOutPageRequest;
+import cn.net.yzl.activity.model.requestModel.CalculateRequest;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
+import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
+import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
+import cn.net.yzl.activity.model.requestModel.RejectionOrderRequest;
+import cn.net.yzl.activity.model.responseModel.MemberAccountHistoryResponse;
+import cn.net.yzl.activity.model.responseModel.MemberAccountResponse;
+import cn.net.yzl.activity.model.responseModel.MemberCouponResponse;
+import cn.net.yzl.activity.model.responseModel.MemberIntegralRecordsResponse;
+import cn.net.yzl.activity.model.responseModel.MemberRedBagRecordsResponse;
+import cn.net.yzl.activity.model.responseModel.ProductDiscountResponse;
+import cn.net.yzl.activity.model.responseModel.ProductListDiscountResponse;
+import cn.net.yzl.activity.model.responseModel.ProductPriceResponse;
+import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.dto.dmc.ActivityDetailResponse;
+import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
+import cn.net.yzl.crm.dto.dmc.MemberLevelResponse;
+import cn.net.yzl.crm.dto.dmc.PageModel;
+import cn.net.yzl.crm.dto.dmc.TaskDto;
+import io.swagger.annotations.ApiOperation;
 
 
 @FeignClient(name = "activityDB", url = "${api.gateway.url}/activityDB")
@@ -76,7 +92,7 @@ public interface ActivityClient {
 
     @ApiOperation(value = "校验订单金额")
     @PostMapping("db/v1/checkOrderAmount")
-    ComResponse<Boolean> checkOrderAmount(@RequestBody CheckOrderAmountRequest request);
+    ComResponse<List<ProductPriceResponse>> checkOrderAmount(@RequestBody CheckOrderAmountRequest request);
 
     @GetMapping("db/v1/launchManage/getAllLaunchManage")
     ComResponse<List<LaunchManageDto>> getAllLaunchManage();
