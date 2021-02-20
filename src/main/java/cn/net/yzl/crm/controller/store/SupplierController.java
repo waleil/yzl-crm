@@ -4,6 +4,8 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.SupplierFeginService;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.model.pojo.SupplierPo;
 import io.swagger.annotations.Api;
@@ -16,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
@@ -35,18 +38,29 @@ public class SupplierController {
     @Autowired
     private FastdfsUtils fastdfsUtils;
 
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
+
     @Value("${fast-dfs.url}")
     private String fastUrlBase;
 
     @ApiOperation(value = "新增供应商管理列表", notes = "新增供应商管理列表", consumes = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/v1/insertsupplier", method = RequestMethod.POST)
-    public ComResponse<Integer> insertSupplier(@RequestBody SupplierPo supplierPo) {
+    public ComResponse<Integer> insertSupplier(@RequestBody SupplierPo supplierPo, HttpServletRequest request) {
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> ehrStaffClientDetailsByNo = ehrStaffClient.getDetailsByNo(userNo);
+        supplierPo.setCreator(userNo);
+        supplierPo.setCreatorName(ehrStaffClientDetailsByNo.getData().getName());
         return supplierFeginService.insertSupplier(supplierPo);
     }
 
     @ApiOperation(value = "编辑供应商管理列表", notes = "编辑供应商管理列表", consumes = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/v1/updatesupplier", method = RequestMethod.POST)
-    public ComResponse<Integer> updateSupplier(@RequestBody SupplierPo supplierPo) {
+    public ComResponse<Integer> updateSupplier(@RequestBody SupplierPo supplierPo, HttpServletRequest request) {
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> ehrStaffClientDetailsByNo = ehrStaffClient.getDetailsByNo(userNo);
+        supplierPo.setUpdator(userNo);
+        supplierPo.setUpdatorName(ehrStaffClientDetailsByNo.getData().getName());
         return supplierFeginService.updateSupplier(supplierPo);
     }
 
