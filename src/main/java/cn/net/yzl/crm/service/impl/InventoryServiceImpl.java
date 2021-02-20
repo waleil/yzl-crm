@@ -14,10 +14,12 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wangxiao
@@ -48,6 +50,11 @@ public class InventoryServiceImpl implements InventoryService {
             //读取excel
             excelReader = EasyExcel.read(file.getInputStream(), InventoryProductVo.class, inventoryExcelListener).build();
             excelReader.readAll();
+            //获取错误信息
+            Map<String, String> errorMessageMap = inventoryExcelListener.getErrorMessageMap();
+            if (!CollectionUtils.isEmpty(errorMessageMap)){
+                return ComResponse.fail(ResponseCodeEnums.EXCEL_HEAD_ERROR.getCode(),errorMessageMap.get("msg"));
+            }
             //获取数据
             List<InventoryProductVo> inventoryProductExcelVoList = inventoryExcelListener.getInventoryProductExcelVoList();
             if (inventoryProductExcelVoList == null || inventoryProductExcelVoList.size()==0)
