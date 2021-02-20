@@ -10,6 +10,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.client.order.SettlementFein;
+import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.DmcActivityStatus;
 import cn.net.yzl.crm.dto.order.*;
@@ -32,6 +33,9 @@ import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import jdk.net.SocketFlow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +52,7 @@ import java.util.stream.Collectors;
 @RequestMapping("orderInvoice")
 @Api(tags = "结算中心")
 public class OrderInvoiceController {
+    Logger logger = LoggerFactory.getLogger(OrderInvoiceController.class);
 
     private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 
@@ -123,7 +128,7 @@ public class OrderInvoiceController {
     @PostMapping("v1/getMemberIntegralRecords")
     public ComResponse<Page<MemberIntegralRecordsDTO>> getMemberIntegralRecords(@RequestBody AccountRequest request) {
         ComResponse<Page<MemberIntegralRecordsResponse>> response = activityService.getMemberIntegralRecords(request);
-        if (!response.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+        if (!response.getStatus().equals(1)) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
         }
         Page<MemberIntegralRecordsResponse> responseData = response.getData();
@@ -161,7 +166,7 @@ public class OrderInvoiceController {
     public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
         formatParams(request);
         ComResponse<List<MemberIntegralRecordsResponse>> records = activityClient.getMemberIntegralRecordsWithOutPage(request);
-        if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+        if (!records.getStatus().equals(1)) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
         }
         List<MemberIntegralRecordsResponse> responseData = records.getData();
@@ -198,7 +203,7 @@ public class OrderInvoiceController {
     @PostMapping("v1/getMemberRedBagRecords")
     public ComResponse<Page<MemberRedBagRecordsDTO>> getMemberRedBagRecords(@RequestBody AccountRequest request) {
         ComResponse<Page<MemberRedBagRecordsResponse>> response = activityService.getMemberRedBagRecords(request);
-        if (!response.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+        if (!response.getStatus().equals(1)) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
         }
         Page<MemberRedBagRecordsResponse> responseData = response.getData();
@@ -236,7 +241,7 @@ public class OrderInvoiceController {
     public void exportMemberRedBagRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
         formatParams(request);
         ComResponse<List<MemberRedBagRecordsResponse>> records = activityClient.getMemberRedBagRecordsWithOutPage(request);
-        if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+        if (!records.getStatus().equals(1)) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
         }
         List<MemberRedBagRecordsResponse> responseData = records.getData();
@@ -272,7 +277,7 @@ public class OrderInvoiceController {
     @PostMapping("v1/getMemberCoupon")
     public ComResponse<Page<MemberCouponDTO>> getMemberCoupon(@RequestBody AccountRequest request) {
         ComResponse<Page<MemberCouponResponse>> response = activityService.getMemberCoupon(request);
-        if (!response.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+        if (!response.getStatus().equals(1)) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
         }
         Page<MemberCouponResponse> responseData = response.getData();
@@ -314,7 +319,7 @@ public class OrderInvoiceController {
     public void exportMemberCoupon(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
         formatParams(request);
         ComResponse<List<MemberCouponResponse>> records = activityClient.getMemberCouponWithOutPage(request);
-        if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
+        if (!records.getStatus().equals(1)) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
         }
         List<MemberCouponResponse> responseData = records.getData();

@@ -5,8 +5,12 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import cn.net.yzl.crm.controller.store.listen.InventoryExcelListener;
+import cn.net.yzl.model.vo.InventoryProductVo;
+import com.alibaba.excel.ExcelReader;
 import org.junit.jupiter.api.Test;
 
 import com.alibaba.excel.EasyExcel;
@@ -62,4 +66,20 @@ public class EasyExcelTests {
 			}
 		}
 	}
+
+
+	@Test
+	public void testReadStore(){
+
+		//创建监听器
+		InventoryExcelListener inventoryExcelListener = new InventoryExcelListener();
+		ExcelReader build = EasyExcel.read(Paths.get("D:\\PD2021-02-20 00_00_00 (3).xlsx").toFile(), InventoryProductVo.class, inventoryExcelListener).build();
+		build.readAll();
+
+		Map<String, String> errorMessageMap = inventoryExcelListener.getErrorMessageMap();
+		System.out.println(errorMessageMap);
+
+
+	}
+
 }
