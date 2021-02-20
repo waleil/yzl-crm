@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import cn.net.yzl.crm.service.order.OutStoreWarningService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.net.yzl.activity.model.dto.CalculateProductDto;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
@@ -29,6 +29,7 @@ import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.service.order.OutStoreWarningService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
@@ -66,12 +67,16 @@ public class OrderRestControllerTests {
 	private OutStoreWarningService outStoreWarningService;
 	@Resource
 	private ActivityClient activityClient;
+	@Resource
+	private ObjectMapper objectMapper;
+
 	@Test
 	public void sendOutStoreWarningMsg() {
 		ComResponse<Boolean> response = outStoreWarningService.sendOutStoreWarningMsg();
 		System.out.println("response = " + response);
 
 	}
+
 	@Test
 	public void testSettlementFein() {
 		ComResponse<List<SettlementDetailDistinctListDTO>> list = settlementFein
@@ -348,23 +353,23 @@ public class OrderRestControllerTests {
 	public void testCheckOrderAmount() {
 		try {
 			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
-			request.setAdvertBusNo(1L);
-			request.setMemberCard("100000002");
-			request.setProductTotal(100L);// 单位分
+			request.setMemberCard("100000002");// 会员卡号
+			request.setProductTotal(40000L);// 商品总额 单位分
 			CalculateProductDto a1 = new CalculateProductDto();
-			a1.setActivityBusNo(1L);
-			a1.setActivityProductBusNo(2L);
-			a1.setCouponDiscountId(3);
-			a1.setActivityType(2);
-			a1.setDiscountId(5);
-			a1.setDiscountType(2);
-			a1.setLimitDownPrice(200L);
-			a1.setMemberCouponId(7);
-			a1.setProductCode("10000156");
-			a1.setProductCount(2);
-			a1.setSalePrice(300L);// 单位分
-			a1.setUseDiscountType(3);
+			a1.setActivityBusNo(12L);// 活动业务/会员优惠业务主键
+			a1.setActivityProductBusNo(14L);// 活动商品业务主键
+			a1.setActivityType(1);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			a1.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			a1.setDiscountId(9);// 使用的优惠主键
+			a1.setCouponDiscountId(12);// 使用的优惠券折扣ID
+			a1.setMemberCouponId(1);// 使用的优惠券ID
+			a1.setProductCode("10000156");// 商品code
+			a1.setProductCount(2);// 商品数量
+			a1.setLimitDownPrice(20000L);// 商品最低折扣价 单位分
+			a1.setSalePrice(20000L);// 商品销售价 单位分
+			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_3);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			request.setCalculateProductDto(Arrays.asList(a1));
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
 			System.err.println(this.activityClient.checkOrderAmount(request));
 		} catch (Exception e) {
 			e.printStackTrace();
