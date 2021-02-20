@@ -473,6 +473,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setCreateTime(new Date());
 		orderM.setUpdateTime(new Date());
 		orderM.setOrderChanal(CommonConstant.ORDER_CHANAL_2);
+		orderM.setIsHistory(CommonConstant.IS_HISTORY_0);
 
 		return orderM;
 	}
@@ -531,6 +532,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			orderDetail.setProductNo(map.getProductNo());
 			orderDetail.setCreateTime(new Date());
 			orderDetail.setUpdateTime(new Date());
+			orderDetail.setIsHistory(String.valueOf(CommonConstant.IS_HISTORY_0));
 			result.add(orderDetail);
 
 		});

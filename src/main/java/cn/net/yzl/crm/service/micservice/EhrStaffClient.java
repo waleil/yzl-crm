@@ -220,7 +220,7 @@ public interface EhrStaffClient {
      * @return
      */
     @GetMapping(value = "/staffChange/getStaffLastChangeRecord")
-    ComResponse<StaffChangeRecordDto> getStaffLastChangeRecord(@RequestParam String staffNo);
+    ComResponse<StaffChangeRecordDto> getStaffLastChangeRecord(@RequestParam("staffNo") String staffNo);
 
     /**
      * 员工变动-根据变动编号查询员工变动状态
@@ -228,7 +228,7 @@ public interface EhrStaffClient {
      * @return
      */
     @GetMapping(value = "/staffChange/getStaffChangeRecordById")
-    ComResponse<StaffChangeRecordDto> getStaffChangeRecordById(@RequestParam Integer id);
+    ComResponse<StaffChangeRecordDto> getStaffChangeRecordById(@RequestParam("id") Integer id);
 
 
     default List<String> getStaffBaseInfoList(Base base) {
