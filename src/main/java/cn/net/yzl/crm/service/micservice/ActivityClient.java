@@ -125,4 +125,13 @@ public interface ActivityClient {
         return null;
     }
 
+    /**
+     * 投放管理- 根据业务主键查询广告
+     * @param busNo 业务主键
+     * @return 广告
+     * @author zhangweiwei
+     * @date 2021年2月20日,下午11:37:35
+     */
+    @GetMapping("/db/v1/launchManage/getLaunchManageByBusNo")
+    ComResponse<LaunchManageDto> getLaunchManageByBusNo(@RequestParam Integer busNo);
 }

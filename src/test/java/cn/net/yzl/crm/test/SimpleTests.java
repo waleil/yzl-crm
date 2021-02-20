@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import cn.hutool.core.lang.Tuple;
 import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.config.QueryIds;
@@ -22,6 +24,7 @@ import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
+import cn.net.yzl.order.model.vo.order.OrderIn;
 
 /**
  * 单元测试类
@@ -230,34 +233,39 @@ public class SimpleTests {
 		System.err.println("计算规则三：");
 		OrderDetail taocan = new OrderDetail();
 		taocan.setMealPrice(150000);// 套餐价
+		taocan.setMealCount(2);// 套餐数量
 		taocan.setMealNo("T0000155");
 		taocan.setMealName("维维的套餐不要动");
 
 		OrderDetail d1 = new OrderDetail();
 		d1.setProductUnitPrice(24000);// 商品单价
-		d1.setProductCount(3);// 商品数量
+		d1.setProductCount(3 * taocan.getMealCount());// 商品数量
 		d1.setTotal(d1.getProductUnitPrice() * d1.getProductCount());// 商品总价=商品单价*商品数量
 		d1.setProductCode("10000156");
 		d1.setProductName("维维的商品不要动3");
 
 		OrderDetail d2 = new OrderDetail();
 		d2.setProductUnitPrice(30000);// 商品单价
-		d2.setProductCount(3);// 商品数量
+		d2.setProductCount(3 * taocan.getMealCount());// 商品数量
 		d2.setTotal(d2.getProductUnitPrice() * d2.getProductCount());
 		d2.setProductCode("10000155");
 		d2.setProductName("维维的商品不要动2");
 
 		List<OrderDetail> orderList = Arrays.asList(d1, d2);
-		int orderTotal = orderList.stream().mapToInt(OrderDetail::getTotal).sum();
-		BigDecimal b1 = BigDecimal.valueOf(taocan.getMealPrice());
-		BigDecimal b2 = BigDecimal.valueOf(orderTotal);
+		// 套餐价
+		BigDecimal mealPrice = BigDecimal.valueOf(taocan.getMealPrice() * taocan.getMealCount());
+		System.err.println("套餐价：" + mealPrice);
+		// 原始商品订单总价
+		BigDecimal orderTotal = BigDecimal.valueOf(orderList.stream().mapToInt(OrderDetail::getTotal).sum());
+		System.err.println("原始商品订单总价：" + orderTotal);
 		orderList.stream().map(m -> {
-			BigDecimal b3 = BigDecimal.valueOf(m.getProductUnitPrice());
-			BigDecimal b4 = b1.multiply(b3).divide(b2, 0, BigDecimal.ROUND_HALF_UP);
+			BigDecimal productUnitPrice = BigDecimal.valueOf(m.getProductUnitPrice());
+			BigDecimal b4 = mealPrice.multiply(productUnitPrice).divide(orderTotal, 0, BigDecimal.ROUND_HALF_UP);
 			m.setProductUnitPrice(b4.intValue());
+			m.setTotal(m.getProductUnitPrice() * m.getProductCount());
 			return m;
-		}).collect(Collectors.toList()).forEach(
-				od -> System.err.println(String.format("%s: %s", od.getProductName(), od.getProductUnitPrice())));
+		}).collect(Collectors.toList()).forEach(od -> System.err.println(String.format("%s: %s*%s=%s",
+				od.getProductName(), od.getProductUnitPrice(), od.getProductCount(), od.getTotal())));
 	}
 
 	@Test
@@ -283,5 +291,21 @@ public class SimpleTests {
 	@Test
 	public void testPage() {
 		System.err.println(AssemblerResultUtil.resultAssembler(Arrays.asList(1, 2, 3)));
+	}
+
+	@Test
+	public void testCheckOrderAmount() {
+		try {
+			OrderIn order = new OrderIn();
+			OrderDetailIn od1 = new OrderDetailIn();
+			order.getOrderDetailIns().add(od1);
+
+//			order.getOrderDetailIns().stream().map(m->{
+//				
+//			})
+			System.err.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(order));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

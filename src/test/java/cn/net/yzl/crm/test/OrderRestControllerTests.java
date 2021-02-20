@@ -151,7 +151,7 @@ public class OrderRestControllerTests {
 	public void testGetDetailsByNo() {
 		try {
 			String staffno = "6666";
-			System.err.println(this.ehrStaffClient.getDetailsByNo(staffno).getData());
+			System.err.println(this.ehrStaffClient.getDetailsByNo(staffno));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -354,23 +354,24 @@ public class OrderRestControllerTests {
 		try {
 			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
 			request.setMemberCard("100000002");// 会员卡号
-			request.setProductTotal(40000L);// 商品总额 单位分
+			request.setProductTotal(39990L);// 商品总额 单位分
+			request.setAdvertBusNo(555L);// 广告业务主键
 			CalculateProductDto a1 = new CalculateProductDto();
-			a1.setActivityBusNo(12L);// 活动业务/会员优惠业务主键
-			a1.setActivityProductBusNo(14L);// 活动商品业务主键
-			a1.setActivityType(1);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			a1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			a1.setActivityProductBusNo(20L);// 活动商品业务主键
+			a1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
 			a1.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
-			a1.setDiscountId(9);// 使用的优惠主键
-			a1.setCouponDiscountId(12);// 使用的优惠券折扣ID
-			a1.setMemberCouponId(1);// 使用的优惠券ID
+			a1.setDiscountId(7);// 使用的优惠主键
+//			a1.setCouponDiscountId(12);// 使用的优惠券折扣ID
+//			a1.setMemberCouponId(1);// 使用的优惠券ID
 			a1.setProductCode("10000156");// 商品code
 			a1.setProductCount(2);// 商品数量
-			a1.setLimitDownPrice(20000L);// 商品最低折扣价 单位分
+			a1.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
 			a1.setSalePrice(20000L);// 商品销售价 单位分
-			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_3);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			request.setCalculateProductDto(Arrays.asList(a1));
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
-			System.err.println(this.activityClient.checkOrderAmount(request));
+			System.err.println(this.activityClient.checkOrderAmount(request).getData());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
