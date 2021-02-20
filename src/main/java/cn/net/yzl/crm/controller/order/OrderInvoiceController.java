@@ -362,12 +362,7 @@ public class OrderInvoiceController {
         //导出
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        try {
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "相应头信息Content-Disposition设置异常");
-        }
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",title, System.currentTimeMillis()));
         ExcelWriter excelWriter = null;
         try {
             excelWriter = EasyExcel.write(response.getOutputStream(), clazz).registerWriteHandler(this.writeHandler).build();
