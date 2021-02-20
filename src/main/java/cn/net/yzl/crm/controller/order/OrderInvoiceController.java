@@ -362,7 +362,7 @@ public class OrderInvoiceController {
         //导出
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",title, System.currentTimeMillis()));
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;fileName=%s%s.xlsx",title, System.currentTimeMillis()));
         ExcelWriter excelWriter = null;
         try {
             excelWriter = EasyExcel.write(response.getOutputStream(), clazz).registerWriteHandler(this.writeHandler).build();
