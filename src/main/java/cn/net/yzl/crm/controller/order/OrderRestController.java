@@ -255,8 +255,8 @@ public class OrderRestController {
 				}
 				orderdetailList.add(od);
 			}
-			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
-			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
+//			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
+//			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		}
 		// 获取套餐
 		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
@@ -324,7 +324,7 @@ public class OrderRestController {
 					od.setProductNo(in.getProductNo());// 商品编码
 					od.setProductName(in.getName());// 商品名称
 					od.setProductBarCode(in.getBarCode());// 产品条形码
-					od.setProductUnitPrice(in.getSalePrice() * mealCount);// 商品单价，单位分
+					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
@@ -345,6 +345,7 @@ public class OrderRestController {
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+							.multiply(BigDecimal.valueOf(mealCount))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
@@ -359,11 +360,13 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
-			orderm.setTotal(orderm.getTotal()
-					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
-			orderm.setCash(orderm.getCash()
-					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+//			orderm.setTotal(orderm.getTotal()
+//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+//			orderm.setCash(orderm.getCash()
+//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
+		orderm.setTotal(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
+		orderm.setCash(orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		orderm.setTotalAll(orderm.getTotal());
 		orderm.setSpend(orderm.getCash());
 		if (this.hasAmountStored(orderin)) {
@@ -697,8 +700,8 @@ public class OrderRestController {
 				od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				orderdetailList.add(od);
 			}
-			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
-			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
+//			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
+//			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		}
 		// 获取套餐
 		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
@@ -766,7 +769,7 @@ public class OrderRestController {
 					od.setProductNo(in.getProductNo());// 商品编码
 					od.setProductName(in.getName());// 商品名称
 					od.setProductBarCode(in.getBarCode());// 产品条形码
-					od.setProductUnitPrice(in.getSalePrice() * mealCount);// 商品单价，单位分
+					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
@@ -787,6 +790,7 @@ public class OrderRestController {
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+							.multiply(BigDecimal.valueOf(mealCount))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
@@ -801,11 +805,13 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
-			orderm.setTotal(orderm.getTotal()
-					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
-			orderm.setCash(orderm.getCash()
-					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+//			orderm.setTotal(orderm.getTotal()
+//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+//			orderm.setCash(orderm.getCash()
+//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
+		orderm.setTotal(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
+		orderm.setCash(orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		orderm.setTotalAll(orderm.getTotal());
 		orderm.setSpend(orderm.getCash());
 		// 如果支付形式是客户账户扣款
@@ -1079,8 +1085,8 @@ public class OrderRestController {
 				od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				orderdetailList.add(od);
 			}
-			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
-			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
+//			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
+//			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		}
 		// 获取套餐
 		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
@@ -1148,7 +1154,7 @@ public class OrderRestController {
 					od.setProductNo(in.getProductNo());// 商品编码
 					od.setProductName(in.getName());// 商品名称
 					od.setProductBarCode(in.getBarCode());// 产品条形码
-					od.setProductUnitPrice(in.getSalePrice() * mealCount);// 商品单价，单位分
+					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
@@ -1169,6 +1175,7 @@ public class OrderRestController {
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+							.multiply(BigDecimal.valueOf(mealCount))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
@@ -1183,11 +1190,13 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
-			orderm.setTotal(orderm.getTotal()
-					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
-			orderm.setCash(orderm.getCash()
-					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+//			orderm.setTotal(orderm.getTotal()
+//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
+//			orderm.setCash(orderm.getCash()
+//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
+		orderm.setTotal(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
+		orderm.setCash(orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		orderm.setTotalAll(orderm.getTotal());
 		orderm.setSpend(orderm.getCash());
 		// 统计订单明细中的每类商品的总数，key为商品编码，value为购买商品总数
