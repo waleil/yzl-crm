@@ -376,4 +376,13 @@ public class OrderRestControllerTests {
 			e.printStackTrace();
 		}
 	}
+
+	@Test
+	public void testGetLaunchManageByBusNo() {
+		try {
+			System.err.println(this.activityClient.getLaunchManageByBusNo(555).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 
 import cn.hutool.core.lang.Tuple;
+import cn.net.yzl.activity.model.dto.CalculateProductDto;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
+import cn.net.yzl.activity.model.responseModel.ProductPriceResponse;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
@@ -37,6 +40,7 @@ import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
+import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
@@ -51,6 +55,7 @@ import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.enums.PayMode;
 import cn.net.yzl.order.enums.PayType;
 import cn.net.yzl.order.enums.RedisKeys;
+import cn.net.yzl.order.model.db.order.OrderCouponDetail;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
@@ -77,10 +82,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/order")
 @Slf4j
 public class OrderRestController {
+	private BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
+
 	@PostMapping("/v1/calcorder")
 	@ApiOperation(value = "热线工单-购物车-计算订单金额", notes = "热线工单-购物车-计算订单金额")
 	public ComResponse<CalcOrderOut> calcOrder(@RequestBody CalcOrderIn orderin) {
-		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(orderin.getTotal()).divide(bd100).doubleValue(),
 				BigDecimal.valueOf(orderin.getTotal()).divide(bd100).doubleValue(), 0d, 0d, 0d));
 	}
@@ -175,6 +181,42 @@ public class OrderRestController {
 		}
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
+		// 如果广告ID不为空
+		if (orderin.getAdvertBusNo() != null) {
+			orderm.setAdvisorNo(orderin.getAdvertBusNo().intValue());// 广告id
+			// 查询广告
+			ComResponse<LaunchManageDto> response = this.activityClient.getLaunchManageByBusNo(orderm.getAdvisorNo());
+			// 如果服务调用异常
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
+				log.error("热线工单-购物车-提交订单>>找不到该广告[{}]>>{}", orderm.getAdvisorNo(), response);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该广告。");
+			}
+			LaunchManageDto dto = response.getData();
+			if (dto == null) {
+				log.error("热线工单-购物车-提交订单>>找不到该广告[{}]>>{}", orderm.getAdvisorNo(), response);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该广告。");
+			}
+			orderm.setAdvisorName(dto.getAdvertName());// 广告名称
+			orderm.setMediaName(dto.getMediaName());// 媒介名称
+		}
+		// 组装校验订单金额参数
+		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
+		// 调用校验订单金额接口
+		ComResponse<List<ProductPriceResponse>> ppresponse = this.activityClient
+				.checkOrderAmount(checkOrderAmountRequest);
+		// 如果服务调用异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(ppresponse.getCode())) {
+			log.error("热线工单-购物车-提交订单>>校验订单金额失败{}>>{}", checkOrderAmountRequest, ppresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "校验订单金额失败");
+		}
+		List<ProductPriceResponse> productPriceList = ppresponse.getData();
+		if (CollectionUtils.isEmpty(productPriceList)) {
+			log.error("热线工单-购物车-提交订单>>找不到商品或套餐的优惠价格>>{}", checkOrderAmountRequest);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品或套餐的优惠价格");
+		}
+		// key为商品编码，value为商品优惠价格对象
+		Map<String, ProductPriceResponse> productPriceMap = productPriceList.stream()
+				.collect(Collectors.toMap(ProductPriceResponse::getProductCode, Function.identity()));
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
 				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
@@ -182,12 +224,13 @@ public class OrderRestController {
 		List<OrderDetailIn> orderProductList = orderdetailMap.get(CommonConstant.MEAL_FLAG_0);
 		// 收集套餐关联的商品和非套餐商品
 		List<OrderDetail> orderdetailList = new ArrayList<>();
+		// 收集商品或套餐优惠信息
+		List<OrderCouponDetail> coupondetailList = new ArrayList<>();
 		// 收集每类商品的库存，key为商品编码，value为商品库存
 		Map<String, Integer> productStockMap = new HashMap<>();
 		// 收集订单明细里商品的购买数量
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
-		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		// 如果有非套餐信息
 		if (!CollectionUtils.isEmpty(orderProductList)) {
 			// 收集商品编码
@@ -248,12 +291,27 @@ public class OrderRestController {
 				// 如果是非赠品
 				if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
-					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
+					od.setCash(productPriceMap.get(p.getProductCode()).getProductTotal().multiply(bd100).intValue());// 应收金额，单位分
 				} else {// 如果是赠品，将金额设置为0
 					od.setTotal(0);// 实收金额，单位分
 					od.setCash(0);// 应收金额，单位分
 				}
 				orderdetailList.add(od);
+				ProductPriceResponse pp = productPriceMap.get(p.getProductCode());
+				switch (pp.getUseDiscountType()) {
+				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
+					coupondetailList.add(this.getOrderCouponDetail1(orderm, seq, in, p, od, pp));
+					break;
+				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
+					coupondetailList.add(this.getOrderCouponDetail2(orderm, seq, in, p, od, pp));
+					break;
+				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
+					coupondetailList.add(this.getOrderCouponDetail1(orderm, seq, in, p, od, pp));
+					coupondetailList.add(this.getOrderCouponDetail2(orderm, seq, in, p, od, pp));
+					break;
+				default:
+					break;
+				}
 			}
 //			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
 //			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
@@ -283,6 +341,9 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
+			// key为套餐编码，value为套餐对象
+			Map<String, OrderDetailIn> ordermealMap = ordermealList.stream()
+					.collect(Collectors.toMap(OrderDetailIn::getProductCode, Function.identity()));
 			// 统计订单明细中的每个套餐的总数，key为套餐编码，value为购买套餐总数
 			Map<String, Integer> mealCountMap = ordermealList.stream()
 					.collect(Collectors.groupingBy(OrderDetailIn::getProductCode)).entrySet().stream()
@@ -303,6 +364,27 @@ public class OrderRestController {
 				Integer mealCount = mealCountMap.get(meal.getMealNo());
 				// 套餐价，单位分
 				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
+				// 套餐优惠价，单位分
+				ProductPriceResponse pp = productPriceMap.get(meal.getMealNo());
+				switch (pp.getUseDiscountType()) {
+				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
+					coupondetailList
+							.add(this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+					break;
+				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
+					coupondetailList
+							.add(this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+					break;
+				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
+					coupondetailList
+							.add(this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+					coupondetailList
+							.add(this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+					break;
+				default:
+					break;
+				}
+				BigDecimal mealDiscountPrice = pp.getProductTotal().multiply(bd100);
 				// 组装订单明细信息
 				List<OrderDetail> result = meal.getMealProductList().stream().map(in -> {
 					OrderDetail od = new OrderDetail();
@@ -347,11 +429,14 @@ public class OrderRestController {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
 							.multiply(BigDecimal.valueOf(mealCount))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
+					BigDecimal discountPrice = mealDiscountPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+							.multiply(BigDecimal.valueOf(mealCount))
+							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
-						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
+						od.setCash(discountPrice.intValue() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
 						od.setProductUnitPrice(0);
 						od.setTotal(0);// 实收金额，单位分
@@ -413,7 +498,7 @@ public class OrderRestController {
 		orderm.setReveiverArea(String.valueOf(reveiverAddress.getMemberCountyNo()));// 区县编码
 		orderm.setReveiverAreaName(reveiverAddress.getMemberCountyName());// 区县名称
 		orderm.setMediaChannel(orderin.getMediaChannel());// 媒介渠道
-		orderm.setMediaName(orderin.getMediaName());// 媒介名称
+//		orderm.setMediaName(orderin.getMediaName());// 媒介名称
 		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
 		orderm.setMediaType(orderin.getMediaType());// 媒介类型
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
@@ -461,7 +546,8 @@ public class OrderRestController {
 		log.info("订单: {}", JSON.toJSONString(orderm, true));
 		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
 		// 调用创建订单服务接口
-		ComResponse<?> submitOrder = this.orderFeignClient.submitOrder(new OrderRequest(orderm, orderdetailList));
+		ComResponse<?> submitOrder = this.orderFeignClient
+				.submitOrder(new OrderRequest(orderm, orderdetailList, coupondetailList));
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(submitOrder.getCode())) {
 			log.error("热线工单-购物车-提交订单>>创建订单失败[订单号：{}]>>{}", orderm.getOrderNo(), submitOrder);
@@ -511,6 +597,152 @@ public class OrderRestController {
 				orderm.getReveiverTelphoneNo(), BigDecimal.valueOf(orderm.getTotal()).divide(bd100).doubleValue(),
 				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100).doubleValue(),
 				orderm.getOrderNo(), orderm.getCreateTime()));
+	}
+
+	/**
+	 * @param orderm
+	 * @param seq
+	 * @param ordermeal
+	 * @param meal
+	 * @param pp
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午4:14:55
+	 */
+	private OrderCouponDetail getOrderCouponDetail2(OrderM orderm, AtomicInteger seq, OrderDetailIn ordermeal,
+			ProductMealListDTO meal, ProductPriceResponse pp) {
+		OrderCouponDetail cd = new OrderCouponDetail();
+		// 优惠使用记录表业务主键
+		cd.setOrderCouponDetailNo(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
+//					cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+		cd.setOrderNo(orderm.getOrderNo());// 订单号
+		cd.setProductCode(meal.getMealNo());// 商品唯一标识
+		cd.setActivityType(pp.getActivityType());// 优惠途径
+		cd.setCouponCode(ordermeal.getDiscountId());// 优惠编号
+		cd.setCouponType(pp.getDiscountType());// 优惠方式
+		cd.setCouponMode(CommonConstant.COUPON_MODE_2);// 活动类型
+		cd.setCouponAmt(pp.getActivityDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+		cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_1);// 优惠方向
+		cd.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是否套餐
+		return cd;
+	}
+
+	/**
+	 * @param orderm
+	 * @param seq
+	 * @param ordermeal
+	 * @param meal
+	 * @param pp
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午4:09:46
+	 */
+	private OrderCouponDetail getOrderCouponDetail1(OrderM orderm, AtomicInteger seq, OrderDetailIn ordermeal,
+			ProductMealListDTO meal, ProductPriceResponse pp) {
+		OrderCouponDetail cd = new OrderCouponDetail();
+		// 优惠使用记录表业务主键
+		cd.setOrderCouponDetailNo(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
+//					cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+		cd.setOrderNo(orderm.getOrderNo());// 订单号
+		cd.setProductCode(meal.getMealNo());// 商品唯一标识
+		cd.setActivityType(pp.getActivityType());// 优惠途径
+		cd.setCouponCode(ordermeal.getDiscountId());// 优惠编号
+		cd.setCouponType(pp.getDiscountType());// 优惠方式
+		cd.setCouponMode(CommonConstant.COUPON_MODE_1);// 活动类型
+		cd.setCouponAmt(pp.getCouponDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+		cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_1);// 优惠方向
+		cd.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是否套餐
+		return cd;
+	}
+
+	/**
+	 * @param orderin
+	 * @param member
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午3:47:29
+	 */
+	private CheckOrderAmountRequest getCheckOrderAmountRequest(OrderIn orderin, Member member) {
+		CheckOrderAmountRequest checkOrderAmountRequest = new CheckOrderAmountRequest();
+		checkOrderAmountRequest.setAdvertBusNo(orderin.getAdvertBusNo());
+		checkOrderAmountRequest.setMemberCard(orderin.getMemberCardNo());
+		checkOrderAmountRequest.setProductTotal(orderin.getProductTotal());
+		checkOrderAmountRequest.setMemberLevelGrade(member.getMGradeId());
+		checkOrderAmountRequest.setCalculateProductDto(orderin.getOrderDetailIns().stream().map(m -> {
+			CalculateProductDto dto = new CalculateProductDto();
+			dto.setActivityBusNo(m.getActivityBusNo());
+			dto.setActivityProductBusNo(m.getActivityProductBusNo());
+			dto.setActivityType(m.getActivityType());
+			dto.setCouponDiscountId(m.getCouponDiscountId());
+			dto.setDiscountId(m.getDiscountId());
+			dto.setDiscountType(m.getDiscountType());
+			dto.setLimitDownPrice(m.getLimitDownPrice());
+			dto.setMemberCouponId(m.getMemberCouponId());
+			dto.setProductCode(m.getProductCode());
+			dto.setProductCount(m.getProductCount());
+			dto.setSalePrice(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());
+			dto.setUseDiscountType(m.getUseDiscountType());
+			return dto;
+		}).collect(Collectors.toList()));
+		return checkOrderAmountRequest;
+	}
+
+	/**
+	 * @param orderm
+	 * @param seq
+	 * @param in
+	 * @param p
+	 * @param od
+	 * @param pp
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午3:42:06
+	 */
+	private OrderCouponDetail getOrderCouponDetail2(OrderM orderm, AtomicInteger seq, OrderDetailIn in,
+			ProductMainDTO p, OrderDetail od, ProductPriceResponse pp) {
+		OrderCouponDetail cd = new OrderCouponDetail();
+		// 优惠使用记录表业务主键
+		cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
+		cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+		cd.setOrderNo(orderm.getOrderNo());// 订单号
+		cd.setProductCode(p.getProductCode());// 商品唯一标识
+		cd.setActivityType(pp.getActivityType());// 优惠途径
+		cd.setCouponCode(in.getDiscountId());// 优惠编号
+		cd.setCouponType(pp.getDiscountType());// 优惠方式
+		cd.setCouponMode(CommonConstant.COUPON_MODE_2);// 活动类型
+		cd.setCouponAmt(pp.getActivityDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+		cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_1);// 优惠方向
+		cd.setMealFlag(CommonConstant.MEAL_FLAG_0);// 是否套餐
+		return cd;
+	}
+
+	/**
+	 * @param orderm
+	 * @param seq
+	 * @param in
+	 * @param p
+	 * @param od
+	 * @param pp
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午3:34:34
+	 */
+	private OrderCouponDetail getOrderCouponDetail1(OrderM orderm, AtomicInteger seq, OrderDetailIn in,
+			ProductMainDTO p, OrderDetail od, ProductPriceResponse pp) {
+		OrderCouponDetail cd = new OrderCouponDetail();
+		// 优惠使用记录表业务主键
+		cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
+		cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+		cd.setOrderNo(orderm.getOrderNo());// 订单号
+		cd.setProductCode(p.getProductCode());// 商品唯一标识
+		cd.setActivityType(pp.getActivityType());// 优惠途径
+		cd.setCouponCode(in.getDiscountId());// 优惠编号
+		cd.setCouponType(pp.getDiscountType());// 优惠方式
+		cd.setCouponMode(CommonConstant.COUPON_MODE_1);// 活动类型
+		cd.setCouponAmt(pp.getCouponDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+		cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_1);// 优惠方向
+		cd.setMealFlag(CommonConstant.MEAL_FLAG_0);// 是否套餐
+		return cd;
 	}
 
 	/**
@@ -633,7 +865,6 @@ public class OrderRestController {
 		// 收集订单明细里商品的购买数量
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
-		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		orderm.setTotal(0);// 实收金额=应收金额+预存
 		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
 		orderm.setTotalAll(0);// 订单总额
@@ -1018,7 +1249,6 @@ public class OrderRestController {
 		// 收集订单明细里商品的购买数量
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
-		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		orderm.setTotal(0);// 实收金额=应收金额+预存
 		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
 		orderm.setTotalAll(0);// 订单总额

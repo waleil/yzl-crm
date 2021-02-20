@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.hutool.core.lang.Tuple;
+import cn.net.yzl.activity.model.dto.CalculateProductDto;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.model.MemberPhone;
@@ -298,11 +300,31 @@ public class SimpleTests {
 		try {
 			OrderIn order = new OrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductUnitPrice(100D);
 			order.getOrderDetailIns().add(od1);
 
-//			order.getOrderDetailIns().stream().map(m->{
-//				
-//			})
+			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
+			request.setAdvertBusNo(order.getAdvertBusNo());
+			request.setMemberCard(order.getMemberCardNo());
+			request.setProductTotal(order.getProductTotal());
+			order.getOrderDetailIns().stream().map(m -> {
+				CalculateProductDto dto = new CalculateProductDto();
+				dto.setActivityBusNo(m.getActivityBusNo());
+				dto.setActivityProductBusNo(m.getActivityProductBusNo());
+				dto.setActivityType(m.getActivityType());
+				dto.setCouponDiscountId(m.getCouponDiscountId());
+				dto.setDiscountId(m.getDiscountId());
+				dto.setDiscountType(m.getDiscountType());
+				dto.setLimitDownPrice(m.getLimitDownPrice());
+				dto.setMemberCouponId(m.getMemberCouponId());
+				dto.setProductCode(m.getProductCode());
+				dto.setProductCount(m.getProductCount());
+				dto.setSalePrice(
+						BigDecimal.valueOf(m.getProductUnitPrice()).multiply(BigDecimal.valueOf(100)).longValue());
+				dto.setUseDiscountType(m.getUseDiscountType());
+				return dto;
+			}).collect(Collectors.toList());
+
 			System.err.println(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(order));
 		} catch (Exception e) {
 			e.printStackTrace();
