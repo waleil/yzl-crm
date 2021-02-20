@@ -44,14 +44,14 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
     public ComResponse addOrderRejection(OrderRejectionAddDTO orderRejectionAddDTO, String userNo) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(userNo);
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(detailsByNo.getCode())) {
-            log.error("拒收单-添加拒收单>>找不到该坐席信息>>{}", detailsByNo);
-            return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
+            log.error("拒收单-添加拒收单>>EHR服务异常>>{}", detailsByNo);
+            return ComResponse.fail(ResponseCodeEnums.ERROR, "EHR服务异常。异常信息："+detailsByNo.getMessage());
         }
         Integer departId = Optional.ofNullable(detailsByNo.getData()).map(StaffImageBaseInfoDto::getDepartId).orElse(0);
         ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(departId);
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
-            log.error("拒收单-添加拒收单>>找不到该坐席的财务归属>>{}", dresponse);
-            return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
+            log.error("拒收单-添加拒收单>>EHR服务异常>>{}", dresponse);
+            return ComResponse.fail(ResponseCodeEnums.ERROR, "EHR服务异常。异常信息："+dresponse.getMessage());
         }
         // 拒收单编号
         String seqNo = redisUtil.getSeqNo(RedisKeys.REJECT_ORDER_NO_PREFIX, RedisKeys.SALE_ORDER_NO, 6);
@@ -72,7 +72,7 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
             ComResponse<StoreVO> storeResponse = storeFeginService.selectStoreByNo(orderRejectionAddDTO.getStoreNo());
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(storeResponse.getCode())) {
                 log.error("拒收单-添加拒收单>>仓库服务异常>>{}", storeResponse);
-                return ComResponse.fail(ResponseCodeEnums.ERROR, "仓库服务异常。");
+                return ComResponse.fail(ResponseCodeEnums.ERROR, "仓库服务异常。异常信息："+dresponse.getMessage());
             }
             StoreVO storeVO = storeResponse.getData();
             if (!Optional.ofNullable(storeVO).isPresent()) {
