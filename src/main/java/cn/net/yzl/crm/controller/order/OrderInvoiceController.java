@@ -11,7 +11,7 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.config.QueryIds;
-import cn.net.yzl.crm.constant.EhrActivityStatus;
+import cn.net.yzl.crm.constant.DmcActivityStatus;
 import cn.net.yzl.crm.dto.order.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.ActivityService;
@@ -126,7 +126,7 @@ public class OrderInvoiceController {
     public ComResponse<Page<MemberIntegralRecordsDTO>> getMemberIntegralRecords(@RequestBody AccountRequest request) {
         ComResponse<Page<MemberIntegralRecordsResponse>> response = activityService.getMemberIntegralRecords(request);
         if (!response.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + response.getMessage());
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
         }
         Page<MemberIntegralRecordsResponse> responseData = response.getData();
         if (responseData.getItems().size() == 0) {
@@ -163,11 +163,11 @@ public class OrderInvoiceController {
     public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
         ComResponse<List<MemberIntegralRecordsResponse>> records = activityClient.getMemberIntegralRecordsWithOutPage(request);
         if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + records.getMessage());
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
         }
         List<MemberIntegralRecordsResponse> responseData = records.getData();
         if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR未查询出数据");
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC未查询出数据");
         }
         List<String> orderNoList = responseData.stream().map(MemberIntegralRecordsResponse::getOrderNo).distinct().collect(Collectors.toList());
         //查询订单服务积分数据
@@ -181,7 +181,7 @@ public class OrderInvoiceController {
         List<MemberIntegralRecordsExportDTO> list = new ArrayList<>();
         for (MemberIntegralRecordsResponse item : responseData) {
             MemberIntegralRecordsExportDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsExportDTO.class);
-            dto.setStatusName(EhrActivityStatus.getName(item.getStatus()));
+            dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
                 dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
@@ -200,7 +200,7 @@ public class OrderInvoiceController {
     public ComResponse<Page<MemberRedBagRecordsDTO>> getMemberRedBagRecords(@RequestBody AccountRequest request) {
         ComResponse<Page<MemberRedBagRecordsResponse>> response = activityService.getMemberRedBagRecords(request);
         if (!response.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + response.getMessage());
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
         }
         Page<MemberRedBagRecordsResponse> responseData = response.getData();
         if (responseData.getItems().size() == 0) {
@@ -237,11 +237,11 @@ public class OrderInvoiceController {
     public void exportMemberRedBagRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
         ComResponse<List<MemberRedBagRecordsResponse>> records = activityClient.getMemberRedBagRecordsWithOutPage(request);
         if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + records.getMessage());
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
         }
         List<MemberRedBagRecordsResponse> responseData = records.getData();
         if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR未查询出数据");
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC未查询出数据");
         }
         List<String> orderNoList = responseData.stream().map(MemberRedBagRecordsResponse::getOrderNo).distinct().collect(Collectors.toList());
         //查询订单服务积分数据
@@ -255,7 +255,7 @@ public class OrderInvoiceController {
         List<MemberRedBagRecordsExportDTO> list = new ArrayList<>();
         for (MemberRedBagRecordsResponse item : responseData) {
             MemberRedBagRecordsExportDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsExportDTO.class);
-            dto.setStatusName(EhrActivityStatus.getName(item.getStatus()));
+            dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
                 dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
@@ -273,7 +273,7 @@ public class OrderInvoiceController {
     public ComResponse<Page<MemberCouponDTO>> getMemberCoupon(@RequestBody AccountRequest request) {
         ComResponse<Page<MemberCouponResponse>> response = activityService.getMemberCoupon(request);
         if (!response.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + response.getMessage());
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
         }
         Page<MemberCouponResponse> responseData = response.getData();
         if (responseData.getItems().size() == 0) {
@@ -314,11 +314,11 @@ public class OrderInvoiceController {
     public void exportMemberCoupon(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
         ComResponse<List<MemberCouponResponse>> records = activityClient.getMemberCouponWithOutPage(request);
         if (!records.getCode().equals(ResponseCodeEnums.SUCCESS_CODE.getCode())) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR异常，" + records.getMessage());
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
         }
         List<MemberCouponResponse> responseData = records.getData();
         if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "EHR未查询出数据");
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC未查询出数据");
         }
         List<String> orderNoList = responseData.stream().map(MemberCouponResponse::getOrderNo).distinct().collect(Collectors.toList());
         //查询订单服务积分数据
@@ -336,7 +336,7 @@ public class OrderInvoiceController {
                 dto.setReduceAmount(BigDecimal.valueOf(item.getCouponDiscountRulesDto().get(0).getReduceAmount()/100));
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
-            dto.setStatusName(EhrActivityStatus.getName(item.getStatus()));
+            dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
                 dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());

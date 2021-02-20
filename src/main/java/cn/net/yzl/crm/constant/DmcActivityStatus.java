@@ -11,16 +11,16 @@ import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
-public enum EhrActivityStatus {
+public enum DmcActivityStatus {
 
     /**
      * 售后订单-售后单方式
      */
-    EHR_ACTIVITY_STATUS_0(0, "领取"),
-    EHR_ACTIVITY_STATUS_1(1, "可用"),
-    EHR_ACTIVITY_STATUS_2(2, "冻结"),
-    EHR_ACTIVITY_STATUS_3(3, "已使用"),
-    EHR_ACTIVITY_STATUS_4(4, "失效"),
+    DMC_ACTIVITY_STATUS_0(0, "领取"),
+    DMC_ACTIVITY_STATUS_1(1, "可用"),
+    DMC_ACTIVITY_STATUS_2(2, "冻结"),
+    DMC_ACTIVITY_STATUS_3(3, "已使用"),
+    DMC_ACTIVITY_STATUS_4(4, "失效"),
     ;
 
     private int code;
@@ -32,6 +32,6 @@ public enum EhrActivityStatus {
 
     public static String getName(Integer code) {
         return Arrays.stream(values()).filter(p -> String.valueOf(p.code).equals(String.valueOf(code))).findFirst()
-                .map(EhrActivityStatus::getName).orElse(null);
+                .map(DmcActivityStatus::getName).orElse(null);
     }
 }
