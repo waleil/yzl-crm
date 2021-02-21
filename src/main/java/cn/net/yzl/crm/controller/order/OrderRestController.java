@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller.order;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +23,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.hutool.core.lang.Tuple;
+import cn.net.yzl.activity.model.dto.CalculateProductDto;
+import cn.net.yzl.activity.model.dto.MemberCouponDto;
+import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
+import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
+import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
+import cn.net.yzl.activity.model.enums.UseDiscountTypeEnum;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
+import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
+import cn.net.yzl.activity.model.responseModel.OrderSubmitResponse;
+import cn.net.yzl.activity.model.responseModel.ProductPriceResponse;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
@@ -37,10 +49,12 @@ import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
+import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
 import cn.net.yzl.crm.model.order.OrderOut;
+import cn.net.yzl.crm.model.order.OrderOut.Coupon;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
@@ -51,6 +65,7 @@ import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.enums.PayMode;
 import cn.net.yzl.order.enums.PayType;
 import cn.net.yzl.order.enums.RedisKeys;
+import cn.net.yzl.order.model.db.order.OrderCouponDetail;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
@@ -77,10 +92,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/order")
 @Slf4j
 public class OrderRestController {
+	private BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
+
 	@PostMapping("/v1/calcorder")
 	@ApiOperation(value = "热线工单-购物车-计算订单金额", notes = "热线工单-购物车-计算订单金额")
 	public ComResponse<CalcOrderOut> calcOrder(@RequestBody CalcOrderIn orderin) {
-		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(orderin.getTotal()).divide(bd100).doubleValue(),
 				BigDecimal.valueOf(orderin.getTotal()).divide(bd100).doubleValue(), 0d, 0d, 0d));
 	}
@@ -99,8 +115,8 @@ public class OrderRestController {
 		GeneralResult<Member> mresult = this.memberFien.getMember(orderin.getMemberCardNo());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresult.getCode())) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息>>{}", orderin.getMemberCardNo(), mresult);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
+			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCardNo(), mresult);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, mresult.getMessage());
 		}
 		Member member = mresult.getData();
 		if (member == null) {
@@ -116,8 +132,8 @@ public class OrderRestController {
 				.getReveiverAddress(orderin.getMemberCardNo());
 		// 如果调用服务异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(raresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址>>{}", orderin.getMemberCardNo(), raresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
+			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCardNo(), raresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, raresponse.getMessage());
 		}
 		List<ReveiverAddressDto> reveiverAddresses = raresponse.getData();
 		if (CollectionUtils.isEmpty(reveiverAddresses)) {
@@ -134,8 +150,8 @@ public class OrderRestController {
 		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
 		// 如果调用服务异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号>>{}", orderin.getMemberCardNo(), maresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
+			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCardNo(), maresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, maresponse.getMessage());
 		}
 		MemberAmountDto account = maresponse.getData();
 		if (account == null) {
@@ -146,8 +162,8 @@ public class OrderRestController {
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getStaffCode());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]信息>>{}", orderm.getStaffCode(), sresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
+			log.error("热线工单-购物车-提交订单>>{}>>{}", orderm.getStaffCode(), sresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, sresponse.getMessage());
 		}
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		if (staffInfo == null) {
@@ -163,9 +179,8 @@ public class OrderRestController {
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
-					dresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
+			log.error("热线工单-购物车-提交订单>>{}>>{}", staffInfo.getDepartId(), dresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, dresponse.getMessage());
 		}
 		DepartDto depart = dresponse.getData();
 		if (depart == null) {
@@ -175,6 +190,42 @@ public class OrderRestController {
 		}
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
+		// 如果广告ID不为空
+		if (orderin.getAdvertBusNo() != null) {
+			orderm.setAdvisorNo(orderin.getAdvertBusNo().intValue());// 广告id
+			// 查询广告
+			ComResponse<LaunchManageDto> response = this.activityClient.getLaunchManageByBusNo(orderm.getAdvisorNo());
+			// 如果服务调用异常
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
+				log.error("热线工单-购物车-提交订单>>{}>>{}", orderm.getAdvisorNo(), response);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, response.getMessage());
+			}
+			LaunchManageDto dto = response.getData();
+			if (dto == null) {
+				log.error("热线工单-购物车-提交订单>>找不到该广告[{}]>>{}", orderm.getAdvisorNo(), response);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该广告。");
+			}
+			orderm.setAdvisorName(dto.getAdvertName());// 广告名称
+			orderm.setMediaName(dto.getMediaName());// 媒介名称
+		}
+		// 组装校验订单金额参数
+		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
+		// 调用校验订单金额接口
+		ComResponse<List<ProductPriceResponse>> ppresponse = this.activityClient
+				.checkOrderAmount(checkOrderAmountRequest);
+		// 如果服务调用异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(ppresponse.getCode())) {
+			log.error("热线工单-购物车-提交订单>>{}>>{}", checkOrderAmountRequest, ppresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, ppresponse.getMessage());
+		}
+		List<ProductPriceResponse> productPriceList = ppresponse.getData();
+		if (CollectionUtils.isEmpty(productPriceList)) {
+			log.error("热线工单-购物车-提交订单>>找不到商品或套餐的优惠价格>>{}", checkOrderAmountRequest);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品或套餐的优惠价格");
+		}
+		// key为商品编码，value为商品优惠价格对象
+		Map<String, ProductPriceResponse> productPriceMap = productPriceList.stream()
+				.collect(Collectors.toMap(ProductPriceResponse::getProductCode, Function.identity()));
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
 				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
@@ -182,12 +233,13 @@ public class OrderRestController {
 		List<OrderDetailIn> orderProductList = orderdetailMap.get(CommonConstant.MEAL_FLAG_0);
 		// 收集套餐关联的商品和非套餐商品
 		List<OrderDetail> orderdetailList = new ArrayList<>();
+		// 收集商品或套餐优惠信息
+		List<OrderCouponDetail> coupondetailList = new ArrayList<>();
 		// 收集每类商品的库存，key为商品编码，value为商品库存
 		Map<String, Integer> productStockMap = new HashMap<>();
 		// 收集订单明细里商品的购买数量
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
-		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		// 如果有非套餐信息
 		if (!CollectionUtils.isEmpty(orderProductList)) {
 			// 收集商品编码
@@ -199,8 +251,8 @@ public class OrderRestController {
 			ComResponse<List<ProductMainDTO>> presponse = this.productClient.queryByProductCodes(productCodes);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(presponse.getCode())) {
-				log.error("热线工单-购物车-提交订单>>找不到商品[{}]信息>>{}", productCodes, presponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
+				log.error("热线工单-购物车-提交订单>>{}>>{}", productCodes, presponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, presponse.getMessage());
 			}
 			List<ProductMainDTO> plist = presponse.getData();
 			if (CollectionUtils.isEmpty(plist)) {
@@ -248,12 +300,27 @@ public class OrderRestController {
 				// 如果是非赠品
 				if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 					od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
-					od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
+					od.setCash(productPriceMap.get(p.getProductCode()).getProductTotal().multiply(bd100).intValue());// 应收金额，单位分
 				} else {// 如果是赠品，将金额设置为0
 					od.setTotal(0);// 实收金额，单位分
 					od.setCash(0);// 应收金额，单位分
 				}
 				orderdetailList.add(od);
+				ProductPriceResponse pp = productPriceMap.get(p.getProductCode());
+				switch (pp.getUseDiscountType()) {
+				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
+					coupondetailList.add(this.getOrderCouponDetail1(orderm, seq, in, p, od, pp));
+					break;
+				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
+					coupondetailList.add(this.getOrderCouponDetail2(orderm, seq, in, p, od, pp));
+					break;
+				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
+					coupondetailList.add(this.getOrderCouponDetail1(orderm, seq, in, p, od, pp));
+					coupondetailList.add(this.getOrderCouponDetail2(orderm, seq, in, p, od, pp));
+					break;
+				default:
+					break;
+				}
 			}
 //			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
 //			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
@@ -271,8 +338,8 @@ public class OrderRestController {
 			ComResponse<List<ProductMealListDTO>> mresponse = this.mealClient.queryByIds(mealNos);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
-				log.error("热线工单-购物车-提交订单>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
+				log.error("热线工单-购物车-提交订单>>{}>>{}", mealNos, mresponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, mresponse.getMessage());
 			}
 			List<ProductMealListDTO> mlist = mresponse.getData();
 			if (CollectionUtils.isEmpty(mlist)) {
@@ -283,6 +350,9 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>订单的套餐编码总数[{}]与套餐查询接口的套餐编码总数[{}]不一致", mealNoList.size(), mlist.size());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "查询的套餐部分已下架。");
 			}
+			// key为套餐编码，value为套餐对象
+			Map<String, OrderDetailIn> ordermealMap = ordermealList.stream()
+					.collect(Collectors.toMap(OrderDetailIn::getProductCode, Function.identity()));
 			// 统计订单明细中的每个套餐的总数，key为套餐编码，value为购买套餐总数
 			Map<String, Integer> mealCountMap = ordermealList.stream()
 					.collect(Collectors.groupingBy(OrderDetailIn::getProductCode)).entrySet().stream()
@@ -303,6 +373,27 @@ public class OrderRestController {
 				Integer mealCount = mealCountMap.get(meal.getMealNo());
 				// 套餐价，单位分
 				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
+				// 套餐优惠价，单位分
+				ProductPriceResponse pp = productPriceMap.get(meal.getMealNo());
+				switch (pp.getUseDiscountType()) {
+				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
+					coupondetailList
+							.add(this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+					break;
+				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
+					coupondetailList
+							.add(this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+					break;
+				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
+					coupondetailList
+							.add(this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+					coupondetailList
+							.add(this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+					break;
+				default:
+					break;
+				}
+				BigDecimal mealDiscountPrice = pp.getProductTotal().multiply(bd100);
 				// 组装订单明细信息
 				List<OrderDetail> result = meal.getMealProductList().stream().map(in -> {
 					OrderDetail od = new OrderDetail();
@@ -347,11 +438,14 @@ public class OrderRestController {
 					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
 							.multiply(BigDecimal.valueOf(mealCount))
 							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
+					BigDecimal discountPrice = mealDiscountPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+							.multiply(BigDecimal.valueOf(mealCount))
+							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
-						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
+						od.setCash(discountPrice.intValue() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
 						od.setProductUnitPrice(0);
 						od.setTotal(0);// 实收金额，单位分
@@ -413,7 +507,7 @@ public class OrderRestController {
 		orderm.setReveiverArea(String.valueOf(reveiverAddress.getMemberCountyNo()));// 区县编码
 		orderm.setReveiverAreaName(reveiverAddress.getMemberCountyName());// 区县名称
 		orderm.setMediaChannel(orderin.getMediaChannel());// 媒介渠道
-		orderm.setMediaName(orderin.getMediaName());// 媒介名称
+//		orderm.setMediaName(orderin.getMediaName());// 媒介名称
 		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
 		orderm.setMediaType(orderin.getMediaType());// 媒介类型
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
@@ -431,8 +525,8 @@ public class OrderRestController {
 		ComResponse<?> productReduce = this.productClient.productReduce(orderProduct);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
-			log.error("热线工单-购物车-提交订单>>调用扣减库存服务接口失败>>{}", productReduce);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
+			log.error("热线工单-购物车-提交订单>>{}", productReduce);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, productReduce.getMessage());
 		}
 		if (this.hasAmountStored(orderin)) {
 			// 组装顾客账户消费参数
@@ -446,22 +540,66 @@ public class OrderRestController {
 			ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
 			// 如果调用服务接口失败
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
-				log.error("热线工单-购物车-提交订单>>调用顾客[{}]账户消费服务接口失败>>{}", orderm.getMemberCardNo(), customerAmountOperation);
+				log.error("热线工单-购物车-提交订单>>{}>>{}", orderm.getMemberCardNo(), customerAmountOperation);
 				// 恢复库存
 				ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
 				// 如果调用服务接口失败
 				if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
-					log.error("热线工单-购物车-提交订单>>恢复库存失败>>{}", increaseStock);
+					log.error("热线工单-购物车-提交订单>>{}", increaseStock);
 					this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL,
 							ProductClient.INCREASE_STOCK_URL, orderm.getStaffCode(), orderm.getOrderNo());
 				}
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "提交订单失败，请稍后重试。");
+				return ComResponse.fail(ResponseCodeEnums.ERROR, customerAmountOperation.getMessage());
 			}
 		}
 		log.info("订单: {}", JSON.toJSONString(orderm, true));
 		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
+		// 组装提交订单送积分和优惠券参数
+		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, member, orderm);
+		try {
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orderSubmitRequest));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// 提交订单送积分和优惠券
+//		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
+//		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(orderSubmit.getCode())) {
+//			log.error("热线工单-购物车-提交订单>>{}>>{}", orderSubmitRequest, orderSubmit);
+//			return ComResponse.fail(ResponseCodeEnums.ERROR, orderSubmit.getMessage());
+//		}
+//		OrderSubmitResponse orderSubmitResponse = orderSubmit.getData();
+//		if (orderSubmitResponse == null) {
+//			log.error("热线工单-购物车-提交订单>>调用送积分和优惠券接口失败{}>>{}", orderSubmitRequest, orderSubmit);
+//			return ComResponse.fail(ResponseCodeEnums.ERROR, "赠送积分、优惠券异常");
+//		}
+//		orderm.setReturnPointsDeduction(orderSubmitResponse.getIntegral());// 本次送的积分
+		// 收集订单返回信息
+		OrderOut orderout = new OrderOut();
+		// 如果本次下单送的优惠券不为空
+		List<MemberCouponDto> memberCouponDtos = null;
+		if (!CollectionUtils.isEmpty(memberCouponDtos)) {
+			for (MemberCouponDto memberCoupon : memberCouponDtos) {
+				OrderCouponDetail cd = new OrderCouponDetail();
+				// 优惠使用记录表业务主键
+				cd.setOrderCouponDetailNo(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
+//				cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+				cd.setOrderNo(orderm.getOrderNo());// 订单号
+//				cd.setProductCode(meal.getMealNo());// 商品唯一标识
+				cd.setActivityType(memberCoupon.getSourceType());// 优惠途径
+				cd.setCouponCode(memberCoupon.getId());// 优惠编号
+//				cd.setCouponType(pp.getDiscountType());// 优惠方式
+				cd.setCouponMode(CommonConstant.COUPON_MODE_1);// 活动类型
+//				cd.setCouponAmt(pp.getActivityDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+				cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_2);// 优惠方向
+//				cd.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是否套餐
+				coupondetailList.add(cd);
+				orderout.getCoupons().add(new Coupon(memberCoupon.getStartData(), memberCoupon.getEndData(),
+						memberCoupon.getCouponBusNo().toString()));
+			}
+		}
 		// 调用创建订单服务接口
-		ComResponse<?> submitOrder = this.orderFeignClient.submitOrder(new OrderRequest(orderm, orderdetailList));
+		ComResponse<?> submitOrder = this.orderFeignClient
+				.submitOrder(new OrderRequest(orderm, orderdetailList, coupondetailList));
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(submitOrder.getCode())) {
 			log.error("热线工单-购物车-提交订单>>创建订单失败[订单号：{}]>>{}", orderm.getOrderNo(), submitOrder);
@@ -469,7 +607,7 @@ public class OrderRestController {
 			ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
 			// 如果调用服务接口失败
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
-				log.error("热线工单-购物车-提交订单>>恢复库存失败>>{}", increaseStock);
+				log.error("热线工单-购物车-提交订单>>{}", increaseStock);
 				this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL, ProductClient.INCREASE_STOCK_URL,
 						orderm.getStaffCode(), orderm.getOrderNo());
 			}
@@ -484,7 +622,7 @@ public class OrderRestController {
 				ComResponse<?> customerAmountOperation2 = this.memberFien.customerAmountOperation(memberAmountDetail);
 				// 如果调用服务接口失败
 				if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation2.getCode())) {
-					log.error("热线工单-购物车-提交订单>>恢复账户失败>>{}", customerAmountOperation2);
+					log.error("热线工单-购物车-提交订单>>{}", customerAmountOperation2);
 					this.orderCommonService.insert(memberAmountDetail, MemberFien.SUFFIX_URL,
 							MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, orderm.getStaffCode(), orderm.getOrderNo());
 				}
@@ -501,16 +639,241 @@ public class OrderRestController {
 		ComResponse<Boolean> createUpdateMember = this.memberFien.dealOrderCreateUpdateMemberData(orderCreateInfoVO);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(createUpdateMember.getCode())) {
-			log.error("热线工单-购物车-提交订单>>更新顾客信息失败>>{}", createUpdateMember);
+			log.error("热线工单-购物车-提交订单>>{}", createUpdateMember);
 			this.orderCommonService.insert(createUpdateMember, MemberFien.SUFFIX_URL,
 					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
 		// 再次调用顾客账户余额
 		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
-		return ComResponse.success(new OrderOut(orderm.getReveiverAddress(), orderm.getReveiverName(),
-				orderm.getReveiverTelphoneNo(), BigDecimal.valueOf(orderm.getTotal()).divide(bd100).doubleValue(),
-				BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100).doubleValue(),
-				orderm.getOrderNo(), orderm.getCreateTime()));
+		orderout.setOrderNo(orderm.getOrderNo());
+		orderout.setReveiverAddress(orderm.getReveiverAddress());
+		orderout.setReveiverName(orderm.getReveiverName());
+		orderout.setReveiverTelphoneNo(orderm.getReveiverTelphoneNo());
+		orderout.setTotal(BigDecimal.valueOf(orderm.getTotal()).divide(bd100));
+		orderout.setTotalMoney(BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100));
+		orderout.setOrderTime(orderm.getCreateTime());
+		orderout.setReturnPointsDeduction(orderm.getReturnPointsDeduction());
+		return ComResponse.success(orderout);
+	}
+
+	/**
+	 * @param activityType
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午9:36:27
+	 */
+	private ActivityTypeEnum getActivityTypeEnum(Integer activityType) {
+		if (activityType == null) {
+			return null;
+		}
+		return Arrays.stream(ActivityTypeEnum.values()).filter(p -> Integer.compare(p.getCode(), activityType) == 0)
+				.findFirst().orElse(null);
+	}
+
+	/**
+	 * @param discountType
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午9:36:31
+	 */
+	private DiscountTypeEnum getDiscountTypeEnum(Integer discountType) {
+		if (discountType == null) {
+			return null;
+		}
+		return Arrays.stream(DiscountTypeEnum.values()).filter(p -> Integer.compare(p.getCode(), discountType) == 0)
+				.findFirst().orElse(null);
+	}
+
+	/**
+	 * @param useDiscountType
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午9:36:37
+	 */
+	private UseDiscountTypeEnum getUseDiscountTypeEnum(Integer useDiscountType) {
+		if (useDiscountType == null) {
+			return null;
+		}
+		return Arrays.stream(UseDiscountTypeEnum.values())
+				.filter(p -> Integer.compare(p.getCode(), useDiscountType) == 0).findFirst().orElse(null);
+	}
+
+	/**
+	 * @param orderm
+	 * @param seq
+	 * @param ordermeal
+	 * @param meal
+	 * @param pp
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午4:14:55
+	 */
+	private OrderCouponDetail getOrderCouponDetail2(OrderM orderm, AtomicInteger seq, OrderDetailIn ordermeal,
+			ProductMealListDTO meal, ProductPriceResponse pp) {
+		OrderCouponDetail cd = new OrderCouponDetail();
+		// 优惠使用记录表业务主键
+		cd.setOrderCouponDetailNo(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
+//		cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+		cd.setOrderNo(orderm.getOrderNo());// 订单号
+		cd.setProductCode(meal.getMealNo());// 商品唯一标识
+		cd.setActivityType(pp.getActivityType());// 优惠途径
+		cd.setCouponCode(ordermeal.getDiscountId());// 优惠编号
+		cd.setCouponType(pp.getDiscountType());// 优惠方式
+		cd.setCouponMode(CommonConstant.COUPON_MODE_2);// 活动类型
+		cd.setCouponAmt(pp.getActivityDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+		cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_1);// 优惠方向
+		cd.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是否套餐
+		return cd;
+	}
+
+	/**
+	 * @param orderm
+	 * @param seq
+	 * @param ordermeal
+	 * @param meal
+	 * @param pp
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午4:09:46
+	 */
+	private OrderCouponDetail getOrderCouponDetail1(OrderM orderm, AtomicInteger seq, OrderDetailIn ordermeal,
+			ProductMealListDTO meal, ProductPriceResponse pp) {
+		OrderCouponDetail cd = new OrderCouponDetail();
+		// 优惠使用记录表业务主键
+		cd.setOrderCouponDetailNo(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
+//		cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+		cd.setOrderNo(orderm.getOrderNo());// 订单号
+		cd.setProductCode(meal.getMealNo());// 商品唯一标识
+		cd.setActivityType(pp.getActivityType());// 优惠途径
+		cd.setCouponCode(ordermeal.getDiscountId());// 优惠编号
+		cd.setCouponType(pp.getDiscountType());// 优惠方式
+		cd.setCouponMode(CommonConstant.COUPON_MODE_1);// 活动类型
+		cd.setCouponAmt(pp.getCouponDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+		cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_1);// 优惠方向
+		cd.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是否套餐
+		return cd;
+	}
+
+	/**
+	 * @param orderin
+	 * @param member
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午3:47:29
+	 */
+	private CheckOrderAmountRequest getCheckOrderAmountRequest(OrderIn orderin, Member member) {
+		CheckOrderAmountRequest request = new CheckOrderAmountRequest();
+		request.setAdvertBusNo(orderin.getAdvertBusNo());
+		request.setMemberCard(orderin.getMemberCardNo());
+		request.setProductTotal(orderin.getProductTotal());// 单位分
+		request.setMemberLevelGrade(member.getMGradeId());
+		request.setCalculateProductDto(orderin.getOrderDetailIns().stream().map(m -> {
+			CalculateProductDto dto = new CalculateProductDto();
+			dto.setActivityBusNo(m.getActivityBusNo());
+			dto.setActivityProductBusNo(m.getActivityProductBusNo());
+			dto.setActivityType(m.getActivityType());
+			dto.setCouponDiscountId(m.getCouponDiscountId());
+			dto.setDiscountId(m.getDiscountId());
+			dto.setDiscountType(m.getDiscountType());
+			dto.setLimitDownPrice(m.getLimitDownPrice());// 单位分
+			dto.setMemberCouponId(m.getMemberCouponId());
+			dto.setProductCode(m.getProductCode());
+			dto.setProductCount(m.getProductCount());
+			dto.setSalePrice(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());// 单位分
+			dto.setUseDiscountType(m.getUseDiscountType());
+			return dto;
+		}).collect(Collectors.toList()));
+		return request;
+	}
+
+	/**
+	 * @param orderin
+	 * @param member
+	 * @param orderm
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午9:52:00
+	 */
+	private OrderSubmitRequest getOrderSubmitRequest(OrderIn orderin, Member member, OrderM orderm) {
+		OrderSubmitRequest request = new OrderSubmitRequest();
+		request.setAdvertBusNo(orderin.getAdvertBusNo());
+		request.setMemberCard(orderin.getMemberCardNo());
+		request.setProductTotal(orderin.getProductTotal());// 单位分
+		request.setMemberLevelGrade(member.getMGradeId());
+		request.setOrderNo(orderm.getOrderNo());
+		request.setOrderSubmitProductDtoList(orderin.getOrderDetailIns().stream().map(m -> {
+			OrderSubmitProductDto dto = new OrderSubmitProductDto();
+			dto.setActivityBusNo(m.getActivityBusNo());
+			dto.setActivityProductBusNo(m.getActivityProductBusNo());
+			dto.setActivityTypeEnum(this.getActivityTypeEnum(m.getActivityType()));
+			dto.setDiscountId(m.getDiscountId());
+			dto.setDiscountTypeEnum(this.getDiscountTypeEnum(m.getDiscountType()));
+			dto.setMemberCouponId(m.getMemberCouponId());
+			dto.setProductCode(m.getProductCode());
+			dto.setProductCount(m.getProductCount());
+			dto.setProductTotal(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());// 单位分
+			dto.setUseDiscountTypeEnum(this.getUseDiscountTypeEnum(m.getUseDiscountType()));
+			return dto;
+		}).collect(Collectors.toList()));
+		return request;
+	}
+
+	/**
+	 * @param orderm
+	 * @param seq
+	 * @param in
+	 * @param p
+	 * @param od
+	 * @param pp
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午3:42:06
+	 */
+	private OrderCouponDetail getOrderCouponDetail2(OrderM orderm, AtomicInteger seq, OrderDetailIn in,
+			ProductMainDTO p, OrderDetail od, ProductPriceResponse pp) {
+		OrderCouponDetail cd = new OrderCouponDetail();
+		// 优惠使用记录表业务主键
+		cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
+		cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+		cd.setOrderNo(orderm.getOrderNo());// 订单号
+		cd.setProductCode(p.getProductCode());// 商品唯一标识
+		cd.setActivityType(pp.getActivityType());// 优惠途径
+		cd.setCouponCode(in.getDiscountId());// 优惠编号
+		cd.setCouponType(pp.getDiscountType());// 优惠方式
+		cd.setCouponMode(CommonConstant.COUPON_MODE_2);// 活动类型
+		cd.setCouponAmt(pp.getActivityDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+		cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_1);// 优惠方向
+		cd.setMealFlag(CommonConstant.MEAL_FLAG_0);// 是否套餐
+		return cd;
+	}
+
+	/**
+	 * @param orderm
+	 * @param seq
+	 * @param in
+	 * @param p
+	 * @param od
+	 * @param pp
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午3:34:34
+	 */
+	private OrderCouponDetail getOrderCouponDetail1(OrderM orderm, AtomicInteger seq, OrderDetailIn in,
+			ProductMainDTO p, OrderDetail od, ProductPriceResponse pp) {
+		OrderCouponDetail cd = new OrderCouponDetail();
+		// 优惠使用记录表业务主键
+		cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
+		cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+		cd.setOrderNo(orderm.getOrderNo());// 订单号
+		cd.setProductCode(p.getProductCode());// 商品唯一标识
+		cd.setActivityType(pp.getActivityType());// 优惠途径
+		cd.setCouponCode(in.getDiscountId());// 优惠编号
+		cd.setCouponType(pp.getDiscountType());// 优惠方式
+		cd.setCouponMode(CommonConstant.COUPON_MODE_1);// 活动类型
+		cd.setCouponAmt(pp.getCouponDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+		cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_1);// 优惠方向
+		cd.setMealFlag(CommonConstant.MEAL_FLAG_0);// 是否套餐
+		return cd;
 	}
 
 	/**
@@ -593,8 +956,8 @@ public class OrderRestController {
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
-			log.error("订单列表-编辑>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到该坐席信息[%s]", sresponse.getMessage()));
+			log.error("订单列表-编辑>>{}>>{}", orderm.getUpdateCode(), sresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, sresponse.getMessage());
 		}
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		if (staffInfo == null) {
@@ -609,9 +972,8 @@ public class OrderRestController {
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
-			log.error("订单列表-编辑>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
-					dresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到该坐席的财务归属[%s]", dresponse.getMessage()));
+			log.error("订单列表-编辑>>{}>>{}", staffInfo.getDepartId(), dresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, dresponse.getMessage());
 		}
 		DepartDto depart = dresponse.getData();
 		if (depart == null) {
@@ -633,7 +995,6 @@ public class OrderRestController {
 		// 收集订单明细里商品的购买数量
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
-		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		orderm.setTotal(0);// 实收金额=应收金额+预存
 		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
 		orderm.setTotalAll(0);// 订单总额
@@ -651,8 +1012,8 @@ public class OrderRestController {
 			ComResponse<List<ProductMainDTO>> presponse = this.productClient.queryByProductCodes(productCodes);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(presponse.getCode())) {
-				log.error("订单列表-编辑>>找不到商品[{}]信息>>{}", productCodes, presponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到商品信息[%s]", presponse.getMessage()));
+				log.error("订单列表-编辑>>{}>>{}", productCodes, presponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, presponse.getMessage());
 			}
 			List<ProductMainDTO> plist = presponse.getData();
 			if (CollectionUtils.isEmpty(plist)) {
@@ -716,8 +1077,8 @@ public class OrderRestController {
 			ComResponse<List<ProductMealListDTO>> mresponse = this.mealClient.queryByIds(mealNos);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
-				log.error("订单列表-编辑>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到套餐信息[%s]", mresponse.getMessage()));
+				log.error("订单列表-编辑>>{}>>{}", mealNos, mresponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, mresponse.getMessage());
 			}
 			List<ProductMealListDTO> mlist = mresponse.getData();
 			if (CollectionUtils.isEmpty(mlist)) {
@@ -820,9 +1181,8 @@ public class OrderRestController {
 			ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 			// 如果调用服务异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
-				log.error("订单列表-编辑>>找不到该顾客[{}]账号>>{}", orderm.getMemberCardNo(), maresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR,
-						String.format("找不到该顾客账号[%s]", maresponse.getMessage()));
+				log.error("订单列表-编辑>>{}>>{}", orderm.getMemberCardNo(), maresponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, maresponse.getMessage());
 			}
 			MemberAmountDto account = maresponse.getData();
 			if (account == null) {
@@ -864,8 +1224,8 @@ public class OrderRestController {
 		ComResponse<?> productReduce = this.productClient.productReduce(orderProduct);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
-			log.error("订单列表-编辑>>调用扣减库存服务接口失败>>{}", productReduce);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("修改订单失败[%s]", productReduce.getMessage()));
+			log.error("订单列表-编辑>>{}", productReduce);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, productReduce.getMessage());
 		}
 		// 如果支付形式是客户账户扣款
 		if (Integer.compare(PayMode.PAY_MODE_4.getCode(), orderm.getPayMode()) == 0) {
@@ -880,17 +1240,16 @@ public class OrderRestController {
 			ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
 			// 如果调用服务接口失败
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
-				log.error("订单列表-编辑>>调用顾客[{}]账户消费服务接口失败>>{}", orderm.getMemberCardNo(), customerAmountOperation);
+				log.error("订单列表-编辑>>{}", customerAmountOperation);
 				// 恢复库存
 				ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
 				// 如果调用服务接口失败
 				if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
-					log.error("订单列表-编辑>>恢复库存失败>>{}", increaseStock);
+					log.error("订单列表-编辑>>{}", increaseStock);
 					this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL,
 							ProductClient.INCREASE_STOCK_URL, orderm.getStaffCode(), orderm.getOrderNo());
 				}
-				return ComResponse.fail(ResponseCodeEnums.ERROR,
-						String.format("修改订单失败[%s]", customerAmountOperation.getMessage()));
+				return ComResponse.fail(ResponseCodeEnums.ERROR, customerAmountOperation.getMessage());
 			}
 		}
 		log.info("订单: {}", JSON.toJSONString(orderm, true));
@@ -904,7 +1263,7 @@ public class OrderRestController {
 			ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
 			// 如果调用服务接口失败
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
-				log.error("订单列表-编辑>>恢复库存失败>>{}", increaseStock);
+				log.error("订单列表-编辑>>{}", increaseStock);
 				this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL, ProductClient.INCREASE_STOCK_URL,
 						orderm.getStaffCode(), orderm.getOrderNo());
 			}
@@ -920,7 +1279,7 @@ public class OrderRestController {
 				ComResponse<?> customerAmountOperation2 = this.memberFien.customerAmountOperation(memberAmountDetail);
 				// 如果调用服务接口失败
 				if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation2.getCode())) {
-					log.error("订单列表-编辑>>恢复账户失败>>{}", customerAmountOperation2);
+					log.error("订单列表-编辑>>{}", customerAmountOperation2);
 					this.orderCommonService.insert(memberAmountDetail, MemberFien.SUFFIX_URL,
 							MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, orderm.getStaffCode(), orderm.getOrderNo());
 				}
@@ -936,7 +1295,7 @@ public class OrderRestController {
 		ComResponse<Boolean> createUpdateMember = this.memberFien.dealOrderCreateUpdateMemberData(orderCreateInfoVO);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(createUpdateMember.getCode())) {
-			log.error("热线工单-购物车-提交订单>>更新顾客信息失败>>{}", createUpdateMember);
+			log.error("热线工单-购物车-提交订单>>{}", createUpdateMember);
 			this.orderCommonService.insert(createUpdateMember, MemberFien.SUFFIX_URL,
 					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
@@ -978,8 +1337,8 @@ public class OrderRestController {
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到该坐席信息[%s]", sresponse.getMessage()));
+			log.error("订单列表-异常处理-补发订单>>{}>>{}", orderm.getUpdateCode(), sresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, sresponse.getMessage());
 		}
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		if (staffInfo == null) {
@@ -994,9 +1353,8 @@ public class OrderRestController {
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
-					dresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到该坐席的财务归属[%s]", dresponse.getMessage()));
+			log.error("订单列表-异常处理-补发订单>>{}>>{}", staffInfo.getDepartId(), dresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, dresponse.getMessage());
 		}
 		DepartDto depart = dresponse.getData();
 		if (depart == null) {
@@ -1018,7 +1376,6 @@ public class OrderRestController {
 		// 收集订单明细里商品的购买数量
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
-		BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 		orderm.setTotal(0);// 实收金额=应收金额+预存
 		orderm.setCash(0);// 应收金额=订单总额+邮费-优惠
 		orderm.setTotalAll(0);// 订单总额
@@ -1036,8 +1393,8 @@ public class OrderRestController {
 			ComResponse<List<ProductMainDTO>> presponse = this.productClient.queryByProductCodes(productCodes);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(presponse.getCode())) {
-				log.error("订单列表-异常处理-补发订单>>找不到商品[{}]信息>>{}", productCodes, presponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到商品信息[%s]", presponse.getMessage()));
+				log.error("订单列表-异常处理-补发订单>>{}>>{}", productCodes, presponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, presponse.getMessage());
 			}
 			List<ProductMainDTO> plist = presponse.getData();
 			if (CollectionUtils.isEmpty(plist)) {
@@ -1101,8 +1458,8 @@ public class OrderRestController {
 			ComResponse<List<ProductMealListDTO>> mresponse = this.mealClient.queryByIds(mealNos);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
-				log.error("订单列表-异常处理-补发订单>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("找不到套餐信息[%s]", mresponse.getMessage()));
+				log.error("订单列表-异常处理-补发订单>>{}>>{}", mealNos, mresponse);
+				return ComResponse.fail(ResponseCodeEnums.ERROR, mresponse.getMessage());
 			}
 			List<ProductMealListDTO> mlist = mresponse.getData();
 			if (CollectionUtils.isEmpty(mlist)) {
@@ -1227,8 +1584,8 @@ public class OrderRestController {
 		ComResponse<?> productReduce = this.productClient.productReduce(orderProduct);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>调用扣减库存服务接口失败>>{}", productReduce);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("修改订单失败[%s]", productReduce.getMessage()));
+			log.error("订单列表-异常处理-补发订单>>{}", productReduce);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, productReduce.getMessage());
 		}
 		log.info("订单: {}", JSON.toJSONString(orderm, true));
 		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
@@ -1253,4 +1610,6 @@ public class OrderRestController {
 	private IOrderCommonService orderCommonService;
 	@Resource
 	private ActivityClient activityClient;
+	@Resource
+	private ObjectMapper objectMapper;
 }
