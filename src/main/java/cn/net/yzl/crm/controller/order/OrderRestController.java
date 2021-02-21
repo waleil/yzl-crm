@@ -562,21 +562,21 @@ public class OrderRestController {
 			e.printStackTrace();
 		}
 		// 提交订单送积分和优惠券
-		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
-		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(orderSubmit.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", orderSubmitRequest, orderSubmit);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, orderSubmit.getMessage());
-		}
-		OrderSubmitResponse orderSubmitResponse = orderSubmit.getData();
-		if (orderSubmitResponse == null) {
-			log.error("热线工单-购物车-提交订单>>调用送积分和优惠券接口失败{}>>{}", orderSubmitRequest, orderSubmit);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "赠送积分、优惠券异常");
-		}
-		orderm.setReturnPointsDeduction(orderSubmitResponse.getIntegral());// 本次送的积分
+//		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
+//		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(orderSubmit.getCode())) {
+//			log.error("热线工单-购物车-提交订单>>{}>>{}", orderSubmitRequest, orderSubmit);
+//			return ComResponse.fail(ResponseCodeEnums.ERROR, orderSubmit.getMessage());
+//		}
+//		OrderSubmitResponse orderSubmitResponse = orderSubmit.getData();
+//		if (orderSubmitResponse == null) {
+//			log.error("热线工单-购物车-提交订单>>调用送积分和优惠券接口失败{}>>{}", orderSubmitRequest, orderSubmit);
+//			return ComResponse.fail(ResponseCodeEnums.ERROR, "赠送积分、优惠券异常");
+//		}
+//		orderm.setReturnPointsDeduction(orderSubmitResponse.getIntegral());// 本次送的积分
 		// 收集订单返回信息
 		OrderOut orderout = new OrderOut();
 		// 如果本次下单送的优惠券不为空
-		List<MemberCouponDto> memberCouponDtos = orderSubmitResponse.getMemberCouponDtoList();
+		List<MemberCouponDto> memberCouponDtos = null;
 		if (!CollectionUtils.isEmpty(memberCouponDtos)) {
 			for (MemberCouponDto memberCoupon : memberCouponDtos) {
 				OrderCouponDetail cd = new OrderCouponDetail();
