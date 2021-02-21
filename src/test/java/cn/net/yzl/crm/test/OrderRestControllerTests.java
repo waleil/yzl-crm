@@ -15,7 +15,12 @@ import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.net.yzl.activity.model.dto.CalculateProductDto;
+import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
+import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
+import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
+import cn.net.yzl.activity.model.enums.UseDiscountTypeEnum;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
+import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
@@ -171,24 +176,50 @@ public class OrderRestControllerTests {
 	public void testSubmitOrderForProduct() {
 		try {
 			OrderIn order = new OrderIn();
+			order.setProductTotal(39990L);// 商品总额 单位分
+			order.setAdvertBusNo(555L);// 广告业务主键
 			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			od1.setActivityProductBusNo(20L);// 活动商品业务主键
+			od1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			od1.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			od1.setDiscountId(7);// 使用的优惠主键
+			od1.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+			od1.setProductUnitPrice(200D);// 商品销售价 单位分
+			od1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od1.setProductCode("10000156");
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(2);
-			od1.setGiftFlag(CommonConstant.GIFT_FLAG_1);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od2 = new OrderDetailIn();
+			od2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			od2.setActivityProductBusNo(20L);// 活动商品业务主键
+			od2.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			od2.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			od2.setDiscountId(7);// 使用的优惠主键
+			od2.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+			od2.setProductUnitPrice(200D);// 商品销售价 单位分
+			od2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od2.setProductCode("10000155");
 			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od2.setProductCount(2);
 			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od3 = new OrderDetailIn();
+			od3.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			od3.setActivityProductBusNo(20L);// 活动商品业务主键
+			od3.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			od3.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			od3.setDiscountId(7);// 使用的优惠主键
+			od3.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+			od3.setProductUnitPrice(200D);// 商品销售价 单位分
+			od3.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od3.setProductCode("10000152");
 			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od3.setProductCount(2);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
-			order.getOrderDetailIns().add(od2);
-			order.getOrderDetailIns().add(od3);
+//			order.getOrderDetailIns().add(od2);
+//			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
 			order.setReveiverAddressNo(482416);
 			order.setMediaChannel(0);
@@ -381,6 +412,23 @@ public class OrderRestControllerTests {
 	public void testGetLaunchManageByBusNo() {
 		try {
 			System.err.println(this.activityClient.getLaunchManageByBusNo(555).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testOrderSubmit() {
+		try {
+			OrderSubmitRequest request = new OrderSubmitRequest();
+			OrderSubmitProductDto dto = new OrderSubmitProductDto();
+			dto.setActivityTypeEnum(ActivityTypeEnum.ADVERT_LAUNCH);
+			dto.setDiscountTypeEnum(DiscountTypeEnum.DISCOUNT);
+			dto.setUseDiscountTypeEnum(UseDiscountTypeEnum.NOT_USE);
+			request.setOrderSubmitProductDtoList(Arrays.asList(dto));
+
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
+			System.err.println(this.activityClient.orderSubmit(request));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
