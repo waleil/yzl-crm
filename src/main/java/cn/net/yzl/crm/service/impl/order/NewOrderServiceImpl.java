@@ -118,7 +118,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 				financialOwner = depart.getFinanceDepartId();
 				financialOwnerName = depart.getFinanceDepartName();
 			} else {
-				throw new BizException(dresponse.getCode(), dresponse.getMessage());
+				throw new BizException(dresponse.getCode(), "查询财务归属失败>>" + dresponse.getMessage());
 			}
 
 			// 处理数据
@@ -177,6 +177,9 @@ public class NewOrderServiceImpl implements INewOrderService {
 			// 调用扣减库存接口（根据批次号扣减库存）
 			orderRes = productClient.productReduce(vo);
 
+			if (orderRes.getCode().compareTo(Integer.valueOf(200)) != 0) {
+				throw new BizException(orderRes.getCode(),"扣减库存失败" +  orderRes.getMessage());
+			}
 			OrderTempVO orderTempVO = new OrderTempVO();
 			orderTempVO.setOrderTemp(orderTemp);
 			orderTempVO.setProducts(productDTOS);
@@ -185,7 +188,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			orderRes = newOrderClient.newOrderTemp(orderTempVO);
 
 			if (orderRes.getCode().compareTo(Integer.valueOf(200)) != 0) {
-				throw new BizException(orderRes.getCode(), orderRes.getMessage());
+				throw new BizException(orderRes.getCode(),"创建批量生产记录失败" + orderRes.getMessage());
 			}
 
 		} catch (BizException e) {
@@ -588,7 +591,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		// 查询顾客群组接口
 		ComResponse<List<CrowdGroup>> response = memberGroupFeign.getCrowdGroupList(groupsStr);
 		if (response.getCode().compareTo(Integer.valueOf(200)) != 0) {
-			throw new BizException(response.getCode(), response.getMessage());
+			throw new BizException(response.getCode(), "查询群组信息失败>>" + response.getMessage());
 		}
 		if (response.getData() != null && (groupCodes.size() != response.getData().size())) {
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "部分群组已失效");
@@ -651,7 +654,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 	protected List<OrderTempProduct> searchProducts(String productCodes, int prodCnt, String tempCode) {
 		ComResponse<List<ProductMainDTO>> prd = productClient.queryByProductCodes(productCodes);
 		if (prd.getCode().compareTo(200) != 0) {
-			throw new BizException(prd.getCode(), prd.getMessage());
+			throw new BizException(prd.getCode(), "查询商品信息失败>>" + prd.getMessage());
 		}
 		if (prd.getData() != null && (prodCnt != prd.getData().size())) {
 			throw new BizException(ResponseCodeEnums.REPEAT_ERROR_CODE.getCode(), "部分商品已下架");
