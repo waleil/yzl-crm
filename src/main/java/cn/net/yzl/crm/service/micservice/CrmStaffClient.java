@@ -108,11 +108,11 @@ public interface CrmStaffClient {
     ComResponse<StaffCrowdGroup> getStaffCrowdGroup(@RequestParam("groupId") long groupId);
 
     @GetMapping("/staff/v1/getStaffCrowdGroupList")
-    ComResponse<List<StaffCrowdGroup>> getStaffCrowdGroupList(@RequestParam("id") Long id);
+    ComResponse<List<StaffCrowdGroup>> getStaffCrowdGroupList(@RequestParam("id") Long id, @RequestParam("rulePriorityLevel") Integer rulePriorityLevel);
 
-    default List<StaffCrowdGroup> getStaffCrowdGroupDefault(Long id) {
+    default List<StaffCrowdGroup> getStaffCrowdGroupDefault(Long id,Integer rulePriorityLevel) {
         try {
-            ComResponse<List<StaffCrowdGroup>> staffCrowdGroupList = getStaffCrowdGroupList(id);
+            ComResponse<List<StaffCrowdGroup>> staffCrowdGroupList = getStaffCrowdGroupList(id,rulePriorityLevel);
             if (null == staffCrowdGroupList || 200 != staffCrowdGroupList.getCode()) {
                 return Collections.emptyList();
             }
