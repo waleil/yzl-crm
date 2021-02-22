@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,6 +49,9 @@ public class DownImageInController {
     @ApiOperation("下载图片")
     @GetMapping("v1/downImage")
     public void downImage(@RequestParam("imageUrl") String imageUrl, HttpServletResponse httpServletResponse) throws IOException {
+        if (StringUtils.isEmpty(imageUrl)){
+
+        }
         ServletOutputStream outputStream = null;
         InputStream inputStream = null;
         try {

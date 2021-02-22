@@ -189,4 +189,7 @@ public class MemberCrowdGroupDTO {
 
     @ApiModelProperty("最后一次进线截止天数")
     private DayParam lastCallDays;
+
+    @ApiModelProperty("规则执行优先级")
+    private Integer seq;
 }

@@ -152,9 +152,9 @@ public class WorkOrderController {
         return ComResponse.success(pageWorkOrderBean);
     }
 
-    @PostMapping("v1/pageList")
+    @PostMapping("v1/workOrderHotlineList")
     @ApiOperation(value = "热线工单管理-列表", notes = "热线工单管理-列表")
-    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
+    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> workOrderHotlineList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
         //是否是分线监控
         Integer isMonitoring = findWorkOrderHotlinePageListDTO.getIsMonitoring();
         if(0 == isMonitoring){
@@ -169,7 +169,7 @@ public class WorkOrderController {
             findWorkOrderHotlinePageListDTO.setDeptId(departId);
         }
         //智能派单--默认查询所有部门的数据
-        ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
+        ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.workOrderHotlineList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
 
     }
