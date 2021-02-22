@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.member;
 import cn.net.yzl.common.entity.ComResponse;
 
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.customer.viewmodel.memberActionModel.MemberActionDictList;
 import cn.net.yzl.crm.customer.viewmodel.memberActionModel.MemberActionRelationList;
 import cn.net.yzl.crm.dto.member.ActionDictDto;
 import cn.net.yzl.crm.dto.member.MemberActionRelationDto;
@@ -28,7 +29,7 @@ import java.util.List;
  * @description 顾客综合行为接口
  * @date: 2021/1/22 3:07 下午
  */
-@Api(tags = "顾客圈选")
+@Api(tags = "顾客综合行为")
 @RestController(value = "memberAction")
 public class MemberActionController {
 
@@ -90,5 +91,11 @@ public class MemberActionController {
     @GetMapping("v1/deleteRelation")
     public ComResponse<Integer> deleteRelation(@RequestParam("rid")  @NotNull @Min(0) Integer rid){
         return memberActionFeign.deleteRelation(rid);
+    }
+
+    @ApiOperation(value="客户行为关联-根据顾客编号查询行为字典")
+    @GetMapping("v1/getActionDictByMemberCard")
+    public ComResponse<List<MemberActionDictList>> getActionDictByMemberCard(@RequestParam("memberCard") @NotBlank String memberCard){
+        return memberActionFeign.getActionDictByMemberCard(memberCard);
     }
 }

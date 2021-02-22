@@ -1,10 +1,15 @@
 package cn.net.yzl.crm.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.dto.ehr.StaffDetailDto;
+import cn.net.yzl.crm.dto.staff.CalculationResult;
+import cn.net.yzl.crm.dto.staff.CalculationUerDetail;
+import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
@@ -65,7 +70,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         //基础信息相关条件查询
         CompletableFuture<List<String>> baseCompletable = CompletableFuture.supplyAsync(() -> {
             Base base = calculationDto.getBase();
-            if (null != base && (null != base.getEmployedInterval() || null != base.getSex() || null != base.getNature() || CollectionUtils.isNotEmpty(base.getWorkplaceList()))) {
+            if (null != base) {
                 RequestContextHolder.setRequestAttributes(attributes);
                 return ehrStaffClient.getStaffBaseInfoList(base);
             }
@@ -164,7 +169,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             }
             return Collections.emptyList();
         });
-        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroupDefault(id);
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroupDefault(id, calculationDto.getRulePriorityLevel());
 
         List<String> staffNoList = all.get();
         if (CollectionUtils.isEmpty(staffNoList)) {
@@ -210,7 +215,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
     }
 
     @Override
-    public ComResponse<Integer> trialStaffNo(long groupId) throws Exception {
+    public ComResponse<CalculationResult> trialStaffNo(long groupId) throws Exception {
         ComResponse<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroup(groupId);
         if (null == staffCrowdGroup) {
             return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE);
@@ -219,7 +224,11 @@ public class StaffLassoServiceImpl implements StaffLassoService {
         if (null == data) {
             return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE);
         }
-        return ComResponse.success(this.calculationDto(data.getCalculationDto(), groupId).size());
+        List<String> userNoList = this.calculationDto(data.getCalculationDto(), groupId);
+        if (org.springframework.util.CollectionUtils.isEmpty(userNoList)) {
+            return ComResponse.success();
+        }
+        return ComResponse.success(calculationUerDetail(userNoList));
     }
 
     @Override
@@ -249,7 +258,7 @@ public class StaffLassoServiceImpl implements StaffLassoService {
 
     @Override
     public void taskCalculation() {
-        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroupDefault(0L);
+        List<StaffCrowdGroup> staffCrowdGroup = crmStaffClient.getStaffCrowdGroupDefault(0L, 0);
         staffCrowdGroup.forEach(staffGroup -> {
             try {
                 List<String> staffs = this.calculationDto(staffGroup.getCalculationDto(), staffGroup.getId());
@@ -261,5 +270,22 @@ public class StaffLassoServiceImpl implements StaffLassoService {
             }
         });
 
+    }
+
+    @Override
+    public CalculationResult calculationUerDetail(List<String> userNoList) {
+        CalculationResult calculationResult = new CalculationResult();
+        int min = Math.min(userNoList.size(), 50);
+        calculationResult.setExampleSize(min);
+        calculationResult.setUserNoSize(userNoList.size());
+        List<String> userNos = userNoList.subList(0, min);
+        List<StaffDetail> staffDetailList = ehrStaffClient.getDetailsListByNoDefault(userNos);
+        if (CollectionUtils.isEmpty(staffDetailList)) {
+            return null;
+        }
+        String sourcesJson = JSONUtil.toJsonStr(staffDetailList);
+        List<CalculationUerDetail> calculationUerDetails = JsonUtil.jsonToList(sourcesJson, CalculationUerDetail.class);
+        calculationResult.setCalculationUerDetail(calculationUerDetails);
+        return calculationResult;
     }
 }

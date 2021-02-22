@@ -12,7 +12,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import cn.net.yzl.activity.model.dto.CalculateProductDto;
+import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
+import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
+import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
+import cn.net.yzl.activity.model.enums.UseDiscountTypeEnum;
+import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
+import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
@@ -23,8 +31,10 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.controller.order.OrderRestController;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.service.order.OutStoreWarningService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
@@ -58,6 +68,19 @@ public class OrderRestControllerTests {
 	private String apiGateWayUrl;
 	@Autowired
 	private SettlementFein settlementFein;
+	@Autowired
+	private OutStoreWarningService outStoreWarningService;
+	@Resource
+	private ActivityClient activityClient;
+	@Resource
+	private ObjectMapper objectMapper;
+
+	@Test
+	public void sendOutStoreWarningMsg() {
+		ComResponse<Boolean> response = outStoreWarningService.sendOutStoreWarningMsg();
+		System.out.println("response = " + response);
+
+	}
 
 	@Test
 	public void testSettlementFein() {
@@ -90,7 +113,7 @@ public class OrderRestControllerTests {
 		try {
 			System.err.println(String.format("%s%s%s", this.apiGateWayUrl, ProductClient.SUFFIX_URL,
 					ProductClient.INCREASE_STOCK_URL));
-			String codes = "10000130,10000114,10000106";
+			String codes = "10000156,10000155,10000152";
 			this.productClient.queryByProductCodes(codes).getData().forEach(System.err::println);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -133,7 +156,7 @@ public class OrderRestControllerTests {
 	public void testGetDetailsByNo() {
 		try {
 			String staffno = "6666";
-			System.err.println(this.ehrStaffClient.getDetailsByNo(staffno).getData());
+			System.err.println(this.ehrStaffClient.getDetailsByNo(staffno));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -153,24 +176,50 @@ public class OrderRestControllerTests {
 	public void testSubmitOrderForProduct() {
 		try {
 			OrderIn order = new OrderIn();
+			order.setProductTotal(39990L);// 商品总额 单位分
+			order.setAdvertBusNo(555L);// 广告业务主键
 			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			od1.setActivityProductBusNo(20L);// 活动商品业务主键
+			od1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			od1.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			od1.setDiscountId(7);// 使用的优惠主键
+			od1.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+			od1.setProductUnitPrice(200D);// 商品销售价 单位分
+			od1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od1.setProductCode("10000156");
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(2);
-			od1.setGiftFlag(CommonConstant.GIFT_FLAG_1);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od2 = new OrderDetailIn();
+			od2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			od2.setActivityProductBusNo(20L);// 活动商品业务主键
+			od2.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			od2.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			od2.setDiscountId(7);// 使用的优惠主键
+			od2.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+			od2.setProductUnitPrice(200D);// 商品销售价 单位分
+			od2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od2.setProductCode("10000155");
 			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od2.setProductCount(2);
 			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od3 = new OrderDetailIn();
+			od3.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			od3.setActivityProductBusNo(20L);// 活动商品业务主键
+			od3.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			od3.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			od3.setDiscountId(7);// 使用的优惠主键
+			od3.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+			od3.setProductUnitPrice(200D);// 商品销售价 单位分
+			od3.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od3.setProductCode("10000152");
 			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od3.setProductCount(2);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
-			order.getOrderDetailIns().add(od2);
-			order.getOrderDetailIns().add(od3);
+//			order.getOrderDetailIns().add(od2);
+//			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
 			order.setReveiverAddressNo(482416);
 			order.setMediaChannel(0);
@@ -326,6 +375,60 @@ public class OrderRestControllerTests {
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
 			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCheckOrderAmount() {
+		try {
+			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
+			request.setMemberCard("100000002");// 会员卡号
+			request.setProductTotal(39990L);// 商品总额 单位分
+			request.setAdvertBusNo(555L);// 广告业务主键
+			CalculateProductDto a1 = new CalculateProductDto();
+			a1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			a1.setActivityProductBusNo(20L);// 活动商品业务主键
+			a1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			a1.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			a1.setDiscountId(7);// 使用的优惠主键
+//			a1.setCouponDiscountId(12);// 使用的优惠券折扣ID
+//			a1.setMemberCouponId(1);// 使用的优惠券ID
+			a1.setProductCode("10000156");// 商品code
+			a1.setProductCount(2);// 商品数量
+			a1.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+			a1.setSalePrice(20000L);// 商品销售价 单位分
+			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			request.setCalculateProductDto(Arrays.asList(a1));
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
+			System.err.println(this.activityClient.checkOrderAmount(request).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetLaunchManageByBusNo() {
+		try {
+			System.err.println(this.activityClient.getLaunchManageByBusNo(555).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testOrderSubmit() {
+		try {
+			OrderSubmitRequest request = new OrderSubmitRequest();
+			OrderSubmitProductDto dto = new OrderSubmitProductDto();
+			dto.setActivityTypeEnum(ActivityTypeEnum.ADVERT_LAUNCH);
+			dto.setDiscountTypeEnum(DiscountTypeEnum.DISCOUNT);
+			dto.setUseDiscountTypeEnum(UseDiscountTypeEnum.NOT_USE);
+			request.setOrderSubmitProductDtoList(Arrays.asList(dto));
+
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
+			System.err.println(this.activityClient.orderSubmit(request));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

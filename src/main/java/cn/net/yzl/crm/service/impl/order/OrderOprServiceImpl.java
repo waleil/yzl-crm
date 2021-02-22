@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.service.impl.order;
 
+import cn.net.yzl.activity.model.enums.RejectionTypeEnum;
+import cn.net.yzl.activity.model.requestModel.RejectionOrderRequest;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderOprClient;
@@ -10,6 +12,7 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.ObtainType;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.IOrderCommonService;
@@ -56,6 +59,9 @@ public class OrderOprServiceImpl implements IOrderOprService {
 
     @Autowired
     private IOrderCommonService orderCommonService;
+
+    @Autowired
+    private ActivityClient activityClient;
 
     @Override
     public ComResponse<Boolean> cancleOrder(OrderOprDTO dto) {
@@ -127,11 +133,22 @@ public class OrderOprServiceImpl implements IOrderOprService {
             }
 
 
-            //todo 释放已使用的优惠
-            if(vo.getCouponDetail() !=null && vo.getCouponDetail().size()>0){
+            //释放已使用的优惠
+             RejectionOrderRequest rejectionOrderRequest = new RejectionOrderRequest();
+             rejectionOrderRequest.setMemberCard(vo.getOrder().getMemberCardNo());
+             rejectionOrderRequest.setOrderNo(vo.getOrder().getOrderNo());
+             rejectionOrderRequest.setUserNo(sresponse.getData().getStaffNo());
+             rejectionOrderRequest.setRejectionType(RejectionTypeEnum.CANCEL_ORDER);
 
+            ComResponse activRes = activityClient.rejectionOrder(rejectionOrderRequest);
+            // 如果调用服务接口失败
+            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(activRes.getCode())) {
+                log.error("取消订单>>调用释放优惠券接口失败>{}", activRes);
+//                this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
+//                        ProductClient.INCREASE_STOCK_URL, dto.getOprCode(), dto.getOrderNo());
+                throw new BizException(activRes.getCode(),activRes.getMessage());
             }
-            //更新订单状态
+        //更新订单状态
             ComResponse<?> res = orderOprClient.cancleOrderM(dto);
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
                 log.error("取消订单>>调用订单服务接口失败>>{}", res);
@@ -204,7 +221,14 @@ public class OrderOprServiceImpl implements IOrderOprService {
         if(orderRes.getCode().compareTo(Integer.valueOf(200))!=0){
             throw new BizException(orderRes.getCode(),orderRes.getMessage());
         }
-
+        orderInfoVo.getOrder().setReveiverProvinceName(dto.getReveiverProvinceName());
+        orderInfoVo.getOrder().setReveiverProvince(dto.getReveiverProvince());
+        orderInfoVo.getOrder().setReveiverCityName(dto.getReveiverCityName());
+        orderInfoVo.getOrder().setReveiverCity(dto.getReveiverCity());
+        orderInfoVo.getOrder().setReveiverAreaName(dto.getReveiverAreaName());
+        orderInfoVo.getOrder().setReveiverArea(dto.getReveiverArea());
+        orderInfoVo.getOrder().setReveiverTelphoneNo(dto.getReveiverTelphoneNo());
+        orderInfoVo.getOrder().setReveiverAddress(dto.getReveiverAddress());
         //todo 给仓库发通知，生成出库单
         List<OrderDistributeExpressVO> list = new ArrayList<>();
         OrderDistributeExpressVO vo= orderCommonService.mkOrderDistributeExpressData(orderInfoVo);

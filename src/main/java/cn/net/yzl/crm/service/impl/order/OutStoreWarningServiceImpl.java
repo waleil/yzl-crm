@@ -12,6 +12,7 @@ import cn.net.yzl.order.util.SendTask;
 import cn.net.yzl.order.util.SmsSendUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
             List<String> mobile = new ArrayList<>();
             List<String> email = new ArrayList<>();
             //TODO 等待菜单权限标识
-            List<Integer> ids = outStoreWarningMapper.getRoleIdsByMenuPerms("");
+            List<Integer> ids = outStoreWarningMapper.getRoleIdsByMenuPerms(39);
             if (ids.size() > 0) {
                 //用户code
                 List<String> userCodes = outStoreWarningMapper.getUserCodesByRoleIds(ids);
@@ -45,25 +46,44 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
                 ComResponse<List<StaffDetailDto>> staffNos = ehrStaffClient.getByStaffNos(userCodes);
                 if (Optional.ofNullable(staffNos.getData()).map(List::isEmpty).isPresent()) {
                     staffNos.getData().forEach(entity -> {
-                        email.add(entity.getEmail());
-                        mobile.add(entity.getPhone());
+                        if (!StringUtils.isEmpty(entity.getEmail())) {
+                            email.add(entity.getEmail());
+                        }
+                        if (!StringUtils.isEmpty(entity.getPhone())) {
+                            mobile.add(entity.getPhone());
+                        }
                     });
                 }
             }
             OutStoreWarningDTO dto = detail.getData();
             //短信
             if (dto.getSendType().equals(1) || dto.getSendType().equals(3)) {
-                SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()));
-                SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastShippingTimeWarning()));
+                if (!StringUtils.isEmpty(dto.getLastCollectionTimeWarning())) {
+                    SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()));
+                }
+                if (!StringUtils.isEmpty(dto.getLastShippingTimeWarning())) {
+                    SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastShippingTimeWarning()));
+                }
+
             }
             // 邮件
             if (dto.getSendType().equals(2) || dto.getSendType().equals(3)) {
                 List<MailVo> mailVos = new ArrayList<>();
-                email.forEach(m -> mailVos.add(new MailVo(m, "出库预警", SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()))));
+                String orderNos = "";
+                if (!StringUtils.isEmpty(dto.getLastCollectionTimeWarning())) {
+                    orderNos = dto.getLastCollectionTimeWarning();
+                }
+                if (!StringUtils.isEmpty(dto.getLastShippingTimeWarning())) {
+                    orderNos = "," + dto.getLastCollectionTimeWarning();
+                }
+                if (!StringUtils.isEmpty(orderNos)) {
+                    String finalOrderNos = orderNos;
+                    email.forEach(m -> mailVos.add(new MailVo(m, "出库预警", SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", finalOrderNos))));
+                }
                 SendTask.runTask(mailVos);
             }
 
-            return ComResponse.success();
+            return ComResponse.success(true);
         }
         return ComResponse.fail(detail.getCode(), detail.getMessage());
     }

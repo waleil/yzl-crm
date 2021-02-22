@@ -17,9 +17,7 @@ public interface ActivityService {
 
     ComResponse<ProductDiscountResponse> getProductDiscount(ProductDiscountRequest request);
 
-    ComResponse<BigDecimal> calculate(CalculateRequest request);
-
-    ComResponse<Boolean> checkOrderAmount(CheckOrderAmountRequest request);
+    ComResponse<ProductPriceResponse> calculate(CalculateRequest request);
 
     ComResponse<MemberAccountResponse> getAccountByMemberCard(String memberCard);
 

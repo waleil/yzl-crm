@@ -6,6 +6,9 @@ import cn.net.yzl.activity.model.requestModel.*;
 import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.client.product.MealClient;
+import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.service.ActivityService;
@@ -13,6 +16,8 @@ import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
+import cn.net.yzl.product.model.vo.product.dto.MealDTO;
+import cn.net.yzl.product.model.vo.product.dto.ProductDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +42,13 @@ public class ActivityServiceImpl implements ActivityService {
     private ActivityClient activityClient;
 
     @Autowired
+    private ProductClient productClient;
+
+    @Autowired
+    private MealClient mealClient;
+
+
+    @Autowired
     MemberFien memberFien;
 
     @Override
@@ -59,7 +71,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public ComResponse<BigDecimal> calculate(CalculateRequest request) {
+    public ComResponse<ProductPriceResponse> calculate(CalculateRequest request) {
         Long groupId = this.getGroupIdByUserNo();
         if (null != groupId) {
             request.setGroupId(groupId);
@@ -68,21 +80,27 @@ public class ActivityServiceImpl implements ActivityService {
         if (null != member) {
             request.setMemberLevelGrade(member.getMGradeId());
         }
+        //查询商品的信息
+        if(0 == request.getCalculateProductDto().getProductType()){
+            ProductDetailVO productDetailVO = productClient.queryProductDetailDefault(request.getCalculateProductDto().getProductCode());
+            if(null == productDetailVO){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE,"找不到对应的商品信息");
+            }
+            request.getCalculateProductDto().setSalePrice(Long.valueOf(productDetailVO.getSalePrice()));
+            request.getCalculateProductDto().setLimitDownPrice(Long.valueOf(productDetailVO.getLimitDownPrice()));
+        }else{
+            //套餐
+            MealDTO mealDTO = mealClient.queryProductMealPortrayDefault(request.getCalculateProductDto().getProductCode());
+            if(null == mealDTO){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE,"找不到对应的商品信息");
+            }
+            request.getCalculateProductDto().setSalePrice(Long.valueOf(mealDTO.getMeal().getPrice()));
+            request.getCalculateProductDto().setLimitDownPrice(Long.valueOf(mealDTO.getMeal().getDiscountPrice()));
+        }
+
         return activityClient.calculate(request);
     }
 
-    @Override
-    public ComResponse<Boolean> checkOrderAmount(CheckOrderAmountRequest request) {
-        Long groupId = this.getGroupIdByUserNo();
-        if (null != groupId) {
-            request.setGroupId(groupId);
-        }
-        Member member = memberFien.getMemberDefault(request.getMemberCard());
-        if (null != member) {
-            request.setMemberLevelGrade(member.getMGradeId());
-        }
-        return activityClient.checkOrderAmount(request);
-    }
 
     @Override
     public ComResponse<MemberAccountResponse> getAccountByMemberCard(String memberCard) {
@@ -153,7 +171,7 @@ public class ActivityServiceImpl implements ActivityService {
             return null;
         }
         // 获取员工群，查看当前员工属于哪个群
-        List<StaffCrowdGroup> staffCrowdGroupList = crmStaffClient.getStaffCrowdGroupDefault(0L);
+        List<StaffCrowdGroup> staffCrowdGroupList = crmStaffClient.getStaffCrowdGroupDefault(0L,0);
         if (CollectionUtils.isEmpty(staffCrowdGroupList)) {
             return null;
         }
