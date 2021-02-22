@@ -1,12 +1,11 @@
 package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.service.order.ExportOrderService;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
-import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
-import cn.net.yzl.order.model.vo.order.SettlementDTO;
-import cn.net.yzl.order.model.vo.order.SettlementListReqDTO;
+import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
@@ -54,7 +53,13 @@ public class ExportOrderController {
         return ComResponse.success(true);
 
     }
+    @PostMapping("v1/selectProductDetailBySettledOrder")
+    @ApiOperation("以商品为维度的结算商品列表导出")
+    public ComResponse<Boolean> selectProductDetailBySettledOrder(@RequestBody ProductDetailSettlementedReqDTO dto, HttpServletResponse response){
+        service.exportSelectProductDetailBySettledOrder(dto,response);
+        return ComResponse.success(true);
 
+    }
 
 
 }

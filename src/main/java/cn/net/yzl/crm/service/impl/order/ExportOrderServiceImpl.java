@@ -8,10 +8,7 @@ import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.service.order.ExportOrderService;
 import cn.net.yzl.order.constant.CommonConstant;
-import cn.net.yzl.order.model.vo.order.CompareOrderType1Out;
-import cn.net.yzl.order.model.vo.order.Settlement4ExportDTO;
-import cn.net.yzl.order.model.vo.order.SettlementDTO;
-import cn.net.yzl.order.model.vo.order.SettlementListReqDTO;
+import cn.net.yzl.order.model.vo.order.*;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.handler.WriteHandler;
@@ -94,6 +91,65 @@ public class ExportOrderServiceImpl implements ExportOrderService {
                 excelWriter.finish();
             }
         }
+    }
+
+    @Override
+    public void exportSelectProductDetailBySettledOrder(ProductDetailSettlementedReqDTO dto, HttpServletResponse response) {
+//        ExcelWriter excelWriter = null;
+//        try {
+//            dto.setPageNo(1);// 默认第1页
+//            dto.setPageSize(1000);// 默认每页1000条数据
+//            ComResponse<Page<ProductDetailSettlementedResDTO>> data = this.settlementFein.selectProductDetailBySettledOrder(dto);
+//            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
+//                log.error("导出结算列表异常>>>{}", data);
+//                return;
+//            }
+//            Page<ProductDetailSettlementedResDTO> page = data.getData();
+//            PageParam param = page.getPageParam();
+//            if (param.getPageTotal() == 0) {
+//                log.info("结算列表为空>>>{}", param);
+//                return;
+//            }
+//            response.setContentType("application/vnd.ms-excel");
+//            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+//            String title = "结算列表";
+//            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
+//                    URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+//
+//
+//            excelWriter = EasyExcel.write(response.getOutputStream(), Settlement4ExportDTO.class)
+//                    .registerWriteHandler(this.writeHandler).build();
+//            // 写入到同一个sheet
+//            WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
+//            // 此处已经获取到第一页的数据
+//            List<Settlement4ExportDTO> settlement4ExportDTOS = this.formatesettleData(data.getItems());
+//            excelWriter.write(settlement4ExportDTOS, writeSheet);
+//            settlement4ExportDTOS.clear();
+//            page.getItems().clear();// 存储完成后清理集合
+//            // 如果总页数大于1
+//            if (param.getPageTotal() > 1) {
+//                // 直接从第二页开始获取
+//                for (int i = 2; i <= param.getPageTotal(); i++) {
+//                    dto.setPageNo(i);
+//                    data = this.settlementFein.settlementList(dto);
+//                    if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
+//                        log.error("导出结算列表异常>>>{}", data);
+//                        return;
+//                    }
+//                    page = data.getData();
+//                    settlement4ExportDTOS = this.formatesettleData(page.getItems());
+//                    excelWriter.write(settlement4ExportDTOS, writeSheet);
+//                    settlement4ExportDTOS.clear();
+//                    page.getItems().clear();// 存储完成后清理集合
+//                }
+//            }
+//        }catch(Exception e){
+//            log.error(e.getMessage(),e);
+//        }finally {
+//            if (excelWriter != null) {
+//                excelWriter.finish();
+//            }
+//        }
     }
 
     /**

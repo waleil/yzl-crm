@@ -58,4 +58,13 @@ public interface SettlementFein {
     public ComResponse<Page<SettlementProductDetailDTO>> selectSettleProductList(@RequestParam(value ="settlementCode")String settlementCode,
                                                                                  @RequestParam(required = false, defaultValue = "1") Integer pageNo,
                                                                                  @RequestParam(required = false, defaultValue = "10") Integer pageSize);
+    @PostMapping("v1/selectProductDetailBySettledOrder")
+    @ApiOperation("以商品为维度的结算商品列表")
+    public ComResponse<Page<ProductDetailSettlementedResDTO>> selectProductDetailBySettledOrder(@RequestBody ProductDetailSettlementedReqDTO dto);
+
+
+    @PostMapping("v1/selectProductDetailBySettledOrderTotal")
+    @ApiOperation("以商品为维度的结算商品列表汇总信息")
+    public ComResponse<ProductDetailSettlementedTotalResDTO> selectProductDetailBySettledOrderTotal(@RequestBody ProductDetailSettlementedReqDTO dto);
+
 }
