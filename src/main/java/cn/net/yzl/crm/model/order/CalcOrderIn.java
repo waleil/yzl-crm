@@ -1,9 +1,8 @@
 package cn.net.yzl.crm.model.order;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import cn.net.yzl.order.model.vo.order.OrderDetailIn;
+import cn.net.yzl.activity.model.dto.CalculateProductDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -21,8 +20,10 @@ import lombok.ToString;
 @Getter
 @ToString
 public class CalcOrderIn {
-	@ApiModelProperty(hidden = true)
-	private Integer total = 0;
-	@ApiModelProperty(value = "订单明细", required = true)
-	private List<OrderDetailIn> orderDetailIns = new ArrayList<>(0);
+	@ApiModelProperty("广告业务主键")
+	private Long advertBusNo;
+	@ApiModelProperty("会员卡号")
+	private String memberCard;
+	@ApiModelProperty("商品相关信息")
+	private List<CalculateProductDto> calculateProductDtos;
 }

@@ -12,7 +12,6 @@ import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
-import cn.net.yzl.order.model.vo.order.ImportParam;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,9 +29,7 @@ import javax.validation.constraints.NotBlank;
 public interface LogisticsFien {
 
 
-    @ApiOperation(value = "导入")
-    @PostMapping("settlement/logistics/import/freight")
-    ComResponse<ImportResult> importFromExcel(@RequestBody ImportParam param);
+
 
     @ApiOperation(value = "快递运单查询")
     @PostMapping("/track/v1/search/orderexpress")
@@ -165,4 +162,15 @@ public interface LogisticsFien {
     @ApiOperation(value = "模糊搜索快递公司")
     @GetMapping("exp/company/v1/like/search/expresscompany")
     ComResponse<List<ObjectCommon>> getCompanyByName(@RequestParam("companyName") String companyName);
+
+	/**
+	 * 物流赔付接口
+	 * 
+	 * @param indemnity {@link ExpressIndemnity}
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月22日,下午3:11:56
+	 */
+	@PostMapping("/settlement/logistics/charge/indemnity")
+	ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
 }

@@ -32,6 +32,7 @@ import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
 import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
 import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
 import cn.net.yzl.activity.model.enums.UseDiscountTypeEnum;
+import cn.net.yzl.activity.model.requestModel.CalculateRequest;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
 import cn.net.yzl.activity.model.responseModel.OrderSubmitResponse;
@@ -97,8 +98,32 @@ public class OrderRestController {
 	@PostMapping("/v1/calcorder")
 	@ApiOperation(value = "热线工单-购物车-计算订单金额", notes = "热线工单-购物车-计算订单金额")
 	public ComResponse<CalcOrderOut> calcOrder(@RequestBody CalcOrderIn orderin) {
-		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(orderin.getTotal()).divide(bd100).doubleValue(),
-				BigDecimal.valueOf(orderin.getTotal()).divide(bd100).doubleValue(), 0d, 0d, 0d));
+		if (CollectionUtils.isEmpty(orderin.getCalculateProductDtos())) {
+			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
+		}
+		// 按顾客号查询顾客信息
+		GeneralResult<Member> mresult = this.memberFien.getMember(orderin.getMemberCard());
+		// 如果服务调用异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresult.getCode())) {
+			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCard(), mresult);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, mresult.getMessage());
+		}
+		Member member = mresult.getData();
+		if (member == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息>>{}", orderin.getMemberCard(), member);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
+		}
+		List<ProductPriceResponse> list = orderin.getCalculateProductDtos().stream().map(m -> {
+			CalculateRequest request = new CalculateRequest();
+			request.setAdvertBusNo(orderin.getAdvertBusNo());
+			request.setCalculateProductDto(m);
+			request.setMemberCard(orderin.getMemberCard());
+			request.setMemberLevelGrade(member.getMGradeId());
+			return this.activityClient.calculate(request).getData();
+		}).collect(Collectors.toList());
+		double productTotal = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
+		return ComResponse.success(new CalcOrderOut(productTotal, productTotal, 0d, 0d, 0d));
 	}
 
 	@PostMapping("/v1/submitorder")
