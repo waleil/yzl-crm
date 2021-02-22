@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/goodsintransit")
+@FeignClient(name = "goodsintransit",url = "${api.gateway.url}/orderService/goodsintransit")
 //@FeignClient(name = "goodsintransit",url = "localhost:4455/goodsintransit")
 public interface GoodsInTransitFeign {
 
