@@ -50,6 +50,7 @@ import cn.net.yzl.crm.constant.ObtainType;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
+import cn.net.yzl.crm.customer.model.MemberAmount;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
@@ -114,6 +115,11 @@ public class OrderRestController {
 		if (member == null) {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
+		}
+		MemberAmount amount = member.getMember_amount();
+		if (amount == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账户信息", orderin.getMemberCard());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账户信息。");
 		}
 		// 只匹配购买的商品或套餐，排除赠品
 		List<CalculateOrderProductDto> orderproducts = orderin.getCalculateProductDtos().stream()
