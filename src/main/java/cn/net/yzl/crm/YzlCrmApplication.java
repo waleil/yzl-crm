@@ -19,7 +19,7 @@ import cn.net.yzl.common.swagger2.EnableSwagger;
 import lombok.extern.slf4j.Slf4j;
 
 @EnableSwagger
-@SpringBootApplication(scanBasePackages = { "cn.net.yzl.crm", "cn.net.yzl.logger", "cn.net.yzl.pm" })
+@SpringBootApplication(scanBasePackages = { "cn.net.yzl.crm", "cn.net.yzl.logger", "cn.net.yzl.pm", "cn.net.yzl.msg" })
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = { "cn.net.yzl.crm.service.micservice", "cn.net.yzl.crm.client" })
 @ServletComponentScan(basePackages = { "cn.net.yzl.crm.filters" })
