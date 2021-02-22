@@ -3,6 +3,8 @@ package cn.net.yzl.crm.controller;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.dto.staff.CalculationResult;
+import cn.net.yzl.crm.dto.staff.CalculationUerDetail;
 import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
@@ -13,9 +15,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Api(tags = "员工圈选服务")
 @RestController
@@ -32,20 +36,24 @@ public class StaffLassoController {
 
     @ApiOperation(value = "试算")
     @PostMapping("v1/calculationDto")
-    public ComResponse<Integer> calculationDto(@RequestBody CalculationDto calculationDto) throws Exception {
-        Integer lassoCount = staffLassoService.calculationDto(calculationDto, 0L).size();
-        return ComResponse.success(lassoCount);
+    public ComResponse<CalculationResult> calculationDto(@RequestBody CalculationDto calculationDto, @RequestParam("groupId") long groupId) throws Exception {
+        List<String> userNoList = staffLassoService.calculationDto(calculationDto, groupId);
+        if (CollectionUtils.isEmpty(userNoList)) {
+            return ComResponse.success();
+        }
+        return ComResponse.success(staffLassoService.calculationUerDetail(userNoList));
     }
 
 
     @ApiOperation(value = "列表页 - 试算员工数量")
     @GetMapping("v1/trialStaffNo")
-    public ComResponse<Integer> trialStaffNo(@RequestParam("groupId") long groupId) throws Exception {
+    public ComResponse<CalculationResult> trialStaffNo(@RequestParam("groupId") long groupId) throws Exception {
+        //返回试算结果中前50条的结果明细
         return staffLassoService.trialStaffNo(groupId);
     }
 
 
-    @ApiOperation(value = "保存员工全选组", httpMethod = "POST")
+    @ApiOperation(value = "保存员工圈选组", httpMethod = "POST")
     @PostMapping("v1/saveStaffCrowdGroup")
     public ComResponse<Boolean> saveStaffCrowdGroupDTO(@RequestBody StaffCrowdGroup staffCrowdGroup) {
         staffCrowdGroup.setCreateCode(QueryIds.userNo.get());
