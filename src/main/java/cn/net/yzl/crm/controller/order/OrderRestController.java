@@ -156,8 +156,20 @@ public class OrderRestController {
 			request.setMemberLevelGrade(member.getMGradeId());
 			return this.activityClient.calculate(request).getData();
 		}).collect(Collectors.toList());
-		double productTotal = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
-		return ComResponse.success(new CalcOrderOut(productTotal, productTotal, 0d, 0d, 0d));
+		// 商品数量*商品价格，然后求和，计算出订单总额
+		long totalAll = orderproducts.stream().mapToLong(m -> m.getProductCount() * m.getSalePrice()).sum();
+		// 对每一件商品经过DMC接口算出优惠价，然后求和，计算出商品优惠总价
+		double total = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
+		// 优惠券+活动优惠的总价
+		double amountCoupon = list.stream()
+				.mapToDouble(m -> Optional.ofNullable(m.getActivityDiscountPrice()).orElse(BigDecimal.ZERO)
+						.add(Optional.ofNullable(m.getCouponDiscountPrice()).orElse(BigDecimal.ZERO)).doubleValue())
+				.sum();
+		if (orderin.getAmountStored().compareTo(BigDecimal.ZERO) > 0) {
+			total -= orderin.getAmountStored().doubleValue();
+		}
+		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(totalAll).divide(bd100).doubleValue(), total,
+				amountCoupon, 0d, orderin.getAmountStored().doubleValue()));
 	}
 
 	@PostMapping("/v1/submitorder")
@@ -1026,7 +1038,7 @@ public class OrderRestController {
 	 * @date 2021年2月2日,下午7:15:59
 	 */
 	private boolean hasAmountStored(OrderIn orderin) {
-		return orderin.getAmountStored() != null && orderin.getAmountStored() > 0D
+		return orderin.getAmountStored() != null && orderin.getAmountStored().compareTo(BigDecimal.ZERO) > 0
 				&& Integer.compare(PayType.PAY_TYPE_1.getCode(), orderin.getPayType()) == 0;
 	}
 
