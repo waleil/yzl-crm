@@ -101,6 +101,20 @@ public interface MealClient {
 	@ApiOperation("查询商品套餐画像")
 	ComResponse<MealDTO> queryProductMealPortray(@RequestParam("mealNo") String mealNo);
 
+	default MealDTO queryProductMealPortrayDefault(String productCodes) {
+		try {
+			ComResponse<MealDTO> listComResponse = queryProductMealPortray(productCodes);
+			if (null == listComResponse || !ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
+				logger.error("{message:查询商品套餐画像失败！}");
+				return null;
+			}
+			return listComResponse.getData();
+		} catch (Exception e) {
+			logger.error("message:查询商品套餐画像失败！", e);
+		}
+		return null;
+	}
+
 	/**
 	 * 按套餐编码查询套餐里的商品列表
 	 * 

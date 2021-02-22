@@ -172,7 +172,7 @@ public class StaffServiceImpl implements StaffService {
             return ComResponse.fail(ResponseCodeEnums.NO_MATCHING_RESULT_CODE, "userNo不能为空!");
         }
         // 获取员工群，查看当前员工属于哪个群
-        List<StaffCrowdGroup> staffCrowdGroupList = crmStaffClient.getStaffCrowdGroupDefault(0L);
+        List<StaffCrowdGroup> staffCrowdGroupList = crmStaffClient.getStaffCrowdGroupDefault(0L,0);
         if (CollectionUtils.isEmpty(staffCrowdGroupList)) {
             return ComResponse.nodata("当前无营销目标！");
         }

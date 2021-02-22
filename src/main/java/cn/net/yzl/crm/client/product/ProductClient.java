@@ -68,6 +68,20 @@ public interface ProductClient {
 	@GetMapping(value = "v1/queryProductDetail")
 	ComResponse<ProductDetailVO> queryProductDetail(@RequestParam("productCode") String productCode);
 
+	default ProductDetailVO queryProductDetailDefault(String productCodes) {
+		try {
+			ComResponse<ProductDetailVO> comResponse = queryProductDetail(productCodes);
+			if (null == comResponse || !ResponseCodeEnums.SUCCESS_CODE.getCode().equals(comResponse.getCode())) {
+				logger.error("{message:查询商品详情失败！}");
+				return null;
+			}
+			return comResponse.getData();
+		} catch (Exception e) {
+			logger.error("message:查询商品详情失败！", e);
+		}
+		return null;
+	}
+
 	@GetMapping(value = "v1/queryProductPortrait")
 	ComResponse<ProductPortraitDTO> queryProductPortrait(@RequestParam("productCode") String productCode);
 
