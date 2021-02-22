@@ -448,7 +448,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setReveiverAddress(addressMsgDTO.getDetailedReceivingAddress());
 		orderM.setRemark(orderTemp.getRemark());
 
-		orderM.setStaffCode(orderTemp.getOrderTempCode());
+		orderM.setStaffCode(orderTemp.getCreateCode());
 		orderM.setStaffName(orderTemp.getCreateName());
 		orderM.setUpdateCode(orderTemp.getCreateCode());
 		orderM.setUpdateName(orderTemp.getCreateName());
