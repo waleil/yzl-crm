@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.net.yzl.model.dto.DepartDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,6 +70,18 @@ public class OrderRestControllerTests {
 	private ActivityClient activityClient;
 	@Resource
 	private ObjectMapper objectMapper;
+
+
+
+	@Test
+	public void getDepartById() {
+		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(1650);
+		ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo("5085");
+		System.out.println("response = " + dresponse);
+		System.out.println("detailsByNo = " + detailsByNo);
+
+	}
+
 
 	@Test
 	public void sendOutStoreWarningMsg() {
