@@ -34,8 +34,8 @@ public interface WorkOrderClient {
      * @param findWorkOrderHotlinePageListDTO
      * @return
      */
-    @PostMapping(value = "v1/pageList")
-    ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
+    @PostMapping(value = "v1/workOrderHotlineList")
+    ComResponse<Page<FindWorkOrderHotlinePageListVO>> workOrderHotlineList(FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
 
     /**
      * 智能工单：热线工单管理-回收
@@ -70,7 +70,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/queryFirstProduct")
-    ComResponse<String> queryFirstProduct(@RequestParam("deptId") Integer deptId);
+    ComResponse<String> queryFirstProduct(@RequestParam("deptId") Integer deptId,@RequestParam("status") Integer status);
 
     /**
      * 智能工单:回访工单管理-查询所有用户最后一次购买商品
@@ -78,7 +78,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/queryLastProduct")
-    ComResponse<String> queryLastProduct(@RequestParam("deptId") Integer deptId);
+    ComResponse<String> queryLastProduct(@RequestParam("deptId") Integer deptId,@RequestParam("status") Integer status);
 
     /**
      * 智能工单：热线工单管理-多数据调整

@@ -106,6 +106,11 @@ public class MemberGroupController {
         member_group.setCreate_name(memberCrowdGroup.getCreate_name());
         member_group.setAdvertProducts(memberCrowdGroup.getAdvertProducts());
         member_group.setLastCallDays(memberCrowdGroup.getLastCallDays());
+        //设置优先级
+        member_group.setSeq(memberCrowdGroup.getSeq());
+        if (memberCrowdGroup.getSeq() == null) {
+            member_group.setSeq(4);
+        }
         if (StringUtil.isNullOrEmpty(memberCrowdGroup.get_id())) {
             member_group.setCreate_code(userId);
             ComResponse result= memberGroupFeign.addCrowdGroup(member_group);

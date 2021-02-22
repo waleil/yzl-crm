@@ -2,7 +2,9 @@ package cn.net.yzl.crm.client.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.workorder.model.vo.VisitSeatsVo;
+import cn.net.yzl.workorder.model.vo.WorkbenchHotlineManagerVO;
 import cn.net.yzl.workorder.model.vo.WorkbenchHotlineVO;
+import cn.net.yzl.workorder.model.vo.WorkbenchVisitManagerVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,4 +22,10 @@ public interface WorkbenchClient {
 
     @RequestMapping(value = "workbench/visitSeats")
     ComResponse<VisitSeatsVo> visitSeats(@RequestParam("staffNo") String staffNo);
+
+    @RequestMapping(value = "workbench/getWorkbenchHotlineManager")
+    ComResponse<WorkbenchHotlineManagerVO> getWorkbenchHotlineManager(@RequestParam("staffNo") String staffNo);
+
+    @RequestMapping(value = "workbench/getWorkbenchVisitManager")
+    ComResponse<WorkbenchVisitManagerVo> getWorkbenchVisitManager(@RequestParam("staffNo") String staffNo);
 }

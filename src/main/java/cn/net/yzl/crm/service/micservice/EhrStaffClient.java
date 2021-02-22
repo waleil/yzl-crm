@@ -141,6 +141,14 @@ public interface EhrStaffClient {
     ComResponse<List<DepartDto>> getListByBusinessAttrId(@RequestParam("bussinessAttrId") String bussinessAttrId);
 
     /**
+     * 根据多个业务属性获取部门列表 list
+     * @param bussinessAttrIds
+     * @return
+     */
+    @RequestMapping(value = "/depart/getListByBusinessAttrIds", method = RequestMethod.GET)
+    ComResponse<List<DepartDto>> getListByBusinessAttrIds(@RequestParam("bussinessAttrIds") String bussinessAttrIds);
+
+    /**
      * 多条件获取 员工list
      * @param staffParamsVO
      * @return
@@ -298,4 +306,16 @@ public interface EhrStaffClient {
     }
 
 
+    default List<StaffDetail> getDetailsListByNoDefault(List<String> userNos) {
+        ComResponse<List<StaffDetail>> listComResponse;
+        try {
+            listComResponse =  this.getDetailsListByNo(userNos);
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+        if (null == listComResponse) {
+            return Collections.emptyList();
+        }
+        return listComResponse.getData();
+    }
 }

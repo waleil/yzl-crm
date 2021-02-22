@@ -152,9 +152,9 @@ public class WorkOrderController {
         return ComResponse.success(pageWorkOrderBean);
     }
 
-    @PostMapping("v1/pageList")
+    @PostMapping("v1/workOrderHotlineList")
     @ApiOperation(value = "热线工单管理-列表", notes = "热线工单管理-列表")
-    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
+    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> workOrderHotlineList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
         //是否是分线监控
         Integer isMonitoring = findWorkOrderHotlinePageListDTO.getIsMonitoring();
         if(0 == isMonitoring){
@@ -169,7 +169,7 @@ public class WorkOrderController {
             findWorkOrderHotlinePageListDTO.setDeptId(departId);
         }
         //智能派单--默认查询所有部门的数据
-        ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
+        ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.workOrderHotlineList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
 
     }
@@ -354,27 +354,27 @@ public class WorkOrderController {
 
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
     @GetMapping("v1/queryFirstProduct")
-    public ComResponse<List<ProductMainDTO>> queryFirstProduct() {
+    public ComResponse<List<ProductMainDTO>> queryFirstProduct(@ApiParam(value = "1:回访;2:待领取")@RequestParam("status") Integer status) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         StaffImageBaseInfoDto data1 = detailsByNo.getData();
         Integer deptId = null;
         if(null != data1){
             deptId = data1.getDepartId();
         }
-        String data = workOrderClient.queryFirstProduct(deptId).getData();
+        String data = workOrderClient.queryFirstProduct(deptId,status).getData();
         return productClient.queryByProductCodes(data);
     }
 
     @ApiOperation(value = "所有用户最后一次购买商品-列表", notes = "所有用户最后一次购买商品-列表")
     @GetMapping("v1/queryLastProduct")
-    public ComResponse<List<ProductMainDTO>> queryLastProduct() {
+    public ComResponse<List<ProductMainDTO>> queryLastProduct(@ApiParam(value = "1:回访;2:待领取")@RequestParam("status") Integer status) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         StaffImageBaseInfoDto data1 = detailsByNo.getData();
         Integer deptId = null;
         if(null != data1){
             deptId = data1.getDepartId();
         }
-        String data = workOrderClient.queryLastProduct(deptId).getData();
+        String data = workOrderClient.queryLastProduct(deptId,status).getData();
         return productClient.queryByProductCodes(data);
     }
 
