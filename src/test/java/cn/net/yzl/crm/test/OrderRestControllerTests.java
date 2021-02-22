@@ -226,6 +226,7 @@ public class OrderRestControllerTests {
 			order.setMemberTelphoneNo("12345678901");
 			order.setPayType(CommonConstant.PAY_TYPE_0);
 			QueryIds.userNo.set("14020");
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(order));
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -459,7 +460,7 @@ public class OrderRestControllerTests {
 			dto.setProductCount(2);// 商品数量
 			dto.setProductTotal(20000L);// 商品销售价,单位分
 			dto.setUseDiscountTypeEnum(UseDiscountTypeEnum.USE_ACTIVITY);// 使用的优惠
-			
+
 			request.setOrderSubmitProductDtoList(Arrays.asList(dto));
 
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
