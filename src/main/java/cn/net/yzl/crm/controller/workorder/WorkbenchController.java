@@ -6,8 +6,10 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.workorder.model.vo.VisitSeatsVo;
 import cn.net.yzl.workorder.model.vo.WorkbenchHotlineManagerVO;
 import cn.net.yzl.workorder.model.vo.WorkbenchHotlineVO;
+import cn.net.yzl.workorder.model.vo.WorkbenchVisitManagerVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,5 +46,11 @@ public class WorkbenchController {
     public ComResponse<WorkbenchHotlineManagerVO> getWorkbenchHotlineManager(){
         ComResponse<WorkbenchHotlineManagerVO> workbenchHotlineManager = workbenchClient.getWorkbenchHotlineManager(QueryIds.userNo.get());
         return workbenchHotlineManager;
+    }
+
+    @ApiOperation(value = "工作台-回访经理",notes = "工作台-回访经理")
+    @GetMapping(value = "getWorkbenchVisitManager")
+    public ComResponse<WorkbenchVisitManagerVo> getWorkbenchVisitManager(){
+        return workbenchClient.getWorkbenchVisitManager(QueryIds.userNo.get());
     }
 }
