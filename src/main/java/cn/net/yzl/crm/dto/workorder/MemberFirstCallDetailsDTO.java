@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.dto.workorder;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -43,7 +44,11 @@ public class MemberFirstCallDetailsDTO implements Serializable {
     @ApiModelProperty(value = "被叫号码")
     private String calledPhone;
 
+    @ApiModelProperty(value = "被叫号码，400电话 ")
+    private String phone;
+
     @ApiModelProperty(value = "记录生成时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
 
     @ApiModelProperty(value = "呼入时间列表")

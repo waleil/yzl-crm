@@ -35,6 +35,7 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
     public ComResponse<Boolean> sendOutStoreWarningMsg() {
         ComResponse<OutStoreWarningDTO> detail = outStoreWarningClient.getOutStoreWarningDetail();
         if (Optional.ofNullable(detail.getData()).isPresent()) {
+
             List<String> mobile = new ArrayList<>();
             List<String> email = new ArrayList<>();
             //TODO 等待菜单权限标识
@@ -56,26 +57,29 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
                 }
             }
             OutStoreWarningDTO dto = detail.getData();
+            String orderNos = "";
+            if (!StringUtils.isEmpty(dto.getLastCollectionTimeWarning())) {
+                orderNos = dto.getLastCollectionTimeWarning();
+            }
+            if (!StringUtils.isEmpty(dto.getLastShippingTimeWarning())) {
+                orderNos = "," + dto.getLastCollectionTimeWarning();
+            }
             //短信
             if (dto.getSendType().equals(1) || dto.getSendType().equals(3)) {
+                //todo 暂时截取200个字符长度，因为短信不支持过长
+                String substring = orderNos.substring(0, 200);
                 if (!StringUtils.isEmpty(dto.getLastCollectionTimeWarning())) {
-                    SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastCollectionTimeWarning()));
+                    SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", substring));
                 }
                 if (!StringUtils.isEmpty(dto.getLastShippingTimeWarning())) {
-                    SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", dto.getLastShippingTimeWarning()));
+                    SmsSendUtils.batchSend(String.join(",", mobile), SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", substring));
                 }
 
             }
             // 邮件
             if (dto.getSendType().equals(2) || dto.getSendType().equals(3)) {
                 List<MailVo> mailVos = new ArrayList<>();
-                String orderNos = "";
-                if (!StringUtils.isEmpty(dto.getLastCollectionTimeWarning())) {
-                    orderNos = dto.getLastCollectionTimeWarning();
-                }
-                if (!StringUtils.isEmpty(dto.getLastShippingTimeWarning())) {
-                    orderNos = "," + dto.getLastCollectionTimeWarning();
-                }
+
                 if (!StringUtils.isEmpty(orderNos)) {
                     String finalOrderNos = orderNos;
                     email.forEach(m -> mailVos.add(new MailVo(m, "出库预警", SmsSendUtils.OUT_STORE_WARNING_SMS_TEMPLATE.replace("#orderNo#", finalOrderNos))));
