@@ -632,11 +632,11 @@ public class OrderRestController {
 		List<MemberCouponDto> memberCouponDtos = orderSubmitResponse.getMemberCouponDtoList();
 		if (!CollectionUtils.isEmpty(memberCouponDtos)) {
 			// key为商品编码，value为订单明细对象
-			Map<String, OrderDetail> odMap = orderdetailList.stream()
-					.collect(Collectors.toMap(OrderDetail::getProductCode, Function.identity()));
+			Map<String, List<OrderDetail>> odMap = orderdetailList.stream()
+					.collect(Collectors.groupingBy(OrderDetail::getProductCode));
 			for (MemberCouponDto memberCoupon : memberCouponDtos) {
 				OrderCouponDetail cd = new OrderCouponDetail();
-				OrderDetail od = odMap.get(memberCoupon.getProductCode());
+				OrderDetail od = odMap.get(memberCoupon.getProductCode()).get(0);
 				// 优惠使用记录表业务主键
 				cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
 				cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
