@@ -155,7 +155,7 @@ public class OrderRestControllerTests {
 	@Test
 	public void testGetDetailsByNo() {
 		try {
-			String staffno = "6666";
+			String staffno = "14020";
 			System.err.println(this.ehrStaffClient.getDetailsByNo(staffno));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -420,15 +420,50 @@ public class OrderRestControllerTests {
 	@Test
 	public void testOrderSubmit() {
 		try {
+//			{
+//				  "orderNo" : "ON20210221115651626262382",
+//				  "advertBusNo" : 555,
+//				  "memberCard" : "100000002",
+//				  "productTotal" : 39990,
+//				  "orderSubmitProductDtoList" : [ {
+//				    "productCode" : "10000156",
+//				    "productCount" : 2,
+//				    "productTotal" : 20000,
+//				    "useDiscountTypeEnum" : "USE_ACTIVITY",
+//				    "activityTypeEnum" : "ADVERT_LAUNCH",
+//				    "activityBusNo" : 20,
+//				    "activityProductBusNo" : 20,
+//				    "discountTypeEnum" : "FULL_REDUCE",
+//				    "discountId" : 7,
+//				    "memberCouponId" : null
+//				  } ],
+//				  "groupId" : null,
+//				  "memberLevelGrade" : 7,
+//				  "userNo" : 14058,
+//				  "memberCouponIdForOrder" : null
+//				}
 			OrderSubmitRequest request = new OrderSubmitRequest();
+			request.setAdvertBusNo(555L);// 广告业务主键
+			request.setMemberCard("100000002");// 会员卡号
+			request.setMemberLevelGrade(7);// 会员级别
+			request.setOrderNo("ON20210221115651626262382");// 订单编号
+			request.setProductTotal(39990L);// 商品总额 单位分
+			request.setUserNo("14058");// 操作人
 			OrderSubmitProductDto dto = new OrderSubmitProductDto();
-			dto.setActivityTypeEnum(ActivityTypeEnum.ADVERT_LAUNCH);
-			dto.setDiscountTypeEnum(DiscountTypeEnum.DISCOUNT);
-			dto.setUseDiscountTypeEnum(UseDiscountTypeEnum.NOT_USE);
+			dto.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			dto.setActivityProductBusNo(20L);// 活动商品业务主键
+			dto.setActivityTypeEnum(ActivityTypeEnum.ADVERT_LAUNCH);// 优惠途径
+			dto.setDiscountId(7);// 使用的优惠主键
+			dto.setDiscountTypeEnum(DiscountTypeEnum.FULL_REDUCE);// 优惠方式
+			dto.setProductCode("10000156");// 商品code
+			dto.setProductCount(2);// 商品数量
+			dto.setProductTotal(20000L);// 商品销售价,单位分
+			dto.setUseDiscountTypeEnum(UseDiscountTypeEnum.USE_ACTIVITY);// 使用的优惠
+			
 			request.setOrderSubmitProductDtoList(Arrays.asList(dto));
 
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
-			System.err.println(this.activityClient.orderSubmit(request));
+			System.err.println(this.activityClient.orderSubmit(request).getData().getMemberCouponDtoList());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
