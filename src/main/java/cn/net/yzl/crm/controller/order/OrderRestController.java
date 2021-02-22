@@ -19,9 +19,11 @@ import javax.annotation.Resource;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
@@ -54,6 +56,7 @@ import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
 import cn.net.yzl.crm.model.order.CalcOrderIn.CalculateOrderProductDto;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
@@ -66,12 +69,14 @@ import cn.net.yzl.crm.service.order.IOrderCommonService;
 import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.order.constant.CommonConstant;
+import cn.net.yzl.order.enums.LeaderBoardType;
 import cn.net.yzl.order.enums.PayMode;
 import cn.net.yzl.order.enums.PayType;
 import cn.net.yzl.order.enums.RedisKeys;
 import cn.net.yzl.order.model.db.order.OrderCouponDetail;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
+import cn.net.yzl.order.model.vo.ehr.LeaderBoard;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
 import cn.net.yzl.order.model.vo.order.OrderRequest;
@@ -83,6 +88,7 @@ import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -287,7 +293,8 @@ public class OrderRestController {
 		// 组装校验订单金额参数
 		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
 		try {
-			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(checkOrderAmountRequest));
+			System.err.println(
+					this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(checkOrderAmountRequest));
 		} catch (Exception e) {
 		}
 		// 调用校验订单金额接口
@@ -637,7 +644,8 @@ public class OrderRestController {
 		// 组装提交订单送积分和优惠券参数
 		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, member, orderm);
 		try {
-			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orderSubmitRequest));
+			System.err
+					.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orderSubmitRequest));
 		} catch (Exception e) {
 		}
 		// 提交订单送积分和优惠券
@@ -1726,6 +1734,28 @@ public class OrderRestController {
 		// 调用补发订单服务接口
 //		ComResponse<Object> a = this.orderFeignClient.reissueOrder(new OrderRequest(orderm, orderdetailList, orderin.getOrderNo()));
 		return ComResponse.success();
+	}
+
+	@GetMapping("/v1/leaderboard")
+	@ApiOperation(value = "业绩排行榜", notes = "业绩排行榜")
+	public ComResponse<List<LeaderBoard>> queryLeaderboard(
+			@ApiParam(value = "今日/3日/7日") @RequestParam LeaderBoardType boardType) {
+		List<LeaderBoard> data = this.orderFeignClient.queryLeaderboard(boardType).getData();
+		if (!CollectionUtils.isEmpty(data)) {
+			List<String> staffCodes = data.stream().map(LeaderBoard::getStaffCode).collect(Collectors.toList());
+			List<StaffDetail> details = this.ehrStaffClient.getDetailsListByNo(staffCodes).getData();
+			if (!CollectionUtils.isEmpty(details)) {
+				Map<String, StaffDetail> sdMap = details.stream()
+						.collect(Collectors.toMap(StaffDetail::getStaffNo, Function.identity()));
+				return ComResponse.success(data.stream().map(m -> {
+					StaffDetail sd = sdMap.get(m.getStaffCode());
+					m.setStaffName(sd.getName());
+					m.setDepartName(sd.getDepartName());
+					return m;
+				}).collect(Collectors.toList()));
+			}
+		}
+		return ComResponse.success(data);
 	}
 
 	@Resource
