@@ -21,9 +21,9 @@ import lombok.ToString;
 @Getter
 @ToString
 public class CalcOrderIn {
-	@ApiModelProperty("广告业务主键")
+	@ApiModelProperty(value = "广告业务主键", required = false)
 	private Long advertBusNo;
-	@ApiModelProperty("会员卡号")
+	@ApiModelProperty(value = "会员卡号", required = true)
 	private String memberCard;
 	@ApiModelProperty(value = "商品相关信息", required = true)
 	private List<CalculateProductDto> calculateProductDtos = new ArrayList<>(0);
