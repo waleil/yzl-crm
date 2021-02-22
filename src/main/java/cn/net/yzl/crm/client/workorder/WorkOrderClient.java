@@ -25,8 +25,8 @@ public interface WorkOrderClient {
      * @param isListPageDTO
      * @return
      */
-    @PostMapping(value = "v1/isListPage")
-    ComResponse<Page<WorkOrderBean>> isListPage(IsListPageDTO isListPageDTO);
+    @PostMapping(value = "v1/isVisitListPage")
+    ComResponse<Page<WorkOrderBean>> isVisitListPage(IsListPageDTO isListPageDTO);
 
     /**
      * 智能工单: 热线工单管理-列表
@@ -34,8 +34,8 @@ public interface WorkOrderClient {
      * @param findWorkOrderHotlinePageListDTO
      * @return
      */
-    @PostMapping(value = "v1/pageList")
-    ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
+    @PostMapping(value = "v1/workOrderHotlineList")
+    ComResponse<Page<FindWorkOrderHotlinePageListVO>> workOrderHotlineList(FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
 
     /**
      * 智能工单：热线工单管理-回收
@@ -52,8 +52,8 @@ public interface WorkOrderClient {
      * @param workOrderVisitVO
      * @return
      */
-    @PostMapping(value = "v1/listPage")
-    ComResponse<Page<WorkOrderBean>> listPage(WorkOrderVisitVO workOrderVisitVO);
+    @PostMapping(value = "v1/visitAdministrationListPage")
+    ComResponse<Page<WorkOrderBean>> visitAdministrationListPage(WorkOrderVisitVO workOrderVisitVO);
 
     /**
      * 智能工单：热线工单管理-单数据调整
@@ -70,7 +70,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/queryFirstProduct")
-    ComResponse<String> queryFirstProduct(@RequestParam("deptId") Integer deptId);
+    ComResponse<String> queryFirstProduct(@RequestParam("deptId") Integer deptId,@RequestParam("status") Integer status);
 
     /**
      * 智能工单:回访工单管理-查询所有用户最后一次购买商品
@@ -78,7 +78,7 @@ public interface WorkOrderClient {
      * @return
      */
     @GetMapping(value = "v1/queryLastProduct")
-    ComResponse<String> queryLastProduct(@RequestParam("deptId") Integer deptId);
+    ComResponse<String> queryLastProduct(@RequestParam("deptId") Integer deptId,@RequestParam("status") Integer status);
 
     /**
      * 智能工单：热线工单管理-多数据调整

@@ -13,6 +13,7 @@ import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.model.dto.DepartDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,5 +108,10 @@ public class CommonController {
         return activityClient.getMemberLevelPages(request);
     }
 
+    @ApiOperation(value = "根据多个业务属性获取部门列表")
+    @GetMapping("v1/getListByBusinessAttrIds")
+    public ComResponse<List<DepartDto>> getListByBusinessAttrIds(@RequestParam("bussinessAttrIds") String bussinessAttrIds) {
+        return ehrStaffClient.getListByBusinessAttrIds(bussinessAttrIds);
+    }
 
 }

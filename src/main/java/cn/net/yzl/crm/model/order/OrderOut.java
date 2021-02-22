@@ -1,6 +1,9 @@
 package cn.net.yzl.crm.model.order;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -8,6 +11,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -18,7 +22,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @ApiModel(description = "订单")
 public class OrderOut {
 	@ApiModelProperty(value = "收货人地址")
@@ -28,12 +31,32 @@ public class OrderOut {
 	@ApiModelProperty(value = "收货人电话")
 	private String reveiverTelphoneNo;
 	@ApiModelProperty(value = "实收金额，单位元")
-	private Double total;
+	private BigDecimal total;
 	@ApiModelProperty(value = "账户余额，单位元")
-	private Double totalMoney;
+	private BigDecimal totalMoney;
 	@ApiModelProperty(value = "订单号")
 	private String orderNo;
 	@ApiModelProperty(value = "下单时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date orderTime;
+	@ApiModelProperty(value = "本次购物获得积分")
+	private Integer returnPointsDeduction;
+	@ApiModelProperty(value = "本次购物获得优惠券")
+	private List<Coupon> coupons = new ArrayList<>(0);
+
+	@Getter
+	@Setter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@ApiModel(description = "优惠券")
+	public static class Coupon {
+		@ApiModelProperty(value = "有效期开始时间")
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		private Date startDate;
+		@ApiModelProperty(value = "有效期结束时间")
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		private Date endDate;
+		@ApiModelProperty(value = "优惠券名称")
+		private String couponName;
+	}
 }

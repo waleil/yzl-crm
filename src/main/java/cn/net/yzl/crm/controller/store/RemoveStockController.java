@@ -2,7 +2,11 @@ package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.RemoveStockFeignService;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.model.dto.*;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.Api;
@@ -29,6 +33,9 @@ public class RemoveStockController {
     @Autowired
     private RemoveStockFeignService removeStockFeignService;
 
+    @Autowired
+    EhrStaffClient ehrStaffClient;
+
     @ApiOperation(value = "分页查询出库制表单表", notes = "分页查询出库制表单表")
     @PostMapping("v1/selectRemoveStoreListPage")
     public ComResponse<Page<RemoveStockDto>> selectRemoveStoreListPage(@RequestBody RemoveStockRaramsVo removeStockRaramsVo){
@@ -40,11 +47,19 @@ public class RemoveStockController {
     @PostMapping("v1/createOutStoreOrder")
     public ComResponse createOutStoreOrder(@RequestBody List<OutStoreOrderVo> outStoreOrderVoList, HttpServletRequest request){
         String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> detailsByNo=null;
+        try {
+            detailsByNo= ehrStaffClient.getDetailsByNo(userNo);
+        } catch (Exception e) {
+            throw new BizException(ResponseCodeEnums.API_ERROR_CODE.getCode(),"调用员工服务出错");
+        }
+        String name = detailsByNo.getData().getName();
         for (OutStoreOrderVo outStoreOrderVo : outStoreOrderVoList) {
+            outStoreOrderVo.setCreator(name);
             outStoreOrderVo.setUserNo(userNo);
         }
-
         return removeStockFeignService.createOutStoreOrder(outStoreOrderVoList);
+
     }
 
     @ApiOperation(value = "查询出库单列表",notes = "查询出库单列表")
@@ -100,7 +115,7 @@ public class RemoveStockController {
             @ApiImplicitParam(name = "orderNo", value = "订单编号",  dataType = "String", paramType = "query"),
     })
     @GetMapping("v1/selectQRSendConsigneeInfo")
-    public ComResponse<QrSendConsigneeDto> selectQRSendConsigneeInfo(@RequestParam("orderNo") String orderNo){
+    public ComResponse selectQRSendConsigneeInfo(@RequestParam("orderNo") String orderNo){
 
         return removeStockFeignService.selectQRSendConsigneeInfo(orderNo);
     }

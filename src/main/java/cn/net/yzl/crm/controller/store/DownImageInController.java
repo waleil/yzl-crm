@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,6 +49,9 @@ public class DownImageInController {
     @ApiOperation("下载图片")
     @GetMapping("v1/downImage")
     public void downImage(@RequestParam("imageUrl") String imageUrl, HttpServletResponse httpServletResponse) throws IOException {
+        if (StringUtils.isEmpty(imageUrl)){
+
+        }
         ServletOutputStream outputStream = null;
         InputStream inputStream = null;
         try {
@@ -59,7 +63,7 @@ public class DownImageInController {
             String[] split = imageUrl.split("[.]");
             String[] splitPath = split[0].split("/");
             httpServletResponse.setContentType("image/" + split[split.length - 1]);
-            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+splitPath[splitPath.length-1]+"."+split[splitPath.length-1]);
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+splitPath[splitPath.length-1]+"."+split[split.length-1]);
             outputStream = httpServletResponse.getOutputStream();
             //读取文件流
             int len = 0;

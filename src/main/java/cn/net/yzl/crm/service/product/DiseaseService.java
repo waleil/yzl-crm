@@ -29,4 +29,6 @@ public interface DiseaseService {
     ComResponse<Page<DiseaseTreePageDTO>> queryDiseaseTreePage(int pageNo, int pageSize);
 
     ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(String name);
+
+    ComResponse queryTreeNodeWithTemp(String memberCard, String userId);
 }

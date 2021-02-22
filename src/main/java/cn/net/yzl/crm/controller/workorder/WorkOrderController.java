@@ -42,11 +42,7 @@ import cn.net.yzl.workorder.model.dto.UpdateWorkOrderVisitDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderUnclaimedUserDTO;
 import cn.net.yzl.workorder.model.enums.WorkOrderTypeEnums;
-import cn.net.yzl.workorder.model.vo.FindDWorkOrderHotlineDetailsVO;
-import cn.net.yzl.workorder.model.vo.FindWorkOrderHotlinePageListVO;
-import cn.net.yzl.workorder.model.vo.MyWorkOrderHotlineListVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderUnclaimedUserVO;
-import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
+import cn.net.yzl.workorder.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -100,11 +96,11 @@ public class WorkOrderController {
      * @param isListPageDTO
      * @return
      */
-    @PostMapping(value = "v1/isListPage")
+    @PostMapping(value = "v1/isVisitListPage")
     @ApiOperation(value = "我的回访工单-列表", notes = "我的回访工单-列表")
-    public ComResponse<Page<WorkOrderBean>> isListPage(@RequestBody IsListPageDTO isListPageDTO) {
+    public ComResponse<Page<WorkOrderBean>> isVisitListPage(@RequestBody IsListPageDTO isListPageDTO) {
         isListPageDTO.setStaffNO(QueryIds.userNo.get());
-        ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isListPage(isListPageDTO);
+        ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.isVisitListPage(isListPageDTO);
         Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
             return ComResponse.success();
@@ -156,9 +152,9 @@ public class WorkOrderController {
         return ComResponse.success(pageWorkOrderBean);
     }
 
-    @PostMapping("v1/pageList")
+    @PostMapping("v1/workOrderHotlineList")
     @ApiOperation(value = "热线工单管理-列表", notes = "热线工单管理-列表")
-    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
+    public ComResponse<Page<FindWorkOrderHotlinePageListVO>> workOrderHotlineList(@RequestBody FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO) {
         //是否是分线监控
         Integer isMonitoring = findWorkOrderHotlinePageListDTO.getIsMonitoring();
         if(0 == isMonitoring){
@@ -173,7 +169,7 @@ public class WorkOrderController {
             findWorkOrderHotlinePageListDTO.setDeptId(departId);
         }
         //智能派单--默认查询所有部门的数据
-        ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.pageList(findWorkOrderHotlinePageListDTO);
+        ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageComResponse = workOrderClient.workOrderHotlineList(findWorkOrderHotlinePageListDTO);
         return pageComResponse;
 
     }
@@ -264,14 +260,14 @@ public class WorkOrderController {
 
 
     @ApiOperation(value = "回访工单管理-列表", notes = "回访工单管理-列表")
-    @PostMapping(value = "v1/listPage")
-    public ComResponse<Page<WorkOrderBean>> listPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
+    @PostMapping(value = "v1/visitAdministrationListPage")
+    public ComResponse<Page<WorkOrderBean>> visitAdministrationListPage(@Validated @RequestBody WorkOrderVisitVO workOrderVisitVO) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         if(null == detailsByNo.getData()){
             return ComResponse.nodata();
         }
         workOrderVisitVO.setDeptId(detailsByNo.getData().getDepartId());
-        ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.listPage(workOrderVisitVO);
+        ComResponse<Page<WorkOrderBean>> listPage = workOrderClient.visitAdministrationListPage(workOrderVisitVO);
         Page<WorkOrderBean> pageWorkOrderBean = listPage.getData();
         if (null == pageWorkOrderBean) {
             return ComResponse.success();
@@ -358,27 +354,27 @@ public class WorkOrderController {
 
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
     @GetMapping("v1/queryFirstProduct")
-    public ComResponse<List<ProductMainDTO>> queryFirstProduct() {
+    public ComResponse<List<ProductMainDTO>> queryFirstProduct(@ApiParam(value = "1:回访;2:待领取")@RequestParam("status") Integer status) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         StaffImageBaseInfoDto data1 = detailsByNo.getData();
         Integer deptId = null;
         if(null != data1){
             deptId = data1.getDepartId();
         }
-        String data = workOrderClient.queryFirstProduct(deptId).getData();
+        String data = workOrderClient.queryFirstProduct(deptId,status).getData();
         return productClient.queryByProductCodes(data);
     }
 
     @ApiOperation(value = "所有用户最后一次购买商品-列表", notes = "所有用户最后一次购买商品-列表")
     @GetMapping("v1/queryLastProduct")
-    public ComResponse<List<ProductMainDTO>> queryLastProduct() {
+    public ComResponse<List<ProductMainDTO>> queryLastProduct(@ApiParam(value = "1:回访;2:待领取")@RequestParam("status") Integer status) {
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         StaffImageBaseInfoDto data1 = detailsByNo.getData();
         Integer deptId = null;
         if(null != data1){
             deptId = data1.getDepartId();
         }
-        String data = workOrderClient.queryLastProduct(deptId).getData();
+        String data = workOrderClient.queryLastProduct(deptId,status).getData();
         return productClient.queryByProductCodes(data);
     }
 
@@ -422,7 +418,7 @@ public class WorkOrderController {
         return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO).setMessage("成功");
     }
 
-    @ApiOperation(value = "我的回访工单-单条分配", notes = "我的回访工单-单条分配")
+    @ApiOperation(value = "回访工单管理-单条分配", notes = "我的回访工单-单条分配")
     @PostMapping(value = "v1/adjustment")
     public ComResponse<Void> adjustment(@RequestBody UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO) {
         updateWorkOrderVisitDTO.setCreateId(QueryIds.userNo.get());
@@ -434,7 +430,7 @@ public class WorkOrderController {
         return workOrderClient.adjustment(updateWorkOrderVisitDTO);
     }
 
-    @ApiOperation(value = "我的回访工单-多条分配", notes = "我的回访工单-多条分配")
+    @ApiOperation(value = "回访工单管理-多条分配", notes = "我的回访工单-多条分配")
     @PostMapping(value = "v1/batchAdjustment")
     public ComResponse<Void> batchAdjustment(@RequestBody UpdateBatchDTO updateBatchDTO) {
         updateBatchDTO.setCreateId(QueryIds.userNo.get());

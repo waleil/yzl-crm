@@ -3,12 +3,12 @@
 <mapper namespace="cn.net.yzl.crm.dao.OutStoreWarningMapper">
 
 
-    <select id="getRoleIdsByMenuPerms" resultType="java.lang.Integer" parameterType="java.lang.String">
+    <select id="getRoleIdsByMenuPerms" resultType="java.lang.Integer" parameterType="java.lang.Integer">
         SELECT DISTINCT b.role_id
         FROM menu a,
              role_menu b
         WHERE a.id = b.menu_id
-          and a.perms = #{menuPerms}
+          and a.id = #{menuPerms}
 
     </select>
     <select id="getUserCodesByRoleIds" resultType="java.lang.String">

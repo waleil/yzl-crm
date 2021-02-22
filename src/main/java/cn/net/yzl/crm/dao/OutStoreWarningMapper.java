@@ -18,7 +18,7 @@ public interface OutStoreWarningMapper {
      * @param menuPerms
      * @return
      */
-    List<Integer> getRoleIdsByMenuPerms(@Param("menuPerms") String menuPerms);
+    List<Integer> getRoleIdsByMenuPerms(@Param("menuPerms") Integer menuPerms);
 
     /**
      * 根据角色ID查询用户code

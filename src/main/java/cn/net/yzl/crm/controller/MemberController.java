@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
@@ -26,6 +27,8 @@ import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
 import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
 import cn.net.yzl.crm.customer.vo.work.WorkOrderBeanVO;
+import cn.net.yzl.crm.dto.dmc.MemberLevelResponse;
+import cn.net.yzl.crm.dto.dmc.PageModel;
 import cn.net.yzl.crm.dto.member.CallInfoDTO;
 import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
@@ -35,6 +38,7 @@ import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.dto.workorder.MemberFirstCallDetailsDTO;
 import cn.net.yzl.crm.model.customer.MemberReferral;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.WorkOrderClient;
 import cn.net.yzl.crm.service.micservice.member.MemberPhoneFien;
@@ -44,6 +48,7 @@ import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.PortraitOrderDetailDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
+import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowSubBean;
 import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
@@ -79,6 +84,8 @@ public class MemberController {
     @Autowired
     private cn.net.yzl.crm.service.micservice.EhrStaffClient ehrStaffClient;
 
+    @Autowired
+    ActivityClient activityClient;
 
 
     @ApiOperation(value = "顾客列表-分页查询顾客列表")
@@ -449,6 +456,29 @@ public class MemberController {
             }
         }
 
+        //设置会员级别编号转成名称
+        if (CollectionUtil.isNotEmpty(list)) {
+            //获取DMC会员级别
+            PageModel pageModel = new PageModel();
+            pageModel.setPageNo(1);
+            pageModel.setPageSize(20);
+            Map<String, String> gradeMap = new HashMap<>();
+            ComResponse<Page<MemberLevelResponse>> levelPages = activityClient.getMemberLevelPages(pageModel);
+            if (levelPages != null && levelPages.getData() != null && CollectionUtil.isNotEmpty(levelPages.getData().getItems())){
+                List<MemberLevelResponse> items = levelPages.getData().getItems();
+                for (MemberLevelResponse item : items) {
+                    gradeMap.put(String.valueOf(item.getMemberLevelGrade()), item.getMemberLevelName());
+                }
+            }
+
+            for (MemberCustomerJourneyDto journeyDto : list) {
+                WorkOrderDisposeFlowSubBean subBean = journeyDto.getWorkOrderDisposeFlowSubBean();
+                if (subBean != null) {
+                    subBean.setMGradeCode(gradeMap.get(subBean.getMGradeCode()));
+                }
+            }
+        }
+
 
         // 根据时间排序
         list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
@@ -496,7 +526,7 @@ public class MemberController {
     public ComResponse<Integer> getMemberDisease(@RequestBody @Validated MemberDiseaseDto memberDiseaseDto) {
         Integer id = null;
         String staffNo= QueryIds.userNo.get();
-        ComResponse<Integer> diseaseMainInfoComResponse = diseaseClient.artificialSeatInput(memberDiseaseDto.getParDiseaseId(), memberDiseaseDto.getDiseaseName(), staffNo);
+        ComResponse<Integer> diseaseMainInfoComResponse = diseaseClient.artificialSeatInput(memberDiseaseDto.getParDiseaseId(), memberDiseaseDto.getDiseaseName(), staffNo,memberDiseaseDto.getMemberCard());
         if(diseaseMainInfoComResponse!=null && diseaseMainInfoComResponse.getCode()==200 && diseaseMainInfoComResponse.getData()!=null){
             id=diseaseMainInfoComResponse.getData();
         }else{
