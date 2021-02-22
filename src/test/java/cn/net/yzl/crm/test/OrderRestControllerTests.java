@@ -355,9 +355,9 @@ public class OrderRestControllerTests {
 			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
 			od3.setProductCount(2);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-			order.getOrderDetailIns().add(od1);
-			order.getOrderDetailIns().add(od2);
-			order.getOrderDetailIns().add(od3);
+//			order.getOrderDetailIns().add(od1);
+//			order.getOrderDetailIns().add(od2);
+//			order.getOrderDetailIns().add(od3);
 			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -374,7 +374,7 @@ public class OrderRestControllerTests {
 			od1.setProductCount(2);
 			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-			order.getOrderDetailIns().add(od1);
+//			order.getOrderDetailIns().add(od1);
 			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
