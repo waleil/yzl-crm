@@ -190,7 +190,7 @@ public class OrderRestControllerTests {
 	public void testSubmitOrderForProduct() {
 		try {
 			OrderIn order = new OrderIn();
-			order.setProductTotal(39990L);// 商品总额 单位分
+			order.setProductTotal(147980L);// 商品总额 单位分
 			order.setAdvertBusNo(555L);// 广告业务主键
 			OrderDetailIn od1 = new OrderDetailIn();
 			od1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
@@ -232,7 +232,7 @@ public class OrderRestControllerTests {
 			od3.setProductCount(2);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
-//			order.getOrderDetailIns().add(od2);
+			order.getOrderDetailIns().add(od2);
 //			order.getOrderDetailIns().add(od3);
 			order.setMemberCardNo("100000002");
 			order.setReveiverAddressNo(482416);
@@ -373,14 +373,14 @@ public class OrderRestControllerTests {
 			a2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
 			a2.setActivityProductBusNo(20L);// 活动商品业务主键
 			a2.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
-			a1.setCouponDiscountId(null);// 使用的优惠券折扣ID
+			a2.setCouponDiscountId(null);// 使用的优惠券折扣ID
 			a2.setDiscountId(7);// 使用的优惠主键
 			a2.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
-			a1.setMemberCouponId(null);// 使用的优惠券ID
+			a2.setMemberCouponId(null);// 使用的优惠券ID
 			a2.setProductCode("10000155");// 商品code
 			a2.setProductCount(2);// 商品数量
-			a1.setProductType(CommonConstant.MEAL_FLAG_0);// 商品类型
-			a1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			a2.setProductType(CommonConstant.MEAL_FLAG_0);// 商品类型
+			a2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			a2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			order.getCalculateProductDtos().add(a1);
 			order.getCalculateProductDtos().add(a2);
