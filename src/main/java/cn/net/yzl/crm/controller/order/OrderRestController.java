@@ -309,14 +309,14 @@ public class OrderRestController {
 				ProductPriceResponse pp = productPriceMap.get(p.getProductCode());
 				switch (pp.getUseDiscountType()) {
 				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
-					coupondetailList.add(this.getOrderCouponDetail1(orderm, seq, in, p, od, pp));
+					coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
 					break;
 				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
-					coupondetailList.add(this.getOrderCouponDetail2(orderm, seq, in, p, od, pp));
+					coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
 					break;
 				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
-					coupondetailList.add(this.getOrderCouponDetail1(orderm, seq, in, p, od, pp));
-					coupondetailList.add(this.getOrderCouponDetail2(orderm, seq, in, p, od, pp));
+					coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
+					coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
 					break;
 				default:
 					break;
@@ -495,6 +495,7 @@ public class OrderRestController {
 		} else {
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
 		}
+		orderm.setWorkOrderType(orderin.getWorkOrderType());// 工单类型
 		orderm.setRemark(orderin.getRemark());// 订单备注
 		orderm.setReveiverAddressNo(orderin.getReveiverAddressNo());// 配送地址唯一标识
 		orderm.setReveiverAddress(reveiverAddress.getMemberAddress());// 收货人地址
@@ -556,45 +557,45 @@ public class OrderRestController {
 		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
 		// 组装提交订单送积分和优惠券参数
 		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, member, orderm);
-		try {
-			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orderSubmitRequest));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		// 提交订单送积分和优惠券
-//		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
-//		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(orderSubmit.getCode())) {
-//			log.error("热线工单-购物车-提交订单>>{}>>{}", orderSubmitRequest, orderSubmit);
-//			return ComResponse.fail(ResponseCodeEnums.ERROR, orderSubmit.getMessage());
-//		}
-//		OrderSubmitResponse orderSubmitResponse = orderSubmit.getData();
-//		if (orderSubmitResponse == null) {
-//			log.error("热线工单-购物车-提交订单>>调用送积分和优惠券接口失败{}>>{}", orderSubmitRequest, orderSubmit);
-//			return ComResponse.fail(ResponseCodeEnums.ERROR, "赠送积分、优惠券异常");
-//		}
-//		orderm.setReturnPointsDeduction(orderSubmitResponse.getIntegral());// 本次送的积分
+		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(orderSubmit.getCode())) {
+			log.error("热线工单-购物车-提交订单>>{}>>{}", orderSubmitRequest, orderSubmit);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, orderSubmit.getMessage());
+		}
+		OrderSubmitResponse orderSubmitResponse = orderSubmit.getData();
+		if (orderSubmitResponse == null) {
+			log.error("热线工单-购物车-提交订单>>调用送积分和优惠券接口失败{}>>{}", orderSubmitRequest, orderSubmit);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "赠送积分、优惠券异常");
+		}
+		orderm.setReturnPointsDeduction(orderSubmitResponse.getIntegral());// 本次送的积分
 		// 收集订单返回信息
 		OrderOut orderout = new OrderOut();
 		// 如果本次下单送的优惠券不为空
-		List<MemberCouponDto> memberCouponDtos = null;
+		List<MemberCouponDto> memberCouponDtos = orderSubmitResponse.getMemberCouponDtoList();
 		if (!CollectionUtils.isEmpty(memberCouponDtos)) {
+			// key为商品编码，value为订单明细对象
+			Map<String, OrderDetail> odMap = orderdetailList.stream()
+					.collect(Collectors.toMap(OrderDetail::getProductCode, Function.identity()));
 			for (MemberCouponDto memberCoupon : memberCouponDtos) {
 				OrderCouponDetail cd = new OrderCouponDetail();
+				OrderDetail od = odMap.get(memberCoupon.getProductCode());
 				// 优惠使用记录表业务主键
-				cd.setOrderCouponDetailNo(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
-//				cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
-				cd.setOrderNo(orderm.getOrderNo());// 订单号
-//				cd.setProductCode(meal.getMealNo());// 商品唯一标识
+				cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
+				cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
+				cd.setOrderNo(od.getOrderNo());// 订单号
+				cd.setMealFlag(od.getMealFlag());// 是否套餐
+				cd.setProductCode(memberCoupon.getProductCode());// 商品唯一标识
 				cd.setActivityType(memberCoupon.getSourceType());// 优惠途径
-				cd.setCouponCode(memberCoupon.getId());// 优惠编号
+				cd.setCouponCode(memberCoupon.getCouponBusNo().intValue());// 优惠编号
+				cd.setCouponName(memberCoupon.getCouponName());// 优惠券名称
 //				cd.setCouponType(pp.getDiscountType());// 优惠方式
-				cd.setCouponMode(CommonConstant.COUPON_MODE_1);// 活动类型
 //				cd.setCouponAmt(pp.getActivityDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
+				cd.setCouponMode(CommonConstant.COUPON_MODE_1);// 活动类型
 				cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_2);// 优惠方向
-//				cd.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是否套餐
 				coupondetailList.add(cd);
 				orderout.getCoupons().add(new Coupon(memberCoupon.getStartData(), memberCoupon.getEndData(),
-						memberCoupon.getCouponBusNo().toString()));
+						memberCoupon.getCouponName()));
 			}
 		}
 		// 调用创建订单服务接口
@@ -657,8 +658,10 @@ public class OrderRestController {
 	}
 
 	/**
+	 * 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+	 * 
 	 * @param activityType
-	 * @return
+	 * @return {@link ActivityTypeEnum}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午9:36:27
 	 */
@@ -671,8 +674,10 @@ public class OrderRestController {
 	}
 
 	/**
+	 * 优惠方式：0满减，1折扣，2红包
+	 * 
 	 * @param discountType
-	 * @return
+	 * @return {@link DiscountTypeEnum}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午9:36:31
 	 */
@@ -685,8 +690,10 @@ public class OrderRestController {
 	}
 
 	/**
+	 * 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+	 * 
 	 * @param useDiscountType
-	 * @return
+	 * @return {@link UseDiscountTypeEnum}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午9:36:37
 	 */
@@ -699,12 +706,14 @@ public class OrderRestController {
 	}
 
 	/**
-	 * @param orderm
-	 * @param seq
-	 * @param ordermeal
-	 * @param meal
-	 * @param pp
-	 * @return
+	 * 组装优惠使用记录数据
+	 * 
+	 * @param orderm    {@link OrderM}
+	 * @param seq       {@link AtomicInteger}
+	 * @param ordermeal {@link OrderDetailIn}
+	 * @param meal      {@link ProductMealListDTO}
+	 * @param pp        {@link ProductPriceResponse}
+	 * @return {@link OrderCouponDetail}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午4:14:55
 	 */
@@ -727,12 +736,14 @@ public class OrderRestController {
 	}
 
 	/**
-	 * @param orderm
-	 * @param seq
-	 * @param ordermeal
-	 * @param meal
-	 * @param pp
-	 * @return
+	 * 组装优惠使用记录数据
+	 * 
+	 * @param orderm    {@link OrderM}
+	 * @param seq       {@link AtomicInteger}
+	 * @param ordermeal {@link OrderDetailIn}
+	 * @param meal      {@link ProductMealListDTO}
+	 * @param pp        {@link ProductPriceResponse}
+	 * @return {@link OrderCouponDetail}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午4:09:46
 	 */
@@ -755,88 +766,102 @@ public class OrderRestController {
 	}
 
 	/**
-	 * @param orderin
-	 * @param member
-	 * @return
+	 * 组装校验订单金额接口参数
+	 * 
+	 * @param orderin {@link OrderIn}
+	 * @param member  {@link Member}
+	 * @return {@link CheckOrderAmountRequest}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午3:47:29
 	 */
 	private CheckOrderAmountRequest getCheckOrderAmountRequest(OrderIn orderin, Member member) {
 		CheckOrderAmountRequest request = new CheckOrderAmountRequest();
-		request.setAdvertBusNo(orderin.getAdvertBusNo());
-		request.setMemberCard(orderin.getMemberCardNo());
-		request.setProductTotal(orderin.getProductTotal());// 单位分
-		request.setMemberLevelGrade(member.getMGradeId());
-		request.setCalculateProductDto(orderin.getOrderDetailIns().stream().map(m -> {
-			CalculateProductDto dto = new CalculateProductDto();
-			dto.setActivityBusNo(m.getActivityBusNo());
-			dto.setActivityProductBusNo(m.getActivityProductBusNo());
-			dto.setActivityType(m.getActivityType());
-			dto.setCouponDiscountId(m.getCouponDiscountId());
-			dto.setDiscountId(m.getDiscountId());
-			dto.setDiscountType(m.getDiscountType());
-			dto.setLimitDownPrice(m.getLimitDownPrice());// 单位分
-			dto.setMemberCouponId(m.getMemberCouponId());
-			dto.setProductCode(m.getProductCode());
-			dto.setProductCount(m.getProductCount());
-			dto.setSalePrice(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());// 单位分
-			dto.setUseDiscountType(m.getUseDiscountType());
-			return dto;
-		}).collect(Collectors.toList()));
+		request.setAdvertBusNo(orderin.getAdvertBusNo());// 广告业务主键
+		request.setCouponDiscountIdForOrder(orderin.getCouponDiscountIdForOrder());// 使用的优惠券折扣ID,针对订单使用的
+		request.setMemberCard(orderin.getMemberCardNo());// 会员卡号
+		request.setMemberLevelGrade(member.getMGradeId());// 会员级别
+		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
+		request.setProductTotal(orderin.getProductTotal());// 商品总额，订单中所有商品 单位分
+		// 商品相关信息
+		request.setCalculateProductDto(orderin.getOrderDetailIns().stream()
+				// 只匹配购买的商品或套餐，排除赠品
+				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0).map(m -> {
+					CalculateProductDto dto = new CalculateProductDto();
+					dto.setActivityBusNo(m.getActivityBusNo());// 活动业务/会员优惠业务主键
+					dto.setActivityProductBusNo(m.getActivityProductBusNo());// 活动商品业务主键
+					dto.setActivityType(m.getActivityType());// 优惠途径
+					dto.setCouponDiscountId(m.getCouponDiscountId());// 使用的优惠券折扣ID
+					dto.setDiscountId(m.getDiscountId());// 使用的优惠主键
+					dto.setDiscountType(m.getDiscountType());// 优惠方式
+					dto.setLimitDownPrice(m.getLimitDownPrice());// 商品最低折扣价 单位分
+					dto.setMemberCouponId(m.getMemberCouponId());// 使用的优惠券ID
+					dto.setProductCode(m.getProductCode());// 商品code
+					dto.setProductCount(m.getProductCount());// 商品数量
+					dto.setSalePrice(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());// 商品销售价,单位分
+					dto.setUseDiscountType(m.getUseDiscountType());// 使用的优惠
+					return dto;
+				}).collect(Collectors.toList()));
 		return request;
 	}
 
 	/**
-	 * @param orderin
-	 * @param member
-	 * @param orderm
-	 * @return
+	 * 组装提交订单送积分和优惠券接口参数
+	 * 
+	 * @param orderin {@link OrderIn}
+	 * @param member  {@link Member}
+	 * @param orderm  {@link OrderM}
+	 * @return {@link OrderSubmitRequest}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午9:52:00
 	 */
 	private OrderSubmitRequest getOrderSubmitRequest(OrderIn orderin, Member member, OrderM orderm) {
 		OrderSubmitRequest request = new OrderSubmitRequest();
-		request.setAdvertBusNo(orderin.getAdvertBusNo());
-		request.setMemberCard(orderin.getMemberCardNo());
-		request.setProductTotal(orderin.getProductTotal());// 单位分
-		request.setMemberLevelGrade(member.getMGradeId());
-		request.setOrderNo(orderm.getOrderNo());
-		request.setOrderSubmitProductDtoList(orderin.getOrderDetailIns().stream().map(m -> {
-			OrderSubmitProductDto dto = new OrderSubmitProductDto();
-			dto.setActivityBusNo(m.getActivityBusNo());
-			dto.setActivityProductBusNo(m.getActivityProductBusNo());
-			dto.setActivityTypeEnum(this.getActivityTypeEnum(m.getActivityType()));
-			dto.setDiscountId(m.getDiscountId());
-			dto.setDiscountTypeEnum(this.getDiscountTypeEnum(m.getDiscountType()));
-			dto.setMemberCouponId(m.getMemberCouponId());
-			dto.setProductCode(m.getProductCode());
-			dto.setProductCount(m.getProductCount());
-			dto.setProductTotal(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());// 单位分
-			dto.setUseDiscountTypeEnum(this.getUseDiscountTypeEnum(m.getUseDiscountType()));
-			return dto;
-		}).collect(Collectors.toList()));
+		request.setAdvertBusNo(orderin.getAdvertBusNo());// 广告业务主键
+		request.setMemberCard(orderin.getMemberCardNo());// 会员卡号
+		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
+		request.setMemberLevelGrade(member.getMGradeId());// 会员级别
+		request.setOrderNo(orderm.getOrderNo());// 订单编号
+		request.setProductTotal(orderin.getProductTotal());// 商品总额 单位分
+		request.setUserNo(orderm.getStaffCode());// 操作人
+		// 订单中的商品信息
+		request.setOrderSubmitProductDtoList(orderin.getOrderDetailIns().stream()
+				// 只匹配购买的商品或套餐，排除赠品
+				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0).map(m -> {
+					OrderSubmitProductDto dto = new OrderSubmitProductDto();
+					dto.setActivityBusNo(m.getActivityBusNo());// 活动业务/会员优惠业务主键
+					dto.setActivityProductBusNo(m.getActivityProductBusNo());// 活动商品业务主键
+					dto.setActivityTypeEnum(this.getActivityTypeEnum(m.getActivityType()));// 优惠途径
+					dto.setDiscountId(m.getDiscountId());// 使用的优惠主键
+					dto.setDiscountTypeEnum(this.getDiscountTypeEnum(m.getDiscountType()));// 优惠方式
+					dto.setMemberCouponId(m.getMemberCouponId());// 使用的优惠券ID
+					dto.setProductCode(m.getProductCode());// 商品code
+					dto.setProductCount(m.getProductCount());// 商品数量
+					dto.setProductTotal(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());// 商品销售价,单位分
+					dto.setUseDiscountTypeEnum(this.getUseDiscountTypeEnum(m.getUseDiscountType()));// 使用的优惠
+					return dto;
+				}).collect(Collectors.toList()));
 		return request;
 	}
 
 	/**
-	 * @param orderm
-	 * @param seq
-	 * @param in
-	 * @param p
-	 * @param od
-	 * @param pp
-	 * @return
+	 * 组装优惠使用记录数据
+	 * 
+	 * @param seq {@link AtomicInteger}
+	 * @param in  {@link OrderDetailIn}
+	 * @param od  {@link OrderDetail}
+	 * @param pp  {@link ProductPriceResponse}
+	 * @return {@link OrderCouponDetail}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午3:42:06
 	 */
-	private OrderCouponDetail getOrderCouponDetail2(OrderM orderm, AtomicInteger seq, OrderDetailIn in,
-			ProductMainDTO p, OrderDetail od, ProductPriceResponse pp) {
+	private OrderCouponDetail getOrderCouponDetail2(AtomicInteger seq, OrderDetailIn in, OrderDetail od,
+			ProductPriceResponse pp) {
 		OrderCouponDetail cd = new OrderCouponDetail();
 		// 优惠使用记录表业务主键
 		cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
 		cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
-		cd.setOrderNo(orderm.getOrderNo());// 订单号
-		cd.setProductCode(p.getProductCode());// 商品唯一标识
+		cd.setOrderNo(od.getOrderNo());// 订单号
+		cd.setProductCode(od.getProductCode());// 商品唯一标识
 		cd.setActivityType(pp.getActivityType());// 优惠途径
 		cd.setCouponCode(in.getDiscountId());// 优惠编号
 		cd.setCouponType(pp.getDiscountType());// 优惠方式
@@ -848,24 +873,24 @@ public class OrderRestController {
 	}
 
 	/**
-	 * @param orderm
-	 * @param seq
-	 * @param in
-	 * @param p
-	 * @param od
-	 * @param pp
-	 * @return
+	 * 组装优惠使用记录数据
+	 * 
+	 * @param seq {@link AtomicInteger}
+	 * @param in  {@link OrderDetailIn}
+	 * @param od  {@link OrderDetail}
+	 * @param pp  {@link ProductPriceResponse}
+	 * @return {@link OrderCouponDetail}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午3:34:34
 	 */
-	private OrderCouponDetail getOrderCouponDetail1(OrderM orderm, AtomicInteger seq, OrderDetailIn in,
-			ProductMainDTO p, OrderDetail od, ProductPriceResponse pp) {
+	private OrderCouponDetail getOrderCouponDetail1(AtomicInteger seq, OrderDetailIn in, OrderDetail od,
+			ProductPriceResponse pp) {
 		OrderCouponDetail cd = new OrderCouponDetail();
 		// 优惠使用记录表业务主键
 		cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
 		cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
-		cd.setOrderNo(orderm.getOrderNo());// 订单号
-		cd.setProductCode(p.getProductCode());// 商品唯一标识
+		cd.setOrderNo(od.getOrderNo());// 订单号
+		cd.setProductCode(od.getProductCode());// 商品唯一标识
 		cd.setActivityType(pp.getActivityType());// 优惠途径
 		cd.setCouponCode(in.getDiscountId());// 优惠编号
 		cd.setCouponType(pp.getDiscountType());// 优惠方式
@@ -879,7 +904,7 @@ public class OrderRestController {
 	/**
 	 * 初始化订单
 	 * 
-	 * @param orderm 订单
+	 * @param orderm {@link OrderM}
 	 * @author zhangweiwei
 	 * @date 2021年2月4日,上午10:29:31
 	 */
@@ -912,7 +937,7 @@ public class OrderRestController {
 	}
 
 	/**
-	 * @param orderin 订单
+	 * @param orderin {@link OrderIn}
 	 * @return 是否使用账户金额
 	 * @author zhangweiwei
 	 * @date 2021年2月2日,下午7:15:59
