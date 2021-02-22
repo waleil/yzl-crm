@@ -3,11 +3,13 @@ package cn.net.yzl.crm.controller.order;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -32,6 +34,7 @@ import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
 import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
 import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
 import cn.net.yzl.activity.model.enums.UseDiscountTypeEnum;
+import cn.net.yzl.activity.model.requestModel.CalculateRequest;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
 import cn.net.yzl.activity.model.responseModel.OrderSubmitResponse;
@@ -52,6 +55,7 @@ import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
+import cn.net.yzl.crm.model.order.CalcOrderIn.CalculateOrderProductDto;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
 import cn.net.yzl.crm.model.order.OrderOut;
 import cn.net.yzl.crm.model.order.OrderOut.Coupon;
@@ -97,8 +101,58 @@ public class OrderRestController {
 	@PostMapping("/v1/calcorder")
 	@ApiOperation(value = "热线工单-购物车-计算订单金额", notes = "热线工单-购物车-计算订单金额")
 	public ComResponse<CalcOrderOut> calcOrder(@RequestBody CalcOrderIn orderin) {
-		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(orderin.getTotal()).divide(bd100).doubleValue(),
-				BigDecimal.valueOf(orderin.getTotal()).divide(bd100).doubleValue(), 0d, 0d, 0d));
+		if (CollectionUtils.isEmpty(orderin.getCalculateProductDtos())) {
+			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin.getCalculateProductDtos());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
+		}
+		if (!StringUtils.hasText(orderin.getMemberCard())) {
+			log.error("热线工单-购物车-提交订单>>顾客卡号不能为空>>{}", orderin.getMemberCard());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客卡号不能为空。");
+		}
+		// 按顾客号查询顾客信息
+		Member member = this.memberFien.getMember(orderin.getMemberCard()).getData();
+		if (member == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
+		}
+		// 只匹配购买的商品或套餐，排除赠品
+		List<CalculateOrderProductDto> orderproducts = orderin.getCalculateProductDtos().stream()
+				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
+				.collect(Collectors.toList());
+		// 用,拼接商品编码
+		String productCodes = orderproducts.stream().map(CalculateOrderProductDto::getProductCode)
+				.collect(Collectors.joining(","));
+		// 商品列表
+		Map<String, ProductMainDTO> productMap = Optional
+				.ofNullable(this.productClient.queryByProductCodes(productCodes).getData())
+				.orElse(Collections.emptyList()).stream()
+				.collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
+		// 套餐列表
+		Map<String, ProductMealListDTO> mealMap = Optional
+				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
+				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
+		List<ProductPriceResponse> list = orderproducts.stream().map(cp -> {
+			if (Integer.compare(CommonConstant.MEAL_FLAG_0, cp.getProductType()) == 0) {
+				// 商品
+				ProductMainDTO product = productMap.get(cp.getProductCode());
+				cp.setLimitDownPrice(
+						BigDecimal.valueOf(Double.valueOf(product.getLimitDownPrice())).multiply(bd100).longValue());// 商品最低折扣价,单位分
+				cp.setSalePrice(BigDecimal.valueOf(Double.valueOf(product.getSalePrice())).multiply(bd100).longValue());// 商品销售价,单位分
+			} else {
+				// 套餐
+				ProductMealListDTO meal = mealMap.get(cp.getProductCode());
+				cp.setLimitDownPrice(Long.valueOf(meal.getDiscountPrice()));// 商品最低折扣价,单位分
+				cp.setSalePrice(BigDecimal.valueOf(meal.getPriceD()).multiply(bd100).longValue());// 商品销售价,单位分
+			}
+			CalculateRequest request = new CalculateRequest();
+			request.setCalculateProductDto(cp);
+			request.setAdvertBusNo(orderin.getAdvertBusNo());
+			request.setMemberCard(orderin.getMemberCard());
+			request.setMemberLevelGrade(member.getMGradeId());
+			return this.activityClient.calculate(request).getData();
+		}).collect(Collectors.toList());
+		double productTotal = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
+		return ComResponse.success(new CalcOrderOut(productTotal, productTotal, 0d, 0d, 0d));
 	}
 
 	@PostMapping("/v1/submitorder")
@@ -228,7 +282,7 @@ public class OrderRestController {
 				.collect(Collectors.toMap(ProductPriceResponse::getProductCode, Function.identity()));
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
-				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
+				.collect(Collectors.groupingBy(OrderDetailIn::getProductType));
 		// 获取非套餐，也就是纯商品
 		List<OrderDetailIn> orderProductList = orderdetailMap.get(CommonConstant.MEAL_FLAG_0);
 		// 收集套餐关联的商品和非套餐商品
@@ -491,8 +545,6 @@ public class OrderRestController {
 		orderm.setOrderNature(CommonConstant.ORDER_NATURE_F);// 非免审
 		// 如果是款到发货
 		if (Integer.compare(CommonConstant.PAY_TYPE_1, orderin.getPayType()) == 0) {
-			orderm.setPayStatus(CommonConstant.PAY_STATUS_1);// 已收款
-		} else {
 			orderm.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
 		}
 		orderm.setWorkOrderType(orderin.getWorkOrderType());// 工单类型
@@ -508,7 +560,7 @@ public class OrderRestController {
 		orderm.setReveiverArea(String.valueOf(reveiverAddress.getMemberCountyNo()));// 区县编码
 		orderm.setReveiverAreaName(reveiverAddress.getMemberCountyName());// 区县名称
 		orderm.setMediaChannel(orderin.getMediaChannel());// 媒介渠道
-//		orderm.setMediaName(orderin.getMediaName());// 媒介名称
+		orderm.setMediaName(orderin.getMediaName());// 媒介名称
 		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
 		orderm.setMediaType(orderin.getMediaType());// 媒介类型
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
@@ -782,25 +834,51 @@ public class OrderRestController {
 		request.setMemberLevelGrade(member.getMGradeId());// 会员级别
 		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
 		request.setProductTotal(orderin.getProductTotal());// 商品总额，订单中所有商品 单位分
+		// 只匹配购买的商品或套餐，排除赠品
+		List<OrderDetailIn> orderdetailins = orderin.getOrderDetailIns().stream()
+				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
+				.collect(Collectors.toList());
+		// 用,拼接商品编码
+		String productCodes = orderdetailins.stream().map(OrderDetailIn::getProductCode)
+				.collect(Collectors.joining(","));
+		// 商品列表
+		Map<String, ProductMainDTO> productMap = Optional
+				.ofNullable(this.productClient.queryByProductCodes(productCodes).getData())
+				.orElse(Collections.emptyList()).stream()
+				.collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
+		// 套餐列表
+		Map<String, ProductMealListDTO> mealMap = Optional
+				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
+				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
 		// 商品相关信息
-		request.setCalculateProductDto(orderin.getOrderDetailIns().stream()
-				// 只匹配购买的商品或套餐，排除赠品
-				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0).map(m -> {
-					CalculateProductDto dto = new CalculateProductDto();
-					dto.setActivityBusNo(m.getActivityBusNo());// 活动业务/会员优惠业务主键
-					dto.setActivityProductBusNo(m.getActivityProductBusNo());// 活动商品业务主键
-					dto.setActivityType(m.getActivityType());// 优惠途径
-					dto.setCouponDiscountId(m.getCouponDiscountId());// 使用的优惠券折扣ID
-					dto.setDiscountId(m.getDiscountId());// 使用的优惠主键
-					dto.setDiscountType(m.getDiscountType());// 优惠方式
-					dto.setLimitDownPrice(m.getLimitDownPrice());// 商品最低折扣价 单位分
-					dto.setMemberCouponId(m.getMemberCouponId());// 使用的优惠券ID
-					dto.setProductCode(m.getProductCode());// 商品code
-					dto.setProductCount(m.getProductCount());// 商品数量
-					dto.setSalePrice(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());// 商品销售价,单位分
-					dto.setUseDiscountType(m.getUseDiscountType());// 使用的优惠
-					return dto;
-				}).collect(Collectors.toList()));
+		request.setCalculateProductDto(orderdetailins.stream().map(m -> {
+			CalculateProductDto dto = new CalculateProductDto();
+			dto.setActivityBusNo(m.getActivityBusNo());// 活动业务/会员优惠业务主键
+			dto.setActivityProductBusNo(m.getActivityProductBusNo());// 活动商品业务主键
+			dto.setActivityType(m.getActivityType());// 优惠途径
+			dto.setCouponDiscountId(m.getCouponDiscountId());// 使用的优惠券折扣ID
+			dto.setDiscountId(m.getDiscountId());// 使用的优惠主键
+			dto.setDiscountType(m.getDiscountType());// 优惠方式
+			dto.setMemberCouponId(m.getMemberCouponId());// 使用的优惠券ID
+			dto.setProductCode(m.getProductCode());// 商品code
+			dto.setProductCount(m.getProductCount());// 商品数量
+			dto.setProductType(m.getProductType());// 商品类型
+			if (Integer.compare(CommonConstant.MEAL_FLAG_0, m.getProductType()) == 0) {
+				// 商品
+				ProductMainDTO product = productMap.get(m.getProductCode());
+				dto.setLimitDownPrice(
+						BigDecimal.valueOf(Double.valueOf(product.getLimitDownPrice())).multiply(bd100).longValue());// 商品最低折扣价,单位分
+				dto.setSalePrice(
+						BigDecimal.valueOf(Double.valueOf(product.getSalePrice())).multiply(bd100).longValue());// 商品销售价,单位分
+			} else {
+				// 套餐
+				ProductMealListDTO meal = mealMap.get(m.getProductCode());
+				dto.setLimitDownPrice(Long.valueOf(meal.getDiscountPrice()));// 商品最低折扣价,单位分
+				dto.setSalePrice(BigDecimal.valueOf(meal.getPriceD()).multiply(bd100).longValue());// 商品销售价,单位分
+			}
+			dto.setUseDiscountType(m.getUseDiscountType());// 使用的优惠
+			return dto;
+		}).collect(Collectors.toList()));
 		return request;
 	}
 
@@ -1010,7 +1088,7 @@ public class OrderRestController {
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
-				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
+				.collect(Collectors.groupingBy(OrderDetailIn::getProductType));
 		// 获取非套餐，也就是纯商品
 		List<OrderDetailIn> orderProductList = orderdetailMap.get(CommonConstant.MEAL_FLAG_0);
 		// 收集套餐关联的商品和非套餐商品
@@ -1391,7 +1469,7 @@ public class OrderRestController {
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
-				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
+				.collect(Collectors.groupingBy(OrderDetailIn::getProductType));
 		// 获取非套餐，也就是纯商品
 		List<OrderDetailIn> orderProductList = orderdetailMap.get(CommonConstant.MEAL_FLAG_0);
 		// 收集套餐关联的商品和非套餐商品
