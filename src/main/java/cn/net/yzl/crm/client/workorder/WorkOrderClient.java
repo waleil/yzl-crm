@@ -34,8 +34,8 @@ public interface WorkOrderClient {
      * @param findWorkOrderHotlinePageListDTO
      * @return
      */
-    @PostMapping(value = "v1/pageList")
-    ComResponse<Page<FindWorkOrderHotlinePageListVO>> pageList(FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
+    @PostMapping(value = "v1/workOrderHotlineList")
+    ComResponse<Page<FindWorkOrderHotlinePageListVO>> workOrderHotlineList(FindWorkOrderHotlinePageListDTO findWorkOrderHotlinePageListDTO);
 
     /**
      * 智能工单：热线工单管理-回收
