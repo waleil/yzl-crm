@@ -60,6 +60,10 @@ public class SimpleTests {
 		System.err.println(Integer.valueOf(BigDecimal.valueOf(999.99).multiply(BigDecimal.valueOf(100))
 				.setScale(0, RoundingMode.HALF_UP).toString()));
 		System.err.println(BigDecimal.valueOf(1137701198).divide(BigDecimal.valueOf(100)));
+
+		System.err.println(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(0L)) > 0);
+		System.err.println(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(0D)) > 0);
+		System.err.println(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(0)) > 0);
 	}
 
 	@Test
