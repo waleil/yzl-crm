@@ -29,5 +29,8 @@ public interface WorkbenchClient {
     ComResponse<WorkbenchVisitManagerVo> getWorkbenchVisitManager(@RequestParam("staffNo") String staffNo);
 
     @RequestMapping(value = "workbench/getVisitSeatMonitoring",method = RequestMethod.GET)
-    ComResponse<List<VisitSeatMonitoringVo>> getVisitSeatMonitoring(String s);
+    ComResponse<List<VisitSeatMonitoringVo>> getVisitSeatMonitoring(@RequestParam("staffNo") String staffNo);
+
+    @RequestMapping(value = "workbench/getWorkbenchHotlineManagerMonitoring",method = RequestMethod.GET)
+    ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(@RequestParam("staffNo") String staffNo);
 }

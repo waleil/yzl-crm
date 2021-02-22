@@ -3,14 +3,20 @@ package cn.net.yzl.crm.controller.workorder;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.workorder.WorkbenchClient;
 import cn.net.yzl.crm.config.QueryIds;
-import cn.net.yzl.workorder.model.vo.*;
+import cn.net.yzl.workorder.model.vo.VisitSeatMonitoringVo;
+import cn.net.yzl.workorder.model.vo.VisitSeatsVo;
+import cn.net.yzl.workorder.model.vo.WorkbenchHotlineManagerMonitoringVO;
+import cn.net.yzl.workorder.model.vo.WorkbenchHotlineManagerVO;
+import cn.net.yzl.workorder.model.vo.WorkbenchHotlineVO;
+import cn.net.yzl.workorder.model.vo.WorkbenchVisitManagerVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 工作台
@@ -54,5 +60,12 @@ public class WorkbenchController {
     @GetMapping(value = "getVisitSeatMonitoring")
     public ComResponse<List<VisitSeatMonitoringVo>> getVisitSeatMonitoring(){
         return workbenchClient.getVisitSeatMonitoring(QueryIds.userNo.get());
+    }
+
+    @RequestMapping(value = "getWorkbenchHotlineManagerMonitoring",method = RequestMethod.GET)
+    @ApiOperation(value = "工作台-热线经理-坐席监控", notes = "工作台-热线经理-坐席监控")
+    public ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(){
+        ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> workbenchHotlineManagerMonitoringVOS = workbenchClient.getWorkbenchHotlineManagerMonitoring(QueryIds.userNo.get());
+        return workbenchHotlineManagerMonitoringVOS;
     }
 }
