@@ -31,6 +31,7 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.controller.order.OrderRestController;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
+import cn.net.yzl.crm.model.order.CalcOrderIn.CalculateOrderProductDto;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
@@ -125,7 +126,7 @@ public class OrderRestControllerTests {
 		try {
 			System.err.println(String.format("%s%s%s", this.apiGateWayUrl, MemberFien.SUFFIX_URL,
 					MemberFien.CUSTOMER_AMOUNT_OPERATION_URL));
-			String member = "100000002";
+			String member = "10136214";
 			System.err.println(this.memberFien.getMember(member).getData());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,7 +189,7 @@ public class OrderRestControllerTests {
 			od1.setProductUnitPrice(200D);// 商品销售价 单位分
 			od1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od1.setProductCode("10000156");
-			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od1.setProductType(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(2);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od2 = new OrderDetailIn();
@@ -201,7 +202,7 @@ public class OrderRestControllerTests {
 			od2.setProductUnitPrice(200D);// 商品销售价 单位分
 			od2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od2.setProductCode("10000155");
-			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od2.setProductType(CommonConstant.MEAL_FLAG_0);
 			od2.setProductCount(2);
 			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od3 = new OrderDetailIn();
@@ -214,7 +215,7 @@ public class OrderRestControllerTests {
 			od3.setProductUnitPrice(200D);// 商品销售价 单位分
 			od3.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od3.setProductCode("10000152");
-			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od3.setProductType(CommonConstant.MEAL_FLAG_0);
 			od3.setProductCount(2);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
@@ -240,7 +241,7 @@ public class OrderRestControllerTests {
 			OrderDetailIn od1 = new OrderDetailIn();
 			od1.setProductCode("T0000155");
 			od1.setProductCount(2);
-			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+			od1.setProductType(CommonConstant.MEAL_FLAG_1);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
 			order.setMemberCardNo("100000002");
@@ -294,17 +295,17 @@ public class OrderRestControllerTests {
 			UpdateOrderIn order = new UpdateOrderIn();
 			OrderDetailIn od1 = new OrderDetailIn();
 			od1.setProductCode("10000156");
-			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od1.setProductType(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(3);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od2 = new OrderDetailIn();
 			od2.setProductCode("10000155");
-			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od2.setProductType(CommonConstant.MEAL_FLAG_0);
 			od2.setProductCount(3);
 			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			OrderDetailIn od3 = new OrderDetailIn();
 			od3.setProductCode("10000152");
-			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od3.setProductType(CommonConstant.MEAL_FLAG_0);
 			od3.setProductCount(3);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
@@ -325,7 +326,7 @@ public class OrderRestControllerTests {
 			OrderDetailIn od1 = new OrderDetailIn();
 			od1.setProductCode("T0000155");
 			od1.setProductCount(1);
-			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+			od1.setProductType(CommonConstant.MEAL_FLAG_1);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			order.getOrderDetailIns().add(od1);
 			order.setOrderNo("ON1314020T202102020019455929");
@@ -340,24 +341,37 @@ public class OrderRestControllerTests {
 	public void testCalcOrderForProduct() {
 		try {
 			CalcOrderIn order = new CalcOrderIn();
-			OrderDetailIn od1 = new OrderDetailIn();
-			od1.setProductCode("10000156");
-			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
-			od1.setProductCount(2);
-			od1.setGiftFlag(CommonConstant.GIFT_FLAG_1);
-			OrderDetailIn od2 = new OrderDetailIn();
-			od2.setProductCode("10000155");
-			od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
-			od2.setProductCount(2);
-			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-			OrderDetailIn od3 = new OrderDetailIn();
-			od3.setProductCode("10000152");
-			od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
-			od3.setProductCount(2);
-			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-//			order.getOrderDetailIns().add(od1);
-//			order.getOrderDetailIns().add(od2);
-//			order.getOrderDetailIns().add(od3);
+			order.setMemberCard("100000002");// 会员卡号
+			order.setAdvertBusNo(555L);// 广告业务主键
+			CalculateOrderProductDto a1 = new CalculateOrderProductDto();
+			a1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			a1.setActivityProductBusNo(20L);// 活动商品业务主键
+			a1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			a1.setCouponDiscountId(null);// 使用的优惠券折扣ID
+			a1.setDiscountId(7);// 使用的优惠主键
+			a1.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			a1.setMemberCouponId(null);// 使用的优惠券ID
+			a1.setProductCode("10000156");// 商品code
+			a1.setProductCount(2);// 商品数量
+			a1.setProductType(CommonConstant.MEAL_FLAG_0);// 商品类型
+			a1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			CalculateOrderProductDto a2 = new CalculateOrderProductDto();
+			a2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+			a2.setActivityProductBusNo(20L);// 活动商品业务主键
+			a2.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+			a1.setCouponDiscountId(null);// 使用的优惠券折扣ID
+			a2.setDiscountId(7);// 使用的优惠主键
+			a2.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+			a1.setMemberCouponId(null);// 使用的优惠券ID
+			a2.setProductCode("10000155");// 商品code
+			a2.setProductCount(2);// 商品数量
+			a1.setProductType(CommonConstant.MEAL_FLAG_0);// 商品类型
+			a1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			a2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			order.getCalculateProductDtos().add(a1);
+			order.getCalculateProductDtos().add(a2);
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(order));
 			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -372,7 +386,7 @@ public class OrderRestControllerTests {
 			OrderDetailIn od1 = new OrderDetailIn();
 			od1.setProductCode("T0000155");
 			od1.setProductCount(2);
-			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+			od1.setProductType(CommonConstant.MEAL_FLAG_1);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 //			order.getOrderDetailIns().add(od1);
 			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));

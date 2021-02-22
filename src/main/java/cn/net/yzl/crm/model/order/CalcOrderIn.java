@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.model.order;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.net.yzl.activity.model.dto.CalculateProductDto;
@@ -20,10 +21,18 @@ import lombok.ToString;
 @Getter
 @ToString
 public class CalcOrderIn {
-	@ApiModelProperty("广告业务主键")
+	@ApiModelProperty(value = "广告业务主键", required = false)
 	private Long advertBusNo;
-	@ApiModelProperty("会员卡号")
+	@ApiModelProperty(value = "会员卡号", required = true)
 	private String memberCard;
-	@ApiModelProperty("商品相关信息")
-	private List<CalculateProductDto> calculateProductDtos;
+	@ApiModelProperty(value = "商品相关信息", required = true)
+	private List<CalculateOrderProductDto> calculateProductDtos = new ArrayList<>(0);
+
+	@Getter
+	@Setter
+	@ToString
+	public static class CalculateOrderProductDto extends CalculateProductDto {
+		@ApiModelProperty(value = "赠品标识：0=购买，1=赠送", required = false)
+		private Integer giftFlag;
+	}
 }
