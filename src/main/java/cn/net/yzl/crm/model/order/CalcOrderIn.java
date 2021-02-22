@@ -26,5 +26,13 @@ public class CalcOrderIn {
 	@ApiModelProperty(value = "会员卡号", required = true)
 	private String memberCard;
 	@ApiModelProperty(value = "商品相关信息", required = true)
-	private List<CalculateProductDto> calculateProductDtos = new ArrayList<>(0);
+	private List<CalculateOrderProductDto> calculateProductDtos = new ArrayList<>(0);
+
+	@Getter
+	@Setter
+	@ToString
+	public static class CalculateOrderProductDto extends CalculateProductDto {
+		@ApiModelProperty(value = "赠品标识：0=购买，1=赠送", required = false)
+		private Integer giftFlag;
+	}
 }
