@@ -72,7 +72,7 @@ public interface RemoveStockFeignService {
             @ApiImplicitParam(name = "orderNo", value = "订单编号",  dataType = "String", paramType = "query"),
     })
     @GetMapping("removestock/v1/selectQRSendConsigneeInfo")
-    public ComResponse<QrSendConsigneeDto> selectQRSendConsigneeInfo(@RequestParam("orderNo") String orderNo);
+    public ComResponse selectQRSendConsigneeInfo(@RequestParam("orderNo") String orderNo);
 
     @ApiOperation(value = "修改出库单和订单-打印状态",notes = "修改出库单和订单-打印状态")
     @PostMapping("removestock/v1/updateOutStoreOrderStatus")
