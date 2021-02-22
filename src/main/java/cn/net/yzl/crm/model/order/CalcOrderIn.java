@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.model.order;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.net.yzl.activity.model.dto.CalculateProductDto;
@@ -25,5 +26,5 @@ public class CalcOrderIn {
 	@ApiModelProperty("会员卡号")
 	private String memberCard;
 	@ApiModelProperty("商品相关信息")
-	private List<CalculateProductDto> calculateProductDtos;
+	private List<CalculateProductDto> calculateProductDtos = new ArrayList<>(0);
 }
