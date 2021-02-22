@@ -50,7 +50,6 @@ import cn.net.yzl.crm.constant.ObtainType;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.customer.model.MemberAmount;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
@@ -116,7 +115,7 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
 		}
-		MemberAmount amount = member.getMember_amount();
+		MemberAmountDto amount = this.memberFien.getMemberAmount(orderin.getMemberCard()).getData();
 		if (amount == null) {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账户信息", orderin.getMemberCard());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账户信息。");
@@ -839,7 +838,7 @@ public class OrderRestController {
 		request.setMemberCard(orderin.getMemberCardNo());// 会员卡号
 		request.setMemberLevelGrade(member.getMGradeId());// 会员级别
 		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
-		request.setProductTotal(orderin.getProductTotal());// 商品总额，订单中所有商品 单位分
+		request.setProductTotal(orderin.getProductTotal().multiply(bd100).longValue());// 商品总额，订单中所有商品,单位分
 		// 只匹配购买的商品或套餐，排除赠品
 		List<OrderDetailIn> orderdetailins = orderin.getOrderDetailIns().stream()
 				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
@@ -905,7 +904,7 @@ public class OrderRestController {
 		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
 		request.setMemberLevelGrade(member.getMGradeId());// 会员级别
 		request.setOrderNo(orderm.getOrderNo());// 订单编号
-		request.setProductTotal(orderin.getProductTotal());// 商品总额 单位分
+		request.setProductTotal(orderin.getProductTotal().multiply(bd100).longValue());// 商品总额,单位分
 		request.setUserNo(orderm.getStaffCode());// 操作人
 		// 订单中的商品信息
 		request.setOrderSubmitProductDtoList(orderin.getOrderDetailIns().stream()

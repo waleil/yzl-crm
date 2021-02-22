@@ -320,7 +320,7 @@ public class SimpleTests {
 			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
 			request.setAdvertBusNo(order.getAdvertBusNo());
 			request.setMemberCard(order.getMemberCardNo());
-			request.setProductTotal(order.getProductTotal());
+			request.setProductTotal(order.getProductTotal().longValue());
 			order.getOrderDetailIns().stream().map(m -> {
 				CalculateProductDto dto = new CalculateProductDto();
 				dto.setActivityBusNo(m.getActivityBusNo());
