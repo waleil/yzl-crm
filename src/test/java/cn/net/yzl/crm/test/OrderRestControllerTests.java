@@ -260,7 +260,7 @@ public class OrderRestControllerTests {
 			order.setMediaChannel(0);
 			order.setMemberTelphoneNo("12345678901");
 			order.setPayType(CommonConstant.PAY_TYPE_1);
-			order.setAmountStored(0D);
+			order.setAmountStored(BigDecimal.ZERO);
 			order.setProductTotal(BigDecimal.valueOf(1500L));
 			
 			OrderDetailIn od1 = new OrderDetailIn();
