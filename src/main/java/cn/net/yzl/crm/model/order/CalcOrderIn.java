@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.model.order;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class CalcOrderIn {
 	private Long advertBusNo;
 	@ApiModelProperty(value = "会员卡号", required = true)
 	private String memberCard;
+	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
+	private BigDecimal amountStored = BigDecimal.ZERO;
 	@ApiModelProperty(value = "商品相关信息", required = true)
 	private List<CalculateOrderProductDto> calculateProductDtos = new ArrayList<>(0);
 
