@@ -192,56 +192,63 @@ public class OrderRestControllerTests {
 	public void testSubmitOrderForProduct() {
 		try {
 			OrderIn order = new OrderIn();
-			order.setProductTotal(BigDecimal.valueOf(147980L));// 商品总额 单位分
+			order.setProductTotal(BigDecimal.valueOf(1180));// 商品总额 单位分
 			order.setAdvertBusNo(555L);// 广告业务主键
+			order.setMemberCardNo("100000002");
+			order.setReveiverAddressNo(482416);
+			order.setMediaChannel(0);
+			order.setMemberTelphoneNo("12345678901");
+			order.setPayType(CommonConstant.PAY_TYPE_1);
+			order.setAmountStored(BigDecimal.valueOf(3531));
+			
 			OrderDetailIn od1 = new OrderDetailIn();
 			od1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
 			od1.setActivityProductBusNo(20L);// 活动商品业务主键
 			od1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
-			od1.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
-			od1.setDiscountId(7);// 使用的优惠主键
-			od1.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
-			od1.setProductUnitPrice(200D);// 商品销售价 单位分
+			od1.setDiscountType(1);// 优惠方式：0满减，1折扣，2红包
+			od1.setDiscountId(8);// 使用的优惠主键
+//			od1.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+//			od1.setProductUnitPrice(200D);// 商品销售价 单位分
 			od1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od1.setProductCode("10000156");
 			od1.setProductType(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(2);
 			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			
 			OrderDetailIn od2 = new OrderDetailIn();
-			od2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
-			od2.setActivityProductBusNo(20L);// 活动商品业务主键
-			od2.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
-			od2.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
-			od2.setDiscountId(7);// 使用的优惠主键
-			od2.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
-			od2.setProductUnitPrice(200D);// 商品销售价 单位分
-			od2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+//			od2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+//			od2.setActivityProductBusNo(20L);// 活动商品业务主键
+//			od2.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+//			od2.setDiscountType(1);// 优惠方式：0满减，1折扣，2红包
+//			od2.setDiscountId(8);// 使用的优惠主键
+//			od2.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+//			od2.setProductUnitPrice(200D);// 商品销售价 单位分
+			od2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od2.setProductCode("10000155");
 			od2.setProductType(CommonConstant.MEAL_FLAG_0);
-			od2.setProductCount(2);
+			od2.setProductCount(1);
 			od2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			
 			OrderDetailIn od3 = new OrderDetailIn();
-			od3.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
-			od3.setActivityProductBusNo(20L);// 活动商品业务主键
-			od3.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
-			od3.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
-			od3.setDiscountId(7);// 使用的优惠主键
-			od3.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
-			od3.setProductUnitPrice(200D);// 商品销售价 单位分
-			od3.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+//			od3.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+//			od3.setActivityProductBusNo(20L);// 活动商品业务主键
+//			od3.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+//			od3.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+//			od3.setDiscountId(7);// 使用的优惠主键
+//			od3.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
+//			od3.setProductUnitPrice(200D);// 商品销售价 单位分
+			od3.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od3.setProductCode("10000152");
 			od3.setProductType(CommonConstant.MEAL_FLAG_0);
-			od3.setProductCount(2);
+			od3.setProductCount(1);
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			
 			order.getOrderDetailIns().add(od1);
 			order.getOrderDetailIns().add(od2);
-//			order.getOrderDetailIns().add(od3);
-			order.setMemberCardNo("100000002");
-			order.setReveiverAddressNo(482416);
-			order.setMediaChannel(0);
-			order.setMemberTelphoneNo("12345678901");
-			order.setPayType(CommonConstant.PAY_TYPE_0);
+			order.getOrderDetailIns().add(od3);
+			
 			QueryIds.userNo.set("14020");
+			
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(order));
 			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
 		} catch (Exception e) {

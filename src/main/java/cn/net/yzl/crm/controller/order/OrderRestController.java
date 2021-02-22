@@ -286,6 +286,10 @@ public class OrderRestController {
 		}
 		// 组装校验订单金额参数
 		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
+		try {
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(checkOrderAmountRequest));
+		} catch (Exception e) {
+		}
 		// 调用校验订单金额接口
 		ComResponse<List<ProductPriceResponse>> ppresponse = this.activityClient
 				.checkOrderAmount(checkOrderAmountRequest);
@@ -632,6 +636,10 @@ public class OrderRestController {
 		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
 		// 组装提交订单送积分和优惠券参数
 		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, member, orderm);
+		try {
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orderSubmitRequest));
+		} catch (Exception e) {
+		}
 		// 提交订单送积分和优惠券
 		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(orderSubmit.getCode())) {
