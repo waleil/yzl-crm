@@ -166,7 +166,12 @@ public class OrderRestController {
 						.add(Optional.ofNullable(m.getCouponDiscountPrice()).orElse(BigDecimal.ZERO)).doubleValue())
 				.sum();
 		if (orderin.getAmountStored().compareTo(BigDecimal.ZERO) > 0) {
-			total -= orderin.getAmountStored().doubleValue();
+			double am = orderin.getAmountStored().doubleValue();
+			if (Double.compare(total, am) >= 0) {
+				total -= am;
+			} else {
+				total = 0;
+			}
 		}
 		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(totalAll).divide(bd100).doubleValue(), total,
 				amountCoupon, 0d, orderin.getAmountStored().doubleValue()));
@@ -530,9 +535,10 @@ public class OrderRestController {
 //			orderm.setCash(orderm.getCash()
 //					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
-		orderm.setTotal(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
+		// 商品数量*商品价，然后再求和
+		orderm.setTotalAll(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
 		orderm.setCash(orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
-		orderm.setTotalAll(orderm.getTotal());
+		orderm.setTotal(orderm.getTotalAll());
 		orderm.setSpend(orderm.getCash());
 		if (this.hasAmountStored(orderin)) {
 			// 如果订单总金额大于账户剩余金额，单位分
