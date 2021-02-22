@@ -25,6 +25,6 @@ public class CalcOrderIn {
 	private Long advertBusNo;
 	@ApiModelProperty("会员卡号")
 	private String memberCard;
-	@ApiModelProperty("商品相关信息")
+	@ApiModelProperty(value = "商品相关信息", required = true)
 	private List<CalculateProductDto> calculateProductDtos = new ArrayList<>(0);
 }
