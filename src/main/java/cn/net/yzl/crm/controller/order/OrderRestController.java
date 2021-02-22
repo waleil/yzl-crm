@@ -1,5 +1,32 @@
 package cn.net.yzl.crm.controller.order;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import cn.hutool.core.lang.Tuple;
 import cn.net.yzl.activity.model.dto.CalculateProductDto;
 import cn.net.yzl.activity.model.dto.MemberCouponDto;
@@ -7,6 +34,7 @@ import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
 import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
 import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
 import cn.net.yzl.activity.model.enums.UseDiscountTypeEnum;
+import cn.net.yzl.activity.model.requestModel.CalculateRequest;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
 import cn.net.yzl.activity.model.responseModel.OrderSubmitResponse;
@@ -22,10 +50,14 @@ import cn.net.yzl.crm.constant.ObtainType;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressDto;
 import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
+import cn.net.yzl.crm.customer.model.MemberAmount;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
 import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.model.order.CalcOrderIn;
+import cn.net.yzl.crm.model.order.CalcOrderIn.CalculateOrderProductDto;
+import cn.net.yzl.crm.model.order.CalcOrderOut;
 import cn.net.yzl.crm.model.order.OrderOut;
 import cn.net.yzl.crm.model.order.OrderOut.Coupon;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
@@ -41,30 +73,18 @@ import cn.net.yzl.order.enums.RedisKeys;
 import cn.net.yzl.order.model.db.order.OrderCouponDetail;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
-import cn.net.yzl.order.model.vo.order.*;
+import cn.net.yzl.order.model.vo.order.OrderDetailIn;
+import cn.net.yzl.order.model.vo.order.OrderIn;
+import cn.net.yzl.order.model.vo.order.OrderRequest;
+import cn.net.yzl.order.model.vo.order.ReissueOrderIn;
+import cn.net.yzl.order.model.vo.order.UpdateOrderIn;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
-import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * 订单管理
@@ -79,62 +99,67 @@ import java.util.stream.Collectors;
 public class OrderRestController {
 	private BigDecimal bd100 = BigDecimal.valueOf(100);// 元转分
 
-//	@PostMapping("/v1/calcorder")
-//	@ApiOperation(value = "热线工单-购物车-计算订单金额", notes = "热线工单-购物车-计算订单金额")
-//	public ComResponse<CalcOrderOut> calcOrder(@RequestBody CalcOrderIn orderin) {
-//		if (CollectionUtils.isEmpty(orderin.getCalculateProductDtos())) {
-//			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin.getCalculateProductDtos());
-//			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
-//		}
-//		if (!StringUtils.hasText(orderin.getMemberCard())) {
-//			log.error("热线工单-购物车-提交订单>>顾客卡号不能为空>>{}", orderin.getMemberCard());
-//			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客卡号不能为空。");
-//		}
-//		// 按顾客号查询顾客信息
-//		Member member = this.memberFien.getMember(orderin.getMemberCard()).getData();
-//		if (member == null) {
-//			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
-//			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
-//		}
-//		// 只匹配购买的商品或套餐，排除赠品
-//		List<CalculateOrderProductDto> orderproducts = orderin.getCalculateProductDtos().stream()
-//				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
-//				.collect(Collectors.toList());
-//		// 用,拼接商品编码
-//		String productCodes = orderproducts.stream().map(CalculateOrderProductDto::getProductCode)
-//				.collect(Collectors.joining(","));
-//		// 商品列表
-//		Map<String, ProductMainDTO> productMap = Optional
-//				.ofNullable(this.productClient.queryByProductCodes(productCodes).getData())
-//				.orElse(Collections.emptyList()).stream()
-//				.collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
-//		// 套餐列表
-//		Map<String, ProductMealListDTO> mealMap = Optional
-//				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
-//				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
-//		List<ProductPriceResponse> list = orderproducts.stream().map(cp -> {
-//			if (Integer.compare(CommonConstant.MEAL_FLAG_0, cp.getProductType()) == 0) {
-//				// 商品
-//				ProductMainDTO product = productMap.get(cp.getProductCode());
-//				cp.setLimitDownPrice(
-//						BigDecimal.valueOf(Double.valueOf(product.getLimitDownPrice())).multiply(bd100).longValue());// 商品最低折扣价,单位分
-//				cp.setSalePrice(BigDecimal.valueOf(Double.valueOf(product.getSalePrice())).multiply(bd100).longValue());// 商品销售价,单位分
-//			} else {
-//				// 套餐
-//				ProductMealListDTO meal = mealMap.get(cp.getProductCode());
-//				cp.setLimitDownPrice(Long.valueOf(meal.getDiscountPrice()));// 商品最低折扣价,单位分
-//				cp.setSalePrice(BigDecimal.valueOf(meal.getPriceD()).multiply(bd100).longValue());// 商品销售价,单位分
-//			}
-//			CalculateRequest request = new CalculateRequest();
-//			request.setCalculateProductDto(cp);
-//			request.setAdvertBusNo(orderin.getAdvertBusNo());
-//			request.setMemberCard(orderin.getMemberCard());
-//			request.setMemberLevelGrade(member.getMGradeId());
-//			return this.activityClient.calculate(request).getData();
-//		}).collect(Collectors.toList());
-//		double productTotal = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
-//		return ComResponse.success(new CalcOrderOut(productTotal, productTotal, 0d, 0d, 0d));
-//	}
+	@PostMapping("/v1/calcorder")
+	@ApiOperation(value = "热线工单-购物车-计算订单金额", notes = "热线工单-购物车-计算订单金额")
+	public ComResponse<CalcOrderOut> calcOrder(@RequestBody CalcOrderIn orderin) {
+		if (CollectionUtils.isEmpty(orderin.getCalculateProductDtos())) {
+			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin.getCalculateProductDtos());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
+		}
+		if (!StringUtils.hasText(orderin.getMemberCard())) {
+			log.error("热线工单-购物车-提交订单>>顾客卡号不能为空>>{}", orderin.getMemberCard());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客卡号不能为空。");
+		}
+		// 按顾客号查询顾客信息
+		Member member = this.memberFien.getMember(orderin.getMemberCard()).getData();
+		if (member == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
+		}
+		MemberAmount amount = member.getMember_amount();
+		if (amount == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账户信息", orderin.getMemberCard());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账户信息。");
+		}
+		// 只匹配购买的商品或套餐，排除赠品
+		List<CalculateOrderProductDto> orderproducts = orderin.getCalculateProductDtos().stream()
+				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
+				.collect(Collectors.toList());
+		// 用,拼接商品编码
+		String productCodes = orderproducts.stream().map(CalculateOrderProductDto::getProductCode)
+				.collect(Collectors.joining(","));
+		// 商品列表
+		Map<String, ProductMainDTO> productMap = Optional
+				.ofNullable(this.productClient.queryByProductCodes(productCodes).getData())
+				.orElse(Collections.emptyList()).stream()
+				.collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
+		// 套餐列表
+		Map<String, ProductMealListDTO> mealMap = Optional
+				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
+				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
+		List<ProductPriceResponse> list = orderproducts.stream().map(cp -> {
+			if (Integer.compare(CommonConstant.MEAL_FLAG_0, cp.getProductType()) == 0) {
+				// 商品
+				ProductMainDTO product = productMap.get(cp.getProductCode());
+				cp.setLimitDownPrice(
+						BigDecimal.valueOf(Double.valueOf(product.getLimitDownPrice())).multiply(bd100).longValue());// 商品最低折扣价,单位分
+				cp.setSalePrice(BigDecimal.valueOf(Double.valueOf(product.getSalePrice())).multiply(bd100).longValue());// 商品销售价,单位分
+			} else {
+				// 套餐
+				ProductMealListDTO meal = mealMap.get(cp.getProductCode());
+				cp.setLimitDownPrice(Long.valueOf(meal.getDiscountPrice()));// 商品最低折扣价,单位分
+				cp.setSalePrice(BigDecimal.valueOf(meal.getPriceD()).multiply(bd100).longValue());// 商品销售价,单位分
+			}
+			CalculateRequest request = new CalculateRequest();
+			request.setCalculateProductDto(cp);
+			request.setAdvertBusNo(orderin.getAdvertBusNo());
+			request.setMemberCard(orderin.getMemberCard());
+			request.setMemberLevelGrade(member.getMGradeId());
+			return this.activityClient.calculate(request).getData();
+		}).collect(Collectors.toList());
+		double productTotal = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
+		return ComResponse.success(new CalcOrderOut(productTotal, productTotal, 0d, 0d, 0d));
+	}
 
 	@PostMapping("/v1/submitorder")
 	@ApiOperation(value = "热线工单-购物车-提交订单", notes = "热线工单-购物车-提交订单")
