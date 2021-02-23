@@ -1,13 +1,18 @@
 package cn.net.yzl.crm.client.order;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.order.enums.LeaderBoardType;
 import cn.net.yzl.order.model.db.order.OrderM;
+import cn.net.yzl.order.model.vo.ehr.LeaderBoard;
 import cn.net.yzl.order.model.vo.order.OrderRequest;
 
 /**
@@ -62,4 +67,16 @@ public interface OrderFeignClient {
 	@GetMapping("/order/v1/get/{orderNo}")
 	ComResponse<OrderM> queryOrder(@PathVariable String orderNo);
 
+	/**
+	 * 查询今日/3日/7日业绩排行榜
+	 * 
+	 * @param boardType     {@link LeaderBoardType}
+	 * @param workOrderType 1：热线，2：回访
+	 * @return 业绩排行榜列表
+	 * @author zhangweiwei
+	 * @date 2021年2月23日,上午4:52:42
+	 */
+	@GetMapping("/order/v1/leaderboard")
+	ComResponse<List<LeaderBoard>> queryLeaderboard(@RequestParam LeaderBoardType boardType,
+			@RequestParam int workOrderType);
 }
