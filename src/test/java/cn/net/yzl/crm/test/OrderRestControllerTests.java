@@ -498,28 +498,6 @@ public class OrderRestControllerTests {
 	@Test
 	public void testOrderSubmit() {
 		try {
-//			{
-//				  "orderNo" : "ON20210221115651626262382",
-//				  "advertBusNo" : 555,
-//				  "memberCard" : "100000002",
-//				  "productTotal" : 39990,
-//				  "orderSubmitProductDtoList" : [ {
-//				    "productCode" : "10000156",
-//				    "productCount" : 2,
-//				    "productTotal" : 20000,
-//				    "useDiscountTypeEnum" : "USE_ACTIVITY",
-//				    "activityTypeEnum" : "ADVERT_LAUNCH",
-//				    "activityBusNo" : 20,
-//				    "activityProductBusNo" : 20,
-//				    "discountTypeEnum" : "FULL_REDUCE",
-//				    "discountId" : 7,
-//				    "memberCouponId" : null
-//				  } ],
-//				  "groupId" : null,
-//				  "memberLevelGrade" : 7,
-//				  "userNo" : 14058,
-//				  "memberCouponIdForOrder" : null
-//				}
 			OrderSubmitRequest request = new OrderSubmitRequest();
 			request.setAdvertBusNo(555L);// 广告业务主键
 			request.setMemberCard("100000002");// 会员卡号
