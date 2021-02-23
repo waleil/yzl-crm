@@ -599,7 +599,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		response.getData().forEach(map ->{
 			if(map.getEnable() == 0){
 				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),
-						"群组：" + map.get_id() + " 群组名称： " + map.getName() +",已失效" );
+						"群组：" + map.get_id() + " 群组名称： " + map.getCrowd_name() +",已失效" );
 			}
 		});
 
