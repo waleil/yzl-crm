@@ -77,5 +77,6 @@ public interface OrderFeignClient {
 	 * @date 2021年2月23日,上午4:52:42
 	 */
 	@GetMapping("/order/v1/leaderboard")
-	ComResponse<List<LeaderBoard>> queryLeaderboard(@RequestParam LeaderBoardType boardType, int workOrderType);
+	ComResponse<List<LeaderBoard>> queryLeaderboard(@RequestParam LeaderBoardType boardType,
+			@RequestParam int workOrderType);
 }
