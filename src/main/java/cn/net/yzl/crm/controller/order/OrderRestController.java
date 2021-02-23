@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.hutool.core.lang.Tuple;
@@ -64,9 +63,11 @@ import cn.net.yzl.crm.model.order.OrderOut;
 import cn.net.yzl.crm.model.order.OrderOut.Coupon;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.IOrderCommonService;
 import cn.net.yzl.crm.utils.RedisUtil;
+import cn.net.yzl.logistics.model.vo.ExpressIndemnity;
 import cn.net.yzl.model.dto.DepartDto;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.enums.LeaderBoardType;
@@ -1428,8 +1429,8 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, customerAmountOperation.getMessage());
 			}
 		}
-		log.info("订单: {}", JSON.toJSONString(orderm, true));
-		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
+		log.info("订单: {}", this.toJsonString(orderm));
+		log.info("订单明细: {}", this.toJsonString(orderdetailList));
 		// 调用修改订单服务接口
 		ComResponse<?> updateOrder = this.orderFeignClient.updateOrder(new OrderRequest(orderm, orderdetailList));
 		// 如果调用服务接口失败
@@ -1471,7 +1472,7 @@ public class OrderRestController {
 		ComResponse<Boolean> createUpdateMember = this.memberFien.dealOrderCreateUpdateMemberData(orderCreateInfoVO);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(createUpdateMember.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}", createUpdateMember);
+			log.error("订单列表-编辑>>{}", createUpdateMember);
 			this.orderCommonService.insert(createUpdateMember, MemberFien.SUFFIX_URL,
 					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
@@ -1763,12 +1764,49 @@ public class OrderRestController {
 			log.error("订单列表-异常处理-补发订单>>{}", productReduce);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, productReduce.getMessage());
 		}
-		log.info("订单: {}", JSON.toJSONString(orderm, true));
-		log.info("订单明细: {}", JSON.toJSONString(orderdetailList, true));
+		log.info("订单: {}", this.toJsonString(orderm));
+		log.info("订单明细: {}", this.toJsonString(orderdetailList));
 		// 调用补发订单服务接口
-		ComResponse<Object> reissueOrder = this.orderFeignClient
-				.reissueOrder(new OrderRequest(orderm, orderdetailList, orderin.getOrderNo()));
-		return ComResponse.success();
+		ComResponse<Object> reissueOrder = this.orderFeignClient.reissueOrder(new OrderRequest(orderm, orderdetailList,
+				orderin.getOrderNo(), orderin.getPayAmount(), orderin.getRemark()));
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(reissueOrder.getCode())) {
+			log.error("订单列表-异常处理-补发订单>>创建订单失败[订单号：{}]>>{}", orderm.getOrderNo(), reissueOrder);
+			// 恢复库存
+			ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
+			// 如果调用服务接口失败
+			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(increaseStock.getCode())) {
+				log.error("订单列表-异常处理-补发订单>>{}", increaseStock);
+				this.orderCommonService.insert(orderProduct, ProductClient.SUFFIX_URL, ProductClient.INCREASE_STOCK_URL,
+						orderm.getStaffCode(), orderm.getOrderNo());
+			}
+		}
+		// 组装物流赔付参数
+		ExpressIndemnity indemnity = new ExpressIndemnity();
+		indemnity.setCharge(orderin.getPayAmount());
+		indemnity.setExpressNum(orderm.getExpressNumber());
+		// 调用物流赔付接口
+		ComResponse<Boolean> settlementLogisticsChargeIndemnity = this.logisticsFien
+				.settlementLogisticsChargeIndemnity(indemnity);
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(settlementLogisticsChargeIndemnity.getCode())) {
+			log.error("订单列表-异常处理-补发订单>>{}", settlementLogisticsChargeIndemnity);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, settlementLogisticsChargeIndemnity.getMessage());
+		}
+		// 顾客管理-处理下单时更新顾客信息
+		OrderCreateInfoVO orderCreateInfoVO = new OrderCreateInfoVO();
+		orderCreateInfoVO.setCreateTime(orderm.getCreateTime());// 下单时间
+		orderCreateInfoVO.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
+		orderCreateInfoVO.setOrderNo(orderm.getOrderNo());// 订单编号
+		orderCreateInfoVO.setStaffNo(orderm.getStaffCode());// 下单坐席编号
+		ComResponse<Boolean> createUpdateMember = this.memberFien.dealOrderCreateUpdateMemberData(orderCreateInfoVO);
+		// 如果调用服务接口失败
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(createUpdateMember.getCode())) {
+			log.error("订单列表-异常处理-补发订单>>{}", createUpdateMember);
+			this.orderCommonService.insert(createUpdateMember, MemberFien.SUFFIX_URL,
+					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
+		}
+		log.info("订单列表-异常处理-补发订单>>创建订单成功[订单号：{}]", orderm.getOrderNo());
+		return ComResponse.success(orderm.getOrderNo());
 	}
 
 	@GetMapping("/v1/leaderboard")
@@ -1808,6 +1846,8 @@ public class OrderRestController {
 	private IOrderCommonService orderCommonService;
 	@Resource
 	private ActivityClient activityClient;
+	@Resource
+	private LogisticsFien logisticsFien;
 	@Resource
 	private RedisUtil redisUtil;
 	@Resource
