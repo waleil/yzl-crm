@@ -1,12 +1,11 @@
 package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.service.order.ExportOrderService;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
-import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
-import cn.net.yzl.order.model.vo.order.SettlementDTO;
-import cn.net.yzl.order.model.vo.order.SettlementListReqDTO;
+import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
@@ -55,6 +54,21 @@ public class ExportOrderController {
 
     }
 
+    @PostMapping("v1/exportselectProductDetailBySettledOrder")
+    @ApiOperation("以商品为维度的结算商品列表导出")
+    public ComResponse<Boolean> exportselectProductDetailBySettledOrder(@RequestBody ProductDetailSettlementedReqDTO dto, HttpServletResponse response){
+        service.exportSelectProductDetailBySettledOrder(dto,response);
+        return ComResponse.success(true);
+
+    }
+
+    @PostMapping("v1/exportselectgoodsInTransitlist")
+    @ApiOperation("导出在途商品列表")
+    public ComResponse<Boolean> exportselectgoodsInTransitlist(@RequestBody ProductDetailSettlementedReqDTO dto, HttpServletResponse response){
+        service.exportSelectgoodsInTransitlist(dto,response);
+        return ComResponse.success(true);
+
+    }
 
 
 }

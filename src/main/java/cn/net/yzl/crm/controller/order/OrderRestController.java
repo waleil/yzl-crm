@@ -1132,7 +1132,7 @@ public class OrderRestController {
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
-				.collect(Collectors.groupingBy(OrderDetailIn::getProductType));
+				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
 		// 获取非套餐，也就是纯商品
 		List<OrderDetailIn> orderProductList = orderdetailMap.get(CommonConstant.MEAL_FLAG_0);
 		// 收集套餐关联的商品和非套餐商品
@@ -1513,7 +1513,7 @@ public class OrderRestController {
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
 		// 按套餐和非套餐对订单明细进行分组，key为套餐标识，value为订单明细集合
 		Map<Integer, List<OrderDetailIn>> orderdetailMap = orderin.getOrderDetailIns().stream()
-				.collect(Collectors.groupingBy(OrderDetailIn::getProductType));
+				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
 		// 获取非套餐，也就是纯商品
 		List<OrderDetailIn> orderProductList = orderdetailMap.get(CommonConstant.MEAL_FLAG_0);
 		// 收集套餐关联的商品和非套餐商品
