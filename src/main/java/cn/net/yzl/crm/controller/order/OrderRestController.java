@@ -1744,7 +1744,8 @@ public class OrderRestController {
 	@GetMapping("/v1/leaderboard")
 	@ApiOperation(value = "业绩排行榜", notes = "业绩排行榜")
 	public ComResponse<List<LeaderBoard>> queryLeaderboard(
-			@ApiParam("今日/3日/7日") @RequestParam LeaderBoardType boardType, @ApiParam("1：热线，2：回访") int workOrderType) {
+			@ApiParam("今日/3日/7日") @RequestParam LeaderBoardType boardType,
+			@ApiParam("1：热线，2：回访") @RequestParam int workOrderType) {
 		List<LeaderBoard> data = this.orderFeignClient.queryLeaderboard(boardType, workOrderType).getData();
 		if (!CollectionUtils.isEmpty(data)) {
 			List<String> staffCodes = data.stream().map(LeaderBoard::getStaffCode).collect(Collectors.toList());
