@@ -160,17 +160,22 @@ public class OrderRestController {
 			request.setAdvertBusNo(orderin.getAdvertBusNo());
 			request.setMemberCard(orderin.getMemberCard());
 			request.setMemberLevelGrade(member.getMGradeId());
+			try {
+				System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
+			} catch (Exception e) {
+			}
 			return this.activityClient.calculate(request).getData();
 		}).collect(Collectors.toList());
 		// 商品数量*商品价格，然后求和，计算出订单总额
 		long totalAll = orderproducts.stream().mapToLong(m -> m.getProductCount() * m.getSalePrice()).sum();
 		// 对每一件商品经过DMC接口算出优惠价，然后求和，计算出商品优惠总价
-		double total = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
+		double productTotal = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
 		// 优惠券+活动优惠的总价
 		double amountCoupon = list.stream()
 				.mapToDouble(m -> Optional.ofNullable(m.getActivityDiscountPrice()).orElse(BigDecimal.ZERO)
 						.add(Optional.ofNullable(m.getCouponDiscountPrice()).orElse(BigDecimal.ZERO)).doubleValue())
 				.sum();
+		double total = productTotal;
 		if (orderin.getAmountStored().compareTo(BigDecimal.ZERO) > 0) {
 			double am = orderin.getAmountStored().doubleValue();
 			if (Double.compare(total, am) >= 0) {
@@ -180,7 +185,7 @@ public class OrderRestController {
 			}
 		}
 		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(totalAll).divide(bd100).doubleValue(), total,
-				amountCoupon, 0d, orderin.getAmountStored().doubleValue()));
+				amountCoupon, 0d, orderin.getAmountStored().doubleValue(), productTotal));
 	}
 
 	@PostMapping("/v1/submitorder")
@@ -1739,8 +1744,8 @@ public class OrderRestController {
 	@GetMapping("/v1/leaderboard")
 	@ApiOperation(value = "业绩排行榜", notes = "业绩排行榜")
 	public ComResponse<List<LeaderBoard>> queryLeaderboard(
-			@ApiParam(value = "今日/3日/7日") @RequestParam LeaderBoardType boardType) {
-		List<LeaderBoard> data = this.orderFeignClient.queryLeaderboard(boardType).getData();
+			@ApiParam("今日/3日/7日") @RequestParam LeaderBoardType boardType, @ApiParam("1：热线，2：回访") int workOrderType) {
+		List<LeaderBoard> data = this.orderFeignClient.queryLeaderboard(boardType, workOrderType).getData();
 		if (!CollectionUtils.isEmpty(data)) {
 			List<String> staffCodes = data.stream().map(LeaderBoard::getStaffCode).collect(Collectors.toList());
 			List<StaffDetail> details = this.ehrStaffClient.getDetailsListByNo(staffCodes).getData();
