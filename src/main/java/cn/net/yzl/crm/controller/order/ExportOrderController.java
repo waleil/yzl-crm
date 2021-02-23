@@ -64,7 +64,7 @@ public class ExportOrderController {
 
     @PostMapping("v1/exportselectgoodsInTransitlist")
     @ApiOperation("导出在途商品列表")
-    public ComResponse<Boolean> exportselectgoodsInTransitlist(@RequestBody ProductDetailSettlementedReqDTO dto, HttpServletResponse response){
+    public ComResponse<Boolean> exportselectgoodsInTransitlist(@RequestBody GoodsInTransitReqDTO dto, HttpServletResponse response){
         service.exportSelectgoodsInTransitlist(dto,response);
         return ComResponse.success(true);
 
