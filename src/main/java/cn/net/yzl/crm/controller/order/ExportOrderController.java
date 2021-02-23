@@ -53,10 +53,19 @@ public class ExportOrderController {
         return ComResponse.success(true);
 
     }
-    @PostMapping("v1/selectProductDetailBySettledOrder")
+
+    @PostMapping("v1/exportselectProductDetailBySettledOrder")
     @ApiOperation("以商品为维度的结算商品列表导出")
-    public ComResponse<Boolean> selectProductDetailBySettledOrder(@RequestBody ProductDetailSettlementedReqDTO dto, HttpServletResponse response){
+    public ComResponse<Boolean> exportselectProductDetailBySettledOrder(@RequestBody ProductDetailSettlementedReqDTO dto, HttpServletResponse response){
         service.exportSelectProductDetailBySettledOrder(dto,response);
+        return ComResponse.success(true);
+
+    }
+
+    @PostMapping("v1/exportselectgoodsInTransitlist")
+    @ApiOperation("导出在途商品列表")
+    public ComResponse<Boolean> exportselectgoodsInTransitlist(@RequestBody ProductDetailSettlementedReqDTO dto, HttpServletResponse response){
+        service.exportSelectgoodsInTransitlist(dto,response);
         return ComResponse.success(true);
 
     }

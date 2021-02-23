@@ -152,6 +152,11 @@ public class ExportOrderServiceImpl implements ExportOrderService {
 //        }
     }
 
+    @Override
+    public void exportSelectgoodsInTransitlist(ProductDetailSettlementedReqDTO dto, HttpServletResponse response) {
+
+    }
+
     /**
      * 格式化返回结算订单数据
      * @param list
