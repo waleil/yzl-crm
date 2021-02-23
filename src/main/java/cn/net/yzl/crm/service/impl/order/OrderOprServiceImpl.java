@@ -221,14 +221,14 @@ public class OrderOprServiceImpl implements IOrderOprService {
         if(orderRes.getCode().compareTo(Integer.valueOf(200))!=0){
             throw new BizException(orderRes.getCode(),orderRes.getMessage());
         }
-        orderInfoVo.getOrder().setReveiverProvinceName(dto.getReveiverProvinceName());
-        orderInfoVo.getOrder().setReveiverProvince(dto.getReveiverProvince());
-        orderInfoVo.getOrder().setReveiverCityName(dto.getReveiverCityName());
-        orderInfoVo.getOrder().setReveiverCity(dto.getReveiverCity());
-        orderInfoVo.getOrder().setReveiverAreaName(dto.getReveiverAreaName());
-        orderInfoVo.getOrder().setReveiverArea(dto.getReveiverArea());
-        orderInfoVo.getOrder().setReveiverTelphoneNo(dto.getReveiverTelphoneNo());
-        orderInfoVo.getOrder().setReveiverAddress(dto.getReveiverAddress());
+//        orderInfoVo.getOrder().setReveiverProvinceName(dto.getReveiverProvinceName());
+//        orderInfoVo.getOrder().setReveiverProvince(dto.getReveiverProvince());
+//        orderInfoVo.getOrder().setReveiverCityName(dto.getReveiverCityName());
+//        orderInfoVo.getOrder().setReveiverCity(dto.getReveiverCity());
+//        orderInfoVo.getOrder().setReveiverAreaName(dto.getReveiverAreaName());
+//        orderInfoVo.getOrder().setReveiverArea(dto.getReveiverArea());
+//        orderInfoVo.getOrder().setReveiverTelphoneNo(dto.getReveiverTelphoneNo());
+//        orderInfoVo.getOrder().setReveiverAddress(dto.getReveiverAddress());
         // 给仓库发通知，生成出库单
 //        List<OrderDistributeExpressVO> list = new ArrayList<>();
 //        OrderDistributeExpressVO vo= orderCommonService.mkOrderDistributeExpressData(orderInfoVo);
