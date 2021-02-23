@@ -945,23 +945,46 @@ public class OrderRestController {
 		request.setOrderNo(orderm.getOrderNo());// 订单编号
 		request.setProductTotal(orderin.getProductTotal().multiply(bd100).longValue());// 商品总额,单位分
 		request.setUserNo(orderm.getStaffCode());// 操作人
+		// 只匹配购买的商品或套餐，排除赠品
+		List<OrderDetailIn> orderdetailins = orderin.getOrderDetailIns().stream()
+				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
+				.collect(Collectors.toList());
+		// 用,拼接商品编码
+		String productCodes = orderdetailins.stream().map(OrderDetailIn::getProductCode)
+				.collect(Collectors.joining(","));
+		// 商品列表
+		Map<String, ProductMainDTO> productMap = Optional
+				.ofNullable(this.productClient.queryByProductCodes(productCodes).getData())
+				.orElse(Collections.emptyList()).stream()
+				.collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
+		// 套餐列表
+		Map<String, ProductMealListDTO> mealMap = Optional
+				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
+				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
 		// 订单中的商品信息
-		request.setOrderSubmitProductDtoList(orderin.getOrderDetailIns().stream()
-				// 只匹配购买的商品或套餐，排除赠品
-				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0).map(m -> {
-					OrderSubmitProductDto dto = new OrderSubmitProductDto();
-					dto.setActivityBusNo(m.getActivityBusNo());// 活动业务/会员优惠业务主键
-					dto.setActivityProductBusNo(m.getActivityProductBusNo());// 活动商品业务主键
-					dto.setActivityTypeEnum(this.getActivityTypeEnum(m.getActivityType()));// 优惠途径
-					dto.setDiscountId(m.getDiscountId());// 使用的优惠主键
-					dto.setDiscountTypeEnum(this.getDiscountTypeEnum(m.getDiscountType()));// 优惠方式
-					dto.setMemberCouponId(m.getMemberCouponId());// 使用的优惠券ID
-					dto.setProductCode(m.getProductCode());// 商品code
-					dto.setProductCount(m.getProductCount());// 商品数量
-					dto.setProductTotal(BigDecimal.valueOf(m.getProductUnitPrice()).multiply(bd100).longValue());// 商品销售价,单位分
-					dto.setUseDiscountTypeEnum(this.getUseDiscountTypeEnum(m.getUseDiscountType()));// 使用的优惠
-					return dto;
-				}).collect(Collectors.toList()));
+		request.setOrderSubmitProductDtoList(orderdetailins.stream().map(m -> {
+			OrderSubmitProductDto dto = new OrderSubmitProductDto();
+			dto.setActivityBusNo(m.getActivityBusNo());// 活动业务/会员优惠业务主键
+			dto.setActivityProductBusNo(m.getActivityProductBusNo());// 活动商品业务主键
+			dto.setActivityTypeEnum(this.getActivityTypeEnum(m.getActivityType()));// 优惠途径
+			dto.setDiscountId(m.getDiscountId());// 使用的优惠主键
+			dto.setDiscountTypeEnum(this.getDiscountTypeEnum(m.getDiscountType()));// 优惠方式
+			dto.setMemberCouponId(m.getMemberCouponId());// 使用的优惠券ID
+			dto.setProductCode(m.getProductCode());// 商品code
+			dto.setProductCount(m.getProductCount());// 商品数量
+			if (Integer.compare(CommonConstant.MEAL_FLAG_0, m.getProductType()) == 0) {
+				// 商品
+				ProductMainDTO product = productMap.get(m.getProductCode());
+				dto.setProductTotal(
+						BigDecimal.valueOf(Double.valueOf(product.getSalePrice())).multiply(bd100).longValue());// 商品销售价,单位分
+			} else {
+				// 套餐
+				ProductMealListDTO meal = mealMap.get(m.getProductCode());
+				dto.setProductTotal(BigDecimal.valueOf(meal.getPriceD()).multiply(bd100).longValue());// 商品销售价,单位分
+			}
+			dto.setUseDiscountTypeEnum(this.getUseDiscountTypeEnum(m.getUseDiscountType()));// 使用的优惠
+			return dto;
+		}).collect(Collectors.toList()));
 		return request;
 	}
 
