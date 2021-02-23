@@ -60,6 +60,10 @@ public class SimpleTests {
 		System.err.println(Integer.valueOf(BigDecimal.valueOf(999.99).multiply(BigDecimal.valueOf(100))
 				.setScale(0, RoundingMode.HALF_UP).toString()));
 		System.err.println(BigDecimal.valueOf(1137701198).divide(BigDecimal.valueOf(100)));
+
+		System.err.println(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(0L)) > 0);
+		System.err.println(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(0D)) > 0);
+		System.err.println(BigDecimal.ZERO.compareTo(BigDecimal.valueOf(0)) > 0);
 	}
 
 	@Test
@@ -82,25 +86,25 @@ public class SimpleTests {
 		OrderDetailIn od1 = new OrderDetailIn();
 		od1.setProductCode("11");
 		od1.setProductName("套餐11");
-		od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+		od1.setProductType(CommonConstant.MEAL_FLAG_1);
 		OrderDetailIn od2 = new OrderDetailIn();
 		od2.setProductCode("22");
 		od2.setProductName("商品22");
-		od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		od2.setProductType(CommonConstant.MEAL_FLAG_0);
 		OrderDetailIn od3 = new OrderDetailIn();
 		od3.setProductCode("33");
 		od3.setProductName("商品33");
-		od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		od3.setProductType(CommonConstant.MEAL_FLAG_0);
 		OrderDetailIn od4 = new OrderDetailIn();
 		od4.setProductCode("44");
 		od4.setProductName("商品44");
-		od4.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		od4.setProductType(CommonConstant.MEAL_FLAG_0);
 		OrderDetailIn od5 = new OrderDetailIn();
 		od5.setProductCode("55");
 		od5.setProductName("套餐55");
-		od5.setMealFlag(CommonConstant.MEAL_FLAG_1);
+		od5.setProductType(CommonConstant.MEAL_FLAG_1);
 		Map<Integer, List<OrderDetailIn>> odMap = Arrays.asList(od1, od2, od3, od4, od5).stream()
-				.collect(Collectors.groupingBy(OrderDetailIn::getMealFlag));
+				.collect(Collectors.groupingBy(OrderDetailIn::getProductType));
 		odMap.entrySet().stream()
 				.forEach(en -> System.err.println(String.format("%s\t%s", en.getKey(), en.getValue())));
 	}
@@ -109,21 +113,21 @@ public class SimpleTests {
 	public void testCollect() {
 		OrderDetailIn od1 = new OrderDetailIn();
 		od1.setProductCode("11");
-		od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+		od1.setProductType(CommonConstant.MEAL_FLAG_1);
 		OrderDetailIn od2 = new OrderDetailIn();
 		od2.setProductCode("22");
-		od2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		od2.setProductType(CommonConstant.MEAL_FLAG_0);
 		OrderDetailIn od3 = new OrderDetailIn();
 		od3.setProductCode("33");
-		od3.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		od3.setProductType(CommonConstant.MEAL_FLAG_0);
 		OrderDetailIn m1 = new OrderDetailIn();
 		m1.setProductCode("44");
-		m1.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		m1.setProductType(CommonConstant.MEAL_FLAG_0);
 		OrderDetailIn m2 = new OrderDetailIn();
 		m2.setProductCode("55");
-		m2.setMealFlag(CommonConstant.MEAL_FLAG_0);
+		m2.setProductType(CommonConstant.MEAL_FLAG_0);
 		List<OrderDetailIn> detailIns = Arrays.asList(od1, od2, od3);
-		List<OrderDetailIn> list = detailIns.stream().filter(p -> p.getMealFlag() != CommonConstant.MEAL_FLAG_0)
+		List<OrderDetailIn> list = detailIns.stream().filter(p -> p.getProductType() != CommonConstant.MEAL_FLAG_0)
 				.collect(Collectors.toList());
 		System.err.println(list.size());
 		list.add(new OrderDetailIn());
@@ -320,7 +324,7 @@ public class SimpleTests {
 			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
 			request.setAdvertBusNo(order.getAdvertBusNo());
 			request.setMemberCard(order.getMemberCardNo());
-			request.setProductTotal(order.getProductTotal());
+			request.setProductTotal(order.getProductTotal().longValue());
 			order.getOrderDetailIns().stream().map(m -> {
 				CalculateProductDto dto = new CalculateProductDto();
 				dto.setActivityBusNo(m.getActivityBusNo());
