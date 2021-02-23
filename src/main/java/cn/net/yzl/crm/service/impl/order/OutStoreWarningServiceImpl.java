@@ -47,24 +47,29 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
                 ComResponse<List<StaffDetailDto>> staffNos = ehrStaffClient.getByStaffNos(userCodes);
                 if (Optional.ofNullable(staffNos.getData()).map(List::isEmpty).isPresent()) {
                     staffNos.getData().forEach(entity -> {
-//                        if ("测试二".equals(entity.getName()) || "苏曼".equals(entity.getName()) || "王海丽".equals(entity.getName())) {
-                            if (!StringUtils.isEmpty(entity.getEmail())) {
-                                email.add(entity.getEmail());
-                            }
-                            if (!StringUtils.isEmpty(entity.getPhone())) {
-                                mobile.add(entity.getPhone());
-                            }
-//                        }
+                        if ("测试二".equals(entity.getName()) || "苏曼".equals(entity.getName()) || "王海丽".equals(entity.getName())) {
+                        if (!StringUtils.isEmpty(entity.getEmail())) {
+                            email.add(entity.getEmail());
+                        }
+                        if (!StringUtils.isEmpty(entity.getPhone())) {
+                            mobile.add(entity.getPhone());
+                        }
+                        }
                     });
                 }
             }
             OutStoreWarningDTO dto = detail.getData();
+
             String orderNos = "";
             if (!StringUtils.isEmpty(dto.getLastCollectionTimeWarning())) {
                 orderNos = dto.getLastCollectionTimeWarning();
             }
+
             if (!StringUtils.isEmpty(dto.getLastShippingTimeWarning())) {
-                orderNos = "," + dto.getLastCollectionTimeWarning();
+                if (!StringUtils.isEmpty(orderNos)) {
+                    orderNos = orderNos + ",";
+                }
+                orderNos = orderNos + dto.getLastCollectionTimeWarning();
             }
             //短信
             if (dto.getSendType().equals(1) || dto.getSendType().equals(3)) {
