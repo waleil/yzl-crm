@@ -32,4 +32,6 @@ public class CalcOrderOut {
 	private Double pointsDeduction = 0d;
 	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
 	private Double amountStored = 0d;
+	@ApiModelProperty(value = "DMC接口返回的优惠金额 单位元", required = false)
+	private Double productTotal = 0d;
 }
