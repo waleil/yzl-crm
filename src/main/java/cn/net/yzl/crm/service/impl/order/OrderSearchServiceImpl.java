@@ -26,39 +26,40 @@ import javax.validation.constraints.NotEmpty;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderSearchServiceImpl implements IOrderSearchService {
 
     @Autowired
     private OrderSearchClient orderSearchClient;
-    
+
     @Autowired
     private MemberFien memberFien;
 
     @Autowired
     private LogisticsFien logisticsFien;
 
-    
+
     @Override
     public ComResponse<OrderInfoVO> selectOrderInfo(String orderNo) {
         OrderInfoVO orderInfoVO = new OrderInfoVO();
         ComResponse<List<OrderInfoResDTO>> respons = orderSearchClient.selectOrderInfo(orderNo);
-        if(respons.getCode().compareTo(Integer.valueOf(200)) !=0){
-            throw new BizException(respons.getCode(),respons.getMessage());
+        if (respons.getCode().compareTo(Integer.valueOf(200)) != 0) {
+            throw new BizException(respons.getCode(), respons.getMessage());
         }
         List<OrderInfoResDTO> list = respons.getData();
-        if(list == null || list.size()==0){
-            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(),respons.getMessage());
+        if (list == null || list.size() == 0) {
+            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), respons.getMessage());
         }
 
         orderInfoVO.setOrderInfoResDTOList(list);
         GeneralResult<Member> member = memberFien.getMember(list.get(0).getMemberCardNo());
-        if(member.getCode().compareTo(Integer.valueOf(200)) !=0){
-            throw new BizException(member.getCode(),member.getMessage());
+        if (member.getCode().compareTo(Integer.valueOf(200)) != 0) {
+            throw new BizException(member.getCode(), member.getMessage());
         }
-        if(member.getData() == null){
-            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(),"顾客信息不存在");
+        if (member.getData() == null) {
+            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), "顾客信息不存在");
         }
         orderInfoVO.setMember(member.getData());
         return ComResponse.success(orderInfoVO);
@@ -80,20 +81,20 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
 
         OrderLogistcInfo orderLogistcInfo = null;
         ComResponse<OrderInfoResDTO> respons = orderSearchClient.selectOrderInfoOnly(orderNo);
-        if(respons.getCode().compareTo(Integer.valueOf(200)) !=0){
-            throw new BizException(respons.getCode(),respons.getMessage());
+        if (respons.getCode().compareTo(Integer.valueOf(200)) != 0) {
+            throw new BizException(respons.getCode(), respons.getMessage());
         }
-        if(respons.getData() == null){
-            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(),"该订单不存在");
+        if (respons.getData() == null) {
+            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), "该订单不存在");
         }
         OrderInfoResDTO order = respons.getData();
-        if(order.getOrderStatus() < OrderStatus.ORDER_STATUS_4.getCode()){
-           return ComResponse.success(null);
+        if (order.getOrderStatus() < OrderStatus.ORDER_STATUS_4.getCode()) {
+            return ComResponse.success(null);
         }
         if (!StringUtils.isBlank(mailid) && !StringUtils.isBlank(companyCode) &&
-                !StringUtils.isBlank(order.getExpressNumber()) &&!mailid.equals(order.getExpressNumber())) {
+                !StringUtils.isBlank(order.getExpressNumber()) && !mailid.equals(order.getExpressNumber())) {
 
-            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(),"您要查询的快递号，不属于该订单");
+            throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), "您要查询的快递号，不属于该订单");
         }
         orderLogistcInfo = new OrderLogistcInfo();
         orderLogistcInfo.setCompanyName(order.getExpressCompanyName());
@@ -102,25 +103,26 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         dto.setMailId(order.getExpressNumber());
         dto.setCompanyCode(order.getExpressCompanyCode());
         GeneralResult<List<ExpressTraceResDTO>> logisticsTraces = logisticsFien.findLogisticsTraces(dto);
-        if(logisticsTraces.getCode().compareTo(Integer.valueOf(200)) !=0){
-            throw new BizException(logisticsTraces.getCode(),logisticsTraces.getMessage());
+        if (logisticsTraces.getCode().compareTo(Integer.valueOf(200)) != 0) {
+            throw new BizException(logisticsTraces.getCode(), logisticsTraces.getMessage());
         }
         List<ExpressTraceResDTO> data = logisticsTraces.getData();
         List<LogisticsInfo> result = new ArrayList<>();
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (Optional.ofNullable(data).map(List::isEmpty).isPresent()) {
+            data.forEach(map -> {
+                LogisticsInfo info = new LogisticsInfo();
+                info.setMailId(order.getExpressNumber());
+                info.setCity(map.getCity());
+                info.setDescription(map.getDescription());
+                info.setSite(map.getSite());
+                info.setStatus(map.getStatus());
 
-        data.forEach(map->{
-            LogisticsInfo info = new LogisticsInfo();
-            info.setMailId(order.getExpressNumber());
-            info.setCity(map.getCity());
-            info.setDescription(map.getDescription());
-            info.setSite(map.getSite());
-            info.setStatus(map.getStatus());
+                info.setTime(df.format(map.getTime()));
+                result.add(info);
 
-            info.setTime(df.format(map.getTime()));
-            result.add(info);
-
-        });
+            });
+        }
 
         orderLogistcInfo.setList(result);
         return ComResponse.success(orderLogistcInfo);
