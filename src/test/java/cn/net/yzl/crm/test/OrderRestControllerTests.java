@@ -376,34 +376,53 @@ public class OrderRestControllerTests {
 			CalcOrderIn order = new CalcOrderIn();
 			order.setMemberCard("100000002");// 会员卡号
 			order.setAdvertBusNo(555L);// 广告业务主键
+			
 			CalculateOrderProductDto a1 = new CalculateOrderProductDto();
 			a1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
 			a1.setActivityProductBusNo(20L);// 活动商品业务主键
 			a1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
-			a1.setCouponDiscountId(null);// 使用的优惠券折扣ID
-			a1.setDiscountId(7);// 使用的优惠主键
-			a1.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
-			a1.setMemberCouponId(null);// 使用的优惠券ID
+//			a1.setCouponDiscountId(null);// 使用的优惠券折扣ID
+			a1.setDiscountId(8);// 使用的优惠主键
+			a1.setDiscountType(1);// 优惠方式：0满减，1折扣，2红包
+//			a1.setMemberCouponId(null);// 使用的优惠券ID
 			a1.setProductCode("10000156");// 商品code
 			a1.setProductCount(2);// 商品数量
 			a1.setProductType(CommonConstant.MEAL_FLAG_0);// 商品类型
 			a1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			
 			CalculateOrderProductDto a2 = new CalculateOrderProductDto();
-			a2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
-			a2.setActivityProductBusNo(20L);// 活动商品业务主键
-			a2.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
-			a2.setCouponDiscountId(null);// 使用的优惠券折扣ID
-			a2.setDiscountId(7);// 使用的优惠主键
-			a2.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
-			a2.setMemberCouponId(null);// 使用的优惠券ID
+//			a2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+//			a2.setActivityProductBusNo(20L);// 活动商品业务主键
+//			a2.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+//			a2.setCouponDiscountId(null);// 使用的优惠券折扣ID
+//			a2.setDiscountId(7);// 使用的优惠主键
+//			a2.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+//			a2.setMemberCouponId(null);// 使用的优惠券ID
 			a2.setProductCode("10000155");// 商品code
-			a2.setProductCount(2);// 商品数量
+			a2.setProductCount(1);// 商品数量
 			a2.setProductType(CommonConstant.MEAL_FLAG_0);// 商品类型
 			a2.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-			a2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			a2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			
+			CalculateOrderProductDto a3 = new CalculateOrderProductDto();
+//			a3.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+//			a3.setActivityProductBusNo(20L);// 活动商品业务主键
+//			a3.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+//			a3.setCouponDiscountId(null);// 使用的优惠券折扣ID
+//			a3.setDiscountId(7);// 使用的优惠主键
+//			a3.setDiscountType(0);// 优惠方式：0满减，1折扣，2红包
+//			a3.setMemberCouponId(null);// 使用的优惠券ID
+			a3.setProductCode("10000152");// 商品code
+			a3.setProductCount(1);// 商品数量
+			a3.setProductType(CommonConstant.MEAL_FLAG_0);// 商品类型
+			a3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			a3.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			
 			order.getCalculateProductDtos().add(a1);
 			order.getCalculateProductDtos().add(a2);
+			order.getCalculateProductDtos().add(a3);
+			
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(order));
 			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
 		} catch (Exception e) {
@@ -479,28 +498,6 @@ public class OrderRestControllerTests {
 	@Test
 	public void testOrderSubmit() {
 		try {
-//			{
-//				  "orderNo" : "ON20210221115651626262382",
-//				  "advertBusNo" : 555,
-//				  "memberCard" : "100000002",
-//				  "productTotal" : 39990,
-//				  "orderSubmitProductDtoList" : [ {
-//				    "productCode" : "10000156",
-//				    "productCount" : 2,
-//				    "productTotal" : 20000,
-//				    "useDiscountTypeEnum" : "USE_ACTIVITY",
-//				    "activityTypeEnum" : "ADVERT_LAUNCH",
-//				    "activityBusNo" : 20,
-//				    "activityProductBusNo" : 20,
-//				    "discountTypeEnum" : "FULL_REDUCE",
-//				    "discountId" : 7,
-//				    "memberCouponId" : null
-//				  } ],
-//				  "groupId" : null,
-//				  "memberLevelGrade" : 7,
-//				  "userNo" : 14058,
-//				  "memberCouponIdForOrder" : null
-//				}
 			OrderSubmitRequest request = new OrderSubmitRequest();
 			request.setAdvertBusNo(555L);// 广告业务主键
 			request.setMemberCard("100000002");// 会员卡号
