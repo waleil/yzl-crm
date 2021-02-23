@@ -554,7 +554,7 @@ public class OrderRestController {
 		// 商品数量*商品价，然后再求和
 		orderm.setTotalAll(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
 		orderm.setCash(orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
-		orderm.setTotal(orderm.getTotalAll());
+		orderm.setTotal(orderm.getCash());
 		orderm.setSpend(orderm.getCash());
 		if (this.hasAmountStored(orderin)) {
 			// 如果订单总金额大于账户剩余金额，单位分
