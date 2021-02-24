@@ -16,9 +16,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -88,6 +86,12 @@ public class ScoreController {
         }
         vo.setStaffNo(request.getHeader("userNo"));
         return service.edit(vo);
+    }
+
+    @PostMapping
+    @ApiOperation("删除积分兑换商品信息")
+    public ComResponse<Void> delete(@RequestParam("id")Integer id,HttpServletRequest request){
+        return service.delete(id, request);
     }
 
 }

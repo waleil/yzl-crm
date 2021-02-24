@@ -28,6 +28,6 @@ public interface ScoreProductClient {
     @PostMapping("edit")
     ComResponse<Void> edit(@RequestBody @Valid ScoreProductVO vo);
 
-
-
+    @PostMapping("delete")
+    ComResponse<Void> delete(Integer id, String userNo);
 }
