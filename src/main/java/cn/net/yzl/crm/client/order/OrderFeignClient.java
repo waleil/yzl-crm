@@ -13,6 +13,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.order.enums.LeaderBoardType;
 import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.ehr.LeaderBoard;
+import cn.net.yzl.order.model.vo.member.MemberChannel;
 import cn.net.yzl.order.model.vo.order.OrderRequest;
 
 /**
@@ -79,4 +80,15 @@ public interface OrderFeignClient {
 	@GetMapping("/order/v1/leaderboard")
 	ComResponse<List<LeaderBoard>> queryLeaderboard(@RequestParam LeaderBoardType boardType,
 			@RequestParam int workOrderType);
+
+	/**
+	 * 查询顾客首单渠道
+	 * 
+	 * @param memberCard 顾客卡号
+	 * @return {@link MemberChannel}
+	 * @author zhangweiwei
+	 * @date 2021年2月24日,下午10:20:55
+	 */
+	@GetMapping("/order/v1/memberfirstorderchannel/{memberCard}")
+	ComResponse<MemberChannel> queryMemberFirstOrderChannel(@PathVariable String memberCard);
 }

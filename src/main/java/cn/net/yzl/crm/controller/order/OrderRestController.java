@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,6 +79,7 @@ import cn.net.yzl.order.model.db.order.OrderCouponDetail;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.ehr.LeaderBoard;
+import cn.net.yzl.order.model.vo.member.MemberChannel;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
 import cn.net.yzl.order.model.vo.order.OrderRequest;
@@ -208,6 +210,8 @@ public class OrderRestController {
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
 		OrderM orderm = new OrderM();// 订单信息
 		this.initOrder(orderm);
+		Optional.ofNullable(orderin.getAmountStored())
+				.ifPresent(c -> orderm.setAmountStored(c.multiply(bd100).intValue()));
 		// 如果订单里没有商品
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin);
@@ -567,6 +571,7 @@ public class OrderRestController {
 		orderm.setCash(orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		orderm.setTotal(orderm.getCash());
 		orderm.setSpend(orderm.getCash());
+		orderm.setAmountCoupon(orderm.getTotalAll() - orderin.getProductTotal().multiply(bd100).intValue());
 		if (this.hasAmountStored(orderin)) {
 			// 如果订单总金额大于账户剩余金额，单位分
 			if (orderm.getTotal() > account.getTotalMoney()) {
@@ -1068,10 +1073,10 @@ public class OrderRestController {
 		orderm.setSpend(0);// 消费金额=订单总额-优惠
 		orderm.setPfee(0);// 邮费
 		orderm.setPfeeFlag(CommonConstant.PFEE_FLAG_0);// 邮费承担方
-		orderm.setAmountStored(0);
-		orderm.setAmountRedEnvelope(0);
-		orderm.setAmountCoupon(0);
-		orderm.setPointsDeduction(0);
+		orderm.setAmountStored(0);// 使用储值金额 单位分
+		orderm.setAmountRedEnvelope(0);// 使用红包金额 单位分
+		orderm.setAmountCoupon(0);// 使用优惠券 单位分
+		orderm.setPointsDeduction(0);// 使用积分抵扣 单位分
 		orderm.setReturnAmountCoupon(0);
 		orderm.setReturnAmountRedEnvelope(0);
 		orderm.setReturnPointsDeduction(0);
@@ -1835,6 +1840,13 @@ public class OrderRestController {
 			}
 		}
 		return ComResponse.success(data);
+	}
+
+	@GetMapping("/v1/memberfirstorderchannel/{memberCard}")
+	@ApiOperation(value = "查询顾客首单渠道", notes = "查询顾客首单渠道")
+	public ComResponse<MemberChannel> queryMemberFirstOrderChannel(
+			@ApiParam(value = "顾客卡号", required = true) @PathVariable String memberCard) {
+		return this.orderFeignClient.queryMemberFirstOrderChannel(memberCard);
 	}
 
 	@Resource

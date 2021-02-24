@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.order.model.vo.order.OrderAccoundInfoDTO;
 import cn.net.yzl.order.model.vo.order.OrderListAccuntDTO;
+import cn.net.yzl.order.model.vo.order.OrderRefundSearchDTO;
 import cn.net.yzl.order.model.vo.order.PaymentInfoDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,15 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface OrderAccountClient {
 
     //新建退款订单分页查询
-    @GetMapping("v1/getOrderAccountList")
-    ComResponse<Page<OrderListAccuntDTO>> getOrderAccountList(@RequestParam String orderNo,
-                                                              @RequestParam Integer pageNo,
-                                                              @RequestParam Integer pageSize,
-                                                              @RequestParam String nameOrCard,
-                                                              @RequestParam String financialOwnerName,
-                                                              @RequestParam String startTime,
-                                                              @RequestParam String endTime,
-                                                              @RequestParam String stats);
+    @PostMapping("v1/getOrderAccountList")
+    ComResponse<Page<OrderListAccuntDTO>> getOrderAccountList(@RequestBody OrderRefundSearchDTO orderRefundSearchDTO);
     //退款商品信息查询
     @GetMapping("v1/selectAccountOrderInfo")
     ComResponse<OrderAccoundInfoDTO> selectAccountOrderInfo(@RequestParam String saleOrderNo,@RequestParam String orderNo);
