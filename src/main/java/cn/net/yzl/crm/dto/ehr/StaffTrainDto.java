@@ -49,10 +49,10 @@ public class StaffTrainDto implements Serializable {
     private String adjustPostNameLater;
 
     @ApiModelProperty("调整前薪资")
-    private Double adjustSalaryFront;
+    private Integer adjustSalaryFront;
 
     @ApiModelProperty("调整后薪资")
-    private Double adjustSalaryLater;
+    private Integer adjustSalaryLater;
 
     @ApiModelProperty("异动时间")
     @JsonFormat(pattern="yyyy-MM-dd")

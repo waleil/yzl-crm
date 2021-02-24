@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.client.store.StoreFeginService;
 import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
@@ -17,6 +18,7 @@ import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
+import cn.net.yzl.model.pojo.StorePo;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,8 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -54,6 +58,9 @@ public class LogisticsController {
     private FastdfsUtils fastdfsUtils;
     @Autowired
     private FastDFSConfig fastDFSConfig;
+
+    @Autowired
+    private StoreFeginService storeFeginService;
 
 
 
@@ -343,7 +350,18 @@ public class LogisticsController {
      * */
     @ApiOperation(value="分页查询物流公司列表")
     @PostMapping("v1/expresscompany/listPage")
-    public ComResponse<Page<ExpressCompany>> listPage(@RequestBody ExpressSearchDTO expressSearchDTO) {
+    public ComResponse<Page<ExpressCompany>> listPage(@RequestBody @Valid ExpressSearchDTO expressSearchDTO) {
+
+        expressSearchDTO.getWarehouseId();
+        ComResponse<List<StorePo>> list = storeFeginService.selectStoreAny();
+        List<String> storePoList = null;
+        if(list.getCode()==200){
+            storePoList =list.getData().stream().filter(s->s.getName().contains(expressSearchDTO.getWarehouseId())).map(a->a.getNo()).collect(Collectors.toList())
+            ;
+        }
+        if(storePoList!=null){
+            expressSearchDTO.setWarehouseId(StringUtils.joinWith(",",storePoList));
+        }
 
 
         return logisticsFien.listPage(expressSearchDTO);
@@ -367,13 +385,77 @@ public class LogisticsController {
 
     @ApiOperation(value="编辑物流公司")
     @PostMapping("v1/update")
-    public ComResponse<Integer> update(@RequestBody @Valid ExpressCompanySaveDTO saveDTO) {
+    public ComResponse<Integer> update(@RequestBody @Valid ExpressCompanySaveDTO saveDTO,HttpServletRequest request) {
+
+
+        String userName = "";
+        try {
+            ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+            if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+
+                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
+            }
+            if(null==(userNo.getData()))
+            {
+                return  ComResponse.fail(ComResponse.ERROR_STATUS,"用户数据错误"+userNo.getCode());
+            }
+
+
+            StaffImageBaseInfoDto data = userNo.getData();
+
+
+
+            if(StringUtils.isEmpty(data.getName())){
+                return ComResponse.fail(ComResponse.ERROR_STATUS, "用户名不存在");
+            }
+
+//            registryOrderinfo.setOrderNO(orderNo);
+//            registryOrderinfo.setRegisterName(data.getName());
+            userName = data.getName();
+        } catch (BizException e) {
+            ComResponse.fail(ComResponse.ERROR_STATUS, "获取用户认证！");
+        }
+        saveDTO.setOperator(userName);
+        saveDTO.setUpdateCode(userName);
+
         return  logisticsFien.update(saveDTO);
 
     }
     @ApiOperation(value="添加物流公司")
     @PostMapping("v1/save")
-    public ComResponse<Integer> save(@RequestBody @Valid ExpressCompanySaveDTO saveDTO) {
+    public ComResponse<Integer> save(@RequestBody @Valid ExpressCompanySaveDTO saveDTO,HttpServletRequest request) {
+
+        String userName = "";
+        try {
+            ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+            if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+
+                throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
+            }
+            if(null==(userNo.getData()))
+            {
+                return  ComResponse.fail(ComResponse.ERROR_STATUS,"用户数据错误"+userNo.getCode());
+            }
+
+
+            StaffImageBaseInfoDto data = userNo.getData();
+
+
+
+            if(StringUtils.isEmpty(data.getName())){
+                return ComResponse.fail(ComResponse.ERROR_STATUS, "用户名不存在");
+            }
+
+//            registryOrderinfo.setOrderNO(orderNo);
+//            registryOrderinfo.setRegisterName(data.getName());
+            userName = data.getName();
+        } catch (BizException e) {
+            ComResponse.fail(ComResponse.ERROR_STATUS, "获取用户认证！");
+        }
+        saveDTO.setOperator(userName);
+        saveDTO.setUpdateCode(userName);
+        saveDTO.setCreateCode(userName);
+
         return logisticsFien.save(saveDTO);
     }
 

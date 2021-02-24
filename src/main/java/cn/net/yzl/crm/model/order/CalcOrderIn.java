@@ -1,9 +1,10 @@
 package cn.net.yzl.crm.model.order;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.net.yzl.order.model.vo.order.OrderDetailIn;
+import cn.net.yzl.activity.model.dto.CalculateProductDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -21,8 +22,20 @@ import lombok.ToString;
 @Getter
 @ToString
 public class CalcOrderIn {
-	@ApiModelProperty(hidden = true)
-	private Integer total = 0;
-	@ApiModelProperty(value = "订单明细", required = true)
-	private List<OrderDetailIn> orderDetailIns = new ArrayList<>(0);
+	@ApiModelProperty(value = "广告业务主键", required = false)
+	private Long advertBusNo;
+	@ApiModelProperty(value = "会员卡号", required = true)
+	private String memberCard;
+	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
+	private BigDecimal amountStored = BigDecimal.ZERO;
+	@ApiModelProperty(value = "商品相关信息", required = true)
+	private List<CalculateOrderProductDto> calculateProductDtos = new ArrayList<>(0);
+
+	@Getter
+	@Setter
+	@ToString
+	public static class CalculateOrderProductDto extends CalculateProductDto {
+		@ApiModelProperty(value = "赠品标识：0=购买，1=赠送", required = false)
+		private Integer giftFlag;
+	}
 }

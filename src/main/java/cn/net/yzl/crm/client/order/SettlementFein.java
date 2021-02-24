@@ -15,8 +15,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@FeignClient(name = "settlementFein", url = "${api.gateway.url}/orderService/settlement")
-//@FeignClient(name = "settlementFein",url = "localhost:4455/settlement")
+//@FeignClient(name = "settlementFein", url = "${api.gateway.url}/orderService/settlement")
+@FeignClient(name = "settlementFein",url = "localhost:4455/settlement")
 public interface SettlementFein {
 
     @PostMapping("v1/createSettlement")
@@ -58,4 +58,13 @@ public interface SettlementFein {
     public ComResponse<Page<SettlementProductDetailDTO>> selectSettleProductList(@RequestParam(value ="settlementCode")String settlementCode,
                                                                                  @RequestParam(required = false, defaultValue = "1") Integer pageNo,
                                                                                  @RequestParam(required = false, defaultValue = "10") Integer pageSize);
+    @PostMapping("v1/selectProductDetailBySettledOrder")
+    @ApiOperation("以商品为维度的结算商品列表")
+    public ComResponse<Page<ProductDetailSettlementedResDTO>> selectProductDetailBySettledOrder(@RequestBody ProductDetailSettlementedReqDTO dto);
+
+
+    @PostMapping("v1/selectProductDetailBySettledOrderTotal")
+    @ApiOperation("以商品为维度的结算商品列表汇总信息")
+    public ComResponse<ProductDetailSettlementedTotalResDTO> selectProductDetailBySettledOrderTotal(@RequestBody ProductDetailSettlementedReqDTO dto);
+
 }
