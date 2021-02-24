@@ -37,19 +37,24 @@ public class ProductClientTests {
 		try {
 			OrderProductVO vo = new OrderProductVO();
 			vo.setOrderNo("ON1314020T202101271816500065");
+
 			ProductReduceVO p1 = new ProductReduceVO();
 			p1.setNum(1);
 			p1.setOrderNo(vo.getOrderNo());
 			p1.setProductCode("10000145");
+
 			ProductReduceVO p2 = new ProductReduceVO();
 			p2.setNum(1);
 			p2.setOrderNo(vo.getOrderNo());
 			p2.setProductCode("10000144");
+
 			ProductReduceVO p4 = new ProductReduceVO();
 			p4.setNum(1);
 			p4.setOrderNo(vo.getOrderNo());
 			p4.setProductCode("10000139");
+
 			vo.setProductReduceVOS(Arrays.asList(p1, p2, p4));
+
 			System.err.println(this.productClient.productReduce(vo));
 		} catch (Exception e) {
 			e.printStackTrace();
