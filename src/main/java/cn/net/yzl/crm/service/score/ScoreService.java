@@ -11,11 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ScoreService {
     ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(String staffNo, Integer pageSize, Integer pageNo);
 
-    ComResponse<String> uploadScoreProductFile(MultipartFile file);
+//    ComResponse<String> uploadScoreProductFile(MultipartFile file);
 
     ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(Integer pageSize, Integer pageNo);
 
     ComResponse<ScoreProductDetailDTO> queryDetail(Integer id);
 
-//    ComResponse<Void> edit(ScoreProductVO vo);
+    ComResponse<Void> edit(ScoreProductVO vo);
 }
