@@ -3,7 +3,9 @@ package cn.net.yzl.crm.controller.score;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.score.ScoreService;
+import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
@@ -29,6 +31,9 @@ public class ScoreController {
     @Autowired
     private ScoreService service;
 
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
+
     @GetMapping("pageDetail")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageSize",value = "每页条数",paramType = "query"),
@@ -44,11 +49,11 @@ public class ScoreController {
     }
 
 
-    @ApiOperation(value = "积分商品文件上传", notes = "积分商品文件上传",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @RequestMapping(value = "uploadScoreProductFile", method = RequestMethod.POST)
-    public ComResponse<String> uploadScoreProductFile(@RequestParam(value = "file") MultipartFile file) {
-        return service.uploadScoreProductFile(file);
-    }
+//    @ApiOperation(value = "积分商品文件上传", notes = "积分商品文件上传",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @RequestMapping(value = "uploadScoreProductFile", method = RequestMethod.POST)
+//    public ComResponse<String> uploadScoreProductFile(@RequestParam(value = "file") MultipartFile file) {
+//        return service.uploadScoreProductFile(file).setMessage(fastDFSConfig.getUrl());
+//    }
 
 
     @GetMapping("queryPage")
@@ -58,14 +63,14 @@ public class ScoreController {
     })
     @ApiOperation("分页查询积分兑换商品总览")
     public ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(@RequestParam("pageSize")Integer pageSize, @RequestParam("pageNo")Integer pageNo){
-        return service.queryPage(pageSize, pageNo);
+        return service.queryPage(pageSize, pageNo).setMessage(fastDFSConfig.getUrl());
     }
 
     @GetMapping("queryDetail")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query")
     @ApiOperation("根据id查询积分兑换指定商品明细")
     public ComResponse<ScoreProductDetailDTO> queryDetail(@RequestParam("id")Integer id){
-        return service.queryDetail(id);
+        return service.queryDetail(id).setMessage(fastDFSConfig.getUrl());
     }
 
     @PostMapping("edit")

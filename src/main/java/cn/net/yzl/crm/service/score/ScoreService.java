@@ -17,5 +17,5 @@ public interface ScoreService {
 
     ComResponse<ScoreProductDetailDTO> queryDetail(Integer id);
 
-    ComResponse<Void> edit(ScoreProductVO vo);
+//    ComResponse<Void> edit(ScoreProductVO vo);
 }

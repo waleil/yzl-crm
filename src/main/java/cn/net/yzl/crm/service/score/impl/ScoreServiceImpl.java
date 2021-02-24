@@ -47,9 +47,9 @@ public class ScoreServiceImpl implements ScoreService {
         return scoreProductClient.queryDetail(id);
     }
 
-    @Override
-    public ComResponse<Void> edit(ScoreProductVO vo) {
-        return edit(vo);
-    }
+//    @Override
+//    public ComResponse<Void> edit(ScoreProductVO vo) {
+//        return scoreProductClient.edit(vo);
+//    }
 
 }

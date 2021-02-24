@@ -263,7 +263,7 @@ public class ProductController {
     @GetMapping("/v1/queryByProductCodes")
     @ApiImplicitParam(name = "codes",value = "codes:使用,分隔",dataType = "String", paramType = "query")
     public ComResponse<List<ProductMainDTO>> queryByProductCodes(@RequestParam @NotBlank String codes){
-        return productService.queryByProductCodes(codes);
+        return productService.queryByProductCodes(codes).setMessage(fastDFSConfig.getUrl());
     }
 
 }

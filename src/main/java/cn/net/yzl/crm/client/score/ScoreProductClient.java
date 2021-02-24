@@ -16,8 +16,8 @@ import javax.validation.Valid;
 @FeignClient(name = "scoreProductClient", url = "${api.gateway.url}/scoreServer/scoreProduct/v1")
 public interface ScoreProductClient {
 
-    @RequestMapping(value = "uploadScoreProductFile", method = RequestMethod.POST)
-    ComResponse<String> uploadScoreProductFile(@RequestParam(value = "file") MultipartFile file);
+//    @RequestMapping(value = "uploadScoreProductFile", method = RequestMethod.POST)
+//    ComResponse<String> uploadScoreProductFile(@RequestParam(value = "file") MultipartFile file);
 
     @GetMapping("queryPage")
     ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(@RequestParam("pageSize")Integer pageSize, @RequestParam("pageNo")Integer pageNo);
