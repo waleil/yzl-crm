@@ -30,5 +30,5 @@ public interface ScoreProductClient {
     ComResponse<Void> edit(@RequestBody @Valid ScoreProductVO vo);
 
     @PostMapping("delete")
-    ComResponse<Void> delete(@RequestParam Integer id,@RequestParam String userNo);
+    ComResponse<Void> delete(@RequestParam("id") Integer id, @RequestParam("userNo") String userNo);
 }
