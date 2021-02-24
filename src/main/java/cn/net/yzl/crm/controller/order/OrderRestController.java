@@ -1506,6 +1506,11 @@ public class OrderRestController {
 			log.error("订单列表-异常处理-补发订单>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
+		// 如果存在补发订单，则不允许再次对该订单进行补发操作
+		if (StringUtils.hasText(orderm.getRelationReissueOrderNo())) {
+			log.error("订单列表-异常处理-补发订单>>该订单[{}]已存在补发订单[{}]", orderin.getOrderNo(), orderm.getRelationReissueOrderNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单已存在补发订单。");
+		}
 		orderm.setUpdateTime(new Date());// 修改时间
 		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
 		orderm.setCreateTime(orderm.getUpdateTime());
