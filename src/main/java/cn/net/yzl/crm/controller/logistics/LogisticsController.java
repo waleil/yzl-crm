@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
@@ -369,13 +371,30 @@ public class LogisticsController {
 
         expressSearchDTO.getWarehouseId();
         ComResponse<List<StorePo>> list = storeFeginService.selectStoreAny();
+
+
+
         List<String> storePoList = null;
+        List<StorePo> storePoList1 = null;
         if(list.getCode()==200){
-            storePoList =list.getData().stream().filter(s->s.getName().contains(expressSearchDTO.getWarehouseId())).map(a->a.getNo()).collect(Collectors.toList())
-            ;
+//            storePoList =list.getData().stream().filter(s->s.getName().contains(expressSearchDTO.getWarehouseId())).map(a->a.getNo()).collect(Collectors.toList());
+            storePoList1 =list.getData();
         }
+
+
+        Pattern pattern = Pattern.compile(expressSearchDTO.getWarehouseId());
+        for(int i=0; i < storePoList1.size(); i++){
+            Matcher matcher = pattern.matcher(((StorePo)storePoList1.get(i)).getName());
+            if(matcher.matches()){
+                storePoList.add(storePoList1.get(i).getNo());
+            }
+        }
+
+
         if(storePoList!=null){
             expressSearchDTO.setWarehouseId(StringUtils.join(storePoList.toArray(),","));
+        }else{
+            expressSearchDTO.setWarehouseId(StringUtils.join(Collections.EMPTY_LIST.toArray(),","));
         }
 //        StringBuffer sb = new StringBuffer();
 //        for (String s: storePoList
