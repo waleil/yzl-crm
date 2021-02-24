@@ -100,61 +100,62 @@ public class ExportOrderServiceImpl implements ExportOrderService {
 
     @Override
     public void exportSelectProductDetailBySettledOrder(ProductDetailSettlementedReqDTO dto, HttpServletResponse response) {
-//        ExcelWriter excelWriter = null;
-//        try {
-//            dto.setPageNo(1);// 默认第1页
-//            dto.setPageSize(1000);// 默认每页1000条数据
-//            ComResponse<Page<ProductDetailSettlementedResDTO>> data = this.settlementFein.selectProductDetailBySettledOrder(dto);
-//            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-//                log.error("导出结算列表异常>>>{}", data);
-//                return;
-//            }
-//            Page<ProductDetailSettlementedResDTO> page = data.getData();
-//            PageParam param = page.getPageParam();
-//            if (param.getPageTotal() == 0) {
-//                log.info("结算列表为空>>>{}", param);
-//                return;
-//            }
-//            response.setContentType("application/vnd.ms-excel");
-//            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-//            String title = "结算列表";
-//            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-//                    URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
-//
-//
-//            excelWriter = EasyExcel.write(response.getOutputStream(), Settlement4ExportDTO.class)
-//                    .registerWriteHandler(this.writeHandler).build();
-//            // 写入到同一个sheet
-//            WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
-//            // 此处已经获取到第一页的数据
-//            List<Settlement4ExportDTO> settlement4ExportDTOS = this.formatesettleData(data.getItems());
-//            excelWriter.write(settlement4ExportDTOS, writeSheet);
-//            settlement4ExportDTOS.clear();
-//            page.getItems().clear();// 存储完成后清理集合
-//            // 如果总页数大于1
-//            if (param.getPageTotal() > 1) {
-//                // 直接从第二页开始获取
-//                for (int i = 2; i <= param.getPageTotal(); i++) {
-//                    dto.setPageNo(i);
-//                    data = this.settlementFein.settlementList(dto);
-//                    if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-//                        log.error("导出结算列表异常>>>{}", data);
-//                        return;
-//                    }
-//                    page = data.getData();
-//                    settlement4ExportDTOS = this.formatesettleData(page.getItems());
-//                    excelWriter.write(settlement4ExportDTOS, writeSheet);
-//                    settlement4ExportDTOS.clear();
-//                    page.getItems().clear();// 存储完成后清理集合
-//                }
-//            }
-//        }catch(Exception e){
-//            log.error(e.getMessage(),e);
-//        }finally {
-//            if (excelWriter != null) {
-//                excelWriter.finish();
-//            }
-//        }
+        if(dto.getStartCreateTime()==null && dto.getEndCreateTime() ==null){
+            dto.setEndCreateTime(new Date());
+            dto.setStartCreateTime(DateFormatUtil.addMonth(new Date(),-12));
+        }
+        ExcelWriter excelWriter = null;
+        try {
+            response.setContentType("application/vnd.ms-excel");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            String title = "已结算商品列表";
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
+                    URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+
+            dto.setPageNo(1);// 默认第1页
+            dto.setPageSize(1000);// 默认每页1000条数据
+            ComResponse<Page<ProductDetailSettlementedResDTO>> data = this.settlementFein.selectProductDetailBySettledOrder(dto);
+            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
+                log.error("导出已结算商品列表异常>>>{}", data);
+                return;
+            }
+            Page<ProductDetailSettlementedResDTO> page = data.getData();
+            PageParam param = page.getPageParam();
+            if (param.getPageTotal() == 0) {
+                log.info("已结算商品列表空>>>{}", param);
+                return;
+            }
+
+
+            excelWriter = EasyExcel.write(response.getOutputStream(), ProductDetailSettlementedResDTO.class)
+                    .registerWriteHandler(this.writeHandler).build();
+            // 写入到同一个sheet
+            WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
+            // 此处已经获取到第一页的数据
+            excelWriter.write(data.getData().getItems(), writeSheet);
+            page.getItems().clear();// 存储完成后清理集合
+            // 如果总页数大于1
+            if (param.getPageTotal() > 1) {
+                // 直接从第二页开始获取
+                for (int i = 2; i <= param.getPageTotal(); i++) {
+                    dto.setPageNo(i);
+                    data = this.settlementFein.selectProductDetailBySettledOrder(dto);
+                    if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
+                        log.error("导出结算列表异常>>>{}", data);
+                        return;
+                    }
+                    page = data.getData();
+                    excelWriter.write(page.getItems(), writeSheet);
+                    page.getItems().clear();// 存储完成后清理集合
+                }
+            }
+        }catch(Exception e){
+            log.error(e.getMessage(),e);
+        }finally {
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
+        }
     }
 
     @Override
