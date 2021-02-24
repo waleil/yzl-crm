@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,6 +79,7 @@ import cn.net.yzl.order.model.db.order.OrderCouponDetail;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.ehr.LeaderBoard;
+import cn.net.yzl.order.model.vo.member.MemberChannel;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
 import cn.net.yzl.order.model.vo.order.OrderRequest;
@@ -1838,6 +1840,13 @@ public class OrderRestController {
 			}
 		}
 		return ComResponse.success(data);
+	}
+
+	@GetMapping("/v1/memberfirstorderchannel/{memberCard}")
+	@ApiOperation(value = "查询顾客首单渠道", notes = "查询顾客首单渠道")
+	public ComResponse<MemberChannel> queryMemberFirstOrderChannel(
+			@ApiParam(value = "顾客卡号", required = true) @PathVariable String memberCard) {
+		return this.orderFeignClient.queryMemberFirstOrderChannel(memberCard);
 	}
 
 	@Resource
