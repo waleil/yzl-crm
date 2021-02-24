@@ -24,7 +24,7 @@ public class EhrStaffClientTests {
 	private EhrStaffClient ehrStaffClient;
 
 	@Test
-	public void getDepartById() {
+	public void testGetDepartByIdAndGetDetailsByNo() {
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(1650);
 		ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo("5085");
 		System.out.println("response = " + dresponse);
@@ -33,7 +33,7 @@ public class EhrStaffClientTests {
 	}
 
 	@Test
-	public void getDetailsByNo() {
+	public void testGetDetailsByNoAndGetData() {
 		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo("11803");
 		if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
