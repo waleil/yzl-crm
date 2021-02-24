@@ -355,6 +355,7 @@ public class WorkOrderController {
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
     @GetMapping("v1/queryFirstProduct")
     public ComResponse<List<ProductMainDTO>> queryFirstProduct(@ApiParam(value = "1:回访;2:待领取")@RequestParam("status") Integer status) {
+
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         StaffImageBaseInfoDto data1 = detailsByNo.getData();
         Integer deptId = null;
@@ -362,7 +363,11 @@ public class WorkOrderController {
             deptId = data1.getDepartId();
         }
         String data = workOrderClient.queryFirstProduct(deptId,status).getData();
-        return productClient.queryByProductCodes(data);
+        if(!StringUtils.isEmpty(data)){
+            return productClient.queryByProductCodes(data);
+        } else {
+            return ComResponse.success();
+        }
     }
 
     @ApiOperation(value = "所有用户最后一次购买商品-列表", notes = "所有用户最后一次购买商品-列表")
@@ -375,7 +380,10 @@ public class WorkOrderController {
             deptId = data1.getDepartId();
         }
         String data = workOrderClient.queryLastProduct(deptId,status).getData();
-        return productClient.queryByProductCodes(data);
+        if(!StringUtils.isEmpty(data)){
+            return productClient.queryByProductCodes(data);
+        }
+        return ComResponse.success();
     }
 
     /**
