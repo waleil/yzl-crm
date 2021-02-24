@@ -74,4 +74,9 @@ public class ProductServiceImpl implements ProductService {
         return productClient.queryProductListAtlasByDiseaseName(diseaseName);
     }
 
+    @Override
+    public ComResponse<List<ProductMainDTO>> queryByProductCodes(String codes) {
+        return productClient.queryByProductCodes(codes);
+    }
+
 }
