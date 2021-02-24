@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
@@ -287,7 +288,7 @@ public class MemberController {
         // 从 订单获取 顾客的 时间
         ComResponse<List<WorkOrderFlowVO>> listComResponse = workOrderClients.userRoute(memberCard);
         List<WorkOrderFlowVO> workOrderFlowVOList = listComResponse.getData();
-        if(workOrderFlowVOList==null || workOrderFlowVOList.size()<1){
+        if(CollectionUtil.isEmpty(workOrderFlowVOList)){
             return ComResponse.nodata();
         }
         //
@@ -307,8 +308,8 @@ public class MemberController {
             memberServiceJournery.setStaffNo(staffNo);
             memberServiceJournery.setStartTime(startTime);
             memberServiceJournery.setEndTime(endTime);
-            String startTimeStr = DateFormatUtil.dateToString(startTime, DateFormatUtil.UTIL_FORMAT);
-           String endTimeStr= DateFormatUtil.dateToString(endTime, DateFormatUtil.UTIL_FORMAT);
+            String startTimeStr = startTime == null ? null : DateFormatUtil.dateToString(startTime, DateFormatUtil.UTIL_FORMAT);
+            String endTimeStr= endTime == null ? DateFormatUtil.dateToString(new Date(), DateFormatUtil.UTIL_FORMAT) : DateFormatUtil.dateToString(endTime, DateFormatUtil.UTIL_FORMAT);
             ComResponse<String> stringComResponse = orderSearchClient.selectSalesQuota(memberCard, staffNo, startTimeStr, endTimeStr);
             if(stringComResponse.getData()!=null){
                 memberServiceJournery.setTotalPrice(Double.parseDouble(stringComResponse.getData()));
@@ -334,6 +335,10 @@ public class MemberController {
 
             if(StrUtil.isBlank(staffNo)){
                 staffNo=staffNo1;
+                if (workOrderFlowVOList.size() == 1) {
+                    return workOrderFlowVOList;
+                }
+
             }else if (!staffNo1.equals(staffNo) ){
                 // 处理
                 WorkOrderFlowVO workOrderFlowVO1 = new WorkOrderFlowVO();
