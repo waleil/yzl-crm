@@ -69,6 +69,7 @@ public class OrderDistributeExpressController {
     @PostMapping(value = "v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
     public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody DistributeExpressVO vo, HttpServletRequest request) {
+        vo.setUpdateUser(request.getHeader("userNo"));
         return orderDistributeExpressFeignService.updateOrderDistributeExpressRuleResult(vo);
     }
 
@@ -93,6 +94,7 @@ public class OrderDistributeExpressController {
     @PostMapping(value = "v1/updateOrderDistributeExpressByMan")
     @ApiOperation("人工分配")
     public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo,HttpServletRequest request) {
+        vo.setUpdateUser(request.getHeader("userNo"));
         return orderDistributeExpressFeignService.updateOrderDistributeExpressByMan(vo);
     }
 
