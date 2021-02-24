@@ -598,8 +598,8 @@ public class NewOrderServiceImpl implements INewOrderService {
 		}
 		response.getData().forEach(map ->{
 			if(map.getEnable() == 0){
-				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),
-						"群组已失效! 群组名称： " + map.getCrowd_name());
+//				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),
+//						"群组已失效! 群组名称： " + map.getCrowd_name());
 			}
 		});
 
