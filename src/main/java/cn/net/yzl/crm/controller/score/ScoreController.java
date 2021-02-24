@@ -67,10 +67,17 @@ public class ScoreController {
     }
 
     @GetMapping("queryDetail")
-    @ApiImplicitParam(name = "id",value = "id",paramType = "query")
+    @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
     @ApiOperation("根据id查询积分兑换指定商品明细")
     public ComResponse<ScoreProductDetailDTO> queryDetail(@RequestParam("id")Integer id){
-        return service.queryDetail(id).setMessage(fastDFSConfig.getUrl());
+        if (id == null) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE, "id不能为空！");
+        }
+        ComResponse<ScoreProductDetailDTO> response = service.queryDetail(id);
+        if (response.getStatus()==1) {
+            response.setMessage(fastDFSConfig.getUrl());
+        }
+        return response;
     }
 
     @PostMapping("edit")
