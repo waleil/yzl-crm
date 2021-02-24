@@ -22,6 +22,36 @@ public class MemberFienTests {
 	private MemberFien memberFien;
 
 	@Test
+	public void testGetMember() {
+		try {
+			String member = "10136214";
+			System.err.println(this.memberFien.getMember(member).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetMemberAmount() {
+		try {
+			String member = "100000002";
+			System.err.println(this.memberFien.getMemberAmount(member).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetReveiverAddress() {
+		try {
+			String member = "100000002";
+			this.memberFien.getReveiverAddress(member).getData().forEach(System.err::println);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
 	public void testDealOrderCreateUpdateMemberData() {
 		try {
 			OrderCreateInfoVO vo = new OrderCreateInfoVO();

@@ -70,11 +70,13 @@ public interface OrderFeignClient {
 	/**
 	 * 查询今日/3日/7日业绩排行榜
 	 * 
-	 * @param boardType {@link LeaderBoardType}
+	 * @param boardType     {@link LeaderBoardType}
+	 * @param workOrderType 1：热线，2：回访
 	 * @return 业绩排行榜列表
 	 * @author zhangweiwei
 	 * @date 2021年2月23日,上午4:52:42
 	 */
 	@GetMapping("/order/v1/leaderboard")
-	ComResponse<List<LeaderBoard>> queryLeaderboard(@RequestParam LeaderBoardType boardType);
+	ComResponse<List<LeaderBoard>> queryLeaderboard(@RequestParam LeaderBoardType boardType,
+			@RequestParam int workOrderType);
 }

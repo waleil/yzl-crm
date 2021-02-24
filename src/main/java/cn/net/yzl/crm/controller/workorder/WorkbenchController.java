@@ -11,11 +11,13 @@ import cn.net.yzl.workorder.model.vo.WorkbenchHotlineVO;
 import cn.net.yzl.workorder.model.vo.WorkbenchVisitManagerVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -67,5 +69,13 @@ public class WorkbenchController {
     public ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(){
         ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> workbenchHotlineManagerMonitoringVOS = workbenchClient.getWorkbenchHotlineManagerMonitoring(QueryIds.userNo.get());
         return workbenchHotlineManagerMonitoringVOS;
+    }
+
+    @RequestMapping(value = "insertWorkbenchHotlineAndCallbackCount",method = RequestMethod.GET)
+    @ApiOperation(value = "工作台-热线&回访经理-坐席监控-增加拨打次数", notes = "工作台-热线&回访经理-坐席监控-增加拨打次数")
+    public ComResponse<Void> insertWorkbenchHotlineAndCallbackCount(@ApiParam(value = "用户编码",required = true) @RequestParam("staffNo") String staffNo,
+                                                                      @ApiParam(value = "工单类型(1：热线，2：回访)",required = true) @RequestParam("workOrderType") Integer workOrderType){
+        workbenchClient.insertWorkbenchHotlineAndCallbackCount(staffNo,workOrderType);
+        return ComResponse.success();
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 
@@ -256,6 +257,13 @@ public class ProductController {
     @GetMapping("v1/queryProductListAtlasByDiseaseName")
     public ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(@RequestParam(value = "diseaseName") String diseaseName) {
         return productService.queryProductListAtlasByDiseaseName(diseaseName);
+    }
+
+    @ApiOperation("根据一组商品code查询商品信息")
+    @GetMapping("/v1/queryByProductCodes")
+    @ApiImplicitParam(name = "codes",value = "codes:使用,分隔",dataType = "String", paramType = "query")
+    public ComResponse<List<ProductMainDTO>> queryByProductCodes(@RequestParam @NotBlank String codes){
+        return productService.queryByProductCodes(codes).setMessage(fastDFSConfig.getUrl());
     }
 
 }
