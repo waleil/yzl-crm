@@ -32,10 +32,10 @@ public class ScoreServiceImpl implements ScoreService {
                 :scoreDetailClient.myExchangeRecords(staffNo, pageSize==null?10:pageSize, pageNo==null?1:pageNo);
     }
 
-    @Override
-    public ComResponse<String> uploadScoreProductFile(MultipartFile file) {
-        return scoreProductClient.uploadScoreProductFile(file);
-    }
+//    @Override
+//    public ComResponse<String> uploadScoreProductFile(MultipartFile file) {
+//        return scoreProductClient.uploadScoreProductFile(file);
+//    }
 
     @Override
     public ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(Integer pageSize, Integer pageNo) {
@@ -49,7 +49,7 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     public ComResponse<Void> edit(ScoreProductVO vo) {
-        return edit(vo);
+        return scoreProductClient.edit(vo);
     }
 
 }
