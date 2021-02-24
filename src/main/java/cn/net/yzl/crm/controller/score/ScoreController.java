@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("score")
+@RequestMapping("score/v1")
 @Api(tags = "积分服务")
 public class ScoreController {
 
