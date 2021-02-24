@@ -207,7 +207,7 @@ public class StaffChangeRecordDto implements Serializable {
      * 当前薪资
      */
     @ApiModelProperty(value="当前薪资")
-    private Double currentSalary;
+    private Integer currentSalary;
 
     /**
      * 领用的物品
