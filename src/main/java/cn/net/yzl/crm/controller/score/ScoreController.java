@@ -3,7 +3,9 @@ package cn.net.yzl.crm.controller.score;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.score.ScoreService;
+import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
@@ -14,20 +16,21 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("score")
+@RequestMapping("score/v1")
 @Api(tags = "积分服务")
 public class ScoreController {
 
     @Autowired
     private ScoreService service;
+
+    @Autowired
+    private FastDFSConfig fastDFSConfig;
 
     @GetMapping("pageDetail")
     @ApiImplicitParams({
@@ -44,11 +47,11 @@ public class ScoreController {
     }
 
 
-    @ApiOperation(value = "积分商品文件上传", notes = "积分商品文件上传",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @RequestMapping(value = "uploadScoreProductFile", method = RequestMethod.POST)
-    public ComResponse<String> uploadScoreProductFile(@RequestParam(value = "file") MultipartFile file) {
-        return service.uploadScoreProductFile(file);
-    }
+//    @ApiOperation(value = "积分商品文件上传", notes = "积分商品文件上传",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @RequestMapping(value = "uploadScoreProductFile", method = RequestMethod.POST)
+//    public ComResponse<String> uploadScoreProductFile(@RequestParam(value = "file") MultipartFile file) {
+//        return service.uploadScoreProductFile(file).setMessage(fastDFSConfig.getUrl());
+//    }
 
 
     @GetMapping("queryPage")
@@ -58,14 +61,21 @@ public class ScoreController {
     })
     @ApiOperation("分页查询积分兑换商品总览")
     public ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(@RequestParam("pageSize")Integer pageSize, @RequestParam("pageNo")Integer pageNo){
-        return service.queryPage(pageSize, pageNo);
+        return service.queryPage(pageSize, pageNo).setMessage(fastDFSConfig.getUrl());
     }
 
     @GetMapping("queryDetail")
-    @ApiImplicitParam(name = "id",value = "id",paramType = "query")
+    @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
     @ApiOperation("根据id查询积分兑换指定商品明细")
     public ComResponse<ScoreProductDetailDTO> queryDetail(@RequestParam("id")Integer id){
-        return service.queryDetail(id);
+        if (id == null) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE, "id不能为空！");
+        }
+        ComResponse<ScoreProductDetailDTO> response = service.queryDetail(id);
+        if (response.getStatus()==1) {
+            response.setMessage(fastDFSConfig.getUrl());
+        }
+        return response;
     }
 
     @PostMapping("edit")
@@ -76,6 +86,12 @@ public class ScoreController {
         }
         vo.setStaffNo(request.getHeader("userNo"));
         return service.edit(vo);
+    }
+
+    @PostMapping
+    @ApiOperation("删除积分兑换商品信息")
+    public ComResponse<Void> delete(@RequestParam("id")Integer id,HttpServletRequest request){
+        return service.delete(id, request);
     }
 
 }

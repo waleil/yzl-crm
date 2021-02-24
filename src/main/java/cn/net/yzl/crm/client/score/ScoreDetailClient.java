@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "scoreDetailClient", url = "localhost:8765/detail/v1")
+@FeignClient(name = "scoreDetailClient", url = "${api.gateway.url}/scoreServer/detail/v1")
 public interface ScoreDetailClient {
 
     /**
@@ -15,7 +15,7 @@ public interface ScoreDetailClient {
      * @author Majinbao
      * @date 2021/2/24 15:53
      */
-    @GetMapping
+    @GetMapping("queryPage")
     ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(@RequestParam("staffNo") String staffNo,
                                                                     @RequestParam("pageSize") Integer pageSize,
                                                                     @RequestParam("pageNo") Integer pageNo);
