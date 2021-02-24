@@ -9,6 +9,7 @@ import cn.net.yzl.crm.client.order.OrderFinanceClient;
 import cn.net.yzl.order.model.db.order.OrderFinance;
 import cn.net.yzl.order.model.vo.order.OrderAccoundInfoDTO;
 import cn.net.yzl.order.model.vo.order.OrderListAccuntDTO;
+import cn.net.yzl.order.model.vo.order.OrderRefundSearchDTO;
 import cn.net.yzl.order.model.vo.order.PaymentInfoDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,17 +40,10 @@ public class OrderAccountController {
         return orderFinanceClient.getOrderFinanceList();
     }
 
-    @GetMapping("v1/getOrderAccountList")
+    @PostMapping("v1/getOrderAccountList")
     @ApiOperation(value = "查询退款订单分页")
-    public ComResponse<Page<OrderListAccuntDTO>> getOrderRejectionList(@ApiParam(value = "订单号") @RequestParam("orderNo") String orderNo,
-                                                                       @ApiParam(value = "起始页") @RequestParam(required = false, defaultValue = "1") Integer pageNo,
-                                                                       @ApiParam(value = "每页多少条") @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                                       @ApiParam(value = "财务归属") @RequestParam("financialOwnerName") String financialOwnerName,
-                                                                       @ApiParam(value = "顾客姓名或会员卡号") @RequestParam("nameOrCard") String nameOrCard,
-                                                                       @ApiParam(value = "开始时间") @RequestParam("startTime") String startTime,
-                                                                       @ApiParam(value = "结束时间") @RequestParam("endTime") String endTime,
-                                                                       @ApiParam(value = "退款或待退款") @RequestParam("stats") String stats) {
-        return orderAccountClient.getOrderAccountList(orderNo, pageNo, pageSize,nameOrCard,financialOwnerName,startTime,endTime,stats);
+    public ComResponse<Page<OrderListAccuntDTO>> getOrderRejectionList(@RequestBody OrderRefundSearchDTO orderRefundSearchDTO) {
+        return orderAccountClient.getOrderAccountList(orderRefundSearchDTO);
     }
 
     @ApiOperation(value = "退款管理查看订单基本信息")
