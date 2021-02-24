@@ -736,7 +736,7 @@ public class WorkOrderController {
         submitWorkOrderDTO.setUpdateName(detailsByNo.getData().getName());
         //解析长字符
         String informationGoods = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoods();
-        if(StringUtils.isEmpty(informationGoods)) {
+        if(!StringUtils.isEmpty(informationGoods)) {
             JSONObject jsonObject = new JSONObject(informationGoods);
             JSONArray hotline400= new JSONArray(jsonObject.get(WorkOrderTypeEnums.HOTLINE_400.getName()));
             List<ProductConsultationInsertVO> productConsultationInsertVOS = new ArrayList<ProductConsultationInsertVO>();
