@@ -165,4 +165,15 @@ public interface LogisticsFien {
     @ApiOperation(value = "模糊搜索快递公司")
     @GetMapping("exp/company/v1/like/search/expresscompany")
     ComResponse<List<ObjectCommon>> getCompanyByName(@RequestParam("companyName") String companyName);
+
+	/**
+	 * 物流赔付接口
+	 * 
+	 * @param indemnity {@link ExpressIndemnity}
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年2月22日,下午3:11:56
+	 */
+	@PostMapping("/settlement/logistics/charge/indemnity")
+	ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
 }
