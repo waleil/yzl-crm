@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -67,7 +68,7 @@ public class OrderDistributeExpressController {
 
     @PostMapping(value = "v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
-    public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody DistributeExpressVO vo) {
+    public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody DistributeExpressVO vo, HttpServletRequest request) {
         return orderDistributeExpressFeignService.updateOrderDistributeExpressRuleResult(vo);
     }
 
@@ -91,7 +92,7 @@ public class OrderDistributeExpressController {
 
     @PostMapping(value = "v1/updateOrderDistributeExpressByMan")
     @ApiOperation("人工分配")
-    public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo) {
+    public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo,HttpServletRequest request) {
         return orderDistributeExpressFeignService.updateOrderDistributeExpressByMan(vo);
     }
 
