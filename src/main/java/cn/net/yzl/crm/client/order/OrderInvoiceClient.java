@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
 
-//@FeignClient(name = "OrderInvoiceClient", url = "${api.gateway.url}/orderService/orderInvoice")
-@FeignClient(name = "OrderInvoiceClient", url = "localhost:4455/orderInvoice")
+@FeignClient(name = "OrderInvoiceClient", url = "${api.gateway.url}/orderService/orderInvoice")
+//@FeignClient(name = "OrderInvoiceClient", url = "localhost:4455/orderInvoice")
 public interface OrderInvoiceClient {
 
 
