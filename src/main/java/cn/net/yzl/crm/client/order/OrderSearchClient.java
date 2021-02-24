@@ -64,8 +64,8 @@ public interface OrderSearchClient {
     @GetMapping("v1/getSignOrderStatus")
     public ComResponse<CustomerNearSignOrderStatusDTO> getSignOrderStatus(
             @RequestParam("memberCarNo") @NotEmpty(message = "会员编号不能为空") String memberCarNo,
-            @RequestParam("startTime") @NotEmpty(message = "开始时间不可为空") String startTime,
-            @RequestParam("endTime") @NotEmpty(message = "结束时间不可为空") String endTime);
+            @RequestParam("startTime")  String startTime,
+            @RequestParam("endTime") String endTime);
 
     @ApiOperation(value = "查询订单基本信息仅订单信息")
     @GetMapping("v1/selectOrderInfoOnly")
