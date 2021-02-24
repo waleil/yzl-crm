@@ -11,6 +11,8 @@ import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
+import cn.net.yzl.logistics.settleexpresscharge.ResultVo;
+import cn.net.yzl.logistics.settleexpresscharge.SearchVo;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.order.model.vo.order.ImportParam;
 import io.swagger.annotations.ApiParam;
@@ -29,6 +31,15 @@ import javax.validation.constraints.NotBlank;
 @FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
 public interface LogisticsFien {
 
+
+
+    @PostMapping("settlement/seach/reconciliation")
+    @ApiOperation("对账")
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<String> searchVo);
+
+    @PostMapping("settlement/seach/nosett")
+    @ApiOperation("未对账数据查询")
+    public  ComResponse<List<ResultVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo);
 
     @ApiOperation(value = "导入")
     @PostMapping("settlement/logistics/import/freight")

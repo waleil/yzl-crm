@@ -17,6 +17,8 @@ import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
+import cn.net.yzl.logistics.settleexpresscharge.ResultVo;
+import cn.net.yzl.logistics.settleexpresscharge.SearchVo;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.pojo.StorePo;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
@@ -63,6 +65,19 @@ public class LogisticsController {
     private StoreFeginService storeFeginService;
 
 
+    @PostMapping("seach/reconciliation")
+    @ApiOperation("对账")
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<String> searchVo){
+        return logisticsFien.settlementInterface(searchVo);
+    }
+
+
+
+    @PostMapping("seach/nosett")
+    @ApiOperation("未对账与对账数据查询")
+    public  ComResponse<List<ResultVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo){
+        return logisticsFien.searchSettlementData(searchVo);
+    }
 
     @ApiOperation(value = "快递运单查询")
     @PostMapping("v1/search/orderexpress")
@@ -360,8 +375,16 @@ public class LogisticsController {
             ;
         }
         if(storePoList!=null){
-            expressSearchDTO.setWarehouseId(StringUtils.joinWith(",",storePoList));
+            expressSearchDTO.setWarehouseId(StringUtils.join(storePoList.toArray(),","));
         }
+//        StringBuffer sb = new StringBuffer();
+//        for (String s: storePoList
+//             ) {
+//            sb.append(s).append(",");
+//
+//        }
+
+
 
 
         return logisticsFien.listPage(expressSearchDTO);
