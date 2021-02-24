@@ -106,7 +106,7 @@ public class HandInUtils{
      * @return
      */
     public Boolean customerRefund(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
-        String paramsValue = wORCBean.getParamsValue();
+        /*String paramsValue = wORCBean.getParamsValue();
         Date date = new Date();
         String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_FORMAT);
         Calendar calendar = Calendar.getInstance();
@@ -117,8 +117,8 @@ public class HandInUtils{
         }
         calendar.add(Calendar.MONTH, -Integer.valueOf(split[0]));
         Date time = calendar.getTime();
-        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
-        return orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), startDate, endDate).getData().getIsGuestComplaint();
+        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);*/
+        return orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), null, null).getData().getIsGuestComplaint();
     }
 
     /**
