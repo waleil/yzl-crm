@@ -380,7 +380,10 @@ public class WorkOrderController {
             deptId = data1.getDepartId();
         }
         String data = workOrderClient.queryLastProduct(deptId,status).getData();
-        return productClient.queryByProductCodes(data);
+        if(!StringUtils.isEmpty(data)){
+            return productClient.queryByProductCodes(data);
+        }
+        return ComResponse.success();
     }
 
     /**
