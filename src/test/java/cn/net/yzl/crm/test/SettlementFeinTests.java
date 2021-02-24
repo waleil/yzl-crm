@@ -23,7 +23,7 @@ public class SettlementFeinTests {
 	private SettlementFein settlementFein;
 
 	@Test
-	public void testSettlementFein() {
+	public void testGetSettlementDetailGroupByOrderNo() {
 		ComResponse<List<SettlementDetailDistinctListDTO>> list = settlementFein
 				.getSettlementDetailGroupByOrderNo(new ArrayList<>());
 		System.out.println(list.getData());
