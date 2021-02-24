@@ -10,10 +10,11 @@ import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class ScoreServiceImpl implements ScoreService {
@@ -50,6 +51,17 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public ComResponse<Void> edit(ScoreProductVO vo) {
         return scoreProductClient.edit(vo);
+    }
+
+    @Override
+    public ComResponse<Void> delete(Integer id, HttpServletRequest request) {
+        String userNo = request.getHeader("userNo");
+
+        if(StringUtils.isBlank(userNo)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"获取用户身份失败，请尝试重新登陆！");
+        }
+
+        return scoreProductClient.delete(id,userNo);
     }
 
 }
