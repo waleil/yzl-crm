@@ -31,16 +31,16 @@ public class OrderOut {
 	@ApiModelProperty(value = "收货人电话")
 	private String reveiverTelphoneNo;
 	@ApiModelProperty(value = "实收金额，单位元")
-	private BigDecimal total;
+	private BigDecimal total = BigDecimal.ZERO;
 	@ApiModelProperty(value = "账户余额，单位元")
-	private BigDecimal totalMoney;
+	private BigDecimal totalMoney = BigDecimal.ZERO;
 	@ApiModelProperty(value = "订单号")
 	private String orderNo;
 	@ApiModelProperty(value = "下单时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date orderTime;
 	@ApiModelProperty(value = "本次购物获得积分")
-	private Integer returnPointsDeduction;
+	private Integer returnPointsDeduction = 0;
 	@ApiModelProperty(value = "本次购物获得优惠券")
 	private List<Coupon> coupons = new ArrayList<>(0);
 
