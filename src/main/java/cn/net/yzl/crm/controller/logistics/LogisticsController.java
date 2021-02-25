@@ -91,7 +91,7 @@ public class LogisticsController {
 
     @PostMapping("/search/settle")
     @ApiOperation("结算查询")
-    public ComResponse<Page<SettleBillSearchResultVo>> searchSettBill(@RequestBody @Valid SettleBillSearchVo searchVo){
+    public ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody @Valid SettleBillSearchVo searchVo){
         return  logisticsFien.searchSettBill(searchVo);
     }
 
