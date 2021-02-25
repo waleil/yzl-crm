@@ -75,7 +75,7 @@ public class SettlementExpressController {
 
 
     @ApiOperation(value = "导出结算",notes = "导出结算")
-    @GetMapping("v1/export/settle")
+    @PostMapping("v1/export/settle")
     public void exportSettleExcel(@RequestBody SettleBillSearchVo searchVo,HttpServletResponse response) throws IOException {
         settlementExpressService.exportSettleExcel(searchVo,response);
     }
