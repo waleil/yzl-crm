@@ -20,6 +20,8 @@ import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.logistics.settleexpresscharge.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.pojo.StorePo;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
@@ -183,6 +185,11 @@ public class LogisticsController {
             storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setDepartId(data.getDepartId());
             storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setOrderStatus(5);
         }
+
+
+        JSONArray array= JSONArray.parseArray(JSON.toJSONString(storeToLogisticsDtoTrace));
+        String s = array.toJSONString();
+        log.info(s);
 
 
             return logisticsFien.signedOrder(storeToLogisticsDtoTrace);
