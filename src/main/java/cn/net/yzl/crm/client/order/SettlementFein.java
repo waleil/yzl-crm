@@ -42,7 +42,7 @@ public interface SettlementFein {
 	 * @date 2021年2月25日,下午3:56:40
 	 */
 	@PostMapping("v1/validcreatesettlement")
-	public ComResponse<Boolean> validCreateSettlement(@RequestBody @Valid SettlementReqDTO dto);
+	public ComResponse<Boolean> validCreateSettlement(@RequestBody SettlementReqDTO dto);
 
 	@PostMapping("v1/settlement")
 	@ApiOperation("结算")
