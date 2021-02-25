@@ -62,14 +62,7 @@ public class SettlementController {
 
 	@PostMapping("v1/validcreatesettlement")
 	@ApiOperation("生成结算单校验")
-	public ComResponse<Boolean> validCreateSettlement(@RequestBody @Valid SettlementReqDTO dto) {
-		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
-		// 如果服务调用异常
-		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
-			return ComResponse.fail(sresponse.getCode(), sresponse.getMessage());
-		}
-		dto.setOprCode(sresponse.getData().getStaffNo());
-		dto.setOprName(sresponse.getData().getName());
+	public ComResponse<Boolean> validCreateSettlement(@RequestBody SettlementReqDTO dto) {
 		return settlementFein.validCreateSettlement(dto);
 
 	}
