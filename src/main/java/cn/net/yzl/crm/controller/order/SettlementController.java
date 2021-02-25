@@ -66,7 +66,7 @@ public class SettlementController {
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
-			throw new BizException(sresponse.getCode(), sresponse.getMessage());
+			return ComResponse.fail(sresponse.getCode(), sresponse.getMessage());
 		}
 		dto.setOprCode(sresponse.getData().getStaffNo());
 		dto.setOprName(sresponse.getData().getName());
