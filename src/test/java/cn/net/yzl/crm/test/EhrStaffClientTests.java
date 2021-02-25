@@ -55,7 +55,7 @@ public class EhrStaffClientTests {
 	public void testGetDepartById() {
 		try {
 			Integer departid = 1;
-			System.err.println(this.ehrStaffClient.getDepartById(departid).getData());
+			System.err.println(this.ehrStaffClient.getDepartById(departid));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
