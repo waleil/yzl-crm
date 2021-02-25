@@ -179,8 +179,8 @@ public interface MemberFien {
 	@ApiOperation("根据时间范围获取会员级别记录")
 	@PostMapping("v1/getMemberGradeRecordListByTimeRange")
 	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordListByTimeRange(@RequestParam(required = true, value = "memberCard")String memberCard,
-																					   @RequestParam(required = false, value = "startTime") String startTime,
-																					   @RequestParam(required = false, value = "endTime")String endTime);
+																					   @RequestParam(required = false, value = "startDate") String startDate,
+																					   @RequestParam(required = false, value = "endDate")String endDate);
 
 	@ApiOperation("顾客病症-根据病症id更新顾客病症")
 	@PostMapping("/v1/updateMemberDiseaseByDiseaseId")
