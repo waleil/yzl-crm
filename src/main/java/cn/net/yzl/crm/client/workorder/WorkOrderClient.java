@@ -2,12 +2,15 @@ package cn.net.yzl.crm.client.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.dto.member.customerJourney.QueryWorkOrderVo;
 import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.dto.*;
 import cn.net.yzl.workorder.model.vo.*;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -197,11 +200,14 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单-顾客旅程-根据顾客会员号查询顾客工单信息
-     * @param memberCard
+     * @param queryWorkOrderDTO
      * @return
      */
-    @GetMapping(value = "v1/queryWorkOrder")
-    ComResponse<List<WorkOrderVo>> queryWorkOrder(@RequestParam("memberCard") String memberCard,@RequestParam(name = "year")String year);
+//    @GetMapping(value = "v1/queryWorkOrder")
+//    ComResponse<List<WorkOrderVo>> queryWorkOrder(@RequestParam("memberCard") String memberCard,@RequestParam(name = "year")String year);
+    @ApiOperation(value = "智能工单-顾客旅程-根据顾客会员号查询顾客工单信息",notes = "智能工单-顾客旅程-根据顾客会员号查询顾客工单信息")
+    @PostMapping(value = "v1/queryWorkOrder")
+    ComResponse<Page<WorkOrderVo>> queryWorkOrder(@RequestBody QueryWorkOrderVo queryVo);
 
     /**
      * 智能工单-我的回访工单-处理工单-提交

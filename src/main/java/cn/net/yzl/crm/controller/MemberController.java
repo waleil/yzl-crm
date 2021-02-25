@@ -2,11 +2,13 @@ package cn.net.yzl.crm.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.common.util.JsonUtil;
@@ -34,6 +36,7 @@ import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
 import cn.net.yzl.crm.dto.member.MemberServiceJournery;
 import cn.net.yzl.crm.dto.member.MemberServiceJourneryDto;
 import cn.net.yzl.crm.dto.member.customerJourney.MemberCustomerJourneyDto;
+import cn.net.yzl.crm.dto.member.customerJourney.QueryWorkOrderVo;
 import cn.net.yzl.crm.dto.staff.StaffCallRecord;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.dto.workorder.MemberFirstCallDetailsDTO;
@@ -49,6 +52,7 @@ import cn.net.yzl.order.model.vo.order.PortraitOrderDetailDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowSubBean;
+import cn.net.yzl.workorder.model.dto.QueryWorkOrderDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
@@ -287,7 +291,7 @@ public class MemberController {
         // 从 订单获取 顾客的 时间
         ComResponse<List<WorkOrderFlowVO>> listComResponse = workOrderClients.userRoute(memberCard);
         List<WorkOrderFlowVO> workOrderFlowVOList = listComResponse.getData();
-        if(workOrderFlowVOList==null || workOrderFlowVOList.size()<1){
+        if(CollectionUtil.isEmpty(workOrderFlowVOList)){
             return ComResponse.nodata();
         }
         //
@@ -307,8 +311,8 @@ public class MemberController {
             memberServiceJournery.setStaffNo(staffNo);
             memberServiceJournery.setStartTime(startTime);
             memberServiceJournery.setEndTime(endTime);
-            String startTimeStr = DateFormatUtil.dateToString(startTime, DateFormatUtil.UTIL_FORMAT);
-           String endTimeStr= DateFormatUtil.dateToString(endTime, DateFormatUtil.UTIL_FORMAT);
+            String startTimeStr = startTime == null ? null : DateFormatUtil.dateToString(startTime, DateFormatUtil.UTIL_FORMAT);
+            String endTimeStr= endTime == null ? DateFormatUtil.dateToString(new Date(), DateFormatUtil.UTIL_FORMAT) : DateFormatUtil.dateToString(endTime, DateFormatUtil.UTIL_FORMAT);
             ComResponse<String> stringComResponse = orderSearchClient.selectSalesQuota(memberCard, staffNo, startTimeStr, endTimeStr);
             if(stringComResponse.getData()!=null){
                 memberServiceJournery.setTotalPrice(Double.parseDouble(stringComResponse.getData()));
@@ -334,6 +338,10 @@ public class MemberController {
 
             if(StrUtil.isBlank(staffNo)){
                 staffNo=staffNo1;
+                if (workOrderFlowVOList.size() == 1) {
+                    return workOrderFlowVOList;
+                }
+
             }else if (!staffNo1.equals(staffNo) ){
                 // 处理
                 WorkOrderFlowVO workOrderFlowVO1 = new WorkOrderFlowVO();
@@ -404,20 +412,24 @@ public class MemberController {
     @GetMapping("v1/getCustomerJourney")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "year", value = "年份", dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "year", value = "年份", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "pageNo", value = "当前页,默认1", dataType = "Integer", paramType = "query"),
+            @ApiImplicitParam(name = "pageSize", value = "每页显示条数，默认15", dataType = "Integer", paramType = "query")
     })
-    public ComResponse<List<MemberCustomerJourneyDto>> getCustomerJourney(String memberCard,String year) {
+    public ComResponse<Page<MemberCustomerJourneyDto>> getCustomerJourney(QueryWorkOrderVo queryVo) {
         // 获取工单信息
         List<MemberCustomerJourneyDto>  list = null;
+        Page<MemberCustomerJourneyDto> page = new Page<>();
+        String year = "";
+        ComResponse<Page<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(queryVo);
 
-        ComResponse<List<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(memberCard,year);
-        if(listComResponse.getData()==null || listComResponse.getData().size()<1){
-            if(StringUtils.isEmpty(year)){
+        if(listComResponse == null || listComResponse.getData()==null || CollectionUtil.isEmpty(listComResponse.getData().getItems())){
+            if(StringUtils.isEmpty(queryVo.getYear())){
                 year = DateFormatUtil.dateToString(new Date(),"yyyy");
             }
-            return ComResponse.success(list).setMessage(year);
+            return ComResponse.success(page).setMessage(year);
         }
-        List<WorkOrderVo> data = listComResponse.getData();
+        List<WorkOrderVo> data = listComResponse.getData().getItems();
         String sourcesJson = JSONUtil.toJsonStr(data);
         list = JsonUtil.jsonToList(sourcesJson, MemberCustomerJourneyDto.class);
         // 获取订单信息
@@ -431,8 +443,20 @@ public class MemberController {
             }
 
         }
+        String startTime = null;
+        String endTime = queryVo.getStartTime();
+        /*if (StringUtils.isEmpty(endTime)) {
+            endTime = DateUtil.format(list.get(0).getCreateTime(), "yyyy-MM-dd HH:mm:ss");
+        }*/
+        PageParam pageParam = listComResponse.getData().getPageParam();
+        if (pageParam.getPageNo() == pageParam.getPageTotal()) {
+            startTime = null;
+        }else if (StringUtils.isEmpty(startTime)) {
+            startTime = DateUtil.format(list.get(list.size() - 1).getCreateTime(), "yyyy-MM-dd HH:mm:ss");
+        }
+
         // 获取会员等级
-        ComResponse<List<MemberGradeRecordDto>> memberGradeRecordList = memberFien.getMemberGradeRecordList(memberCard);
+        ComResponse<List<MemberGradeRecordDto>> memberGradeRecordList = memberFien.getMemberGradeRecordListByTimeRange(queryVo.getMemberCard(),startTime,endTime);
         if(memberGradeRecordList.getData()!=null && memberGradeRecordList.getData().size()>0){
             for (MemberGradeRecordDto datum : memberGradeRecordList.getData()) {
                 MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
@@ -444,17 +468,17 @@ public class MemberController {
         }
 
         //获取首次呼入
-        ComResponse<MemberFirstCallDetailsDTO> cardResult = workOrderClient.getCallInDetailsByMemberCard(memberCard);
-        if (cardResult.getData() != null) {
-            MemberFirstCallDetailsDTO cardResultData = cardResult.getData();
-            if (cardResultData.getCreateTime() != null) {
-                MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
-                memberCustomerJourneyDto.setWorkOrderType(4);
-                memberCustomerJourneyDto.setCreateTime(cardResultData.getCreateTime());
-                memberCustomerJourneyDto.setMemberFirstCallDetailsDTO(cardResultData);
-                list.add(memberCustomerJourneyDto);
-            }
-        }
+//        ComResponse<MemberFirstCallDetailsDTO> cardResult = workOrderClient.getCallInDetailsByMemberCard(queryVo.getMemberCard());
+//        if (cardResult.getData() != null) {
+//            MemberFirstCallDetailsDTO cardResultData = cardResult.getData();
+//            if (cardResultData.getCreateTime() != null) {
+//                MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
+//                memberCustomerJourneyDto.setWorkOrderType(4);
+//                memberCustomerJourneyDto.setCreateTime(cardResultData.getCreateTime());
+//                memberCustomerJourneyDto.setMemberFirstCallDetailsDTO(cardResultData);
+//                list.add(memberCustomerJourneyDto);
+//            }
+//        }
 
         //设置会员级别编号转成名称
         if (CollectionUtil.isNotEmpty(list)) {
@@ -479,13 +503,36 @@ public class MemberController {
             }
         }
 
-
+        page.setPageParam(pageParam);
         // 根据时间排序
         list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
+        page.setItems(list);
         if(StringUtils.isEmpty(year)){
             year = DateFormatUtil.dateToString(new Date(),"yyyy");
         }
-        return ComResponse.success(list).setMessage(year);
+        return ComResponse.success(page).setMessage(year);
+    }
+
+
+    @ApiOperation("顾客画像-顾客旅程-首次呼入")
+    @GetMapping("v1/getCallInDetailsByMemberCard")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query")
+    })
+    public ComResponse<MemberCustomerJourneyDto> getCallInDetailsByMemberCard(String memberCard) {
+        //获取首次呼入
+        MemberCustomerJourneyDto memberCustomerJourneyDto = null;
+        ComResponse<MemberFirstCallDetailsDTO> cardResult = workOrderClient.getCallInDetailsByMemberCard(memberCard);
+        if (cardResult.getData() != null) {
+            MemberFirstCallDetailsDTO cardResultData = cardResult.getData();
+            if (cardResultData.getCreateTime() != null) {
+                memberCustomerJourneyDto = new MemberCustomerJourneyDto();
+                memberCustomerJourneyDto.setWorkOrderType(4);
+                memberCustomerJourneyDto.setCreateTime(cardResultData.getCreateTime());
+                memberCustomerJourneyDto.setMemberFirstCallDetailsDTO(cardResultData);
+            }
+        }
+        return ComResponse.success(memberCustomerJourneyDto).setMessage(DateFormatUtil.dateToString(new Date(),"yyyy"));
     }
 
     @ApiOperation("顾客画像-获取顾客病症(诊疗结果)")
