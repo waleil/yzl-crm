@@ -5,10 +5,7 @@ import cn.net.yzl.common.entity.ComResponse;
 
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.logistics.model.ExpressCompany;
-import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
-import cn.net.yzl.logistics.model.ExpressTraceResDTO;
-import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
+import cn.net.yzl.logistics.model.*;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.logistics.settleexpresscharge.*;
@@ -43,10 +40,10 @@ public interface LogisticsFien {
     @ApiOperation("结算单号查询")
     public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid String setNum);
 
-    @PostMapping("settlement/search/settle")
-    @ApiOperation("结算查询")
-    public ComResponse<Page<SettleBillSearchResultVo>> searchSettBill(@RequestBody @Valid SettleBillSearchVo searchVo);
-
+//    @PostMapping("settlement/search/settle")
+//    @ApiOperation("结算查询")
+//    public ComResponse<Page<SettleBillSearchResultVo>> searchSettBill(@RequestBody @Valid SettleBillSearchVo searchVo);
+//
 
 
     @PostMapping("settlement/seach/nosett")
@@ -199,4 +196,12 @@ public interface LogisticsFien {
 	 */
 	@PostMapping("/settlement/logistics/charge/indemnity")
 	ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
+
+    @PostMapping("settlement/add/settle/detail")
+    @ApiOperation("添加结算")
+    ComResponse addSettleDetail(@RequestBody @Valid ExpressSettleDetailAddVO addVO);
+
+    @PostMapping("settlement/search/settle")
+    @ApiOperation("结算查询")
+    ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo);
 }
