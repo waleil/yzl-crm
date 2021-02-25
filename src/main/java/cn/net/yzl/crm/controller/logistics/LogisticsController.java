@@ -17,10 +17,12 @@ import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
-import cn.net.yzl.logistics.settleexpresscharge.ResultVo;
-import cn.net.yzl.logistics.settleexpresscharge.SearchVo;
+import cn.net.yzl.logistics.settleexpresscharge.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
 import cn.net.yzl.model.pojo.StorePo;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -67,18 +70,39 @@ public class LogisticsController {
     private StoreFeginService storeFeginService;
 
 
-    @PostMapping("seach/reconciliation")
+    @PostMapping("/seach/reconciliation")
     @ApiOperation("对账")
-    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<String> searchVo){
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo){
         return logisticsFien.settlementInterface(searchVo);
     }
 
 
+    @PostMapping("/close/account")
+    @ApiOperation("结算")
+    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo){
+        return logisticsFien.closeAccount(searchVo);
+    }
+
+    @PostMapping("/search/settle/detail")
+    @ApiOperation("结算单号查询")
+    public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid String setNum){
+        return logisticsFien.searchSettDertail(setNum);
+    }
+
+    @PostMapping("/search/settle")
+    @ApiOperation("结算查询")
+    public ComResponse<Page<SettleBillSearchResultVo>> searchSettBill(@RequestBody @Valid SettleBillSearchVo searchVo){
+        return  logisticsFien.searchSettBill(searchVo);
+    }
+
+
+
+
 
     @PostMapping("seach/nosett")
-    @ApiOperation("未对账与对账数据查询")
-    public  ComResponse<List<ResultVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo){
-        return logisticsFien.searchSettlementData(searchVo);
+    @ApiOperation("未对账数据查询")
+    public  ComResponse<Page<ResultVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo){
+        return  logisticsFien.searchSettlementData(searchVo);
     }
 
     @ApiOperation(value = "快递运单查询")
@@ -161,6 +185,11 @@ public class LogisticsController {
             storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setDepartId(data.getDepartId());
             storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setOrderStatus(5);
         }
+
+
+        JSONArray array= JSONArray.parseArray(JSON.toJSONString(storeToLogisticsDtoTrace));
+        String s = array.toJSONString();
+        log.info(s);
 
 
             return logisticsFien.signedOrder(storeToLogisticsDtoTrace);
@@ -369,43 +398,36 @@ public class LogisticsController {
     @PostMapping("v1/expresscompany/listPage")
     public ComResponse<Page<ExpressCompany>> listPage(@RequestBody @Valid ExpressSearchDTO expressSearchDTO) {
 
-        expressSearchDTO.getWarehouseId();
         ComResponse<List<StorePo>> list = storeFeginService.selectStoreAny();
 
-
-
-        List<String> storePoList = null;
+        List<String> storePoList = new ArrayList<>();
         List<StorePo> storePoList1 = null;
         if(list.getCode()==200){
 //            storePoList =list.getData().stream().filter(s->s.getName().contains(expressSearchDTO.getWarehouseId())).map(a->a.getNo()).collect(Collectors.toList());
             storePoList1 =list.getData();
-        }
+
+            if(expressSearchDTO.getWarehouseId()!=null) {
+                for (int i = 0; i < storePoList1.size(); i++) {
+                    if (storePoList1.get(i).getName().indexOf(expressSearchDTO.getWarehouseId()) > -1) {
+                        storePoList.add(storePoList1.get(i).getNo());
+                    }
 
 
-        Pattern pattern = Pattern.compile(expressSearchDTO.getWarehouseId());
-        for(int i=0; i < storePoList1.size(); i++){
-            Matcher matcher = pattern.matcher(((StorePo)storePoList1.get(i)).getName());
-            if(matcher.matches()){
-                storePoList.add(storePoList1.get(i).getNo());
+                }
             }
-        }
 
-
-        if(storePoList!=null){
-            expressSearchDTO.setWarehouseId(StringUtils.join(storePoList.toArray(),","));
+            if(storePoList!=null){
+                expressSearchDTO.setWarehouseId(StringUtils.join(storePoList.toArray(),","));
+            }else{
+                expressSearchDTO.setWarehouseId(StringUtils.join(Collections.EMPTY_LIST.toArray(),","));
+            }
         }else{
             expressSearchDTO.setWarehouseId(StringUtils.join(Collections.EMPTY_LIST.toArray(),","));
         }
-//        StringBuffer sb = new StringBuffer();
-//        for (String s: storePoList
-//             ) {
-//            sb.append(s).append(",");
-//
-//        }
 
-
-
-
+        JSONObject  json =(JSONObject) JSONObject.toJSON(expressSearchDTO);
+        String s = json.toJSONString();
+        log.info(s);
         return logisticsFien.listPage(expressSearchDTO);
     }
 

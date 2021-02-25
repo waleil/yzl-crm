@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import cn.net.yzl.order.constant.CommonConstant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class OrderOut {
 	@ApiModelProperty(value = "订单号")
 	private String orderNo;
 	@ApiModelProperty(value = "下单时间")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = CommonConstant.JSON_FORMAT_PATTERN, timezone = CommonConstant.JSON_FORMAT_TIMEZONE)
 	private Date orderTime;
 	@ApiModelProperty(value = "本次购物获得积分")
 	private Integer returnPointsDeduction = 0;
@@ -51,10 +52,10 @@ public class OrderOut {
 	@ApiModel(description = "优惠券")
 	public static class Coupon {
 		@ApiModelProperty(value = "有效期开始时间")
-		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		@JsonFormat(pattern = CommonConstant.JSON_FORMAT_PATTERN, timezone = CommonConstant.JSON_FORMAT_TIMEZONE)
 		private Date startDate;
 		@ApiModelProperty(value = "有效期结束时间")
-		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+		@JsonFormat(pattern = CommonConstant.JSON_FORMAT_PATTERN, timezone = CommonConstant.JSON_FORMAT_TIMEZONE)
 		private Date endDate;
 		@ApiModelProperty(value = "优惠券名称")
 		private String couponName;
