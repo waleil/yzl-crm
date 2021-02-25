@@ -9,6 +9,7 @@ import cn.net.yzl.crm.service.score.ScoreService;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.vo.ExchangeVO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,16 @@ public class ScoreServiceImpl implements ScoreService {
         }
 
         return scoreProductClient.delete(id,userNo);
+    }
+
+    @Override
+    public ComResponse<Void> exchange(ExchangeVO vo) {
+        return scoreProductClient.exchange(vo);
+    }
+
+    @Override
+    public ComResponse<Integer> myScore(String staffNo) {
+        return scoreProductClient.myScore(staffNo);
     }
 
 }
