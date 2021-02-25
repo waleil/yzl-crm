@@ -19,9 +19,9 @@ public class QueryWorkOrderVo extends BaseDTO {
     @ApiModelProperty("年")
     private String year;
 
-    @ApiModelProperty(value="查询会员级别记录的开始时间", name = "startTime")
+    @ApiModelProperty(value="查询会员级别记录的查询结束时间", name = "startTime")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private String startTime;
+    private String endDate;
 
 
 }
