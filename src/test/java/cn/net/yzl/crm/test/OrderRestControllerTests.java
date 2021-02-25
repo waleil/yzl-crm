@@ -1,9 +1,14 @@
 package cn.net.yzl.crm.test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import cn.net.yzl.crm.dao.OutStoreWarningMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -32,7 +37,6 @@ public class OrderRestControllerTests {
 	private OrderRestController orderRestController;
 	@Resource
 	private ObjectMapper objectMapper;
-
 	@Test
 	public void testSubmitOrderForProduct() {
 		try {
