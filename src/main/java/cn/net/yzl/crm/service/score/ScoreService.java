@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.vo.ExchangeVO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,4 +23,8 @@ public interface ScoreService {
     ComResponse<Void> edit(ScoreProductVO vo);
 
     ComResponse<Void> delete(Integer id, HttpServletRequest request);
+
+    ComResponse<Void> exchange(ExchangeVO vo);
+
+    ComResponse<Integer> myScore(String staffNo);
 }
