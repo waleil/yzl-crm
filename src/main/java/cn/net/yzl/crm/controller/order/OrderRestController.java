@@ -301,18 +301,11 @@ public class OrderRestController {
 			orderm.setAdvisorNo(orderin.getAdvertBusNo().intValue());// 广告id
 			// 查询广告
 			ComResponse<LaunchManageDto> response = this.activityClient.getLaunchManageByBusNo(orderm.getAdvisorNo());
-			// 如果服务调用异常
-			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
-				log.error("热线工单-购物车-提交订单>>{}>>{}", orderm.getAdvisorNo(), response);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, response.getMessage());
-			}
 			LaunchManageDto dto = response.getData();
-			if (dto == null) {
-				log.error("热线工单-购物车-提交订单>>找不到该广告[{}]>>{}", orderm.getAdvisorNo(), response);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该广告。");
+			if (dto != null) {
+				orderm.setAdvisorName(dto.getAdvertName());// 广告名称
+				orderm.setMediaName(dto.getMediaName());// 媒介名称
 			}
-			orderm.setAdvisorName(dto.getAdvertName());// 广告名称
-			orderm.setMediaName(dto.getMediaName());// 媒介名称
 		}
 		// 组装校验订单金额参数
 		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
