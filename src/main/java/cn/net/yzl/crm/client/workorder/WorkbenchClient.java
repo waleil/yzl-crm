@@ -32,7 +32,7 @@ public interface WorkbenchClient {
     ComResponse<List<VisitSeatMonitoringVo>> getVisitSeatMonitoring(@RequestParam("staffNo") String staffNo);
 
     @RequestMapping(value = "workbench/getWorkbenchHotlineManagerMonitoring",method = RequestMethod.GET)
-    ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(@RequestParam("staffNo") String staffNo);
+    ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(@RequestParam("staffNo") String staffNo,@RequestParam("pageNo") Integer pageNo,@RequestParam("pageSize") Integer pageSize);
 
     @RequestMapping(value = "workbench/insertWorkbenchHotlineAndCallbackCount",method = RequestMethod.GET)
     void insertWorkbenchHotlineAndCallbackCount(@RequestParam("staffNo") String staffNo, @RequestParam("workOrderType") Integer workOrderType);
