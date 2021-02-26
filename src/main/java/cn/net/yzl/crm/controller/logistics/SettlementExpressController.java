@@ -13,6 +13,8 @@ import cn.net.yzl.logistics.model.ExpressSettleDetailAddVO;
 import cn.net.yzl.logistics.model.vo.ExpressSettlementPageVo;
 import cn.net.yzl.logistics.model.vo.ImportResult;
 import cn.net.yzl.logistics.settleexpresscharge.*;
+import cn.net.yzl.logistics.settleexpresscharge.excel.ResultExcelVo;
+import cn.net.yzl.logistics.settleexpresscharge.excel.ResultRecionExcelVo;
 import cn.net.yzl.model.vo.InventoryExcelVo;
 import cn.net.yzl.model.vo.InventoryProductExcelVo;
 import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
@@ -65,31 +67,38 @@ public class SettlementExpressController {
         ComResponse<List<ResultVo>> listComResponse = settlement.exportExpressChargeExcel(searchVo);
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
-
-//        Integer status = inventoryExcelVo.getStatus();
         List<ResultVo> listComResponseData = listComResponse.getData();
-
         //盘点日期
         Date inventoryDate = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = simpleDateFormat.format(inventoryDate);
-
         //仓库名称
 //        String storeName = inventoryExcelVo.getStoreName();
-
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
-
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"PD"+date+".xlsx");
 
 
+        // 已经结账的list
+        List<ResultRecionExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
 
-        List<InventoryProductResultExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
+
+        List<ResultExcelVo> inventoryProductResultExcelVoList1 = new ArrayList<>();
         for (ResultVo listComResponseDatum : listComResponseData) {
-            InventoryProductResultExcelVo inventoryProductResultExcelVo = new InventoryProductResultExcelVo();
-            BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
-            inventoryProductResultExcelVoList.add(inventoryProductResultExcelVo);
+            if(searchVo.getSearchStatus()==1){
+                ResultRecionExcelVo inventoryProductResultExcelVo = new ResultRecionExcelVo();
+                BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
+                inventoryProductResultExcelVoList.add(inventoryProductResultExcelVo);
+            }
+            if(searchVo.getSearchStatus()==0){
+                ResultExcelVo inventoryProductResultExcelVo = new ResultExcelVo();
+                BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
+                inventoryProductResultExcelVoList1.add(inventoryProductResultExcelVo);
+            }
+
+
+
         }
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductResultExcelVo.class)
