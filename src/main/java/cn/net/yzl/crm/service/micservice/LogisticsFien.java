@@ -205,12 +205,17 @@ public interface LogisticsFien {
     @ApiOperation("结算查询")
     ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo);
 
-    @PostMapping("/express/charge/detail")
+    @PostMapping("settlement/express/charge/detail")
     @ApiOperation("运费结算明细")
-    ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody @Valid ExpressChargeSettlementDetail
+    ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody ExpressChargeSettlementDetail
                                                                                                     expressChargeSettlementDetail);
 
     @PostMapping("settlement/export/ExpressChargeExcel")
     @ApiOperation("已对账未对账导出")
     ComResponse<List<ResultVo>> exportExpressChargeExcel(SearchVo searchVo);
+
+
+    @PostMapping("settlement/v1/allCreateSettle")
+    @ApiOperation("全选生成结算单接口")
+    ComResponse allCreateSettle(@RequestBody CreateSettleByCondition createSettleByCondition);
 }

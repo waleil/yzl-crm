@@ -123,7 +123,7 @@ public class SettlementExpressController {
      * */
     @PostMapping("/express/charge/detail")
     @ApiOperation("运费结算明细")
-    public   ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody @Valid ExpressChargeSettlementDetail
+    public   ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody ExpressChargeSettlementDetail
                                                                                                     expressChargeSettlementDetail){
         return  settlement.expressChargeSettlementDetailSearch(expressChargeSettlementDetail);
 
@@ -151,7 +151,14 @@ public class SettlementExpressController {
 
     @PostMapping("/close/account")
     @ApiOperation("生成结算单")
-    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo){
+    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo, HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
+        StaffImageBaseInfoDto data = user.getData();
+        if(data != null){
+            searchVo.setCreateUser(userNo);
+            searchVo.setCreateUserName(data.getName());
+        }
         return settlement.closeAccount(searchVo);
     }
 
@@ -212,6 +219,19 @@ public class SettlementExpressController {
     @PostMapping("v1/export/settle")
     public void exportSettleExcel(@RequestBody SettleBillSearchVo searchVo,HttpServletResponse response) throws IOException {
         settlementExpressService.exportSettleExcel(searchVo,response);
+    }
+
+
+    @ApiOperation(value = "导出结算明细",notes = "导出结算明细")
+    @PostMapping("v1/export/over/detail")
+    public void exportSettleOverDetailExcel(@RequestBody ExpressChargeSettlementDetail detail, HttpServletResponse response) throws IOException {
+        settlementExpressService.exportSettleOverDetailExcel(detail,response);
+    }
+
+    @PostMapping("v1/allCreateSettle")
+    @ApiOperation("全选生成结算单接口")
+    public ComResponse allCreateSettle(@RequestBody CreateSettleByCondition createSettleByCondition){
+        return settlement.allCreateSettle(createSettleByCondition);
     }
 }
 
