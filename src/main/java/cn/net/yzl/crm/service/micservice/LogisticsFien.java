@@ -186,16 +186,16 @@ public interface LogisticsFien {
     @GetMapping("exp/company/v1/like/search/expresscompany")
     ComResponse<List<ObjectCommon>> getCompanyByName(@RequestParam("companyName") String companyName);
 
-	/**
-	 * 物流赔付接口
-	 * 
-	 * @param indemnity {@link ExpressIndemnity}
-	 * @return
-	 * @author zhangweiwei
-	 * @date 2021年2月22日,下午3:11:56
-	 */
-	@PostMapping("/settlement/logistics/charge/indemnity")
-	ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
+    /**
+     * 物流赔付接口
+     *
+     * @param indemnity {@link ExpressIndemnity}
+     * @return
+     * @author zhangweiwei
+     * @date 2021年2月22日,下午3:11:56
+     */
+    @PostMapping("/settlement/logistics/charge/indemnity")
+    ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
 
     @PostMapping("settlement/add/settle/detail")
     @ApiOperation("添加结算")
@@ -204,4 +204,13 @@ public interface LogisticsFien {
     @PostMapping("settlement/search/settle")
     @ApiOperation("结算查询")
     ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo);
+
+    @PostMapping("/express/charge/detail")
+    @ApiOperation("运费结算明细")
+    ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody @Valid ExpressChargeSettlementDetail
+                                                                                                    expressChargeSettlementDetail);
+
+    @PostMapping("settlement/export/ExpressChargeExcel")
+    @ApiOperation("已对账未对账导出")
+    ComResponse<List<ResultVo>> exportExpressChargeExcel(SearchVo searchVo);
 }
