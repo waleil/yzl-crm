@@ -123,7 +123,7 @@ public class SettlementExpressController {
      * */
     @PostMapping("/express/charge/detail")
     @ApiOperation("运费结算明细")
-    public   ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody @Valid ExpressChargeSettlementDetail
+    public   ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody ExpressChargeSettlementDetail
                                                                                                     expressChargeSettlementDetail){
         return  settlement.expressChargeSettlementDetailSearch(expressChargeSettlementDetail);
 
@@ -210,6 +210,13 @@ public class SettlementExpressController {
     @PostMapping("v1/export/settle")
     public void exportSettleExcel(@RequestBody SettleBillSearchVo searchVo,HttpServletResponse response) throws IOException {
         settlementExpressService.exportSettleExcel(searchVo,response);
+    }
+
+
+    @ApiOperation(value = "导出结算明细",notes = "导出结算明细")
+    @PostMapping("v1/export/over/detail")
+    public void exportSettleOverDetailExcel(@RequestBody ExpressChargeSettlementDetail detail, HttpServletResponse response) throws IOException {
+        settlementExpressService.exportSettleOverDetailExcel(detail,response);
     }
 }
 

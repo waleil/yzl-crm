@@ -207,7 +207,7 @@ public interface LogisticsFien {
 
     @PostMapping("/express/charge/detail")
     @ApiOperation("运费结算明细")
-    ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody @Valid ExpressChargeSettlementDetail
+    ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody ExpressChargeSettlementDetail
                                                                                                     expressChargeSettlementDetail);
 
     @PostMapping("settlement/export/ExpressChargeExcel")
