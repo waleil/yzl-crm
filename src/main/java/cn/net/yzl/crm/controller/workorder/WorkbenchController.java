@@ -66,8 +66,9 @@ public class WorkbenchController {
 
     @RequestMapping(value = "getWorkbenchHotlineManagerMonitoring",method = RequestMethod.GET)
     @ApiOperation(value = "工作台-热线经理-坐席监控", notes = "工作台-热线经理-坐席监控")
-    public ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(){
-        ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> workbenchHotlineManagerMonitoringVOS = workbenchClient.getWorkbenchHotlineManagerMonitoring(QueryIds.userNo.get());
+    public ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring( @RequestParam("pageNo") Integer pageNo,
+                                                                                                        @RequestParam("pageSize") Integer pageSize){
+        ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> workbenchHotlineManagerMonitoringVOS = workbenchClient.getWorkbenchHotlineManagerMonitoring(QueryIds.userNo.get(),pageNo,pageSize);
         return workbenchHotlineManagerMonitoringVOS;
     }
 

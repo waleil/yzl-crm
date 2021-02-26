@@ -135,7 +135,7 @@ public class SettlementExpressController {
 
     @PostMapping("/seach/reconciliation")
     @ApiOperation("对账")
-    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo ,HttpServletRequest request){
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<ReconExpressNum> searchVo ,HttpServletRequest request){
         String userNo = request.getHeader("userNo");
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
