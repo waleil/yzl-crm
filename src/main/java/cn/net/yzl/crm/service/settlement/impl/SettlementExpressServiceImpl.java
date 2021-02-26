@@ -41,7 +41,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
         if(data != null) {
             List<ExpressSettlementPageVo> items = data.getItems();
             if (!CollectionUtils.isEmpty(items)) {
-                int i =0 ;
+                int i =1;
                 List<ExpressSettlementExcelDTO> excelDTOS = new ArrayList<>();
                 for (ExpressSettlementPageVo item : items) {
                     ExpressSettlementExcelDTO copy = CglibUtil.copy(item, ExpressSettlementExcelDTO.class);
@@ -55,9 +55,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
                 response.setCharacterEncoding("UTF-8");
                 //响应内容格式
 
-                Date date = new Date();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String sysDate = simpleDateFormat.format(date);
+                String sysDate =DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss");
                 response.setContentType("application/vnd.ms-excel");
                 response.setHeader("Content-Disposition", "attachment;fileName=" +"jsys"+sysDate +".xlsx");
 
@@ -78,7 +76,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
         if(data != null) {
             List<SettlementDetailResult> items = data.getItems();
             if (!CollectionUtils.isEmpty(items)) {
-                int i =0 ;
+                int i =1 ;
                 List<SettlementDetailExcel> excels = new ArrayList<>();
                 for (SettlementDetailResult item : items) {
                     SettlementDetailExcel copy = CglibUtil.copy(item, SettlementDetailExcel.class);
@@ -91,9 +89,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
                 response.setCharacterEncoding("UTF-8");
                 //响应内容格式
 
-                Date date = new Date();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String sysDate = simpleDateFormat.format(date);
+                String sysDate =DateUtil.format(new Date(),"yyyy-MM-dd HH:mm:ss");
                 response.setContentType("application/vnd.ms-excel");
                 response.setHeader("Content-Disposition", "attachment;fileName=" +"yfjsmx"+sysDate +".xlsx");
 

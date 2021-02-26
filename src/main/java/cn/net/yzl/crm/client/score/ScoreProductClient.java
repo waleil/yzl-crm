@@ -22,13 +22,15 @@ public interface ScoreProductClient {
 //    ComResponse<String> uploadScoreProductFile(@RequestParam(value = "file") MultipartFile file);
 
     @GetMapping("queryPage")
-    ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(@RequestParam("pageSize")Integer pageSize, @RequestParam("pageNo")Integer pageNo);
+    ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(@RequestParam("pageSize") Integer pageSize,
+                                                         @RequestParam("pageNo") Integer pageNo,
+                                                         @RequestParam("hide") Boolean hide);
 
     @GetMapping("queryDetail")
     ComResponse<ScoreProductDetailDTO> queryDetail(@RequestParam("id")Integer id);
 
     @PostMapping("edit")
-    ComResponse<Void> edit(@RequestBody @Valid ScoreProductVO vo);
+    ComResponse<Void> edit(@RequestBody ScoreProductVO vo);
 
     @PostMapping("delete")
     ComResponse<Void> delete(@RequestParam("id") Integer id, @RequestParam("userNo") String userNo);

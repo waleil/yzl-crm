@@ -7,7 +7,6 @@ import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
 import cn.net.yzl.score.model.vo.ExchangeVO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,7 +15,7 @@ public interface ScoreService {
 
 //    ComResponse<String> uploadScoreProductFile(MultipartFile file);
 
-    ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(Integer pageSize, Integer pageNo);
+    ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(Integer pageSize, Integer pageNo, Boolean hide);
 
     ComResponse<ScoreProductDetailDTO> queryDetail(Integer id);
 
