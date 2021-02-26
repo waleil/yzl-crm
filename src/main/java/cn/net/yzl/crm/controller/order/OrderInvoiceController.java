@@ -299,7 +299,7 @@ public class OrderInvoiceController {
         for (MemberCouponResponse item : responseData.getItems()) {
             MemberCouponDTO dto = BeanCopyUtils.transfer(item, MemberCouponDTO.class);
             if (item.getCouponDiscountRulesDto().size() > 0) {
-                dto.setReduceAmount(BigDecimal.valueOf(item.getCouponDiscountRulesDto().get(0).getReduceAmount()/100));
+                dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getConditionFullD());
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
