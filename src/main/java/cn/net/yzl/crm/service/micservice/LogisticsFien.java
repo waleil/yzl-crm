@@ -31,6 +31,15 @@ import javax.validation.constraints.NotBlank;
 public interface LogisticsFien {
 
 
+    @PostMapping("settlement/settle/detail")
+    @ApiOperation("结算明细")
+    public ComResponse<Boolean> settlementDetail(@RequestBody @Valid SettlemDetailVo settlemDetailVo);
+
+    @PostMapping("settlement/express/charge/detail")
+    @ApiOperation("运费结算明细")
+    public   ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody @Valid ExpressChargeSettlementDetail
+                                                                                                    expressChargeSettlementDetail);
+
     @PostMapping("settlement/seach/reconciliation")
     @ApiOperation("对账")
     public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo);
@@ -199,4 +208,9 @@ public interface LogisticsFien {
 	 */
 	@PostMapping("/settlement/logistics/charge/indemnity")
 	ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
+
+
+    @PostMapping("/settlement/export/ExpressChargeExcel")
+    @ApiOperation("已对账未对账导出")
+    ComResponse<List<ResultVo>> exportExpressChargeExcel(SearchVo searchVo);
 }
