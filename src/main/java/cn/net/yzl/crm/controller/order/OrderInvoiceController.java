@@ -233,7 +233,6 @@ public class OrderInvoiceController {
             MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
-
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
                 dto.setMemberName(Optional.ofNullable(settlementDetailDistinctListDTOS.get(0).getMemberName()).orElse(getMemberName(item.getMemberCard())));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
@@ -285,6 +284,7 @@ public class OrderInvoiceController {
 
     /**
      * TODO 获取顾客信息，测试完后就没用了
+     *
      * @param memberCardNo
      * @return
      */
