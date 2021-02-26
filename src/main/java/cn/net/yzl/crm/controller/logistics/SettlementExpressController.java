@@ -218,5 +218,11 @@ public class SettlementExpressController {
     public void exportSettleOverDetailExcel(@RequestBody ExpressChargeSettlementDetail detail, HttpServletResponse response) throws IOException {
         settlementExpressService.exportSettleOverDetailExcel(detail,response);
     }
+
+    @PostMapping("v1/allCreateSettle")
+    @ApiOperation("全选生成结算单接口")
+    public ComResponse allCreateSettle(@RequestBody CreateSettleByCondition createSettleByCondition){
+        return settlement.allCreateSettle(createSettleByCondition);
+    }
 }
 

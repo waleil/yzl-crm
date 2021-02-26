@@ -213,4 +213,9 @@ public interface LogisticsFien {
     @PostMapping("settlement/export/ExpressChargeExcel")
     @ApiOperation("已对账未对账导出")
     ComResponse<List<ResultVo>> exportExpressChargeExcel(SearchVo searchVo);
+
+
+    @PostMapping("settlement/v1/allCreateSettle")
+    @ApiOperation("全选生成结算单接口")
+    ComResponse allCreateSettle(@RequestBody CreateSettleByCondition createSettleByCondition);
 }
