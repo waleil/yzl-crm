@@ -36,11 +36,13 @@ public class ScoreController {
     @GetMapping("pageDetail")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageSize",value = "每页条数",paramType = "query"),
-            @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query")
+            @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query"),
+
     })
     @ApiOperation("根据员工编号分页查询员工积分明细")
     public ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(@RequestParam("pageSize") Integer pageSize,
-                                                                    @RequestParam("pageNo") Integer pageNo, HttpServletRequest request){
+                                                                    @RequestParam("pageNo") Integer pageNo,
+                                                                    HttpServletRequest request){
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
@@ -58,11 +60,14 @@ public class ScoreController {
     @GetMapping("queryPage")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageSize",value = "每页条数",paramType = "query"),
-            @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query")
+            @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query"),
+            @ApiImplicitParam(name = "hide",value = "是否显示禁用信息",paramType = "query")
     })
     @ApiOperation("分页查询积分兑换商品总览")
-    public ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(@RequestParam("pageSize")Integer pageSize, @RequestParam("pageNo")Integer pageNo){
-        return service.queryPage(pageSize, pageNo).setMessage(fastDFSConfig.getUrl());
+    public ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(@RequestParam("pageSize")Integer pageSize,
+                                                                @RequestParam("pageNo")Integer pageNo,
+                                                                @RequestParam("hide") Boolean hide){
+        return service.queryPage(pageSize, pageNo,hide);
     }
 
     @GetMapping("queryDetail")
@@ -73,9 +78,6 @@ public class ScoreController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE, "id不能为空！");
         }
         ComResponse<ScoreProductDetailDTO> response = service.queryDetail(id);
-        if (response.getStatus()==1) {
-            response.setMessage(fastDFSConfig.getUrl());
-        }
         return response;
     }
 
@@ -98,7 +100,7 @@ public class ScoreController {
 
     @PostMapping("exchange")
     @ApiOperation("兑换商品")
-    public ComResponse<Void> exchange(@RequestBody ExchangeVO vo,HttpServletRequest request){
+    public ComResponse<Void> exchange(@RequestBody @Valid ExchangeVO vo,HttpServletRequest request){
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
@@ -107,7 +109,7 @@ public class ScoreController {
     }
 
     @GetMapping
-    @ApiOperation("根据员工编号查询积分")
+    @ApiOperation("查询我的积分")
     public ComResponse<Integer> myScore(HttpServletRequest request){
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
