@@ -101,8 +101,15 @@ public class SettlementExpressController {
 
         }
         //向前端写入文件流流
-        EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductResultExcelVo.class)
-                .sheet("盘点商品库存表").doWrite(inventoryProductResultExcelVoList);
+        if (searchVo.getSearchStatus() == 1) {
+            EasyExcel.write(httpServletResponse.getOutputStream(), ResultRecionExcelVo.class)
+                    .sheet("对账数据表").doWrite(inventoryProductResultExcelVoList);
+        }
+        if (searchVo.getSearchStatus() == 0) {
+            EasyExcel.write(httpServletResponse.getOutputStream(), ResultExcelVo.class)
+                    .sheet("对账数据表").doWrite(inventoryProductResultExcelVoList1);
+        }
+
 
 
 
