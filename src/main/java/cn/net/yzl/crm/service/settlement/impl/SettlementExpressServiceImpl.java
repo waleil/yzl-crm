@@ -62,7 +62,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
                 response.setHeader("Content-Disposition", "attachment;fileName=" +"jsys"+sysDate +".xlsx");
 
                 //向前端写入文件流流
-                EasyExcel.write(response.getOutputStream(), ProductPurchaseWarnExcelDTO.class)
+                EasyExcel.write(response.getOutputStream(), ExpressSettlementExcelDTO.class)
                         .sheet("结算运费订单").doWrite(excelDTOS);
                 return;
             }
