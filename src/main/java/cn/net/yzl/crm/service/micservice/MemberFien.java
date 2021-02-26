@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 
 import cn.net.yzl.crm.customer.vo.MemberAndAddWorkOrderVO;
+import cn.net.yzl.crm.customer.vo.member.MemberGrandSelectVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +48,7 @@ import io.swagger.annotations.ApiOperation;
 /**
  * 顾客服务接口
  */
+//@FeignClient(name = "crmCustomer", url = "localhost:2070" + "/member")
 @FeignClient(name = "crmCustomer", url = "${api.gateway.url}" + MemberFien.SUFFIX_URL)
 public interface MemberFien {
 	String SUFFIX_URL = "/crmCustomer/member";
@@ -178,9 +180,7 @@ public interface MemberFien {
 
 	@ApiOperation("根据时间范围获取会员级别记录")
 	@PostMapping("v1/getMemberGradeRecordListByTimeRange")
-	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordListByTimeRange(@RequestParam(required = true, value = "memberCard")String memberCard,
-																					   @RequestParam(required = false, value = "startDate") String startDate,
-																					   @RequestParam(required = false, value = "endDate")String endDate);
+	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordListByTimeRange(@RequestBody MemberGrandSelectVo vo);
 
 	@ApiOperation("顾客病症-根据病症id更新顾客病症")
 	@PostMapping("/v1/updateMemberDiseaseByDiseaseId")

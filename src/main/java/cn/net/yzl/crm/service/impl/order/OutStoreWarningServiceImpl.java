@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +39,8 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
 
             List<String> mobile = new ArrayList<>();
             List<String> email = new ArrayList<>();
-            //TODO 等待菜单权限标识
-            List<Integer> ids = outStoreWarningMapper.getRoleIdsByMenuPerms(39);
+            //TODO 等待菜单权限标识(使用prems标识)
+            List<Integer> ids = outStoreWarningMapper.getRoleIdsByMenuPerms(Arrays.asList("ddckyj"));
             if (ids.size() > 0) {
                 //用户code
                 List<String> userCodes = outStoreWarningMapper.getUserCodesByRoleIds(ids);
@@ -47,14 +48,14 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
                 ComResponse<List<StaffDetailDto>> staffNos = ehrStaffClient.getByStaffNos(userCodes);
                 if (Optional.ofNullable(staffNos.getData()).map(List::isEmpty).isPresent()) {
                     staffNos.getData().forEach(entity -> {
-                        if ("测试二".equals(entity.getName()) || "苏曼".equals(entity.getName()) || "王海丽".equals(entity.getName())) {
+//                        if ("测试二".equals(entity.getName()) || "苏曼".equals(entity.getName()) || "王海丽".equals(entity.getName())) {
                         if (!StringUtils.isEmpty(entity.getEmail())) {
                             email.add(entity.getEmail());
                         }
                         if (!StringUtils.isEmpty(entity.getPhone())) {
                             mobile.add(entity.getPhone());
                         }
-                        }
+//                        }
                     });
                 }
             }

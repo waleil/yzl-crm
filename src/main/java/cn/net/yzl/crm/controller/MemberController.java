@@ -27,6 +27,7 @@ import cn.net.yzl.crm.customer.vo.MemberProductEffectSelectVO;
 import cn.net.yzl.crm.customer.vo.MemberProductEffectUpdateVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
+import cn.net.yzl.crm.customer.vo.member.MemberGrandSelectVo;
 import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
 import cn.net.yzl.crm.customer.vo.work.WorkOrderBeanVO;
 import cn.net.yzl.crm.dto.dmc.MemberLevelResponse;
@@ -52,7 +53,6 @@ import cn.net.yzl.order.model.vo.order.PortraitOrderDetailDTO;
 import cn.net.yzl.product.model.vo.product.dto.DiseaseMainInfo;
 import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowSubBean;
-import cn.net.yzl.workorder.model.dto.QueryWorkOrderDTO;
 import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
 import io.swagger.annotations.*;
@@ -63,6 +63,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -420,13 +424,13 @@ public class MemberController {
         // 获取工单信息
         List<MemberCustomerJourneyDto>  list = null;
         Page<MemberCustomerJourneyDto> page = new Page<>();
-        String year = "";
+        String year = queryVo.getYear();
         ComResponse<Page<WorkOrderVo>> listComResponse = workOrderClients.queryWorkOrder(queryVo);
+        if(StringUtils.isEmpty(year)){
+            year = DateFormatUtil.dateToString(new Date(),"yyyy");
+        }
 
         if(listComResponse == null || listComResponse.getData()==null || CollectionUtil.isEmpty(listComResponse.getData().getItems())){
-            if(StringUtils.isEmpty(queryVo.getYear())){
-                year = DateFormatUtil.dateToString(new Date(),"yyyy");
-            }
             return ComResponse.success(page).setMessage(year);
         }
         List<WorkOrderVo> data = listComResponse.getData().getItems();
@@ -443,20 +447,32 @@ public class MemberController {
             }
 
         }
-        String startTime = null;
-        String endTime = queryVo.getStartTime();
-        /*if (StringUtils.isEmpty(endTime)) {
-            endTime = DateUtil.format(list.get(0).getCreateTime(), "yyyy-MM-dd HH:mm:ss");
-        }*/
+        Date start = null;
+        Date end = null;
         PageParam pageParam = listComResponse.getData().getPageParam();
-        if (pageParam.getPageNo() == pageParam.getPageTotal()) {
-            startTime = null;
-        }else if (StringUtils.isEmpty(startTime)) {
-            startTime = DateUtil.format(list.get(list.size() - 1).getCreateTime(), "yyyy-MM-dd HH:mm:ss");
+
+        String yearFirstDay = year + "-01-01 00:00:00";
+        String nextYearFirstDay =  Integer.valueOf(year)+1  + "-01-01 00:00:00";
+        //时间为空，则最大时间为下一年的第一天0点
+        if (StringUtils.isEmpty(queryVo.getEndDate())) {
+            end = DateUtil.parse(nextYearFirstDay, "yyyy-MM-dd HH:mm:ss");
+        }else{
+            end = DateUtil.parse(queryVo.getEndDate(), "yyyy-MM-dd HH:mm:ss");
         }
 
+        //当只有一页时 和 查询最后一页时，设置开始时间为本年第一天开始
+        if (pageParam.getPageTotal() == 1 || pageParam.getPageNo() == pageParam.getPageTotal()){
+            start = DateUtil.parse(yearFirstDay, "yyyy-MM-dd HH:mm:ss");
+        }else{
+            //开始时间  = 工单的最小创建时间
+            start = DateUtil.parse(DateUtil.format(data.get(data.size()-1).getCreateTime(), "yyyy-MM-dd HH:mm:ss"), "yyyy-MM-dd HH:mm:ss");
+        }
         // 获取会员等级
-        ComResponse<List<MemberGradeRecordDto>> memberGradeRecordList = memberFien.getMemberGradeRecordListByTimeRange(queryVo.getMemberCard(),startTime,endTime);
+        MemberGrandSelectVo vo = new MemberGrandSelectVo();
+        vo.setMemberCard(queryVo.getMemberCard());
+        vo.setStartDate(start);
+        vo.setEndDate(end);
+        ComResponse<List<MemberGradeRecordDto>> memberGradeRecordList = memberFien.getMemberGradeRecordListByTimeRange(vo);
         if(memberGradeRecordList.getData()!=null && memberGradeRecordList.getData().size()>0){
             for (MemberGradeRecordDto datum : memberGradeRecordList.getData()) {
                 MemberCustomerJourneyDto memberCustomerJourneyDto = new MemberCustomerJourneyDto();
@@ -507,9 +523,6 @@ public class MemberController {
         // 根据时间排序
         list = list.stream().sorted(Comparator.comparing(MemberCustomerJourneyDto::getCreateTime).reversed()).collect(Collectors.toList());
         page.setItems(list);
-        if(StringUtils.isEmpty(year)){
-            year = DateFormatUtil.dateToString(new Date(),"yyyy");
-        }
         return ComResponse.success(page).setMessage(year);
     }
 

@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.order.model.vo.order.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -48,11 +49,11 @@ public class OrderSaleController {
 	@PostMapping("/v1/saveOrderSale")
 	public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSaleAddDTO dto,
 			HttpServletRequest request) {
-		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
-		if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
-			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
+		ComResponse<StaffImageBaseInfoDto> staffRes = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+		if (!staffRes.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
+			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), staffRes.getMessage());
 		}
-		StaffImageBaseInfoDto data = userNo.getData();
+		StaffImageBaseInfoDto data = staffRes.getData();
 		String seqNo = redisUtil.getSeqNo(RedisKeys.SALE_ORDER_NO_PREFIX, RedisKeys.SALE_ORDER_NO, 6);
 		dto.setSaleOrderNo(seqNo);
 		dto.setCreateCode(data.getStaffNo());

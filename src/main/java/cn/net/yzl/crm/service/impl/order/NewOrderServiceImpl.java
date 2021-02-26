@@ -505,7 +505,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			orderDetail.setProductCount(map.getCount());
 			orderDetail.setSpec(map.getSpec());
 			orderDetail.setUnit(map.getUnit());
-			orderDetail.setPackageunit(map.getPackageunit());
+			orderDetail.setPackageUnit(map.getPackageunit());
 			orderDetail.setProductUnitPrice(map.getPrice());
 			orderDetail.setMealFlag(0);
 			orderDetail.setMealNo(null);
@@ -531,7 +531,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			orderDetail.setCreateTime(null);
 			orderDetail.setStaffCode(order.getStaffCode());
 			orderDetail.setUpdateCode(order.getStaffName());
-			orderDetail.setPackageunit(map.getPackageunit());
+			orderDetail.setPackageUnit(map.getPackageunit());
 			orderDetail.setProductNo(map.getProductNo());
 			orderDetail.setCreateTime(new Date());
 			orderDetail.setUpdateTime(new Date());

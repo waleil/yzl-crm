@@ -38,7 +38,11 @@ import java.util.List;
 public class SettlementExpressController {
 
     @Autowired
-    private LogisticsFien settlement;
+    LogisticsFien logisticsFien;
+    @Autowired
+    private SettlementExpressService settlementExpressService;
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
 
 
     /*
@@ -155,4 +159,32 @@ public class SettlementExpressController {
 //        return this.settlement.importFromExcel(param);
         return ComResponse.success();
     }
+
+    @PostMapping("/add/settle/detail")
+    @ApiOperation("添加结算")
+    public ComResponse addSettleDetail(@RequestBody @Valid ExpressSettleDetailAddVO addVO, HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
+        StaffImageBaseInfoDto data = user.getData();
+        if(data != null){
+            addVO.setOperator(userNo);
+            addVO.setOperatorName(data.getName());
+        }
+        return logisticsFien.addSettleDetail(addVO);
+    }
+
+    @PostMapping("/search/settle")
+    @ApiOperation("结算查询")
+    public ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo){
+        return  logisticsFien.searchSettBill(searchVo);
+    }
+
+
+    @ApiOperation(value = "导出结算",notes = "导出结算")
+    @PostMapping("v1/export/settle")
+    public void exportSettleExcel(@RequestBody SettleBillSearchVo searchVo,HttpServletResponse response) throws IOException {
+        settlementExpressService.exportSettleExcel(searchVo,response);
+    }
+
+
 }

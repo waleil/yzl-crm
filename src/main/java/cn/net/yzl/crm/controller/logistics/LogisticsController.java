@@ -70,6 +70,33 @@ public class LogisticsController {
     private StoreFeginService storeFeginService;
 
 
+    @PostMapping("/seach/reconciliation")
+    @ApiOperation("对账")
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo){
+        return logisticsFien.settlementInterface(searchVo);
+    }
+
+
+    @PostMapping("/close/account")
+    @ApiOperation("结算")
+    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo){
+        return logisticsFien.closeAccount(searchVo);
+    }
+
+    @PostMapping("/search/settle/detail")
+    @ApiOperation("结算单号查询")
+    public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid String setNum){
+        return logisticsFien.searchSettDertail(setNum);
+    }
+
+    @PostMapping("/search/settle")
+    @ApiOperation("结算查询")
+    public ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody @Valid SettleBillSearchVo searchVo){
+        return  logisticsFien.searchSettBill(searchVo);
+    }
+
+
+
 
 
     @ApiOperation(value = "快递运单查询")

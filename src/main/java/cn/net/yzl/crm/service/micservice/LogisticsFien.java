@@ -5,10 +5,7 @@ import cn.net.yzl.common.entity.ComResponse;
 
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.logistics.model.ExpressCompany;
-import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
-import cn.net.yzl.logistics.model.ExpressTraceResDTO;
-import cn.net.yzl.logistics.model.TransPortExceptionRegistry;
+import cn.net.yzl.logistics.model.*;
 import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.logistics.settleexpresscharge.*;
@@ -30,15 +27,6 @@ import javax.validation.constraints.NotBlank;
 @FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
 public interface LogisticsFien {
 
-
-    @PostMapping("settlement/settle/detail")
-    @ApiOperation("结算明细")
-    public ComResponse<Boolean> settlementDetail(@RequestBody @Valid SettlemDetailVo settlemDetailVo);
-
-    @PostMapping("settlement/express/charge/detail")
-    @ApiOperation("运费结算明细")
-    public   ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody @Valid ExpressChargeSettlementDetail
-                                                                                                    expressChargeSettlementDetail);
 
     @PostMapping("settlement/seach/reconciliation")
     @ApiOperation("对账")
@@ -208,9 +196,4 @@ public interface LogisticsFien {
 	 */
 	@PostMapping("/settlement/logistics/charge/indemnity")
 	ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
-
-
-    @PostMapping("/settlement/export/ExpressChargeExcel")
-    @ApiOperation("已对账未对账导出")
-    ComResponse<List<ResultVo>> exportExpressChargeExcel(SearchVo searchVo);
 }
