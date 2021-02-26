@@ -24,13 +24,14 @@ import javax.validation.constraints.NotBlank;
 /**
  * 顾客服务接口
  */
-@FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
+//@FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
+@FeignClient("yzl-logistics-server")
 public interface LogisticsFien {
 
 
-    @PostMapping("settlement/seach/reconciliation")
+    @PostMapping("/settlement/reconciliation")
     @ApiOperation("对账")
-    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo);
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid UpdateSearchVo updateSearchVo);
 
     @PostMapping("settlement/close/account")
     @ApiOperation("结算")
@@ -205,7 +206,7 @@ public interface LogisticsFien {
     @ApiOperation("结算查询")
     ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo);
 
-    @PostMapping("/express/charge/detail")
+    @PostMapping("settlement/express/charge/detail")
     @ApiOperation("运费结算明细")
     ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody ExpressChargeSettlementDetail
                                                                                                     expressChargeSettlementDetail);
@@ -213,4 +214,9 @@ public interface LogisticsFien {
     @PostMapping("settlement/export/ExpressChargeExcel")
     @ApiOperation("已对账未对账导出")
     ComResponse<List<ResultVo>> exportExpressChargeExcel(SearchVo searchVo);
+
+
+    @PostMapping("settlement/v1/allCreateSettle")
+    @ApiOperation("全选生成结算单接口")
+    ComResponse allCreateSettle(@RequestBody CreateSettleByCondition createSettleByCondition);
 }

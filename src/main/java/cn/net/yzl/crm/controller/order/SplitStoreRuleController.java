@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.SplitStoreRuleClient;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.order.SplitStoreRulePageDTO;
 import cn.net.yzl.crm.service.SplitStoreRuleService;
 import cn.net.yzl.crm.sys.BizException;
@@ -41,11 +42,11 @@ public class SplitStoreRuleController {
      */
     @PostMapping("v1/addRule")
     @ApiOperation(value = "添加分仓规则", notes = "若选择全部，provinceId=0，provinceName=全部")
-    ComResponse<Boolean> addRule(HttpServletRequest request, @Valid @RequestBody List<SplitStoreRuleAddDTO> list) {
+    ComResponse<Boolean> addRule(@Valid @RequestBody List<SplitStoreRuleAddDTO> list) {
         if (list.size() == 0) {
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
-        String userNo = Optional.ofNullable(request.getHeader("userNo")).orElse("");
+        String userNo = Optional.ofNullable(QueryIds.userNo.get()).orElse("");
         return splitStoreRuleClient.addRule(list, userNo);
     }
 
@@ -57,11 +58,10 @@ public class SplitStoreRuleController {
      */
     @PostMapping("v1/updateRuleStatus")
     @ApiOperation(value = "变更分仓规则状态")
-    ComResponse<Boolean> updateRuleStatus(HttpServletRequest request,
-                                          @ApiParam(value = "仓库状态，0停用，1启用") @RequestParam Integer storeStatus,
-                                          @ApiParam(value = "仓库编号") @RequestParam String storeNo) {
-        String userNo = request.getHeader("userNo");
-        return splitStoreRuleClient.updateRuleStatus(userNo, storeNo, storeStatus);
+    ComResponse<Boolean> updateRuleStatus(
+            @ApiParam(value = "仓库状态，0停用，1启用") @RequestParam Integer storeStatus,
+            @ApiParam(value = "仓库编号") @RequestParam String storeNo) {
+        return splitStoreRuleClient.updateRuleStatus(QueryIds.userNo.get(), storeNo, storeStatus);
     }
 
     /**

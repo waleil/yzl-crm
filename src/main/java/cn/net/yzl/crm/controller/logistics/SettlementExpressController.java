@@ -107,7 +107,7 @@ public class SettlementExpressController {
         }
         if (searchVo.getSearchStatus() == 0) {
             EasyExcel.write(httpServletResponse.getOutputStream(), ResultExcelVo.class)
-                    .sheet("对账数据表").doWrite(inventoryProductResultExcelVoList1);
+                    .sheet("未对账数据表").doWrite(inventoryProductResultExcelVoList1);
         }
 
 
@@ -135,8 +135,17 @@ public class SettlementExpressController {
 
     @PostMapping("/seach/reconciliation")
     @ApiOperation("对账")
-    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo){
-        return settlement.settlementInterface(searchVo);
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo ,HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
+        StaffImageBaseInfoDto data = user.getData();
+
+        UpdateSearchVo updateSearchVo = new UpdateSearchVo();
+        updateSearchVo.setExpressList(searchVo);
+        updateSearchVo.setUserName(data.getName());
+        updateSearchVo.setUserNo(userNo);
+
+        return settlement.settlementInterface(updateSearchVo);
     }
 
 
@@ -217,6 +226,12 @@ public class SettlementExpressController {
     @PostMapping("v1/export/over/detail")
     public void exportSettleOverDetailExcel(@RequestBody ExpressChargeSettlementDetail detail, HttpServletResponse response) throws IOException {
         settlementExpressService.exportSettleOverDetailExcel(detail,response);
+    }
+
+    @PostMapping("v1/allCreateSettle")
+    @ApiOperation("全选生成结算单接口")
+    public ComResponse allCreateSettle(@RequestBody CreateSettleByCondition createSettleByCondition){
+        return settlement.allCreateSettle(createSettleByCondition);
     }
 }
 
