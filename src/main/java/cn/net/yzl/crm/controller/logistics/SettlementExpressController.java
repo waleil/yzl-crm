@@ -4,7 +4,13 @@ package cn.net.yzl.crm.controller.logistics;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.AssemblerResultUtil;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
+import cn.net.yzl.crm.service.settlement.SettlementExpressService;
+import cn.net.yzl.logistics.model.ExpressSettleDetailAddVO;
+import cn.net.yzl.logistics.model.vo.ExpressSettlementPageVo;
 import cn.net.yzl.logistics.model.vo.ImportResult;
 import cn.net.yzl.logistics.settleexpresscharge.*;
 import cn.net.yzl.model.vo.InventoryExcelVo;
@@ -12,6 +18,7 @@ import cn.net.yzl.model.vo.InventoryProductExcelVo;
 import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
 import cn.net.yzl.order.model.vo.order.ImportParam;
 import com.alibaba.excel.EasyExcel;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -38,7 +46,8 @@ import java.util.List;
 public class SettlementExpressController {
 
     @Autowired
-    LogisticsFien logisticsFien;
+    private LogisticsFien settlement;
+
     @Autowired
     private SettlementExpressService settlementExpressService;
     @Autowired
@@ -46,9 +55,9 @@ public class SettlementExpressController {
 
 
     /*
-    * 导出
-    *
-    * */
+     * 导出
+     *
+     * */
 
     @ApiOperation(value = "导出对账或者未对账数据",notes = "运费对账订单的导出")
     @PostMapping("v1/exportInventoryExcel")
@@ -76,15 +85,15 @@ public class SettlementExpressController {
 
 
 
-            List<InventoryProductResultExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
-            for (ResultVo listComResponseDatum : listComResponseData) {
-                InventoryProductResultExcelVo inventoryProductResultExcelVo = new InventoryProductResultExcelVo();
-                BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
-                inventoryProductResultExcelVoList.add(inventoryProductResultExcelVo);
-            }
-            //向前端写入文件流流
-            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductResultExcelVo.class)
-                    .sheet("盘点商品库存表").doWrite(inventoryProductResultExcelVoList);
+        List<InventoryProductResultExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
+        for (ResultVo listComResponseDatum : listComResponseData) {
+            InventoryProductResultExcelVo inventoryProductResultExcelVo = new InventoryProductResultExcelVo();
+            BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
+            inventoryProductResultExcelVoList.add(inventoryProductResultExcelVo);
+        }
+        //向前端写入文件流流
+        EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductResultExcelVo.class)
+                .sheet("盘点商品库存表").doWrite(inventoryProductResultExcelVoList);
 
 
 
@@ -93,22 +102,20 @@ public class SettlementExpressController {
 
 
 
-    @PostMapping("/settle/detail")
-    @ApiOperation("结算明细")
-    public ComResponse<Boolean> settlementDetail(@RequestBody @Valid SettlemDetailVo settlemDetailVo){
-        return  settlement.settlementDetail(settlemDetailVo);
-    }
-
     /*
      * 运费结算明细查询
      * */
     @PostMapping("/express/charge/detail")
-    @ApiOperation("运费结算明细查询")
+    @ApiOperation("运费结算明细")
     public   ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody @Valid ExpressChargeSettlementDetail
-                                                                                                    expressChargeSettlementDetail)
-    {
-        return settlement.expressChargeSettlementDetailSearch(expressChargeSettlementDetail);
+                                                                                                    expressChargeSettlementDetail){
+        return  settlement.expressChargeSettlementDetailSearch(expressChargeSettlementDetail);
+
+
+
     }
+
+
 
     @PostMapping("/seach/reconciliation")
     @ApiOperation("对账")
@@ -129,11 +136,7 @@ public class SettlementExpressController {
         return settlement.searchSettDertail(setNum);
     }
 
-    @PostMapping("/search/settle")
-    @ApiOperation("结算查询")
-    public ComResponse<Page<SettleBillSearchResultVo>> searchSettBill(@RequestBody @Valid SettleBillSearchVo searchVo){
-        return  settlement.searchSettBill(searchVo);
-    }
+
 
 
 
@@ -170,13 +173,13 @@ public class SettlementExpressController {
             addVO.setOperator(userNo);
             addVO.setOperatorName(data.getName());
         }
-        return logisticsFien.addSettleDetail(addVO);
+        return settlement.addSettleDetail(addVO);
     }
 
     @PostMapping("/search/settle")
     @ApiOperation("结算查询")
     public ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo){
-        return  logisticsFien.searchSettBill(searchVo);
+        return  settlement.searchSettBill(searchVo);
     }
 
 
@@ -185,6 +188,5 @@ public class SettlementExpressController {
     public void exportSettleExcel(@RequestBody SettleBillSearchVo searchVo,HttpServletResponse response) throws IOException {
         settlementExpressService.exportSettleExcel(searchVo,response);
     }
-
-
 }
+
