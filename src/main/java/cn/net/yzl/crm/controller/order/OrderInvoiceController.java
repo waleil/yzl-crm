@@ -6,6 +6,7 @@ import cn.net.yzl.activity.model.responseModel.MemberCouponResponse;
 import cn.net.yzl.activity.model.responseModel.MemberIntegralRecordsResponse;
 import cn.net.yzl.activity.model.responseModel.MemberRedBagRecordsResponse;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
@@ -13,11 +14,13 @@ import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.DmcActivityStatus;
+import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.dto.order.*;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.ActivityService;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.BeanCopyUtils;
@@ -70,6 +73,8 @@ public class OrderInvoiceController {
     private ActivityClient activityClient;
     @Autowired
     private SettlementFein settlementFein;
+    @Autowired
+    private MemberFien memberFien;
 
     @ApiOperation("查询订单发票申请列表")
     @PostMapping("v1/selectInvoiceApplyOrderList")
@@ -151,7 +156,9 @@ public class OrderInvoiceController {
             MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
-                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
+                //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
+                dto.setMemberName(Optional.ofNullable(settlementDetailDistinctListDTOS.get(0).getMemberName()).orElse(getMemberName(item.getMemberCard())));
+//                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
@@ -226,7 +233,9 @@ public class OrderInvoiceController {
             MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
-                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
+                //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
+                dto.setMemberName(Optional.ofNullable(settlementDetailDistinctListDTOS.get(0).getMemberName()).orElse(getMemberName(item.getMemberCard())));
+//                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
@@ -273,6 +282,25 @@ public class OrderInvoiceController {
         this.export(list, MemberRedBagRecordsExportDTO.class, title, response);
     }
 
+    /**
+     * TODO 获取顾客信息，测试完后就没用了
+     *
+     * @param memberCardNo
+     * @return
+     */
+    public String getMemberName(String memberCardNo) {
+        GeneralResult<Member> member = memberFien.getMember(memberCardNo);
+        if (!member.getCode().equals(200)) {
+            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "顾客服务异常，" + member.getMessage());
+        }
+        Member data = member.getData();
+        if (null == data) {
+            return "";
+        } else {
+            return Optional.ofNullable(data.getMember_name()).orElse("");
+        }
+    }
+
     @ApiOperation(value = "顾客优惠券明细表")
     @PostMapping("v1/getMemberCoupon")
     public ComResponse<Page<MemberCouponDTO>> getMemberCoupon(@RequestBody AccountRequest request) {
@@ -304,7 +332,9 @@ public class OrderInvoiceController {
             }
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
-                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
+                //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
+                dto.setMemberName(Optional.ofNullable(settlementDetailDistinctListDTOS.get(0).getMemberName()).orElse(getMemberName(item.getMemberCard())));
+//                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
@@ -339,7 +369,7 @@ public class OrderInvoiceController {
         for (MemberCouponResponse item : responseData) {
             MemberCouponExportDTO dto = BeanCopyUtils.transfer(item, MemberCouponExportDTO.class);
             if (item.getCouponDiscountRulesDto().size() > 0) {
-                dto.setReduceAmount(BigDecimal.valueOf(item.getCouponDiscountRulesDto().get(0).getReduceAmount()/100));
+                dto.setReduceAmount(BigDecimal.valueOf(item.getCouponDiscountRulesDto().get(0).getReduceAmount() / 100));
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
             dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
@@ -357,7 +387,7 @@ public class OrderInvoiceController {
 
     private void formatParams(AccountWithOutPageRequest request) {
         //若不传起止时间，则默认一年的时间范围
-        if (null == request.getBeginTime() && null == request.getEndTime()){
+        if (null == request.getBeginTime() && null == request.getEndTime()) {
             Calendar c = Calendar.getInstance();
             Date thisDate = new Date();
             c.setTime(thisDate);
@@ -381,7 +411,7 @@ public class OrderInvoiceController {
         //导出
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;fileName=%s%s.xlsx",title, System.currentTimeMillis()));
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;fileName=%s%s.xlsx", title, System.currentTimeMillis()));
         ExcelWriter excelWriter = null;
         try {
             excelWriter = EasyExcel.write(response.getOutputStream(), clazz).registerWriteHandler(this.writeHandler).build();
