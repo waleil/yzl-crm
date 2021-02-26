@@ -205,7 +205,7 @@ public interface LogisticsFien {
     @ApiOperation("结算查询")
     ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo);
 
-    @PostMapping("/express/charge/detail")
+    @PostMapping("settlement/express/charge/detail")
     @ApiOperation("运费结算明细")
     ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody ExpressChargeSettlementDetail
                                                                                                     expressChargeSettlementDetail);
