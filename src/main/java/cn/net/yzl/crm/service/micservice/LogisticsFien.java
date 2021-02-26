@@ -24,8 +24,8 @@ import javax.validation.constraints.NotBlank;
 /**
  * 顾客服务接口
  */
-//@FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
-@FeignClient("yzl-logistics-server")
+@FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
+//@FeignClient("yzl-logistics-server")
 public interface LogisticsFien {
 
 
