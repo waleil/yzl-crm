@@ -28,7 +28,7 @@ import javax.validation.constraints.NotBlank;
 public interface LogisticsFien {
 
 
-    @PostMapping("settlement/seach/reconciliation")
+    @PostMapping("/settlement/reconciliation")
     @ApiOperation("对账")
     public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid UpdateSearchVo updateSearchVo);
 
