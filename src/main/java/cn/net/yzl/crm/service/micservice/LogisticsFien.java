@@ -30,7 +30,7 @@ public interface LogisticsFien {
 
     @PostMapping("settlement/seach/reconciliation")
     @ApiOperation("对账")
-    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo);
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid UpdateSearchVo updateSearchVo);
 
     @PostMapping("settlement/close/account")
     @ApiOperation("结算")
