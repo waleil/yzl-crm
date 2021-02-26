@@ -142,7 +142,14 @@ public class SettlementExpressController {
 
     @PostMapping("/close/account")
     @ApiOperation("生成结算单")
-    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo){
+    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo, HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
+        StaffImageBaseInfoDto data = user.getData();
+        if(data != null){
+            searchVo.setCreateUser(userNo);
+            searchVo.setCreateUserName(data.getName());
+        }
         return settlement.closeAccount(searchVo);
     }
 
