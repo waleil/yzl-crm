@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.workorder.WorkbenchClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.workorder.model.vo.VisitSeatMonitoringVo;
@@ -60,15 +61,15 @@ public class WorkbenchController {
 
     @ApiOperation(value = "工作台-回访经理-坐席监控", notes = "工作台-回访经理-坐席监控")
     @GetMapping(value = "getVisitSeatMonitoring")
-    public ComResponse<List<VisitSeatMonitoringVo>> getVisitSeatMonitoring(){
+    public ComResponse<Page<VisitSeatMonitoringVo>> getVisitSeatMonitoring(){
         return workbenchClient.getVisitSeatMonitoring(QueryIds.userNo.get());
     }
 
     @RequestMapping(value = "getWorkbenchHotlineManagerMonitoring",method = RequestMethod.GET)
     @ApiOperation(value = "工作台-热线经理-坐席监控", notes = "工作台-热线经理-坐席监控")
-    public ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring( @RequestParam("pageNo") Integer pageNo,
+    public ComResponse<Page<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring( @RequestParam("pageNo") Integer pageNo,
                                                                                                         @RequestParam("pageSize") Integer pageSize){
-        ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> workbenchHotlineManagerMonitoringVOS = workbenchClient.getWorkbenchHotlineManagerMonitoring(QueryIds.userNo.get(),pageNo,pageSize);
+        ComResponse<Page<WorkbenchHotlineManagerMonitoringVO>> workbenchHotlineManagerMonitoringVOS = workbenchClient.getWorkbenchHotlineManagerMonitoring(QueryIds.userNo.get(),pageNo,pageSize);
         return workbenchHotlineManagerMonitoringVOS;
     }
 
