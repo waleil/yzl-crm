@@ -30,7 +30,7 @@ public interface WorkbenchClient {
     ComResponse<WorkbenchVisitManagerVo> getWorkbenchVisitManager(@RequestParam("staffNo") String staffNo);
 
     @RequestMapping(value = "workbench/getVisitSeatMonitoring",method = RequestMethod.GET)
-    ComResponse<Page<VisitSeatMonitoringVo>> getVisitSeatMonitoring(@RequestParam("staffNo") String staffNo);
+    ComResponse<Page<VisitSeatMonitoringVo>> getVisitSeatMonitoring(@RequestParam("staffNo") String staffNo,@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize);
 
     @RequestMapping(value = "workbench/getWorkbenchHotlineManagerMonitoring",method = RequestMethod.GET)
     ComResponse<Page<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(@RequestParam("staffNo") String staffNo, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize);
