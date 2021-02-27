@@ -31,8 +31,8 @@ public class ProductPurchaseWarnController {
 
     @GetMapping(value = "v1/selectProductPurchaseWarnSet")
     @ApiOperation("查询预警通知设置")
-    public ComResponse<ProductPurchaseWarnSetDTO> selectProductPurchaseWarnSet() {
-        return feignService.selectProductPurchaseWarnSet();
+    public ComResponse<ProductPurchaseWarnSetDTO> selectProductPurchaseWarnSet(@RequestParam("storeNo") String storeNo) {
+        return feignService.selectProductPurchaseWarnSet(storeNo);
     }
 
     @PostMapping(value = "v1/updateProductPurchaseWarnSet")

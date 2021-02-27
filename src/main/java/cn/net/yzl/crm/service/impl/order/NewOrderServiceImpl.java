@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -93,11 +94,10 @@ public class NewOrderServiceImpl implements INewOrderService {
 	public ComResponse<Boolean> newOrder(NewOrderDTO dto) {
 		ComResponse orderRes = null;
 		AtomicInteger totalCount = null;// 总人数
-//		AtomicInteger successCnt = new AtomicInteger();// 成功人数
-//		AtomicInteger failCnt = new AtomicInteger();// 失败人数
+
 		try {
-			local.set(new ArrayList<>());
-			// 查询坐席时间
+
+			// 查询坐席
 			ComResponse<StaffImageBaseInfoDto> response = ehrStaffClient.getDetailsByNo(dto.getUserNo());
 			if (response.getCode().compareTo(Integer.valueOf(200)) != 0) {
 				throw new BizException(response.getCode(), response.getMessage());
@@ -280,7 +280,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			} else {
 				List<GroupRefMember> data = listComResponse.getData();
 				// 分批次查询群组中的顾客
-				int offset = 0;
+				int offset = orderTemp.getOprCount();
 				while (offset < data.size()) {
 
 					int toIndex = offset + MAX_SIZE > data.size() ? data.size() : offset + MAX_SIZE;
@@ -427,13 +427,14 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setInvoiceFlag(0);
 		orderM.setPayType(CommonConstant.PAY_TYPE_0);// 支付方式 货到付款
 		orderM.setPayMode(CommonConstant.PAY_MODE_K);// 快递代收
-		orderM.setPayStatus(null);// 未收款
+		orderM.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
 		orderM.setDistrubutionMode(CommonConstant.DISTRUBUTION_MODE_KD);// 配送方式 快递
+        if(StringUtils.isNullOrEmpty(orderTemp.getExpressCode())){
+			orderM.setExpressCompanyFlag(1);
+			orderM.setExpressCompanyCode(orderTemp.getExpressCode());
+			orderM.setExpressCompanyName(orderTemp.getExpressName());
+		}
 
-		orderM.setExpressCompanyFlag(0);
-		orderM.setExpressCompanyCode(null);
-		orderM.setExpressCompanyName(null);
-		orderM.setExpressNumber(null);
 		orderM.setRelationOrder(orderTemp.getRelationOrder());
 		// todo 地址唯一标识
 		orderM.setReveiverAddressNo(addressMsgDTO.getId());
@@ -477,6 +478,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setUpdateTime(new Date());
 		orderM.setOrderChanal(CommonConstant.ORDER_CHANAL_2);
 		orderM.setIsHistory(CommonConstant.IS_HISTORY_0);
+		orderM.setRemark("新建订单，关联批次号：" + orderTemp.getOrderTempCode());
 
 		return orderM;
 	}

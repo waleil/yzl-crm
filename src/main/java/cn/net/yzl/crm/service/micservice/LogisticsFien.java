@@ -39,7 +39,7 @@ public interface LogisticsFien {
 
     @PostMapping("settlement/search/settle/detail")
     @ApiOperation("结算单号查询")
-    public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid String setNum);
+    public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid SetNum setNum);
 
 //    @PostMapping("settlement/search/settle")
 //    @ApiOperation("结算查询")

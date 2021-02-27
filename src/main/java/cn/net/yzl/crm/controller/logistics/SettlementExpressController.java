@@ -1,13 +1,9 @@
 package cn.net.yzl.crm.controller.logistics;
 
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.extra.cglib.CglibUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.common.util.AssemblerResultUtil;
-import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -18,31 +14,29 @@ import cn.net.yzl.logistics.model.vo.ImportResult;
 import cn.net.yzl.logistics.settleexpresscharge.*;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultExcelVo;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultRecionExcelVo;
-import cn.net.yzl.logistics.settleexpresscharge.excel.SettlementDetailExcel;
-import cn.net.yzl.model.vo.InventoryExcelVo;
-import cn.net.yzl.model.vo.InventoryProductExcelVo;
-import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
 import cn.net.yzl.order.model.vo.order.ImportParam;
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,7 +47,7 @@ import java.util.List;
 @RequestMapping("settlement")
 @Api(tags = "结算API")
 public class SettlementExpressController {
-
+    private Resource templateResource = new ClassPathResource("excel/comparisonmgt/template.xlsx");
     @Autowired
     private LogisticsFien settlement;
 
@@ -62,6 +56,19 @@ public class SettlementExpressController {
     @Autowired
     private EhrStaffClient ehrStaffClient;
 
+
+
+
+    @GetMapping("/excel/download")
+    @ApiOperation(value = "下载快递对账单模板", notes = "下载快递对账单模板")
+    public ResponseEntity<byte[]> download() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s.xlsx",
+                URLEncoder.encode("快递对账单导入模板", StandardCharsets.UTF_8.name())));
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers)
+                .body(StreamUtils.copyToByteArray(this.templateResource.getInputStream()));
+    }
 
     /*
      * 导出
@@ -171,7 +178,7 @@ public class SettlementExpressController {
 
     @PostMapping("/search/settle/detail")
     @ApiOperation("结算单号查询")
-    public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid String setNum){
+    public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid SetNum setNum){
         return settlement.searchSettDertail(setNum);
     }
 
