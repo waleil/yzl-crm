@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.hutool.core.lang.Tuple;
 import cn.net.yzl.activity.model.dto.CalculateProductDto;
-import cn.net.yzl.activity.model.dto.MemberCouponDto;
 import cn.net.yzl.activity.model.dto.MemberCouponSaveDto;
 import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
 import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
