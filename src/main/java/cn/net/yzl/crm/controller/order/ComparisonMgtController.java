@@ -202,7 +202,7 @@ public class ComparisonMgtController {
 		if (!StringUtils.hasText(param.getUserNo())) {
 			param.setUserNo(QueryIds.userNo.get());
 		}
-		if (!StringUtils.hasText(param.getUserNo())) {
+		if (StringUtils.hasText(param.getUserNo())) {
 			// 按员工号查询员工信息
 			ComResponse<StaffImageBaseInfoDto> response = this.ehrStaffClient.getDetailsByNo(param.getUserNo());
 			if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
