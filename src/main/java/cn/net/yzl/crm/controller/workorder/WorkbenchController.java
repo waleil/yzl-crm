@@ -79,18 +79,19 @@ public class WorkbenchController {
 
     @ApiOperation(value = "工作台-回访经理-坐席监控", notes = "工作台-回访经理-坐席监控")
     @GetMapping(value = "getVisitSeatMonitoring")
-    public ComResponse<Page<VisitSeatMonitoringVo>> getVisitSeatMonitoring(){
+    public ComResponse<Page<VisitSeatMonitoringVo>> getVisitSeatMonitoring(@ApiParam(value = "页数",required = true) @RequestParam("pageNo") Integer pageNo,
+                                                                           @ApiParam(value = "条数",required = true) @RequestParam("pageSize") Integer pageSize){
         String userNo = QueryIds.userNo.get();
         if(StringUtils.isEmpty(userNo)){
             return ComResponse.fail(ComResponse.ERROR_STATUS, ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getMessage());
         }
-        return workbenchClient.getVisitSeatMonitoring(userNo);
+        return workbenchClient.getVisitSeatMonitoring(userNo,pageNo,pageSize);
     }
 
     @RequestMapping(value = "getWorkbenchHotlineManagerMonitoring",method = RequestMethod.GET)
     @ApiOperation(value = "工作台-热线经理-坐席监控", notes = "工作台-热线经理-坐席监控")
-    public ComResponse<Page<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring( @RequestParam("pageNo") Integer pageNo,
-                                                                                                        @RequestParam("pageSize") Integer pageSize){
+    public ComResponse<Page<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(@ApiParam(value = "页数",required = true) @RequestParam("pageNo") Integer pageNo,
+                                                                                                       @ApiParam(value = "条数",required = true) @RequestParam("pageSize") Integer pageSize){
         String userNo = QueryIds.userNo.get();
         if(StringUtils.isEmpty(userNo)){
             return ComResponse.fail(ComResponse.ERROR_STATUS, ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getMessage());
