@@ -55,6 +55,7 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.workorder.model.db.WorkOrderDisposeFlowSubBean;
 import cn.net.yzl.workorder.model.vo.WorkOrderFlowVO;
 import cn.net.yzl.workorder.model.vo.WorkOrderVo;
+import cn.net.yzl.workorder.utils.MonggoDateHelper;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -721,6 +722,12 @@ private ProductClient productClient;
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
         ComResponse<Page<StaffCallRecord>> response = workOrderClient.getCallRecord(callInfoDTO);
+        Page<StaffCallRecord> data = response.getData();
+        if(!StringUtils.isEmpty(data) && !StringUtils.isEmpty(data.getItems()) && data.getItems().size() > 0){
+            data.getItems().stream().forEach(staffCallRecord -> {
+                staffCallRecord.setConversionDuration(MonggoDateHelper.getDate(staffCallRecord.getDuration()));
+            });
+        }
         return response;
     }
 
