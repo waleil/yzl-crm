@@ -178,7 +178,6 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
             copy.setSignTime(DateUtil.format(item.getSignTime(), "yyyy-MM-dd"));
             copy.setOctime(DateUtil.format(item.getOctime(), "yyyy-MM-dd"));
             copy.setIndex(i);
-            copy.setMediaTypeDesc("00000");
             i++;
             excels.add(copy);
         }
