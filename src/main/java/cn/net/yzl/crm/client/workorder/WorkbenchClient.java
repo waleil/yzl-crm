@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.client.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.workorder.model.vo.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,10 +30,10 @@ public interface WorkbenchClient {
     ComResponse<WorkbenchVisitManagerVo> getWorkbenchVisitManager(@RequestParam("staffNo") String staffNo);
 
     @RequestMapping(value = "workbench/getVisitSeatMonitoring",method = RequestMethod.GET)
-    ComResponse<List<VisitSeatMonitoringVo>> getVisitSeatMonitoring(@RequestParam("staffNo") String staffNo);
+    ComResponse<Page<VisitSeatMonitoringVo>> getVisitSeatMonitoring(@RequestParam("staffNo") String staffNo,@RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize);
 
     @RequestMapping(value = "workbench/getWorkbenchHotlineManagerMonitoring",method = RequestMethod.GET)
-    ComResponse<List<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(@RequestParam("staffNo") String staffNo);
+    ComResponse<Page<WorkbenchHotlineManagerMonitoringVO>> getWorkbenchHotlineManagerMonitoring(@RequestParam("staffNo") String staffNo, @RequestParam("pageNo") Integer pageNo, @RequestParam("pageSize") Integer pageSize);
 
     @RequestMapping(value = "workbench/insertWorkbenchHotlineAndCallbackCount",method = RequestMethod.GET)
     void insertWorkbenchHotlineAndCallbackCount(@RequestParam("staffNo") String staffNo, @RequestParam("workOrderType") Integer workOrderType);

@@ -25,12 +25,13 @@ import javax.validation.constraints.NotBlank;
  * 顾客服务接口
  */
 @FeignClient(name = "yzl-logistics-server",url = "${api.gateway.url}/logisticsServer")
+//@FeignClient("yzl-logistics-server")
 public interface LogisticsFien {
 
 
-    @PostMapping("settlement/seach/reconciliation")
+    @PostMapping("/settlement/reconciliation")
     @ApiOperation("对账")
-    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<Express> searchVo);
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid UpdateSearchVo updateSearchVo);
 
     @PostMapping("settlement/close/account")
     @ApiOperation("结算")
@@ -38,7 +39,7 @@ public interface LogisticsFien {
 
     @PostMapping("settlement/search/settle/detail")
     @ApiOperation("结算单号查询")
-    public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid String setNum);
+    public ComResponse<List<SettDetailVo>> searchSettDertail(@RequestBody @Valid SetNum setNum);
 
 //    @PostMapping("settlement/search/settle")
 //    @ApiOperation("结算查询")
@@ -186,16 +187,16 @@ public interface LogisticsFien {
     @GetMapping("exp/company/v1/like/search/expresscompany")
     ComResponse<List<ObjectCommon>> getCompanyByName(@RequestParam("companyName") String companyName);
 
-	/**
-	 * 物流赔付接口
-	 * 
-	 * @param indemnity {@link ExpressIndemnity}
-	 * @return
-	 * @author zhangweiwei
-	 * @date 2021年2月22日,下午3:11:56
-	 */
-	@PostMapping("/settlement/logistics/charge/indemnity")
-	ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
+    /**
+     * 物流赔付接口
+     *
+     * @param indemnity {@link ExpressIndemnity}
+     * @return
+     * @author zhangweiwei
+     * @date 2021年2月22日,下午3:11:56
+     */
+    @PostMapping("/settlement/logistics/charge/indemnity")
+    ComResponse<Boolean> settlementLogisticsChargeIndemnity(@RequestBody ExpressIndemnity indemnity);
 
     @PostMapping("settlement/add/settle/detail")
     @ApiOperation("添加结算")
@@ -204,4 +205,28 @@ public interface LogisticsFien {
     @PostMapping("settlement/search/settle")
     @ApiOperation("结算查询")
     ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo);
+
+    @PostMapping("settlement/search/settle/list")
+    @ApiOperation("结算查询不分页")
+    ComResponse<List<ExpressSettlementPageVo>> searchSettBillList(@RequestBody SettleBillSearchVo searchVo);
+
+    @PostMapping("settlement/express/charge/detail")
+    @ApiOperation("运费结算明细")
+    ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody ExpressChargeSettlementDetail
+                                                                                                    expressChargeSettlementDetail);
+
+    @PostMapping("settlement/express/charge/detail/list")
+    @ApiOperation("运费结算明细不分页")
+    ComResponse<List<SettlementDetailResult>>  expressChargeSettlementDetailList(@RequestBody ExpressChargeSettlementDetail
+                                                                                           expressChargeSettlementDetail);
+
+
+    @PostMapping("settlement/export/ExpressChargeExcel")
+    @ApiOperation("已对账未对账导出")
+    ComResponse<List<ResultVo>> exportExpressChargeExcel(SearchVo searchVo);
+
+
+    @PostMapping("settlement/v1/allCreateSettle")
+    @ApiOperation("全选生成结算单接口")
+    ComResponse allCreateSettle(@RequestBody CreateSettleByCondition createSettleByCondition);
 }

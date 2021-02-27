@@ -2,10 +2,7 @@ package cn.net.yzl.crm.service.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.order.model.vo.order.GoodsInTransitReqDTO;
-import cn.net.yzl.order.model.vo.order.ProductDetailSettlementedReqDTO;
-import cn.net.yzl.order.model.vo.order.ProductDetailSettlementedResDTO;
-import cn.net.yzl.order.model.vo.order.SettlementListReqDTO;
+import cn.net.yzl.order.model.vo.order.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,4 +26,11 @@ public interface ExportOrderService {
      * @param response
      */
     void exportSelectgoodsInTransitlist(GoodsInTransitReqDTO dto, HttpServletResponse response);
+
+    /**
+     * 导出商品销售明细
+     * @param dto
+     * @param response
+     */
+    void sexportselectOrderSaleDetail(OrderSellDetailReqDTO dto, HttpServletResponse response);
 }

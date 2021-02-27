@@ -1,13 +1,10 @@
 package cn.net.yzl.crm.controller.order;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import cn.net.yzl.crm.config.QueryIds;
-import cn.net.yzl.order.model.vo.order.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +19,20 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderSaleClient;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.order.enums.RedisKeys;
+import cn.net.yzl.order.model.vo.order.CreateOrderSaleForSearchDTO;
+import cn.net.yzl.order.model.vo.order.OrderSaleAddDTO;
+import cn.net.yzl.order.model.vo.order.OrderSaleCheckListVO;
+import cn.net.yzl.order.model.vo.order.OrderSaleDetailWatchDTO;
+import cn.net.yzl.order.model.vo.order.OrderSaleListVO;
+import cn.net.yzl.order.model.vo.order.OrderSaleUpdateExpress;
+import cn.net.yzl.order.model.vo.order.RefundMoneyApplyDetailDTO;
+import cn.net.yzl.order.model.vo.order.SaleOrderReviewDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -40,15 +46,13 @@ public class OrderSaleController {
 
 	@Autowired
 	private EhrStaffClient ehrStaffClient;
-//	@Autowired
-//	private MemberFien memberFien;
+
 	@Autowired
 	private RedisUtil redisUtil;
 
 	@ApiOperation(value = "新建售后单 ")
 	@PostMapping("/v1/saveOrderSale")
-	public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSaleAddDTO dto,
-			HttpServletRequest request) {
+	public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSaleAddDTO dto) {
 		ComResponse<StaffImageBaseInfoDto> staffRes = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 		if (!staffRes.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), staffRes.getMessage());
@@ -87,10 +91,9 @@ public class OrderSaleController {
 
 	@ApiOperation(value = "变更售后单物流信息 ")
 	@PostMapping("/v1/updateExpress")
-	public ComResponse<Boolean> updateExpress(@RequestBody @Valid OrderSaleUpdateExpress express,
-			HttpServletRequest request) {
+	public ComResponse<Boolean> updateExpress(@RequestBody @Valid OrderSaleUpdateExpress express) {
 
-		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 		if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
 		}
@@ -103,9 +106,8 @@ public class OrderSaleController {
 
 	@ApiOperation(value = "审核售后单")
 	@PutMapping("/v1/reviewSaleOrder")
-	public ComResponse<Boolean> reviewSaleOrder(@RequestBody @Valid SaleOrderReviewDTO dto,
-			HttpServletRequest request) {
-		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+	public ComResponse<Boolean> reviewSaleOrder(@RequestBody @Valid SaleOrderReviewDTO dto) {
+		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 		if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
 		}

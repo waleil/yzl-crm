@@ -70,5 +70,12 @@ public class ExportOrderController {
 
     }
 
+    @ApiOperation(value = "查询订单销售明细")
+    @PostMapping("v1/exportselectOrderSaleDetail")
+    public void sexportselectOrderSaleDetail(@RequestBody OrderSellDetailReqDTO dto,HttpServletResponse response) {
+
+      service.sexportselectOrderSaleDetail(dto,response);
+    }
+
 
 }

@@ -182,7 +182,10 @@ public class MemberController {
         workOrderBeanVO.setUpdateId(staffNo);
         //设置工单信息
         vo.setWorkOrderBeanVO(workOrderBeanVO);
-        memberFien.saveMemberReferral(vo);
+        ComResponse<Boolean> response = memberFien.saveMemberReferral(vo);
+        if (response.getCode() != 200) {
+            return ComResponse.fail(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(),response.getMessage());
+        }
         return ComResponse.success(true);
     }
 

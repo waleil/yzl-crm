@@ -33,6 +33,8 @@ import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.order.model.excel.ExcelResult;
 import cn.net.yzl.order.model.vo.order.CompareOrderIn;
 import cn.net.yzl.order.model.vo.order.CompareOrderParam;
@@ -58,6 +60,8 @@ public class ComparisonMgtController {
 	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 	@Autowired
 	private ComparisonMgtFeignClient comparisonMgtFeignClient;
+	@Autowired
+	private EhrStaffClient ehrStaffClient;
 
 	@PostMapping("/v1/querytype1pagelist")
 	@ApiOperation(value = "查询待对账订单列表--支持分页", notes = "查询待对账订单列表--支持分页")
@@ -194,6 +198,19 @@ public class ComparisonMgtController {
 		}
 		if (!StringUtils.hasText(param.getFileUrl())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "上传文件URL不能为空");
+		}
+		if (!StringUtils.hasText(param.getUserNo())) {
+			param.setUserNo(QueryIds.userNo.get());
+		}
+		if (StringUtils.hasText(param.getUserNo())) {
+			// 按员工号查询员工信息
+			ComResponse<StaffImageBaseInfoDto> response = this.ehrStaffClient.getDetailsByNo(param.getUserNo());
+			if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
+				StaffImageBaseInfoDto dto = response.getData();
+				if (dto != null) {
+					param.setUserName(dto.getName());
+				}
+			}
 		}
 		return this.comparisonMgtFeignClient.importFromExcel(param);
 	}

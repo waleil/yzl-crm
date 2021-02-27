@@ -410,10 +410,14 @@ public class WorkOrderController {
                 ComResponse<StaffImageBaseInfoDto> detailsByNoOne = ehrStaffClient.getDetailsByNo(names.get(i).getStaffNo());
                 if(!StringUtils.isEmpty(detailsByNoOne) && !StringUtils.isEmpty(detailsByNoOne.getData())){
                     StaffImageBaseInfoDto dataOne = detailsByNoOne.getData();
+                    Integer departId = dataOne.getDepartId();
+                    if(StringUtils.isEmpty(departId)){
+                        return ComResponse.fail(ComResponse.ERROR_STATUS,"部门信息不存在");
+                    }
                     names.get(i).setStaffNo(dataOne.getStaffNo());//被分配人编码
                     names.get(i).setStaffName(dataOne.getName());//被分配人名称
                     names.get(i).setStaffLevel(StringUtils.isEmpty(dataOne.getPostLevelName())?"":String.valueOf(dataOne.getPostLevelName()));//被分配人级别
-                    names.get(i).setDeptId(dataOne.getDepartId());//被分配人部门id
+                    names.get(i).setDeptId(departId);//被分配人部门id
                     names.get(i).setDeptName(dataOne.getDepartName());//被分配人部门名称
                     names.get(i).setAcceptStatus(1);//不管是人工还是自动分配都是未接收
                 } else {
@@ -734,63 +738,6 @@ public class WorkOrderController {
         }
         submitWorkOrderDTO.setUpdateId(userNo);
         submitWorkOrderDTO.setUpdateName(detailsByNo.getData().getName());
-        //解析长字符
-        String informationGoods = submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getInformationGoods();
-        if(!StringUtils.isEmpty(informationGoods)) {
-            JSONObject jsonObject = new JSONObject(informationGoods);
-            JSONArray hotline400= new JSONArray(jsonObject.get(WorkOrderTypeEnums.HOTLINE_400.getName()));
-            List<ProductConsultationInsertVO> productConsultationInsertVOS = new ArrayList<ProductConsultationInsertVO>();
-            hotline400.stream().forEach(o -> {
-                ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
-                productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
-                JSONObject object = new JSONObject(o);
-                Object name = object.get("name");
-                Object code = object.get("code");
-                if(!StringUtils.isEmpty(name)) productConsultationInsertVO.setProductName((String) name);
-                if(!StringUtils.isEmpty(code)) productConsultationInsertVO.setProductCode((String) code);
-                productConsultationInsertVO.setConsultationTime(new Date());
-                productConsultationInsertVOS.add(productConsultationInsertVO);
-            });
-            JSONArray ladderSales= new JSONArray(jsonObject.get(WorkOrderTypeEnums.LADDER_SALES.getName()));
-            ladderSales.stream().forEach(o -> {
-                ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
-                productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
-                JSONObject object = new JSONObject(o);
-                Object name = object.get("name");
-                Object code = object.get("code");
-                if(!StringUtils.isEmpty(name)) productConsultationInsertVO.setProductName((String) name);
-                if(!StringUtils.isEmpty(code)) productConsultationInsertVO.setProductCode((String) code);
-                productConsultationInsertVO.setConsultationTime(new Date());
-                productConsultationInsertVOS.add(productConsultationInsertVO);
-            });
-            JSONArray regularReview= new JSONArray(jsonObject.get(WorkOrderTypeEnums.REGULAR_REVIEW.getName()));
-            regularReview.stream().forEach(o -> {
-                ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
-                productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
-                JSONObject object = new JSONObject(o);
-                Object name = object.get("name");
-                Object code = object.get("code");
-                if(!StringUtils.isEmpty(name)) productConsultationInsertVO.setProductName((String) name);
-                if(!StringUtils.isEmpty(code)) productConsultationInsertVO.setProductCode((String) code);
-                productConsultationInsertVO.setConsultationTime(new Date());
-                productConsultationInsertVOS.add(productConsultationInsertVO);
-            });
-            JSONArray eventMarketing= new JSONArray(jsonObject.get(WorkOrderTypeEnums.EVENT_MARKETING.getName()));
-            eventMarketing.stream().forEach(o -> {
-                ProductConsultationInsertVO productConsultationInsertVO = new ProductConsultationInsertVO();
-                productConsultationInsertVO.setMemberCard(submitWorkOrderDTO.getWorkOrderDisposeFlowSubBean().getMemberCard());
-                JSONObject object = new JSONObject(o);
-                Object name = object.get("name");
-                Object code = object.get("code");
-                if(!StringUtils.isEmpty(name)) productConsultationInsertVO.setProductName((String) name);
-                if(!StringUtils.isEmpty(code)) productConsultationInsertVO.setProductCode((String) code);
-                productConsultationInsertVO.setConsultationTime(new Date());
-                productConsultationInsertVOS.add(productConsultationInsertVO);
-            });
-            if(!CollectionUtils.isEmpty(productConsultationInsertVOS)){
-                memberFien.addProductConsultation(productConsultationInsertVOS);
-            }
-        }
         return workOrderClient.submitWorkOrder(submitWorkOrderDTO);
     }
 

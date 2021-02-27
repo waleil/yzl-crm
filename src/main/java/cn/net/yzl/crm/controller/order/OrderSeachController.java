@@ -78,4 +78,11 @@ public class OrderSeachController {
 
         return  orderSearchService.selectLogisticInfo(orderNo,companyCode,expressNo);
     }
+
+    @ApiOperation(value = "查询订单销售明细")
+    @PostMapping("v1/selectOrderSaleDetail")
+    public ComResponse<Page<OrderSellDetailResDTO>> selectOrderSaleDetail(@RequestBody OrderSellDetailReqDTO dto) {
+
+        return orderSearchClient.selectOrderSaleDetail(dto);
+    }
 }
