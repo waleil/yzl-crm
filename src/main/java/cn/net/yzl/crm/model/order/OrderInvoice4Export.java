@@ -27,23 +27,29 @@ public class OrderInvoice4Export  implements Serializable {
     @ExcelProperty(value = {"开票方式"} ,index = 2)
     private String taxMode;
 
-    @ExcelProperty(value = {"开票状态"} ,index = 3)
+    @ExcelProperty(value = {"开票类型"} ,index = 3)
+    private String taxType;;
+
+    @ExcelProperty(value = {"开票金额"} ,index = 4)
+    private String taxMoney;
+
+    @ExcelProperty(value = {"开票状态"} ,index = 5)
     private String statsStr;
 
-    @ExcelProperty(value = {"付款方式"},index = 4)
+    @ExcelProperty(value = {"付款方式"},index = 6)
     private String payType;
 
-    @ExcelProperty(value = {"发货状态"},index = 5)
+    @ExcelProperty(value = {"发货状态"},index = 7)
     private String logisticsStatus;
 
-    @ExcelProperty(value = {"客户地址"},index = 6)
+    @ExcelProperty(value = {"客户地址"},index = 8)
     private String reveiverAddress;
 
-    @ExcelProperty(value = {"创建时间"},index = 7)
+    @ExcelProperty(value = {"创建时间"},index = 9)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createTime;
 
-    @ExcelProperty(value = {"开票时间"},index = 8)
+    @ExcelProperty(value = {"开票时间"},index = 10)
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date invoiceTime;
 
