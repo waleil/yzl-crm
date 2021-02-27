@@ -111,11 +111,9 @@ public class OrderRestController {
 	@ApiOperation(value = "热线工单-购物车-计算订单金额", notes = "热线工单-购物车-计算订单金额")
 	public ComResponse<CalcOrderOut> calcOrder(@RequestBody CalcOrderIn orderin) {
 		if (CollectionUtils.isEmpty(orderin.getCalculateProductDtos())) {
-			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin.getCalculateProductDtos());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
 		}
 		if (!StringUtils.hasText(orderin.getMemberCard())) {
-			log.error("热线工单-购物车-提交订单>>顾客卡号不能为空>>{}", orderin.getMemberCard());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客卡号不能为空。");
 		}
 		// 按顾客号查询顾客信息
@@ -163,7 +161,7 @@ public class OrderRestController {
 			request.setAdvertBusNo(orderin.getAdvertBusNo());
 			request.setMemberCard(orderin.getMemberCard());
 			request.setMemberLevelGrade(member.getMGradeId());
-			log.info("调用DMC金额计算接口：{}", this.toJsonString(request));
+			log.info("调用计算金额接口：{}", this.toJsonString(request));
 			return this.activityClient.calculate(request).getData();
 		}).collect(Collectors.toList());
 		// 商品数量*商品价格，然后求和，计算出订单总额
@@ -214,19 +212,18 @@ public class OrderRestController {
 				.ifPresent(c -> orderm.setAmountStored(c.multiply(bd100).intValue()));
 		// 如果订单里没有商品
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
-			log.error("热线工单-购物车-提交订单>>订单明细集合里没有任何元素>>{}", orderin);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
 		}
 		// 按顾客号查询顾客信息
 		GeneralResult<Member> mresult = this.memberFien.getMember(orderin.getMemberCardNo());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresult.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCardNo(), mresult);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, mresult.getMessage());
+			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用查询顾客信息接口异常：%s", mresult.getMessage()));
 		}
 		Member member = mresult.getData();
 		if (member == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息>>{}", orderin.getMemberCardNo(), member);
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
 		}
 		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
@@ -238,42 +235,44 @@ public class OrderRestController {
 				.getReveiverAddress(orderin.getMemberCardNo());
 		// 如果调用服务异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(raresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCardNo(), raresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, raresponse.getMessage());
+			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用查询顾客收货地址接口异常：%s", raresponse.getMessage()));
 		}
 		List<ReveiverAddressDto> reveiverAddresses = raresponse.getData();
 		if (CollectionUtils.isEmpty(reveiverAddresses)) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址>>{}", orderin.getMemberCardNo(), raresponse);
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
 		}
 		ReveiverAddressDto reveiverAddress = reveiverAddresses.stream()
 				.filter(p -> p.getId().equals(orderin.getReveiverAddressNo())).findFirst().orElse(null);
 		if (reveiverAddress == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址>>{}", orderin.getMemberCardNo(), reveiverAddress);
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
 		}
 		// 按顾客号查询顾客账号
 		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
 		// 如果调用服务异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCardNo(), maresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, maresponse.getMessage());
+			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用查询顾客账号接口异常：%s", maresponse.getMessage()));
 		}
 		MemberAmountDto account = maresponse.getData();
 		if (account == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号>>{}", orderin.getMemberCardNo(), account);
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 		}
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getStaffCode());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", orderm.getStaffCode(), sresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, sresponse.getMessage());
+			log.error("热线工单-购物车-提交订单>>{}", orderm.getStaffCode());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用员工编号获取员工基本信息接口异常：%s", sresponse.getMessage()));
 		}
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		if (staffInfo == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]信息>>{}", orderm.getStaffCode(), sresponse);
+			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]信息", orderm.getStaffCode());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
 		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, RedisKeys.CREATE_ORDER_NO, 6));// 使用redis生成订单号
@@ -285,13 +284,13 @@ public class OrderRestController {
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", staffInfo.getDepartId(), dresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, dresponse.getMessage());
+			log.error("热线工单-购物车-提交订单>>{}", staffInfo.getDepartId());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用id获取部门信息接口异常：%s", dresponse.getMessage()));
 		}
 		DepartDto depart = dresponse.getData();
 		if (depart == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
-					dresponse);
+			log.error("热线工单-购物车-提交订单>>找不到该坐席[{}]所在部门[{}]的财务归属", orderm.getStaffCode(), staffInfo.getDepartId());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
 		}
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
@@ -309,18 +308,16 @@ public class OrderRestController {
 		}
 		// 组装校验订单金额参数
 		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
-		log.info("调用DMC校验订单金额接口：{}", this.toJsonString(checkOrderAmountRequest));
+		log.info("调用校验订单金额接口：{}", this.toJsonString(checkOrderAmountRequest));
 		// 调用校验订单金额接口
 		ComResponse<List<ProductPriceResponse>> ppresponse = this.activityClient
 				.checkOrderAmount(checkOrderAmountRequest);
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(ppresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", checkOrderAmountRequest, ppresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, ppresponse.getMessage());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用校验订单金额接口异常：%s", ppresponse.getMessage()));
 		}
 		List<ProductPriceResponse> productPriceList = ppresponse.getData();
 		if (CollectionUtils.isEmpty(productPriceList)) {
-			log.error("热线工单-购物车-提交订单>>找不到商品或套餐的优惠价格>>{}", checkOrderAmountRequest);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品或套餐的优惠价格");
 		}
 		// key为商品编码，value为商品优惠价格对象
@@ -351,12 +348,13 @@ public class OrderRestController {
 			ComResponse<List<ProductMainDTO>> presponse = this.productClient.queryByProductCodes(productCodes);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(presponse.getCode())) {
-				log.error("热线工单-购物车-提交订单>>{}>>{}", productCodes, presponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, presponse.getMessage());
+				log.error("热线工单-购物车-提交订单>>{}", productCodes);
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("调用商品编码查询商品列表接口异常：%s", presponse.getMessage()));
 			}
 			List<ProductMainDTO> plist = presponse.getData();
 			if (CollectionUtils.isEmpty(plist)) {
-				log.error("热线工单-购物车-提交订单>>找不到商品[{}]信息>>{}", productCodes, presponse);
+				log.error("热线工单-购物车-提交订单>>找不到商品[{}]信息", productCodes);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
 			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
@@ -371,10 +369,9 @@ public class OrderRestController {
 				ProductMainDTO p = pmap.get(in.getProductCode());
 				// 如果商品已下架
 				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, p.getStatus()) == 0) {
-					log.error("热线工单-购物车-提交订单>>该商品[{}]已下架>>{}", p);
+					log.error("热线工单-购物车-提交订单>>该商品已下架>>{}", p);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
 				}
-//				in.setLimitDownPrice(Long.parseLong(p.getLimitDownPrice()));
 				OrderDetail od = new OrderDetail();
 				// 按主订单号生成订单明细编号
 				od.setOrderDetailCode(String.format("%s%s", orderm.getOrderNo(), seq.incrementAndGet()));
@@ -422,8 +419,6 @@ public class OrderRestController {
 					break;
 				}
 			}
-//			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
-//			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		}
 		// 获取套餐
 		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
@@ -438,12 +433,13 @@ public class OrderRestController {
 			ComResponse<List<ProductMealListDTO>> mresponse = this.mealClient.queryByIds(mealNos);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
-				log.error("热线工单-购物车-提交订单>>{}>>{}", mealNos, mresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, mresponse.getMessage());
+				log.error("热线工单-购物车-提交订单>>{}", mealNos);
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("调用套餐编码查询套餐里商品列表接口异常：%s", mresponse.getMessage()));
 			}
 			List<ProductMealListDTO> mlist = mresponse.getData();
 			if (CollectionUtils.isEmpty(mlist)) {
-				log.error("热线工单-购物车-提交订单>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
+				log.error("热线工单-购物车-提交订单>>找不到套餐[{}]信息", mealNos);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
 			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
@@ -554,10 +550,6 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
-//			orderm.setTotal(orderm.getTotal()
-//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
-//			orderm.setCash(orderm.getCash()
-//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
 		// 商品数量*商品价，然后再求和
 		orderm.setTotalAll(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
@@ -565,14 +557,6 @@ public class OrderRestController {
 		orderm.setTotal(orderm.getCash());
 		orderm.setSpend(orderm.getCash());
 		orderm.setAmountCoupon(orderm.getTotalAll() - orderin.getProductTotal().multiply(bd100).intValue());
-		if (this.hasAmountStored(orderin)) {
-			// 如果订单总金额大于账户剩余金额，单位分
-			if (orderm.getTotal() > account.getTotalMoney()) {
-				log.error("热线工单-购物车-提交订单>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
-						account.getTotalMoney());
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
-			}
-		}
 		// 统计订单明细中的每类商品的总数，key为商品编码，value为购买商品总数
 		Map<String, Integer> productCountMap = new HashMap<>();
 		tuples.stream().forEach(p -> productCountMap.merge(p.get(0), p.get(1), Integer::sum));
@@ -626,8 +610,9 @@ public class OrderRestController {
 		ComResponse<?> productReduce = this.productClient.productReduce(orderProduct);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}", productReduce);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, productReduce.getMessage());
+			log.error("热线工单-购物车-提交订单>>{}", this.toJsonString(orderProduct));
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用扣减库存接口异常：%s", productReduce.getMessage()));
 		}
 		if (this.hasAmountStored(orderin)) {
 			// 组装顾客账户消费参数
@@ -657,16 +642,15 @@ public class OrderRestController {
 		log.info("订单明细信息: {}", this.toJsonString(orderdetailList));
 		// 组装提交订单送积分和优惠券参数
 		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, member, orderm);
-		log.info("调用DMC提交订单送积分和优惠券接口：{}", this.toJsonString(orderSubmitRequest));
+		log.info("调用提交订单送积分和优惠券接口：{}", this.toJsonString(orderSubmitRequest));
 		// 提交订单送积分和优惠券
 		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(orderSubmit.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", orderSubmitRequest, orderSubmit);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, orderSubmit.getMessage());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用提交订单送积分和优惠券接口异常：%s", orderSubmit.getMessage()));
 		}
 		OrderSubmitResponse orderSubmitResponse = orderSubmit.getData();
 		if (orderSubmitResponse == null) {
-			log.error("热线工单-购物车-提交订单>>调用送积分和优惠券接口失败{}>>{}", orderSubmitRequest, orderSubmit);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "赠送积分、优惠券异常");
 		}
 		orderm.setReturnPointsDeduction(orderSubmitResponse.getIntegral());// 本次送的积分
@@ -704,7 +688,7 @@ public class OrderRestController {
 				.submitOrder(new OrderRequest(orderm, orderdetailList, coupondetailList));
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(submitOrder.getCode())) {
-			log.error("热线工单-购物车-提交订单>>创建订单失败[订单号：{}]>>{}", orderm.getOrderNo(), submitOrder);
+			log.error("热线工单-购物车-提交订单>>创建订单失败[订单号：{}]", orderm.getOrderNo());
 			// 恢复库存
 			ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
 			// 如果调用服务接口失败
@@ -1102,25 +1086,23 @@ public class OrderRestController {
 	public ComResponse<String> updateOrder(@RequestBody UpdateOrderIn orderin) {
 		// 判断是否传入订单号
 		if (!StringUtils.hasText(orderin.getOrderNo())) {
-			log.error("订单列表-编辑>>订单号不能为空>>{}", orderin);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单号不能为空。");
 		}
 		// 判断是否传入订单明细
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
-			log.error("订单列表-编辑>>订单明细集合里没有任何元素>>{}", orderin);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
 		}
 		// 按订单编号查询订单信息
 		ComResponse<OrderM> oresponse = this.orderFeignClient.queryOrder(orderin.getOrderNo());
 		// 如果调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(oresponse.getCode())) {
-			log.error("订单列表-编辑>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
+			log.error("订单列表-编辑>>调用查询订单[{}]信息接口失败", orderin.getOrderNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
 		OrderM orderm = oresponse.getData();
 		// 如果不存在
 		if (orderm == null) {
-			log.error("订单列表-编辑>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
+			log.error("订单列表-编辑>>调用查询订单[{}]信息接口失败", orderin.getOrderNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
 		orderm.setUpdateTime(new Date());// 修改时间
@@ -1131,12 +1113,13 @@ public class OrderRestController {
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
-			log.error("订单列表-编辑>>{}>>{}", orderm.getUpdateCode(), sresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, sresponse.getMessage());
+			log.error("订单列表-编辑>>{}", orderm.getUpdateCode());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用员工编号获取员工基本信息接口异常：%s", sresponse.getMessage()));
 		}
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		if (staffInfo == null) {
-			log.error("订单列表-编辑>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
+			log.error("订单列表-编辑>>找不到该坐席[{}]信息", orderm.getUpdateCode());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
 		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, RedisKeys.CREATE_ORDER_NO, 6));// 使用redis重新生成订单号
@@ -1147,13 +1130,13 @@ public class OrderRestController {
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
-			log.error("订单列表-编辑>>{}>>{}", staffInfo.getDepartId(), dresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, dresponse.getMessage());
+			log.error("订单列表-编辑>>{}", staffInfo.getDepartId());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用id获取部门信息接口异常：%s", dresponse.getMessage()));
 		}
 		DepartDto depart = dresponse.getData();
 		if (depart == null) {
-			log.error("订单列表-编辑>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
-					dresponse);
+			log.error("订单列表-编辑>>找不到该坐席[{}]所在部门[{}]的财务归属", orderm.getStaffCode(), staffInfo.getDepartId());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
 		}
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
@@ -1187,12 +1170,13 @@ public class OrderRestController {
 			ComResponse<List<ProductMainDTO>> presponse = this.productClient.queryByProductCodes(productCodes);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(presponse.getCode())) {
-				log.error("订单列表-编辑>>{}>>{}", productCodes, presponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, presponse.getMessage());
+				log.error("订单列表-编辑>>{}", productCodes);
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("调用商品编码查询商品列表接口异常：%s", presponse.getMessage()));
 			}
 			List<ProductMainDTO> plist = presponse.getData();
 			if (CollectionUtils.isEmpty(plist)) {
-				log.error("订单列表-编辑>>找不到商品[{}]信息>>{}", productCodes, presponse);
+				log.error("订单列表-编辑>>找不到商品[{}]信息", productCodes);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
 			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
@@ -1207,7 +1191,7 @@ public class OrderRestController {
 				ProductMainDTO p = pmap.get(in.getProductCode());
 				// 如果商品已下架
 				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, p.getStatus()) == 0) {
-					log.error("订单列表-编辑>>该商品[{}]已下架>>{}", p);
+					log.error("订单列表-编辑>>该商品已下架>>{}", p);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
 				}
 				OrderDetail od = new OrderDetail();
@@ -1236,8 +1220,6 @@ public class OrderRestController {
 				od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				orderdetailList.add(od);
 			}
-//			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
-//			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		}
 		// 获取套餐
 		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
@@ -1252,12 +1234,13 @@ public class OrderRestController {
 			ComResponse<List<ProductMealListDTO>> mresponse = this.mealClient.queryByIds(mealNos);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
-				log.error("订单列表-编辑>>{}>>{}", mealNos, mresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, mresponse.getMessage());
+				log.error("订单列表-编辑>>{}", mealNos);
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("调用套餐编码查询套餐里商品列表接口异常：%s", mresponse.getMessage()));
 			}
 			List<ProductMealListDTO> mlist = mresponse.getData();
 			if (CollectionUtils.isEmpty(mlist)) {
-				log.error("订单列表-编辑>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
+				log.error("订单列表-编辑>>找不到套餐[{}]信息", mealNos);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
 			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
@@ -1341,10 +1324,6 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
-//			orderm.setTotal(orderm.getTotal()
-//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
-//			orderm.setCash(orderm.getCash()
-//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
 		orderm.setTotal(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
 		orderm.setCash(orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
@@ -1356,12 +1335,13 @@ public class OrderRestController {
 			ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 			// 如果调用服务异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
-				log.error("订单列表-编辑>>{}>>{}", orderm.getMemberCardNo(), maresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, maresponse.getMessage());
+				log.error("订单列表-编辑>>{}", orderm.getMemberCardNo());
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("调用查询顾客账号接口异常：%s", maresponse.getMessage()));
 			}
 			MemberAmountDto account = maresponse.getData();
 			if (account == null) {
-				log.error("订单列表-编辑>>找不到该顾客[{}]账号>>{}", orderm.getMemberCardNo(), account);
+				log.error("订单列表-编辑>>找不到该顾客[{}]账号", orderm.getMemberCardNo());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 			}
 			// 如果订单总金额大于账户剩余金额，单位分
@@ -1399,8 +1379,9 @@ public class OrderRestController {
 		ComResponse<?> productReduce = this.productClient.productReduce(orderProduct);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
-			log.error("订单列表-编辑>>{}", productReduce);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, productReduce.getMessage());
+			log.error("订单列表-编辑>>{}", this.toJsonString(orderProduct));
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用扣减库存接口异常：%s", productReduce.getMessage()));
 		}
 		// 如果支付形式是客户账户扣款
 		if (Integer.compare(PayMode.PAY_MODE_4.getCode(), orderm.getPayMode()) == 0) {
@@ -1483,25 +1464,23 @@ public class OrderRestController {
 	public ComResponse<Object> reissueOrder(@RequestBody ReissueOrderIn orderin) {
 		// 判断是否传入订单号
 		if (!StringUtils.hasText(orderin.getOrderNo())) {
-			log.error("订单列表-异常处理-补发订单>>订单号不能为空>>{}", orderin);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单号不能为空。");
 		}
 		// 判断是否传入订单明细
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
-			log.error("订单列表-异常处理-补发订单>>订单明细集合里没有任何元素>>{}", orderin);
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
 		}
 		// 按订单编号查询订单信息
 		ComResponse<OrderM> oresponse = this.orderFeignClient.queryOrder(orderin.getOrderNo());
 		// 如果调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(oresponse.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
+			log.error("订单列表-异常处理-补发订单>>调用查询订单[{}]信息接口失败", orderin.getOrderNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
 		OrderM orderm = oresponse.getData();
 		// 如果不存在
 		if (orderm == null) {
-			log.error("订单列表-异常处理-补发订单>>调用查询订单[{}]信息接口失败>>{}", orderin.getOrderNo(), oresponse);
+			log.error("订单列表-异常处理-补发订单>>调用查询订单[{}]信息接口失败", orderin.getOrderNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "该订单信息不存在。");
 		}
 		// 如果存在补发订单，则不允许再次对该订单进行补发操作
@@ -1517,12 +1496,13 @@ public class OrderRestController {
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>{}>>{}", orderm.getUpdateCode(), sresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, sresponse.getMessage());
+			log.error("订单列表-异常处理-补发订单>>{}", orderm.getUpdateCode());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用员工编号获取员工基本信息接口异常：%s", sresponse.getMessage()));
 		}
 		StaffImageBaseInfoDto staffInfo = sresponse.getData();
 		if (staffInfo == null) {
-			log.error("订单列表-异常处理-补发订单>>找不到该坐席[{}]信息>>{}", orderm.getUpdateCode(), sresponse);
+			log.error("订单列表-异常处理-补发订单>>找不到该坐席[{}]信息", orderm.getUpdateCode());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席信息。");
 		}
 		orderm.setOrderNo(this.redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, RedisKeys.CREATE_ORDER_NO, 6));// 使用redis重新生成订单号
@@ -1533,13 +1513,13 @@ public class OrderRestController {
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(dresponse.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>{}>>{}", staffInfo.getDepartId(), dresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, dresponse.getMessage());
+			log.error("订单列表-异常处理-补发订单>>{}", staffInfo.getDepartId());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用id获取部门信息接口异常：%s", dresponse.getMessage()));
 		}
 		DepartDto depart = dresponse.getData();
 		if (depart == null) {
-			log.error("订单列表-异常处理-补发订单>>找不到该坐席[{}]所在部门[{}]的财务归属>>{}", orderm.getStaffCode(), staffInfo.getDepartId(),
-					dresponse);
+			log.error("订单列表-异常处理-补发订单>>找不到该坐席[{}]所在部门[{}]的财务归属", orderm.getStaffCode(), staffInfo.getDepartId());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该坐席的财务归属。");
 		}
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
@@ -1573,12 +1553,13 @@ public class OrderRestController {
 			ComResponse<List<ProductMainDTO>> presponse = this.productClient.queryByProductCodes(productCodes);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(presponse.getCode())) {
-				log.error("订单列表-异常处理-补发订单>>{}>>{}", productCodes, presponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, presponse.getMessage());
+				log.error("订单列表-异常处理-补发订单>>{}", productCodes);
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("调用商品编码查询商品列表接口异常：%s", presponse.getMessage()));
 			}
 			List<ProductMainDTO> plist = presponse.getData();
 			if (CollectionUtils.isEmpty(plist)) {
-				log.error("订单列表-异常处理-补发订单>>找不到商品[{}]信息>>{}", productCodes, presponse);
+				log.error("订单列表-异常处理-补发订单>>找不到商品[{}]信息", productCodes);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品信息。");
 			}
 			if (Integer.compare(plist.size(), productCodeList.size()) != 0) {
@@ -1593,7 +1574,7 @@ public class OrderRestController {
 				ProductMainDTO p = pmap.get(in.getProductCode());
 				// 如果商品已下架
 				if (Integer.compare(CommonConstant.PRODUCT_AND_MEAL_STATUS_0, p.getStatus()) == 0) {
-					log.error("订单列表-异常处理-补发订单>>该商品[{}]已下架>>{}", p);
+					log.error("订单列表-异常处理-补发订单>>该商品已下架>>{}", p);
 					return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品已下架。");
 				}
 				OrderDetail od = new OrderDetail();
@@ -1622,8 +1603,6 @@ public class OrderRestController {
 				od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
 				orderdetailList.add(od);
 			}
-//			orderm.setTotal(orderm.getTotal() + orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
-//			orderm.setCash(orderm.getCash() + orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
 		}
 		// 获取套餐
 		List<OrderDetailIn> ordermealList = orderdetailMap.get(CommonConstant.MEAL_FLAG_1);
@@ -1638,12 +1617,13 @@ public class OrderRestController {
 			ComResponse<List<ProductMealListDTO>> mresponse = this.mealClient.queryByIds(mealNos);
 			// 如果服务调用异常
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(mresponse.getCode())) {
-				log.error("订单列表-异常处理-补发订单>>{}>>{}", mealNos, mresponse);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, mresponse.getMessage());
+				log.error("订单列表-异常处理-补发订单>>{}", mealNos);
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("调用套餐编码查询套餐里商品列表接口异常：%s", mresponse.getMessage()));
 			}
 			List<ProductMealListDTO> mlist = mresponse.getData();
 			if (CollectionUtils.isEmpty(mlist)) {
-				log.error("订单列表-异常处理-补发订单>>找不到套餐[{}]信息>>{}", mealNos, mresponse);
+				log.error("订单列表-异常处理-补发订单>>找不到套餐[{}]信息", mealNos);
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到套餐信息。");
 			}
 			if (Integer.compare(mlist.size(), mealNoList.size()) != 0) {
@@ -1727,10 +1707,6 @@ public class OrderRestController {
 					return od;
 				}).collect(Collectors.toList()));
 			}
-//			orderm.setTotal(orderm.getTotal()
-//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
-//			orderm.setCash(orderm.getCash()
-//					+ mlist.stream().mapToInt(m -> BigDecimal.valueOf(m.getPriceD()).multiply(bd100).intValue()).sum());
 		}
 		orderm.setTotal(orderdetailList.stream().mapToInt(OrderDetail::getTotal).sum());
 		orderm.setCash(orderdetailList.stream().mapToInt(OrderDetail::getCash).sum());
@@ -1764,8 +1740,9 @@ public class OrderRestController {
 		ComResponse<?> productReduce = this.productClient.productReduce(orderProduct);
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(productReduce.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>{}", productReduce);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, productReduce.getMessage());
+			log.error("订单列表-异常处理-补发订单>>{}", this.toJsonString(orderProduct));
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用扣减库存接口异常：%s", productReduce.getMessage()));
 		}
 		log.info("订单: {}", this.toJsonString(orderm));
 		log.info("订单明细: {}", this.toJsonString(orderdetailList));
@@ -1774,7 +1751,7 @@ public class OrderRestController {
 				orderin.getOrderNo(), orderin.getPayAmount(), orderin.getRemark()));
 		// 如果调用服务接口失败
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(reissueOrder.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>创建订单失败[订单号：{}]>>{}", orderm.getOrderNo(), reissueOrder);
+			log.error("订单列表-异常处理-补发订单>>创建订单失败[订单号：{}]", orderm.getOrderNo());
 			// 恢复库存
 			ComResponse<?> increaseStock = this.productClient.increaseStock(orderProduct);
 			// 如果调用服务接口失败
@@ -1792,8 +1769,9 @@ public class OrderRestController {
 		ComResponse<Boolean> settlementLogisticsChargeIndemnity = this.logisticsFien
 				.settlementLogisticsChargeIndemnity(indemnity);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(settlementLogisticsChargeIndemnity.getCode())) {
-			log.error("订单列表-异常处理-补发订单>>{}", settlementLogisticsChargeIndemnity);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, settlementLogisticsChargeIndemnity.getMessage());
+			log.error("订单列表-异常处理-补发订单>>{}", this.toJsonString(indemnity));
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用物流赔付接口异常：%s", settlementLogisticsChargeIndemnity.getMessage()));
 		}
 		// 顾客管理-处理下单时更新顾客信息
 		OrderCreateInfoVO orderCreateInfoVO = new OrderCreateInfoVO();
