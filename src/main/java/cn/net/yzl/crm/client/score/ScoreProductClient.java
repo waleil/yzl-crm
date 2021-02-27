@@ -33,13 +33,17 @@ public interface ScoreProductClient {
     ComResponse<Void> edit(@RequestBody ScoreProductVO vo);
 
     @PostMapping("delete")
-    ComResponse<Void> delete(@RequestParam("id") Integer id, @RequestParam("userNo") String userNo);
+    ComResponse<Void> delete(@RequestParam("id") Integer id, @RequestParam("staffNo") String userNo);
 
     @PostMapping("exchange")
     ComResponse<Void> exchange(@RequestBody ExchangeVO vo);
 
-    @GetMapping
-    @ApiOperation("根据员工编号查询积分")
+    @GetMapping("myScore")
     ComResponse<Integer> myScore(@RequestParam("staffNo") String staffNo);
+
+    @PostMapping("changeStatus")
+    ComResponse<Void> changeStatus(@RequestParam("status")Integer status,
+                                          @RequestParam("id")Integer id,
+                                          @RequestParam("staffNo")String staffNo);
 
 }

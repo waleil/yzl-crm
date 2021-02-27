@@ -206,10 +206,20 @@ public interface LogisticsFien {
     @ApiOperation("结算查询")
     ComResponse<Page<ExpressSettlementPageVo>> searchSettBill(@RequestBody SettleBillSearchVo searchVo);
 
+    @PostMapping("settlement/search/settle/list")
+    @ApiOperation("结算查询不分页")
+    ComResponse<List<ExpressSettlementPageVo>> searchSettBillList(@RequestBody SettleBillSearchVo searchVo);
+
     @PostMapping("settlement/express/charge/detail")
     @ApiOperation("运费结算明细")
     ComResponse<Page<SettlementDetailResult>>  expressChargeSettlementDetailSearch(@RequestBody ExpressChargeSettlementDetail
                                                                                                     expressChargeSettlementDetail);
+
+    @PostMapping("settlement/express/charge/detail/list")
+    @ApiOperation("运费结算明细不分页")
+    ComResponse<List<SettlementDetailResult>>  expressChargeSettlementDetailList(@RequestBody ExpressChargeSettlementDetail
+                                                                                           expressChargeSettlementDetail);
+
 
     @PostMapping("settlement/export/ExpressChargeExcel")
     @ApiOperation("已对账未对账导出")
