@@ -2,8 +2,10 @@ package cn.net.yzl.crm.controller.workorder;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
@@ -24,6 +26,7 @@ import cn.net.yzl.workorder.model.db.WorkOrderBean;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.FindByCalledPhoneIsEmptyDTO;
 import cn.net.yzl.workorder.model.dto.FindWorkOrderHotlinePageListDTO;
+import cn.net.yzl.workorder.model.dto.InformationGoodsDTOS;
 import cn.net.yzl.workorder.model.dto.InsertWorkOrderDisposeFlowDTO;
 import cn.net.yzl.workorder.model.dto.IsHandInDTO;
 import cn.net.yzl.workorder.model.dto.IsListPageDTO;
@@ -41,6 +44,7 @@ import cn.net.yzl.workorder.model.dto.UpdateSingleAdjustDTO;
 import cn.net.yzl.workorder.model.dto.UpdateWorkOrderVisitDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderUnclaimedUserDTO;
+import cn.net.yzl.workorder.model.dto.WorkOrderVisitTypeDTO;
 import cn.net.yzl.workorder.model.enums.WorkOrderTypeEnums;
 import cn.net.yzl.workorder.model.vo.*;
 import io.swagger.annotations.Api;
@@ -508,16 +512,14 @@ public class WorkOrderController {
         FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
         if(!StringUtils.isEmpty(data)){
             //获取详情中的阶梯商品，通过商品编码获取商品列表
-            String firstBuyProductCode = data.getFirstBuyProductCode();//商品编码，多个是商品逗号拼接
-            if(!StringUtils.isEmpty(firstBuyProductCode)) {
-                String[] split = firstBuyProductCode.split(",");
-                //获取数组
-                Stream<String> distinct = Arrays.stream(split).distinct();
+            WorkOrderVisitTypeDTO workOrderVisitTypeDTO = JSONUtil.toBean(data.getInformationGoods(),WorkOrderVisitTypeDTO.class);
+            List<InformationGoodsDTOS> ladderSales = workOrderVisitTypeDTO.getLadderSales();
+            if(!StringUtils.isEmpty(ladderSales) && ladderSales.size() > 0) {
                 //创建Map集合
                 List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
-                distinct.forEach(s -> {
+                ladderSales.forEach(informationGoodsDTOS -> {
                     //循环调用商品详情服务
-                    ComResponse<ProductDetailVO> productDetailVOComResponse = productClient.queryProductDetail(s);
+                    ComResponse<ProductDetailVO> productDetailVOComResponse = productClient.queryProductDetail(informationGoodsDTOS.getCode());
                     ProductDetailVO productDetailVO = productDetailVOComResponse.getData();
                     if(!StringUtils.isEmpty(productDetailVO)){
                         Map<String, Object> map = new HashMap<String, Object>();
