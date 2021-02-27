@@ -216,5 +216,5 @@ public interface MemberFien {
 
 	@ApiOperation("保存转介绍用户")
 	@PostMapping("/v1/saveMemberReferral")
-    void saveMemberReferral(MemberAndAddWorkOrderVO memberReferralVO);
+	ComResponse<Boolean> saveMemberReferral(MemberAndAddWorkOrderVO memberReferralVO);
 }
