@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cn.hutool.core.lang.Tuple;
 import cn.net.yzl.activity.model.dto.CalculateProductDto;
 import cn.net.yzl.activity.model.dto.MemberCouponDto;
+import cn.net.yzl.activity.model.dto.MemberCouponSaveDto;
 import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
 import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
 import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
@@ -657,12 +658,12 @@ public class OrderRestController {
 		// 收集订单返回信息
 		OrderOut orderout = new OrderOut();
 		// 如果本次下单送的优惠券不为空
-		List<MemberCouponDto> memberCouponDtos = orderSubmitResponse.getMemberCouponDtoList();
+		List<MemberCouponSaveDto> memberCouponDtos = orderSubmitResponse.getMemberCouponSaveDtoList();
 		if (!CollectionUtils.isEmpty(memberCouponDtos)) {
 			// key为商品编码，value为订单明细对象
 			Map<String, List<OrderDetail>> odMap = orderdetailList.stream()
 					.collect(Collectors.groupingBy(OrderDetail::getProductCode));
-			for (MemberCouponDto memberCoupon : memberCouponDtos) {
+			for (MemberCouponSaveDto memberCoupon : memberCouponDtos) {
 				OrderCouponDetail cd = new OrderCouponDetail();
 				OrderDetail od = odMap.get(memberCoupon.getProductCode()).get(0);
 				// 优惠使用记录表业务主键

@@ -97,7 +97,7 @@ public class ActivityClientTests {
 			request.setOrderSubmitProductDtoList(Arrays.asList(dto));
 
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
-			System.err.println(this.activityClient.orderSubmit(request).getData().getMemberCouponDtoList());
+			System.err.println(this.activityClient.orderSubmit(request).getData().getMemberCouponSaveDtoList());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
