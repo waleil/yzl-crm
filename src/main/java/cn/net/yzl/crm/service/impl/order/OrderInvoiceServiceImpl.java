@@ -1,4 +1,5 @@
 package cn.net.yzl.crm.service.impl.order;
+import java.util.Date;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
@@ -57,11 +58,12 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
             PageParam param = page.getPageParam();
             if (param.getPageTotal() == 0) {
                 log.info("订单发票列表为空>>>{}", param);
-                return;
+
             }
             response.setContentType("application/vnd.ms-excel");
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            String title = "订单发票列表";
+
+            String title = new String("结算列表".getBytes(),StandardCharsets.UTF_8.name());
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
                     URLEncoder.encode(URLEncoder.encode(title, StandardCharsets.UTF_8.name()) ,StandardCharsets.UTF_8.name()),
                     System.currentTimeMillis()));
@@ -108,6 +110,8 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
         List<OrderInvoice4Export> list = new ArrayList<>();
         items.forEach(map ->{
             OrderInvoice4Export orderInvoice4Export = new OrderInvoice4Export();
+            orderInvoice4Export.setTaxType(CommonConstant.TAX_TYPE_0 ==map.getTaxType()?"公司":"个人");
+            orderInvoice4Export.setTaxMoney(map.getTaxMoney());
             orderInvoice4Export.setOrderNo(map.getOrderNo());
             orderInvoice4Export.setFinancialOwnerName(map.getFinancialOwnerName());
             orderInvoice4Export.setTaxMode(CommonConstant.TAX_MODE_0 == map.getTaxMode()?"电子发票":"纸质发票");
@@ -117,6 +121,7 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
             orderInvoice4Export.setReveiverAddress(map.getReveiverAddress());
             orderInvoice4Export.setCreateTime(map.getCreateTime());
             orderInvoice4Export.setInvoiceTime(map.getInvoiceTime());
+
             list.add(orderInvoice4Export);
 
         });
