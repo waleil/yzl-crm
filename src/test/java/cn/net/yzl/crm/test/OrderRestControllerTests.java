@@ -1,17 +1,11 @@
 package cn.net.yzl.crm.test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Resource;
 
-import cn.net.yzl.crm.dao.OutStoreWarningMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,12 +25,13 @@ import cn.net.yzl.order.model.vo.order.UpdateOrderIn;
  * @author zhangweiwei
  * @date 2021年1月23日,上午11:12:13
  */
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 public class OrderRestControllerTests {
 	@Resource
 	private OrderRestController orderRestController;
 	@Resource
 	private ObjectMapper objectMapper;
+
 	@Test
 	public void testSubmitOrderForProduct() {
 		try {
