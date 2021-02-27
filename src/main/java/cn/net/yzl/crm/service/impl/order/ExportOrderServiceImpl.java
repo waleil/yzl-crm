@@ -6,8 +6,10 @@ import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.GoodsInTransitFeign;
+import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.service.order.ExportOrderService;
+import cn.net.yzl.crm.service.order.IOrderSearchService;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.mongo.order.GoodsInTransit;
 import cn.net.yzl.order.model.vo.order.*;
@@ -17,9 +19,11 @@ import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +43,9 @@ public class ExportOrderServiceImpl implements ExportOrderService {
     private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
     @Resource
     private GoodsInTransitFeign goodsInTransitFeign;
+
+    @Autowired
+    private OrderSearchClient orderSearchClient;
     @Override
     public void exportSettlementList(SettlementListReqDTO dto, HttpServletResponse response) {
         ExcelWriter excelWriter = null;
@@ -199,6 +206,63 @@ public class ExportOrderServiceImpl implements ExportOrderService {
                     data = this.goodsInTransitFeign.selectgoodsInTransitlist(dto);
                     if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
                         log.error("导出在途商品列表异常>>>{}", data);
+                        return;
+                    }
+                    page = data.getData();
+
+                    excelWriter.write(page.getItems(), writeSheet);
+                    page.getItems().clear();// 存储完成后清理集合
+                }
+            }
+        }catch(Exception e){
+            log.error(e.getMessage(),e);
+        }finally {
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
+        }
+    }
+
+    @Override
+    public void sexportselectOrderSaleDetail(OrderSellDetailReqDTO dto, HttpServletResponse response) {
+        ExcelWriter excelWriter = null;
+        try {
+            dto.setPageNo(1);// 默认第1页
+            ComResponse<Page<OrderSellDetailResDTO>> data = this.orderSearchClient.selectOrderSaleDetail(dto);
+
+            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
+                log.error("导出订单销售明细列表异常>>>{}", data);
+                return;
+            }
+            Page<OrderSellDetailResDTO> page  = data.getData();
+            PageParam param = page.getPageParam();
+            if (param.getPageTotal() == 0) {
+                log.info("订单销售明细列表为空>>>{}", param);
+                return;
+            }
+            response.setContentType("application/vnd.ms-excel");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            String title = "订单销售明细列表";
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
+                    URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+
+
+            excelWriter = EasyExcel.write(response.getOutputStream(), OrderSellDetailResDTO.class)
+                    .registerWriteHandler(this.writeHandler).build();
+            // 写入到同一个sheet
+            WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
+            // 此处已经获取到第一页的数据
+
+            excelWriter.write(page.getItems(), writeSheet);
+            page.getItems().clear();// 存储完成后清理集合
+            // 如果总页数大于1
+            if (param.getPageTotal() > 1) {
+                // 直接从第二页开始获取
+                for (int i = 2; i <= param.getPageTotal(); i++) {
+                    dto.setPageNo(i);
+                    data = this.orderSearchClient.selectOrderSaleDetail(dto);
+                    if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
+                        log.error("导出订单销售明细列表异常>>>{}", data);
                         return;
                     }
                     page = data.getData();
