@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
             return;
         }
         List<ExpressSettlementPageVo> listComResponseData = comResponse.getData();
-        if (listComResponseData == null || listComResponseData.size()==0){
+        if (CollectionUtils.isEmpty(listComResponseData)){
             response.setContentType("application/json;charset=utf-8");
             PrintWriter out = response.getWriter();
             out.write(JSON.toJSONString(listComResponseData));
@@ -153,6 +154,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
     @Override
     public void exportSettleOverDetailExcel( ExpressChargeSettlementDetail detail, HttpServletResponse response) throws IOException {
         ComResponse<List<SettlementDetailResult>> pageComResponse = logisticsFien.expressChargeSettlementDetailList(detail);
+
         log.info("运费结算明细导出数据:{}", JsonUtil.toJsonStr(pageComResponse));
         if (pageComResponse==null || pageComResponse.getCode() !=200L){
             response.setContentType("application/json;charset=utf-8");
@@ -161,12 +163,14 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
             return;
         }
         List<SettlementDetailResult> listComResponseData = pageComResponse.getData();
-        if (listComResponseData == null || listComResponseData.size()==0){
+        if (CollectionUtils.isEmpty(listComResponseData)){
             response.setContentType("application/json;charset=utf-8");
             PrintWriter out = response.getWriter();
             out.write(JSON.toJSONString(listComResponseData));
             return;
         }
+
+
         int i =1 ;
         List<SettlementDetailExcel> excels = new ArrayList<>();
         for (SettlementDetailResult item : listComResponseData) {
@@ -174,9 +178,11 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
             copy.setSignTime(DateUtil.format(item.getSignTime(), "yyyy-MM-dd"));
             copy.setOctime(DateUtil.format(item.getOctime(), "yyyy-MM-dd"));
             copy.setIndex(i);
+            copy.setMediaTypeDesc("00000");
             i++;
             excels.add(copy);
         }
+
         log.info("运费结算明细excel数据:{}", JsonUtil.toJsonStr(excels));
         //系统时间
         String sysDate =DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
@@ -184,7 +190,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
         //响应内容格式
 
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "attachment;fileName=" +"YFJSMX"+sysDate +".xlsx");
+        response.setHeader("Content-Disposition", "attachment;fileName=YFJSMX"+sysDate+".xlsx");
         //向前端写入文件流流
         EasyExcel.write(response.getOutputStream(), SettlementDetailExcel.class)
                 .sheet("运费结算明细").doWrite(excels);

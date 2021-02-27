@@ -31,6 +31,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -231,62 +232,7 @@ public class SettlementExpressController {
     @ApiOperation(value = "导出结算明细",notes = "导出结算明细")
     @PostMapping("v1/export/over/detail")
     public void exportSettleOverDetailExcel(@RequestBody ExpressChargeSettlementDetail detail, HttpServletResponse response) throws IOException {
-        ComResponse<List<SettlementDetailResult>> pageComResponse = settlement.expressChargeSettlementDetailList(detail);
-
-        log.info("运费结算明细导出数据:{}", JsonUtil.toJsonStr(pageComResponse));
-//        if (pageComResponse==null || pageComResponse.getCode() !=200L){
-//            response.setContentType("application/json;charset=utf-8");
-//            PrintWriter out = response.getWriter();
-//            out.write(JSON.toJSONString(pageComResponse));
-//            return;
-//        }
-        List<SettlementDetailResult> listComResponseData = pageComResponse.getData();
-//        if (listComResponseData == null || listComResponseData.size()==0){
-//            response.setContentType("application/json;charset=utf-8");
-//            PrintWriter out = response.getWriter();
-//            out.write(JSON.toJSONString(listComResponseData));
-//            return;
-//        }
-
-
-        int i =1 ;
-        List<SettlementDetailExcel> excels = new ArrayList<>();
-//        for (SettlementDetailResult item : listComResponseData) {
-//            SettlementDetailExcel copy = CglibUtil.copy(item, SettlementDetailExcel.class);
-//            copy.setSignTime(DateUtil.format(item.getSignTime(), "yyyy-MM-dd"));
-//            copy.setOctime(DateUtil.format(item.getOctime(), "yyyy-MM-dd"));
-//            copy.setIndex(i);
-//            copy.setMediaTypeDesc("00000");
-////            i++;
-//            excels.add(copy);
-//            break;
-//        }
-
-        SettlementDetailExcel copy = new SettlementDetailExcel();
-        copy.setIndex(0);
-        copy.setExpressNum("xxx");
-        copy.setExpress("xxx");
-        copy.setOrderNo("xxx");
-        copy.setFinanicialOwership("xxx");
-        copy.setSignTime("xxx");
-        copy.setMediaTypeDesc("xxx");
-        copy.setFreight("xxx");
-        copy.setOperator("xxx");
-        copy.setOctime("xxx");
-        excels.add(copy);
-        log.info("运费结算明细excel数据:{}", JsonUtil.toJsonStr(excels));
-        //系统时间
-        String sysDate =DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
-        response.setCharacterEncoding("UTF-8");
-        //响应内容格式
-
-        response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "attachment;fileName=YFJSMX.xlsx");
-        //向前端写入文件流流
-        EasyExcel.write(response.getOutputStream(), SettlementDetailExcel.class)
-                .sheet("运费结算明细").doWrite(excels);
-
-//        settlementExpressService.exportSettleOverDetailExcel(detail,response);
+        settlementExpressService.exportSettleOverDetailExcel(detail,response);
     }
 
     @PostMapping("v1/allCreateSettle")
