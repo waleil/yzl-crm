@@ -1,10 +1,13 @@
 package cn.net.yzl.crm.controller.logistics;
 
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.extra.cglib.CglibUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.AssemblerResultUtil;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -15,11 +18,13 @@ import cn.net.yzl.logistics.model.vo.ImportResult;
 import cn.net.yzl.logistics.settleexpresscharge.*;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultExcelVo;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultRecionExcelVo;
+import cn.net.yzl.logistics.settleexpresscharge.excel.SettlementDetailExcel;
 import cn.net.yzl.model.vo.InventoryExcelVo;
 import cn.net.yzl.model.vo.InventoryProductExcelVo;
 import cn.net.yzl.model.vo.InventoryProductResultExcelVo;
 import cn.net.yzl.order.model.vo.order.ImportParam;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -225,7 +231,62 @@ public class SettlementExpressController {
     @ApiOperation(value = "导出结算明细",notes = "导出结算明细")
     @PostMapping("v1/export/over/detail")
     public void exportSettleOverDetailExcel(@RequestBody ExpressChargeSettlementDetail detail, HttpServletResponse response) throws IOException {
-        settlementExpressService.exportSettleOverDetailExcel(detail,response);
+        ComResponse<List<SettlementDetailResult>> pageComResponse = settlement.expressChargeSettlementDetailList(detail);
+
+        log.info("运费结算明细导出数据:{}", JsonUtil.toJsonStr(pageComResponse));
+//        if (pageComResponse==null || pageComResponse.getCode() !=200L){
+//            response.setContentType("application/json;charset=utf-8");
+//            PrintWriter out = response.getWriter();
+//            out.write(JSON.toJSONString(pageComResponse));
+//            return;
+//        }
+        List<SettlementDetailResult> listComResponseData = pageComResponse.getData();
+//        if (listComResponseData == null || listComResponseData.size()==0){
+//            response.setContentType("application/json;charset=utf-8");
+//            PrintWriter out = response.getWriter();
+//            out.write(JSON.toJSONString(listComResponseData));
+//            return;
+//        }
+
+
+        int i =1 ;
+        List<SettlementDetailExcel> excels = new ArrayList<>();
+//        for (SettlementDetailResult item : listComResponseData) {
+//            SettlementDetailExcel copy = CglibUtil.copy(item, SettlementDetailExcel.class);
+//            copy.setSignTime(DateUtil.format(item.getSignTime(), "yyyy-MM-dd"));
+//            copy.setOctime(DateUtil.format(item.getOctime(), "yyyy-MM-dd"));
+//            copy.setIndex(i);
+//            copy.setMediaTypeDesc("00000");
+////            i++;
+//            excels.add(copy);
+//            break;
+//        }
+
+        SettlementDetailExcel copy = new SettlementDetailExcel();
+        copy.setIndex(0);
+        copy.setExpressNum("xxx");
+        copy.setExpress("xxx");
+        copy.setOrderNo("xxx");
+        copy.setFinanicialOwership("xxx");
+        copy.setSignTime("xxx");
+        copy.setMediaTypeDesc("xxx");
+        copy.setFreight("xxx");
+        copy.setOperator("xxx");
+        copy.setOctime("xxx");
+        excels.add(copy);
+        log.info("运费结算明细excel数据:{}", JsonUtil.toJsonStr(excels));
+        //系统时间
+        String sysDate =DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
+        response.setCharacterEncoding("UTF-8");
+        //响应内容格式
+
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment;fileName=YFJSMX.xlsx");
+        //向前端写入文件流流
+        EasyExcel.write(response.getOutputStream(), SettlementDetailExcel.class)
+                .sheet("运费结算明细").doWrite(excels);
+
+//        settlementExpressService.exportSettleOverDetailExcel(detail,response);
     }
 
     @PostMapping("v1/allCreateSettle")
