@@ -15,8 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import cn.net.yzl.common.entity.ComResponse;
 import java.util.List;
 
-//@FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/newOrdder")
-@FeignClient(name = "newOrder",url = "localhost:4455/newOrdder")
+@FeignClient(name = "newOrder",url = "${api.gateway.url}/orderService/newOrdder")
+//@FeignClient(name = "newOrder",url = "localhost:4455/newOrdder")
 public interface NewOrderClient {
 
 

@@ -36,7 +36,7 @@ public class OrderRestControllerTests {
 	public void testSubmitOrderForProduct() {
 		try {
 			OrderIn order = new OrderIn();
-			order.setProductTotal(BigDecimal.valueOf(232.8));// 商品总额 单位分
+			order.setProductTotal(BigDecimal.valueOf(940));// 商品总额 单位分
 			order.setAdvertBusNo(555L);// 广告业务主键
 			order.setMemberCardNo("100000002");
 			order.setReveiverAddressNo(482416);
@@ -49,14 +49,14 @@ public class OrderRestControllerTests {
 			order.setMediaName("陕西卫视");
 
 			OrderDetailIn od1 = new OrderDetailIn();
-			od1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
-			od1.setActivityProductBusNo(20L);// 活动商品业务主键
-			od1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
-			od1.setDiscountType(1);// 优惠方式：0满减，1折扣，2红包
-			od1.setDiscountId(7);// 使用的优惠主键
+//			od1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+//			od1.setActivityProductBusNo(20L);// 活动商品业务主键
+//			od1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+//			od1.setDiscountType(1);// 优惠方式：0满减，1折扣，2红包
+//			od1.setDiscountId(7);// 使用的优惠主键
 //			od1.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
 //			od1.setProductUnitPrice(200D);// 商品销售价 单位分
-			od1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			od1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 			od1.setProductCode("10000156");
 			od1.setProductType(CommonConstant.MEAL_FLAG_0);
 			od1.setProductCount(1);
@@ -91,8 +91,8 @@ public class OrderRestControllerTests {
 			od3.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 
 			order.getOrderDetailIns().add(od1);
-//			order.getOrderDetailIns().add(od2);
-//			order.getOrderDetailIns().add(od3);
+			order.getOrderDetailIns().add(od2);
+			order.getOrderDetailIns().add(od3);
 
 			QueryIds.userNo.set("14020");
 
@@ -203,18 +203,18 @@ public class OrderRestControllerTests {
 			order.setAdvertBusNo(555L);// 广告业务主键
 
 			CalculateOrderProductDto a1 = new CalculateOrderProductDto();
-			a1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
-			a1.setActivityProductBusNo(20L);// 活动商品业务主键
-			a1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
+//			a1.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
+//			a1.setActivityProductBusNo(20L);// 活动商品业务主键
+//			a1.setActivityType(0);// 优惠途径：0广告投放，1会员优惠，2当前坐席的任务优惠
 //			a1.setCouponDiscountId(null);// 使用的优惠券折扣ID
-			a1.setDiscountId(7);// 使用的优惠主键
-			a1.setDiscountType(1);// 优惠方式：0满减，1折扣，2红包
+//			a1.setDiscountId(7);// 使用的优惠主键
+//			a1.setDiscountType(1);// 优惠方式：0满减，1折扣，2红包
 //			a1.setMemberCouponId(null);// 使用的优惠券ID
 			a1.setProductCode("10000156");// 商品code
 			a1.setProductCount(1);// 商品数量
 			a1.setProductType(CommonConstant.MEAL_FLAG_0);// 商品类型
 			a1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_2);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 
 			CalculateOrderProductDto a2 = new CalculateOrderProductDto();
 //			a2.setActivityBusNo(20L);// 活动业务/会员优惠业务主键
@@ -245,8 +245,8 @@ public class OrderRestControllerTests {
 			a3.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 
 			order.getCalculateProductDtos().add(a1);
-//			order.getCalculateProductDtos().add(a2);
-//			order.getCalculateProductDtos().add(a3);
+			order.getCalculateProductDtos().add(a2);
+			order.getCalculateProductDtos().add(a3);
 
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(order));
 			System.err.println(JSON.toJSONString(this.orderRestController.calcOrder(order), true));
