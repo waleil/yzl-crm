@@ -21,9 +21,11 @@ public interface ScoreService {
 
     ComResponse<Void> edit(ScoreProductVO vo);
 
-    ComResponse<Void> delete(Integer id, HttpServletRequest request);
+    ComResponse<Void> delete(Integer id, String staffNo);
 
     ComResponse<Void> exchange(ExchangeVO vo);
 
     ComResponse<Integer> myScore(String staffNo);
+
+    ComResponse<Void> changeStatus(Integer status, Integer id, String userNo);
 }

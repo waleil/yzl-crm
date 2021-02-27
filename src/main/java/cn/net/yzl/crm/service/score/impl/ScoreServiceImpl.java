@@ -96,14 +96,8 @@ public class ScoreServiceImpl implements ScoreService {
      * @date 2021/2/26 16:19
      */
     @Override
-    public ComResponse<Void> delete(Integer id, HttpServletRequest request) {
-        String userNo = request.getHeader("userNo");
-
-        if(StringUtils.isBlank(userNo)) {
-            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"获取用户身份失败，请尝试重新登陆！");
-        }
-
-        return scoreProductClient.delete(id,userNo);
+    public ComResponse<Void> delete(Integer id, String staffNo) {
+        return scoreProductClient.delete(id,staffNo);
     }
 
     /**
@@ -124,6 +118,16 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public ComResponse<Integer> myScore(String staffNo) {
         return scoreProductClient.myScore(staffNo);
+    }
+
+    /**
+     * @description 修改商品上下架状态
+     * @author Majinbao
+     * @date 2021/2/27 11:43
+     */
+    @Override
+    public ComResponse<Void> changeStatus(Integer status, Integer id, String userNo) {
+        return scoreProductClient.changeStatus(status, id,userNo);
     }
 
 }

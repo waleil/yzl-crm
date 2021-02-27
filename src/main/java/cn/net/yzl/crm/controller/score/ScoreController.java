@@ -117,4 +117,25 @@ public class ScoreController {
         return service.myScore(request.getHeader("userNo"));
     }
 
+
+    @PostMapping("delete")
+    @ApiOperation("根据id删除积分商品信息")
+    public ComResponse<Void> delete(@RequestParam("id")Integer id ,HttpServletRequest request){
+        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
+        }
+        return service.delete(id, request.getHeader("userNo"));
+    }
+
+    @PostMapping("changeStatus")
+    @ApiOperation("修改积分商品启用禁用状态")
+    public ComResponse<Void> changeStatus(@RequestParam("status")Integer status,
+                                          @RequestParam("id")Integer id,
+                                          HttpServletRequest request){
+        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
+        }
+        return service.changeStatus(status, id, request.getHeader("userNo"));
+    }
+
 }
