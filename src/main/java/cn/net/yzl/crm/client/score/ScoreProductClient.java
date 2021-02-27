@@ -38,7 +38,7 @@ public interface ScoreProductClient {
     @PostMapping("exchange")
     ComResponse<Void> exchange(@RequestBody ExchangeVO vo);
 
-    @GetMapping
+    @GetMapping("myScore")
     ComResponse<Integer> myScore(@RequestParam("staffNo") String staffNo);
 
     @PostMapping("changeStatus")
