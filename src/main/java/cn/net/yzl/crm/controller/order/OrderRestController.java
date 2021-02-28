@@ -280,6 +280,8 @@ public class OrderRestController {
 		orderm.setDepartId(String.valueOf(staffInfo.getDepartId()));// 下单坐席所属部门id
 		orderm.setUpdateCode(orderm.getStaffCode());// 更新人编号
 		orderm.setUpdateName(staffInfo.getName());// 更新人姓名
+		orderm.setWorkCode(staffInfo.getWorkCode());// 职场id
+		orderm.setWorkCodeStr(staffInfo.getWorkCodeStr());// 职场
 		// 按部门id查询部门信息
 		ComResponse<DepartDto> dresponse = this.ehrStaffClient.getDepartById(staffInfo.getDepartId());
 		// 如果服务调用异常
@@ -381,6 +383,9 @@ public class OrderRestController {
 				od.setMemberCardNo(orderm.getMemberCardNo());// 顾客卡号
 				od.setMemberName(orderm.getMemberName());// 顾客姓名
 				od.setDepartId(orderm.getDepartId());// 部门表唯一标识
+				od.setWorkCode(orderm.getWorkCode());// 职场id
+				od.setWorkCodeStr(orderm.getWorkCodeStr());// 职场
+				od.setWorkOrderType(orderin.getWorkOrderType());// 工单类型
 				od.setGiftFlag(in.getGiftFlag());// 是否赠品
 				od.setMealFlag(CommonConstant.MEAL_FLAG_0);// 不是套餐
 				od.setProductCode(p.getProductCode());// 商品唯一标识
@@ -501,6 +506,9 @@ public class OrderRestController {
 					od.setMemberCardNo(orderm.getMemberCardNo());// 顾客卡号
 					od.setMemberName(orderm.getMemberName());// 顾客姓名
 					od.setDepartId(orderm.getDepartId());// 部门表唯一标识
+					od.setWorkCode(orderm.getWorkCode());// 职场id
+					od.setWorkCodeStr(orderm.getWorkCodeStr());// 职场
+					od.setWorkOrderType(orderin.getWorkOrderType());// 工单类型
 					od.setGiftFlag(in.getMealGiftFlag());// 是否赠品
 					od.setMealFlag(CommonConstant.MEAL_FLAG_1);// 是套餐
 					od.setMealName(meal.getName());// 套餐名称
