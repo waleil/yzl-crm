@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.dto.staff.CalculationResult;
 import cn.net.yzl.crm.dto.staff.CalculationUerDetail;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;
+import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroup;
 import cn.net.yzl.crm.staff.dto.lasso.StaffCrowdGroupListDTO;
 
 import java.util.Date;
@@ -21,7 +22,7 @@ public interface StaffLassoService {
 
     ComResponse<CalculationResult> trialStaffNo(long groupId) throws Exception;
 
-    ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize);
+    ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize);
 
     void taskCalculation();
 
