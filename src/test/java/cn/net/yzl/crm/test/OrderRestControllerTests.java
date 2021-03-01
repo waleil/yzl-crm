@@ -17,6 +17,7 @@ import cn.net.yzl.crm.model.order.CalcOrderIn.CalculateOrderProductDto;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
+import cn.net.yzl.order.model.vo.order.ReissueOrderIn;
 import cn.net.yzl.order.model.vo.order.UpdateOrderIn;
 
 /**
@@ -333,4 +334,21 @@ public class OrderRestControllerTests {
 		}
 	}
 
+	@Test
+	public void testReissueOrder() {
+		try {
+			ReissueOrderIn order = new ReissueOrderIn();
+			order.setOrderNo("ON202103011417336152825328");
+			order.setPayAmount(BigDecimal.valueOf(1000));
+			order.setRemark("赔了");
+
+			OrderDetailIn od1 = new OrderDetailIn();
+
+			order.getOrderDetailIns().add(od1);
+
+			System.err.println(JSON.toJSONString(this.orderRestController.reissueOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
