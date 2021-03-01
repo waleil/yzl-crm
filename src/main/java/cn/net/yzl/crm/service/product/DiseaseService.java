@@ -31,4 +31,6 @@ public interface DiseaseService {
     ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(String name);
 
     ComResponse queryTreeNodeWithTemp(String memberCard, String userId);
+
+    ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseNameAndMemberCard(String name, String memberCard);
 }
