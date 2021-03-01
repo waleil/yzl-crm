@@ -498,7 +498,6 @@ public class OrderRestController {
 						break;
 					}
 				}
-				BigDecimal mealDiscountPrice = pp.getProductTotal().multiply(bd100);
 				// 组装订单明细信息
 				List<OrderDetail> result = meal.getMealProductList().stream().map(in -> {
 					OrderDetail od = new OrderDetail();
@@ -543,16 +542,17 @@ public class OrderRestController {
 				// 套餐商品总金额
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
-					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-							.multiply(BigDecimal.valueOf(mealCount))
-							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
-					BigDecimal discountPrice = mealDiscountPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-							.multiply(BigDecimal.valueOf(mealCount))
-							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
+						BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+								.multiply(BigDecimal.valueOf(mealCount))
+								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
+						BigDecimal discountPrice = pp.getProductTotal().multiply(bd100)
+								.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+								.multiply(BigDecimal.valueOf(mealCount))
+								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 						od.setCash(discountPrice.intValue() * od.getProductCount());// 应收金额，单位分
 					} else {// 如果是赠品，将金额设置为0
 						od.setProductUnitPrice(0);
@@ -1320,11 +1320,11 @@ public class OrderRestController {
 				// 套餐商品总金额
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
-					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-							.multiply(BigDecimal.valueOf(mealCount))
-							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
+						BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+								.multiply(BigDecimal.valueOf(mealCount))
+								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
@@ -1703,11 +1703,11 @@ public class OrderRestController {
 				// 套餐商品总金额
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
-					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-							.multiply(BigDecimal.valueOf(mealCount))
-							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
+						BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+								.multiply(BigDecimal.valueOf(mealCount))
+								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
