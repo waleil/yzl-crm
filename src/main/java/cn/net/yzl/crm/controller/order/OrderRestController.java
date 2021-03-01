@@ -549,11 +549,13 @@ public class OrderRestController {
 								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
-						BigDecimal discountPrice = pp.getProductTotal().multiply(bd100)
-								.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-								.multiply(BigDecimal.valueOf(mealCount))
-								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
-						od.setCash(discountPrice.intValue() * od.getProductCount());// 应收金额，单位分
+						if (pp != null) {
+							BigDecimal discountPrice = pp.getProductTotal().multiply(bd100)
+									.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+									.multiply(BigDecimal.valueOf(mealCount))
+									.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
+							od.setCash(discountPrice.intValue() * od.getProductCount());// 应收金额，单位分
+						}
 					} else {// 如果是赠品，将金额设置为0
 						od.setProductUnitPrice(0);
 						od.setTotal(0);// 实收金额，单位分
