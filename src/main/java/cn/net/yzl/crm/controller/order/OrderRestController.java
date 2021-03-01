@@ -409,19 +409,21 @@ public class OrderRestController {
 				}
 				orderdetailList.add(od);
 				ProductPriceResponse pp = productPriceMap.get(p.getProductCode());
-				switch (pp.getUseDiscountType()) {
-				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
-					coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
-					break;
-				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
-					coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
-					break;
-				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
-					coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
-					coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
-					break;
-				default:
-					break;
+				if (pp != null) {
+					switch (pp.getUseDiscountType()) {
+					case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
+						coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
+						break;
+					case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
+						coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
+						break;
+					case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
+						coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
+						coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
+						break;
+					default:
+						break;
+					}
 				}
 			}
 		}
@@ -476,23 +478,25 @@ public class OrderRestController {
 				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
 				// 套餐优惠价，单位分
 				ProductPriceResponse pp = productPriceMap.get(meal.getMealNo());
-				switch (pp.getUseDiscountType()) {
-				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
-					coupondetailList
-							.add(this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
-					break;
-				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
-					coupondetailList
-							.add(this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
-					break;
-				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
-					coupondetailList
-							.add(this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
-					coupondetailList
-							.add(this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
-					break;
-				default:
-					break;
+				if (pp != null) {
+					switch (pp.getUseDiscountType()) {
+					case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
+						coupondetailList.add(
+								this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+						break;
+					case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
+						coupondetailList.add(
+								this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+						break;
+					case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
+						coupondetailList.add(
+								this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+						coupondetailList.add(
+								this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+						break;
+					default:
+						break;
+					}
 				}
 				BigDecimal mealDiscountPrice = pp.getProductTotal().multiply(bd100);
 				// 组装订单明细信息
