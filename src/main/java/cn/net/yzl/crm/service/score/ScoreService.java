@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.vo.ChangeProductStatusVO;
 import cn.net.yzl.score.model.vo.ExchangeVO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
 
@@ -27,5 +28,5 @@ public interface ScoreService {
 
     ComResponse<Integer> myScore(String staffNo);
 
-    ComResponse<Void> changeStatus(Integer status, Integer id, String userNo);
+    ComResponse<Void> changeStatus(ChangeProductStatusVO vo);
 }
