@@ -139,7 +139,6 @@ public class DiseaseController {
 
     @GetMapping(value = "v1/queryProductByDiseaseNameAndMemberCard")
     @ApiOperation(value = "根据病症名称和会员卡号查询所属商品")
-    @ApiImplicitParam(name = "name",paramType = "query", value="病症名称")
     public ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseNameAndMemberCard(
             @RequestParam(value = "name",required = true) String name,
             @RequestParam(value = "memberCard",required = true)  String memberCard){
