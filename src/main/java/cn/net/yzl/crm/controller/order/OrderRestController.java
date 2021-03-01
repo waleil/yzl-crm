@@ -409,19 +409,21 @@ public class OrderRestController {
 				}
 				orderdetailList.add(od);
 				ProductPriceResponse pp = productPriceMap.get(p.getProductCode());
-				switch (pp.getUseDiscountType()) {
-				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
-					coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
-					break;
-				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
-					coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
-					break;
-				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
-					coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
-					coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
-					break;
-				default:
-					break;
+				if (pp != null) {
+					switch (pp.getUseDiscountType()) {
+					case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
+						coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
+						break;
+					case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
+						coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
+						break;
+					case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
+						coupondetailList.add(this.getOrderCouponDetail1(seq, in, od, pp));
+						coupondetailList.add(this.getOrderCouponDetail2(seq, in, od, pp));
+						break;
+					default:
+						break;
+					}
 				}
 			}
 		}
@@ -476,25 +478,26 @@ public class OrderRestController {
 				BigDecimal mealPrice = BigDecimal.valueOf(meal.getPriceD()).multiply(bd100);
 				// 套餐优惠价，单位分
 				ProductPriceResponse pp = productPriceMap.get(meal.getMealNo());
-				switch (pp.getUseDiscountType()) {
-				case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
-					coupondetailList
-							.add(this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
-					break;
-				case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
-					coupondetailList
-							.add(this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
-					break;
-				case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
-					coupondetailList
-							.add(this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
-					coupondetailList
-							.add(this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
-					break;
-				default:
-					break;
+				if (pp != null) {
+					switch (pp.getUseDiscountType()) {
+					case CommonConstant.USE_DISCOUNT_TYPE_1:// 使用的优惠：1优惠券
+						coupondetailList.add(
+								this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+						break;
+					case CommonConstant.USE_DISCOUNT_TYPE_2:// 使用的优惠：2优惠活动
+						coupondetailList.add(
+								this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+						break;
+					case CommonConstant.USE_DISCOUNT_TYPE_3:// 使用的优惠：3优惠券+优惠活动
+						coupondetailList.add(
+								this.getOrderCouponDetail1(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+						coupondetailList.add(
+								this.getOrderCouponDetail2(orderm, seq, ordermealMap.get(meal.getMealNo()), meal, pp));
+						break;
+					default:
+						break;
+					}
 				}
-				BigDecimal mealDiscountPrice = pp.getProductTotal().multiply(bd100);
 				// 组装订单明细信息
 				List<OrderDetail> result = meal.getMealProductList().stream().map(in -> {
 					OrderDetail od = new OrderDetail();
@@ -539,17 +542,20 @@ public class OrderRestController {
 				// 套餐商品总金额
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
-					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-							.multiply(BigDecimal.valueOf(mealCount))
-							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
-					BigDecimal discountPrice = mealDiscountPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-							.multiply(BigDecimal.valueOf(mealCount))
-							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
+						BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+								.multiply(BigDecimal.valueOf(mealCount))
+								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
-						od.setCash(discountPrice.intValue() * od.getProductCount());// 应收金额，单位分
+						if (pp != null) {
+							BigDecimal discountPrice = pp.getProductTotal().multiply(bd100)
+									.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+									.multiply(BigDecimal.valueOf(mealCount))
+									.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
+							od.setCash(discountPrice.intValue() * od.getProductCount());// 应收金额，单位分
+						}
 					} else {// 如果是赠品，将金额设置为0
 						od.setProductUnitPrice(0);
 						od.setTotal(0);// 实收金额，单位分
@@ -1316,11 +1322,11 @@ public class OrderRestController {
 				// 套餐商品总金额
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
-					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-							.multiply(BigDecimal.valueOf(mealCount))
-							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
+						BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+								.multiply(BigDecimal.valueOf(mealCount))
+								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
@@ -1699,11 +1705,11 @@ public class OrderRestController {
 				// 套餐商品总金额
 				BigDecimal orderdetailTotal = BigDecimal.valueOf(result.stream().mapToInt(OrderDetail::getTotal).sum());
 				orderdetailList.addAll(result.stream().map(od -> {
-					BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
-							.multiply(BigDecimal.valueOf(mealCount))
-							.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
+						BigDecimal price = mealPrice.multiply(BigDecimal.valueOf(od.getProductUnitPrice()))
+								.multiply(BigDecimal.valueOf(mealCount))
+								.divide(orderdetailTotal, 0, BigDecimal.ROUND_HALF_UP);
 						od.setProductUnitPrice(price.intValue());
 						od.setTotal(od.getProductUnitPrice() * od.getProductCount());// 实收金额，单位分
 						od.setCash(od.getProductUnitPrice() * od.getProductCount());// 应收金额，单位分
