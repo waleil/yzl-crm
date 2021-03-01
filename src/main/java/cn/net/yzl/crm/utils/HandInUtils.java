@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.utils;
 
+import cn.net.yzl.common.constant.CommonConstant;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
@@ -7,12 +8,16 @@ import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.model.dto.DepartDto;
+import cn.net.yzl.order.model.vo.order.CustomerNearSignOrderStatusDTO;
+import cn.net.yzl.workorder.common.CommonConstants;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.IsHandInDTO;
+import cn.net.yzl.workorder.utils.MonggoDateHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.Calendar;
 import java.util.Date;
+import org.springframework.util.StringUtils;
 
 @Component
 public class HandInUtils{
@@ -106,19 +111,9 @@ public class HandInUtils{
      * @return
      */
     public Boolean customerRefund(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
-        /*String paramsValue = wORCBean.getParamsValue();
-        Date date = new Date();
-        String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_FORMAT);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        String[] split = paramsValue.split(",");
-        if(null == split || 0 == split.length){
-            return  Boolean.FALSE;
-        }
-        calendar.add(Calendar.MONTH, -Integer.valueOf(split[0]));
-        Date time = calendar.getTime();
-        String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);*/
-        return orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), null, null).getData().getIsGuestComplaint();
+        ComResponse<Boolean> booleanComResponse = orderSearchClient.hasRefundByMemberCardNo(isHandInDTO.getMemberCard(), DateFormatUtil.dateToString(MonggoDateHelper.getStartTime(), "yyyy-MM-dd HH:mm:ss"), DateFormatUtil.dateToString(MonggoDateHelper.getEndTime(CommonConstants.THREE), "yyyy-MM-dd HH:mm:ss"));
+        Boolean aBoolean = booleanComResponse.getData();
+        return StringUtils.isEmpty(aBoolean) ? false : aBoolean;
     }
 
     /**

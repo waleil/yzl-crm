@@ -55,4 +55,7 @@ public interface DiseaseClient {
 
     @GetMapping("queryTreeNodeWithTemp")
     ComResponse queryTreeNodeWithTemp(@RequestParam("memberCard") String memberCard,@RequestParam("userId") String userId);
+
+    @GetMapping(value = "queryProductByDiseaseNameAndMemberCard")
+    ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseNameAndMemberCard(@RequestParam("name")String name, @RequestParam("memberCard")String memberCard);
 }

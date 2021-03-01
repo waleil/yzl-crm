@@ -17,6 +17,7 @@ import cn.net.yzl.crm.model.order.CalcOrderIn.CalculateOrderProductDto;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.vo.order.OrderDetailIn;
 import cn.net.yzl.order.model.vo.order.OrderIn;
+import cn.net.yzl.order.model.vo.order.ReissueOrderIn;
 import cn.net.yzl.order.model.vo.order.UpdateOrderIn;
 
 /**
@@ -31,6 +32,55 @@ public class OrderRestControllerTests {
 	private OrderRestController orderRestController;
 	@Resource
 	private ObjectMapper objectMapper;
+
+	@Test
+	public void testSubmitOrder() {
+		try {
+			OrderIn order = new OrderIn();
+			order.setMediaChannel(0);
+			order.setMediaName(null);
+			order.setMediaType(0);
+			order.setMemberName(null);
+			order.setMemberTelphoneNo(null);
+			order.setWorkBatchNo("3538");
+			order.setWorkOrderNo(13226);
+			order.setWorkOrderType(2);
+			order.setAdvertBusNo(1001L);// 广告业务主键
+			order.setMemberCardNo("10000055");
+			order.setMediaNo(1001);
+			order.setPayType(CommonConstant.PAY_TYPE_1);
+			order.setRemark("赠品包含套餐");
+			order.setReveiverAddressNo(5302);
+			order.setProductTotal(BigDecimal.valueOf(998));// 商品总额 单位分
+			order.setAmountStored(BigDecimal.valueOf(0));
+
+			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			od1.setMealFlag(CommonConstant.GIFT_FLAG_0);
+			od1.setProductCode("10000172");
+			od1.setProductCount(1);
+			od1.setProductType(CommonConstant.MEAL_FLAG_0);
+			od1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+
+			OrderDetailIn od2 = new OrderDetailIn();
+			od2.setGiftFlag(CommonConstant.GIFT_FLAG_1);
+			od2.setMealFlag(CommonConstant.GIFT_FLAG_1);
+			od2.setProductCode("T0000163");
+			od2.setProductCount(1);
+			od2.setProductType(CommonConstant.MEAL_FLAG_1);
+			od2.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
+
+			order.getOrderDetailIns().add(od1);
+			order.getOrderDetailIns().add(od2);
+
+			QueryIds.userNo.set("14020");
+
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(order));
+			System.err.println(JSON.toJSONString(this.orderRestController.submitOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	public void testSubmitOrderForProduct() {
@@ -284,4 +334,21 @@ public class OrderRestControllerTests {
 		}
 	}
 
+	@Test
+	public void testReissueOrder() {
+		try {
+			ReissueOrderIn order = new ReissueOrderIn();
+			order.setOrderNo("ON202103011417336152825328");
+			order.setPayAmount(BigDecimal.valueOf(1000));
+			order.setRemark("赔了");
+
+			OrderDetailIn od1 = new OrderDetailIn();
+
+			order.getOrderDetailIns().add(od1);
+
+			System.err.println(JSON.toJSONString(this.orderRestController.reissueOrder(order), true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

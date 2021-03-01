@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -120,5 +121,11 @@ public interface OrderSearchClient {
     @ApiOperation(value = "查询订单销售明细")
     @PostMapping("v1/selectOrderSaleDetail")
     public ComResponse<Page<OrderSellDetailResDTO>> selectOrderSaleDetail(@RequestBody OrderSellDetailReqDTO dto);
+
+    @ApiOperation(value = "查询顾客指定时间范围内客户退单情况")
+    @GetMapping("orderSearch/v1/hasRefundByMemberCardNo")
+    public ComResponse<Boolean> hasRefundByMemberCardNo(@ApiParam("会员编号") @RequestParam("memberCarNo") String memberCarNo,
+                                                        @ApiParam("开始时间") @RequestParam("startTime") String startTime,
+                                                        @ApiParam("结束时间") @RequestParam("endTime") String endTime);
 
 }
