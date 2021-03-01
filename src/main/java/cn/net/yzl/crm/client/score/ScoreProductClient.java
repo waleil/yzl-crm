@@ -6,6 +6,7 @@ import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.vo.ChangeProductStatusVO;
 import cn.net.yzl.score.model.vo.ExchangeVO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
 import io.swagger.annotations.ApiOperation;
@@ -42,8 +43,6 @@ public interface ScoreProductClient {
     ComResponse<Integer> myScore(@RequestParam("staffNo") String staffNo);
 
     @PostMapping("changeStatus")
-    ComResponse<Void> changeStatus(@RequestParam("status")Integer status,
-                                          @RequestParam("id")Integer id,
-                                          @RequestParam("staffNo")String staffNo);
+    ComResponse<Void> changeStatus(@RequestBody ChangeProductStatusVO vo);
 
 }

@@ -139,7 +139,7 @@ public class ScoreController {
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        return service.changeStatus(vo.getStatus(), vo.getId(), request.getHeader("userNo"));
+        return service.changeStatus(vo);
     }
 
     @GetMapping("myInfo")
