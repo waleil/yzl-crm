@@ -120,7 +120,7 @@ public class MemberController {
         YLoggerUtil.infoLog("根据员工编码获取部门 Response", JsonUtil.toJsonStr(detailsByNo));
         StaffImageBaseInfoDto data = detailsByNo.getData();
         if(null == data){
-            return ComResponse.fail(ComResponse.ERROR_STATUS,"获取当前用户信息:"+detailsByNo.getMessage());
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"获取当前用户信息失败:"+detailsByNo.getMessage());
         }
         Integer departId = data.getDepartId();//部门id
         if(null == departId){
@@ -134,11 +134,21 @@ public class MemberController {
         member.setAge(memberReferralVO.getAge());
 
         List<MemberPhone> memberPhoneList = new ArrayList<>();
+        //手机号
         MemberPhone memberPhone = new MemberPhone();
         memberPhone.setPhone_number(memberReferralVO.getMemberPhone());
+        memberPhone.setPhone_type(1);
         memberPhone.setCreator_no(staffNo);
         memberPhone.setUpdator_no(staffNo);
         memberPhoneList.add(memberPhone);
+        //座机号
+        MemberPhone fixedPhone = new MemberPhone();
+        fixedPhone.setPhone_number(memberReferralVO.getFixedPhoneNum());
+        fixedPhone.setPhone_type(2);
+        fixedPhone.setCreator_no(staffNo);
+        fixedPhone.setUpdator_no(staffNo);
+        memberPhoneList.add(fixedPhone);
+        //添加到客户对象中
         member.setMemberPhoneList(memberPhoneList);
 
         member.setEmail(memberReferralVO.getEmail());
