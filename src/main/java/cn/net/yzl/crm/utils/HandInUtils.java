@@ -111,7 +111,7 @@ public class HandInUtils{
      * @return
      */
     public Boolean customerRefund(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
-        ComResponse<Boolean> booleanComResponse = orderSearchClient.hasRefundByMemberCardNo(isHandInDTO.getMemberCard(), DateFormatUtil.dateToString(MonggoDateHelper.getStartTime(), "yyyy-MM-dd HH:mm:ss"), DateFormatUtil.dateToString(MonggoDateHelper.getStartTime(CommonConstants.THREE), "yyyy-MM-dd HH:mm:ss"));
+        ComResponse<Boolean> booleanComResponse = orderSearchClient.hasRefundByMemberCardNo(isHandInDTO.getMemberCard(), DateFormatUtil.dateToString(MonggoDateHelper.getStartTime(), "yyyy-MM-dd HH:mm:ss"), DateFormatUtil.dateToString(MonggoDateHelper.getEndTime(CommonConstants.THREE), "yyyy-MM-dd HH:mm:ss"));
         Boolean aBoolean = booleanComResponse.getData();
         return StringUtils.isEmpty(aBoolean) ? false : aBoolean;
     }
