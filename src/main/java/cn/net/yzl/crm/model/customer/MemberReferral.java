@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-@ApiModel("转介绍用户")
+@ApiModel("转介绍客户")
 public class MemberReferral {
 
     @NotBlank(message = "姓名不能为空")
@@ -24,8 +24,11 @@ public class MemberReferral {
     private Integer age;
 
     @NotBlank(message = "手机号不能为空")
-    @ApiModelProperty(value = "手机号",required = true)
-    private String MemberPhone;
+    @ApiModelProperty(value = "手机号", name = "memberPhone",required = true)
+    private String memberPhone;
+
+    @ApiModelProperty(value = "座机号",required = true)
+    private String fixedPhoneNum;
 
     @ApiModelProperty(value = "邮箱")
     private String email;
@@ -65,7 +68,7 @@ public class MemberReferral {
 
     @ApiModelProperty(value = "分配状态：0:未分配，1：自动分配，2：人工分配")
     private Integer allocateStatus;
-
+    @ApiModelProperty(value = "媒体Id")
     private Integer mediaId;
     @ApiModelProperty(value = "媒体名称")
     private String mediaName;
