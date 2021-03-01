@@ -111,8 +111,12 @@ public class WorkbenchController {
 
     @RequestMapping(value = "answerWorkbenchHotlineAndCallback",method = RequestMethod.GET)
     @ApiOperation(value = "工作台-热线&&回访经理-接听", notes = "工作台-热线&&回访经理-接听")
-    public ComResponse<SelectWorkOrderByMemberCardVO> answerWorkbenchHotlineAndCallback(@ApiParam(value = "用户编码",required = true) @RequestParam("staffNo") String staffNo){
-        SelectWorkOrderByMemberCardVO selectWorkOrderByMemberCardVO = workbenchClient.answerWorkbenchHotlineAndCallback(staffNo);
+    public ComResponse<SelectWorkOrderByMemberCardVO> answerWorkbenchHotlineAndCallback(){
+        String userNo = QueryIds.userNo.get();
+        if(StringUtils.isEmpty(userNo)){
+            return ComResponse.fail(ComResponse.ERROR_STATUS, ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE.getMessage());
+        }
+        SelectWorkOrderByMemberCardVO selectWorkOrderByMemberCardVO = workbenchClient.answerWorkbenchHotlineAndCallback(userNo);
         return ComResponse.success(selectWorkOrderByMemberCardVO);
     }
 }
