@@ -248,10 +248,16 @@ public class SettlementExpressController {
         return settlement.allCreateSettle(createSettleByCondition);
     }
 
-    @PostMapping("/search/charge/sum")
+    @PostMapping("search/charge/sum")
     @ApiOperation("金额汇总查询")
     public ComResponse<ExpressSettlementPageVo> searchChargeSum(@RequestBody SettleBillSearchVo searchVo){
         return settlement.searchChargeSum(searchVo);
+    }
+
+    @PostMapping("search/detail/charge/sum")
+    @ApiOperation("运费结算明细金额汇总查询")
+    public ComResponse<CountFreightVo> searchDetailSum(@RequestBody ExpressChargeSettlementDetail detail) {
+        return settlement.searchDetailSum(detail);
     }
 }
 
