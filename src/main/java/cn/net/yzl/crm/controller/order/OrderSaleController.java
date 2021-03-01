@@ -54,18 +54,6 @@ public class OrderSaleController {
 	@ApiOperation(value = "新建售后单 ")
 	@PostMapping("/v1/saveOrderSale")
 	public ComResponse<Boolean> saveOrUpdateOrderSale(@RequestBody @Validated OrderSaleAddDTO dto) {
-		//数据校验
-		Integer realRefund = MathUtils.strPriceToLong(dto.getRefundAmountActual());
-		if(dto.getRefundFlag() == 1){//用户承担
-			realRefund = MathUtils.strPriceToLong(dto.getRefundAmountReceivable())
-					- MathUtils.strPriceToLong(dto.getRefundAmountDepreciate()==null?"0":dto.getRefundAmountDepreciate())
-					- MathUtils.strPriceToLong(dto.getRefundAmountDelivery()==null?"0":dto.getRefundAmountDelivery());
-		}
-		//校验前端上送的实退，是否与手段上送的一致
-		if(Integer.compare(realRefund,MathUtils.strPriceToLong(dto.getRefundAmountActual())) != 0){
-			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "实退金额校验错误");
-		}
-
 		ComResponse<StaffImageBaseInfoDto> staffRes = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 		if (!staffRes.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), staffRes.getMessage());
