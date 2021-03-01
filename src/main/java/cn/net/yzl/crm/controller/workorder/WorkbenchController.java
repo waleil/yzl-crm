@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.workorder.WorkbenchClient;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.workorder.model.vo.SelectWorkOrderByMemberCardVO;
 import cn.net.yzl.workorder.model.vo.VisitSeatMonitoringVo;
 import cn.net.yzl.workorder.model.vo.VisitSeatsVo;
 import cn.net.yzl.workorder.model.vo.WorkbenchHotlineManagerMonitoringVO;
@@ -106,5 +107,12 @@ public class WorkbenchController {
                                                                       @ApiParam(value = "工单类型(1：热线，2：回访)",required = true) @RequestParam("workOrderType") Integer workOrderType){
         workbenchClient.insertWorkbenchHotlineAndCallbackCount(staffNo,workOrderType);
         return ComResponse.success();
+    }
+
+    @RequestMapping(value = "answerWorkbenchHotlineAndCallback",method = RequestMethod.GET)
+    @ApiOperation(value = "工作台-热线&&回访经理-接听", notes = "工作台-热线&&回访经理-接听")
+    public ComResponse<SelectWorkOrderByMemberCardVO> answerWorkbenchHotlineAndCallback(@ApiParam(value = "用户编码",required = true) @RequestParam("staffNo") String staffNo){
+        SelectWorkOrderByMemberCardVO selectWorkOrderByMemberCardVO = workbenchClient.answerWorkbenchHotlineAndCallback(staffNo);
+        return ComResponse.success(selectWorkOrderByMemberCardVO);
     }
 }
