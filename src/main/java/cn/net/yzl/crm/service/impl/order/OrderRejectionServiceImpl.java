@@ -62,7 +62,7 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
         dto.setRejectionNo(seqNo);
         dto.setStoreNo(String.valueOf(orderRejectionAddDTO.getStoreNo()));
         dto.setUserNo(userNo);
-        dto.setFinancialOwner(Long.valueOf(Optional.ofNullable(dresponse.getData()).map(DepartDto::getFinanceDepartId).orElse(0)));
+        dto.setFinancialOwner(Optional.ofNullable(dresponse.getData()).map(DepartDto::getFinanceDepartId).orElse(0));
         dto.setFinancialOwnerName(Optional.ofNullable(dresponse.getData()).map(DepartDto::getFinanceDepartName).orElse("无"));
         dto.setUserName(Optional.ofNullable(detailsByNo.getData()).map(StaffImageBaseInfoDto::getName).orElse(null));
         if (orderRejectionAddDTO.getRejectType().compareTo(1) == 0) {
