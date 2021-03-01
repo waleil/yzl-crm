@@ -233,4 +233,8 @@ public interface LogisticsFien {
     @PostMapping("settlement/search/charge/sum")
     @ApiOperation("金额汇总查询")
     ComResponse<ExpressSettlementPageVo> searchChargeSum(@RequestBody SettleBillSearchVo searchVo);
+
+    @PostMapping("settlement/search/detail/charge/sum")
+    @ApiOperation("运费结算明细金额汇总查询")
+    ComResponse<CountFreightVo> searchDetailSum(@RequestBody ExpressChargeSettlementDetail detail) ;
 }
