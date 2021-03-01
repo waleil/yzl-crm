@@ -10,6 +10,7 @@ import cn.net.yzl.crm.service.score.ScoreService;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.vo.ChangeProductStatusVO;
 import cn.net.yzl.score.model.vo.ExchangeVO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
 import org.apache.commons.lang3.StringUtils;
@@ -126,8 +127,8 @@ public class ScoreServiceImpl implements ScoreService {
      * @date 2021/2/27 11:43
      */
     @Override
-    public ComResponse<Void> changeStatus(Integer status, Integer id, String userNo) {
-        return scoreProductClient.changeStatus(status, id,userNo);
+    public ComResponse<Void> changeStatus(ChangeProductStatusVO vo) {
+        return scoreProductClient.changeStatus(vo);
     }
 
 }
