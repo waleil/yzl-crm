@@ -37,4 +37,7 @@ public interface WorkbenchClient {
 
     @RequestMapping(value = "workbench/insertWorkbenchHotlineAndCallbackCount",method = RequestMethod.GET)
     void insertWorkbenchHotlineAndCallbackCount(@RequestParam("staffNo") String staffNo, @RequestParam("workOrderType") Integer workOrderType);
+
+    @RequestMapping(value = "workbench/answerWorkbenchHotlineAndCallback",method = RequestMethod.GET)
+    SelectWorkOrderByMemberCardVO answerWorkbenchHotlineAndCallback(@RequestParam("staffNo") String staffNo);
 }
