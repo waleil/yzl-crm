@@ -27,7 +27,7 @@ public class MemberReferral {
     @ApiModelProperty(value = "手机号", name = "memberPhone",required = true)
     private String memberPhone;
 
-    @ApiModelProperty(value = "座机号",required = true)
+    @ApiModelProperty(value = "座机号",required = false)
     private String fixedPhoneNum;
 
     @ApiModelProperty(value = "邮箱")
