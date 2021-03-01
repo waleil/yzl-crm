@@ -75,7 +75,7 @@ public class OrderAccountController {
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
             throw new BizException(sresponse.getCode(),"调用ehr查询操作人信息失败>>"+sresponse.getMessage());
         }
-//        dto.setDepartId(String.valueOf(sresponse.getData().getDepartId()));
+        dto.setDepartId(String.valueOf(sresponse.getData().getDepartId()));
         dto.setUpdateCode(sresponse.getData().getStaffNo());
         dto.setUpdateName(sresponse.getData().getName());
         ComResponse comResponse = null;
