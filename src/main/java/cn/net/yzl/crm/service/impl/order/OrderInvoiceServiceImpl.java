@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.model.order.OrderInvoice4Export;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
@@ -65,9 +66,7 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
 
             String title = new String("结算列表".getBytes(),StandardCharsets.UTF_8.name());
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-                    URLEncoder.encode(URLEncoder.encode(title, StandardCharsets.UTF_8.name()) ,StandardCharsets.UTF_8.name()),
-                    System.currentTimeMillis()));
-
+                    URLEncoder.encode(title, StandardCharsets.UTF_8.name()), DateFormatUtil.dateToString(new Date(),CommonConstant.JSON_FORMAT_PATTERN)));
 
             excelWriter = EasyExcel.write(response.getOutputStream(), OrderInvoice4Export.class)
                     .registerWriteHandler(this.writeHandler).build();
