@@ -431,7 +431,7 @@ public class WorkOrderController {
         }
         updateMoreAdjustDTO.setAcceptStatus(1);//人工触发 改为未接收，不管是人工还是自动分配都是未接收
         updateMoreAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
-        return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO).setMessage("成功");
+        return workOrderClient.updateMoreAdjust(updateMoreAdjustDTO);
     }
 
     @ApiOperation(value = "回访工单管理-单条分配", notes = "我的回访工单-单条分配")

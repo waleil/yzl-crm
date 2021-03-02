@@ -28,7 +28,7 @@ public class OrderInvoice4Export  implements Serializable {
     private String taxMode;
 
     @ExcelProperty(value = {"开票类型"} ,index = 3)
-    private String taxType;;
+    private String taxWay;;
 
     @ExcelProperty(value = {"开票金额"} ,index = 4)
     private String taxMoney;

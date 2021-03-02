@@ -8,6 +8,7 @@ import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
 import cn.net.yzl.score.model.vo.ChangeProductStatusVO;
 import cn.net.yzl.score.model.vo.ExchangeVO;
+import cn.net.yzl.score.model.vo.ProductDelVO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -34,7 +35,7 @@ public interface ScoreProductClient {
     ComResponse<Void> edit(@RequestBody ScoreProductVO vo);
 
     @PostMapping("delete")
-    ComResponse<Void> delete(@RequestParam("id") Integer id, @RequestParam("staffNo") String userNo);
+    ComResponse<Void> delete(@RequestBody ProductDelVO vo);
 
     @PostMapping("exchange")
     ComResponse<Void> exchange(@RequestBody ExchangeVO vo);

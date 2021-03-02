@@ -8,11 +8,10 @@ import cn.net.yzl.crm.client.score.ScoreProductClient;
 import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.score.ScoreService;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
+import cn.net.yzl.score.model.dto.ScoreManageDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
-import cn.net.yzl.score.model.vo.ChangeProductStatusVO;
-import cn.net.yzl.score.model.vo.ExchangeVO;
-import cn.net.yzl.score.model.vo.ScoreProductVO;
+import cn.net.yzl.score.model.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,8 +96,8 @@ public class ScoreServiceImpl implements ScoreService {
      * @date 2021/2/26 16:19
      */
     @Override
-    public ComResponse<Void> delete(Integer id, String staffNo) {
-        return scoreProductClient.delete(id,staffNo);
+    public ComResponse<Void> delete(ProductDelVO vo) {
+        return scoreProductClient.delete(vo);
     }
 
     /**
@@ -129,6 +128,16 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public ComResponse<Void> changeStatus(ChangeProductStatusVO vo) {
         return scoreProductClient.changeStatus(vo);
+    }
+
+    /**
+     * @description 分页查询员工积分信息
+     * @author Majinbao
+     * @date 2021/3/2 10:38
+     */
+    @Override
+    public ComResponse<Page<ScoreManageDTO>> scoreManagePage(ManageSelectVO vo) {
+        return scoreDetailClient.scoreManagePage(vo);
     }
 
 }
