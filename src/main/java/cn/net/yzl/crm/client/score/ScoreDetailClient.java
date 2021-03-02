@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "scoreDetailClient", url = "localhost:8765/detail/v1")
+@FeignClient(name = "scoreDetailClient", url = "${api.gateway.url}/scoreServer/detail/v1")
 public interface ScoreDetailClient {
 
     /**
@@ -32,4 +32,9 @@ public interface ScoreDetailClient {
      */
     @PostMapping("scoreManagePage")
     ComResponse<Page<ScoreManageDTO>> scoreManagePage(@RequestBody ManageSelectVO vo);
+
+    @GetMapping("exchangeRecord")
+    ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(@RequestParam("staffNo") String staffNo,
+                                                           @RequestParam("pageSize") Integer pageSize,
+                                                           @RequestParam("pageNo") Integer pageNo);
 }
