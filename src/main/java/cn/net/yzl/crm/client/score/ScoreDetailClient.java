@@ -3,6 +3,7 @@ package cn.net.yzl.crm.client.score;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
+import cn.net.yzl.score.model.dto.MyScoreDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreManageDTO;
 import cn.net.yzl.score.model.vo.DisableScoreVO;
 import cn.net.yzl.score.model.vo.ManageSelectVO;
@@ -23,9 +24,9 @@ public interface ScoreDetailClient {
      * @date 2021/2/24 15:53
      */
     @GetMapping("queryPage")
-    ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(@RequestParam("staffNo") String staffNo,
-                                                                    @RequestParam("pageSize") Integer pageSize,
-                                                                    @RequestParam("pageNo") Integer pageNo);
+    ComResponse<Page<MyScoreDetailDTO>> myExchangeRecords(@RequestParam("staffNo") String staffNo,
+                                                          @RequestParam("pageSize") Integer pageSize,
+                                                          @RequestParam("pageNo") Integer pageNo);
 
     /**
      * @description 分页查询员工积分信息
