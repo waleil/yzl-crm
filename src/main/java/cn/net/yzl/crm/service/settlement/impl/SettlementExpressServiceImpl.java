@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,7 +110,10 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
         //响应内容格式
 
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "attachment;fileName=" +"JSYF"+sysDate +".xlsx");
+//        response.setHeader("Content-Disposition", "attachment;fileName=" +"JSYF"+sysDate +".xlsx");
+
+        response.setHeader("Content-Disposition", "attachment;fileName="+
+                URLEncoder.encode("结算运费订单"+sysDate+".xlsx", "utf-8"));
         //向前端写入文件流流
         EasyExcel.write(response.getOutputStream(), ExpressSettlementExcelDTO.class)
                 .sheet("结算运费订单").doWrite(excels);
@@ -189,7 +193,11 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
         //响应内容格式
 
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "attachment;fileName=YFJSMX"+sysDate+".xlsx");
+//        response.setHeader("Content-Disposition", "attachment;fileName=YFJSMX"+sysDate+".xlsx");
+
+
+        response.setHeader("Content-Disposition", "attachment;fileName="+
+                URLEncoder.encode("运费结算明细"+sysDate+".xlsx", "utf-8"));
         //向前端写入文件流流
         EasyExcel.write(response.getOutputStream(), SettlementDetailExcel.class)
                 .sheet("运费结算明细").doWrite(excels);
