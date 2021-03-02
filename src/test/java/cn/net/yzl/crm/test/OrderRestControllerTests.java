@@ -338,14 +338,22 @@ public class OrderRestControllerTests {
 	public void testReissueOrder() {
 		try {
 			ReissueOrderIn order = new ReissueOrderIn();
-			order.setOrderNo("ON202103011417336152825328");
+			order.setOrderNo("ON202103021051196902825492");
 			order.setPayAmount(BigDecimal.valueOf(1000));
 			order.setRemark("赔了");
 
 			OrderDetailIn od1 = new OrderDetailIn();
+			od1.setProductCode("10000003");
+			od1.setProductType(CommonConstant.MEAL_FLAG_0);
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_0);
+			od1.setProductCount(1);
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
 
 			order.getOrderDetailIns().add(od1);
 
+			QueryIds.userNo.set("14020");
+
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(order));
 			System.err.println(JSON.toJSONString(this.orderRestController.reissueOrder(order), true));
 		} catch (Exception e) {
 			e.printStackTrace();
