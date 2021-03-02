@@ -18,7 +18,6 @@ import cn.net.yzl.logistics.model.ExpressFindTraceDTO;
 import cn.net.yzl.logistics.model.ExpressTraceResDTO;
 import cn.net.yzl.order.model.vo.order.OrderInfoResDTO;
 import cn.net.yzl.order.model.vo.order.OrderProductDTO;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-@Slf4j
+
 @Service
 public class OrderSearchServiceImpl implements IOrderSearchService {
 
@@ -51,18 +50,15 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         }
         List<OrderInfoResDTO> list = respons.getData();
         if (list == null || list.size() == 0) {
-            log.error("订单不存在，订单号：" + orderNo);
             throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), respons.getMessage());
         }
 
         orderInfoVO.setOrderInfoResDTOList(list);
         GeneralResult<Member> member = memberFien.getMember(list.get(0).getMemberCardNo());
         if (member.getCode().compareTo(Integer.valueOf(200)) != 0) {
-            log.error("查询顾客信息异常，顾客卡号：" + list.get(0).getMemberCardNo());
             throw new BizException(member.getCode(), member.getMessage());
         }
         if (member.getData() == null) {
-            log.error("查询顾客信息异常，顾客信息不存在，顾客卡号：" + list.get(0).getMemberCardNo());
             throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), "顾客信息不存在");
         }
         orderInfoVO.setMember(member.getData());
@@ -86,11 +82,9 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         OrderLogistcInfo orderLogistcInfo = null;
         ComResponse<OrderInfoResDTO> respons = orderSearchClient.selectOrderInfoOnly(orderNo);
         if (respons.getCode().compareTo(Integer.valueOf(200)) != 0) {
-            log.error("调用订单服务失败：" + respons.getCode(),respons.getMessage());
             throw new BizException(respons.getCode(), respons.getMessage());
         }
         if (respons.getData() == null) {
-            log.error("该订单不存在,订单号：" + orderNo);
             throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), "该订单不存在");
         }
         OrderInfoResDTO order = respons.getData();
@@ -99,7 +93,7 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         }
         if (!StringUtils.isBlank(mailid) && !StringUtils.isBlank(companyCode) &&
                 !StringUtils.isBlank(order.getExpressNumber()) && !mailid.equals(order.getExpressNumber())) {
-            log.error("您要查询的快递号，不属于该订单，订单号：" + orderNo);
+
             throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), "您要查询的快递号，不属于该订单");
         }
         orderLogistcInfo = new OrderLogistcInfo();
@@ -110,7 +104,6 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         dto.setCompanyCode(order.getExpressCompanyCode());
         GeneralResult<List<ExpressTraceResDTO>> logisticsTraces = logisticsFien.findLogisticsTraces(dto);
         if (logisticsTraces.getCode().compareTo(Integer.valueOf(200)) != 0) {
-            log.error("调用物流服务查询物流轨迹失败，订单号：" + orderNo,respons.getMessage());
             throw new BizException(logisticsTraces.getCode(), logisticsTraces.getMessage());
         }
         List<ExpressTraceResDTO> data = logisticsTraces.getData();
