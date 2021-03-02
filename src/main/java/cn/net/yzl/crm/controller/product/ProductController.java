@@ -266,4 +266,11 @@ public class ProductController {
         return productService.queryByProductCodes(codes).setMessage(fastDFSConfig.getUrl());
     }
 
+    @ApiOperation("根据商品编码获取库存")
+    @GetMapping("/v1/getProductStock")
+    @ApiImplicitParam(name = "productCode",value = "商品编码",dataType = "String", paramType = "query")
+    public ComResponse<Integer> getProductStock(@RequestParam @NotBlank String productCode){
+        return productService.getProductStock(productCode);
+    }
+
 }

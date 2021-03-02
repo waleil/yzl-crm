@@ -72,4 +72,11 @@ public interface ProductService {
     ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(String diseaseName);
 
     ComResponse<List<ProductMainDTO>> queryByProductCodes(String codes);
+
+    /**
+     * 通过商品编码获取商品库存
+     * @param productCode
+     * @return
+     */
+    ComResponse<Integer> getProductStock(String productCode);
 }

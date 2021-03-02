@@ -147,4 +147,7 @@ public interface ProductClient {
 
 	@GetMapping(value = "v1/queryCategoryCountByCodes")
 	ComResponse<Integer> queryCategoryCountByCodes(@RequestParam("productCodes") String[] productCodes);
+
+	@GetMapping(value = "v1/getProductStock")
+	ComResponse<Integer> getProductStock(@RequestParam("productCode") String productCode);
 }

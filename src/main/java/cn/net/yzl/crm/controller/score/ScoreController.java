@@ -9,11 +9,10 @@ import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.score.ScoreService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
+import cn.net.yzl.score.model.dto.ScoreManageDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
-import cn.net.yzl.score.model.vo.ChangeProductStatusVO;
-import cn.net.yzl.score.model.vo.ExchangeVO;
-import cn.net.yzl.score.model.vo.ScoreProductVO;
+import cn.net.yzl.score.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -126,11 +125,12 @@ public class ScoreController {
 
     @PostMapping("delete")
     @ApiOperation("根据id删除积分商品信息")
-    public ComResponse<Void> delete(@RequestParam("id")Integer id ,HttpServletRequest request){
+    public ComResponse<Void> delete(@RequestBody ProductDelVO vo, HttpServletRequest request){
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        return service.delete(id, request.getHeader("userNo"));
+        vo.setStaffNo(request.getHeader("userNo"));
+        return service.delete(vo);
     }
 
     @PostMapping("changeStatus")
@@ -149,6 +149,12 @@ public class ScoreController {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
         return ehrClient.getDetailsByNo(request.getHeader("userNo"));
+    }
+
+    @PostMapping("scoreManagePage")
+    @ApiOperation("分页查询员工积分信息")
+    ComResponse<Page<ScoreManageDTO>> scoreManagePage(@RequestBody ManageSelectVO vo){
+        return service.scoreManagePage(vo);
     }
 
 }
