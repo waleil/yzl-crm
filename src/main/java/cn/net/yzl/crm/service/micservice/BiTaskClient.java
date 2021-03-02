@@ -3,6 +3,7 @@ package cn.net.yzl.crm.service.micservice;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.util.DateFormatUtil;
+import cn.net.yzl.crm.dto.biTask.BiSystemDataSourceSettingVO;
 import cn.net.yzl.crm.dto.biTask.Indicators;
 import cn.net.yzl.crm.staff.dto.lasso.Indicator;
 import cn.net.yzl.crm.staff.dto.lasso.IndicatorDto;
@@ -18,18 +19,31 @@ import java.util.stream.Collectors;
 /**
  * @author: liuChangFu
  * @date: 2021/1/18 13:27
- * @desc: //TODO  请说明该类的用途
+ * @desc: BI相关
  **/
 @FeignClient(name = "BiTask", url = "${api.gateway.url}/taskServer")
 public interface BiTaskClient {
 
+    /**
+     * 查询指标库列表
+     * @param pageNum
+     * @param pageSize
+     * @param indicatorsDomainType
+     * @return
+     */
     @GetMapping("/indicatorsSetting/getBiIndicatorsSettingList")
     ComResponse<Page<Indicators>> getBiIndicatorsSettingList(@RequestParam("pageNum") Integer pageNum,
                                                              @RequestParam("pageSize") Integer pageSize,
                                                              @RequestParam("indicatorsDomainType") Integer indicatorsDomainType);
 
 
-
+    /**
+     * 查询员工指标完成情况的员工编号信息
+     * @param taskCycleTime
+     * @param achieveIndicatorsSettingIds
+     * @param noAchieveIndicatorsSettingIds
+     * @return
+     */
     @GetMapping("/staffTargetTask/getStaffCodeByIndicatorsSettingId")
     ComResponse<List<String>> getStaffCodeByIndicatorsSettingId(@RequestParam("taskCycleTime") String taskCycleTime,
                                                                 @RequestParam("achieveIndicatorsSettingIds") List<Integer> achieveIndicatorsSettingIds,
@@ -58,4 +72,12 @@ public interface BiTaskClient {
         }
         return Collections.emptyList();
     }
+
+    /**
+     * 查询跨系统数据配置列表
+     * @param systemType 系统类型（1：CRM 2：EHR 3：DMC 等）
+     * @return
+     */
+    @GetMapping("/systemDataSourceSetting/getSystemDataSourceList")
+    ComResponse<List<BiSystemDataSourceSettingVO>> getSystemDataSourceList(@RequestParam("systemType") Integer systemType);
 }
