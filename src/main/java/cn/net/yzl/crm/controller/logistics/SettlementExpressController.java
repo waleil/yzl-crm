@@ -205,8 +205,8 @@ public class SettlementExpressController {
         if (!StringUtils.hasText(param.getFileUrl())) {
             return ComResponse.fail(ResponseCodeEnums.ERROR, "上传文件URL不能为空");
         }
-//        return this.settlement.importFromExcel(param);
-        return ComResponse.success();
+        return this.settlement.importFromExcel(param);
+//        return ComResponse.success();
     }
 
     @PostMapping("/add/settle/detail")
