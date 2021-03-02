@@ -170,6 +170,11 @@ public class MemberController {
             member.setCreator_name(data.getName());
             member.setUpdator_name(data.getName());
         }
+
+        //介绍人信息
+        member.setIntro_no(memberReferralVO.getIntroNo());
+        member.setIntro_name(memberReferralVO.getIntroName());
+        member.setIntro_type(memberReferralVO.getIntroType() == null ? 2 : memberReferralVO.getIntroType() );
         //设置会员信息
         vo.setMemberVO(member);
 
