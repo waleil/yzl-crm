@@ -176,4 +176,10 @@ public class ScoreController {
         return service.changeScoreStaffStatus(vo);
     }
 
+    @PostMapping("pageStaffScore")
+    @ApiOperation("分页查询员工兑换列表")
+    public ComResponse<Page<ScoreStaffRecordDTO>> pageStaffScore(@RequestBody StaffExchangeSelectVO vo){
+        return service.pageStaffScore(vo);
+    }
+
 }
