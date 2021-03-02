@@ -25,7 +25,8 @@ import java.util.List;
 @Api(tags = "商品服务")
 @RestController
 @RequestMapping("product")
-public class ProductController {
+public class
+ProductController {
 
     @Autowired
     private ProductService productService;

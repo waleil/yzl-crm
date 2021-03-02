@@ -30,4 +30,6 @@ public interface ScoreService {
     ComResponse<Void> changeStatus(ChangeProductStatusVO vo);
 
     ComResponse<Page<ScoreManageDTO>> scoreManagePage(ManageSelectVO vo);
+
+    ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(String userNo, Integer pageSize, Integer pageNo);
 }

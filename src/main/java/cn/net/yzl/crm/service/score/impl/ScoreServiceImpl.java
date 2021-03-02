@@ -140,4 +140,15 @@ public class ScoreServiceImpl implements ScoreService {
         return scoreDetailClient.scoreManagePage(vo);
     }
 
+    @Override
+    public ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(String userNo, Integer pageSize, Integer pageNo) {
+        ComResponse<Page<MyExchangeRecordDTO>> pageComResponse = scoreDetailClient.exchangeRecords(userNo, pageSize, pageNo);
+        if (pageComResponse != null) {
+            pageComResponse.getData().getItems().stream().forEach(s->{
+                s.setFastDFSUrl(fastDFSConfig.getUrl());
+            });
+        }
+        return pageComResponse;
+    }
+
 }

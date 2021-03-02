@@ -157,4 +157,15 @@ public class ScoreController {
         return service.scoreManagePage(vo);
     }
 
+    @GetMapping("exchangeRecord")
+    @ApiOperation("分页查询员工的兑换明细")
+    public ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(@RequestParam("pageSize")Integer pageSize,
+                                                                  @RequestParam("pageNo")Integer pageNo,
+                                                                  HttpServletRequest request){
+        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
+        }
+        return service.exchangeRecords(request.getHeader("userNo"),pageSize, pageNo);
+    }
+
 }
