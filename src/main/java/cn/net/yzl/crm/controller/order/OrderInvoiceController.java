@@ -46,7 +46,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -170,7 +172,7 @@ public class OrderInvoiceController {
 
     @ApiOperation(value = "顾客积分明细表——导出")
     @PostMapping("v1/exportMemberIntegralRecords")
-    public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+    public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) throws Exception {
         formatParams(request);
         ComResponse<List<MemberIntegralRecordsResponse>> records = activityClient.getMemberIntegralRecordsWithOutPage(request);
         if (!records.getStatus().equals(1)) {
@@ -247,7 +249,7 @@ public class OrderInvoiceController {
 
     @ApiOperation(value = "顾客红包明细表——导出")
     @PostMapping("v1/exportMemberRedBagRecords")
-    public void exportMemberRedBagRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+    public void exportMemberRedBagRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) throws Exception {
         formatParams(request);
         ComResponse<List<MemberRedBagRecordsResponse>> records = activityClient.getMemberRedBagRecordsWithOutPage(request);
         if (!records.getStatus().equals(1)) {
@@ -346,7 +348,7 @@ public class OrderInvoiceController {
 
     @ApiOperation(value = "顾客优惠券明细表——导出")
     @PostMapping("v1/exportMemberCoupon")
-    public void exportMemberCoupon(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) {
+    public void exportMemberCoupon(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response) throws Exception {
         formatParams(request);
         ComResponse<List<MemberCouponResponse>> records = activityClient.getMemberCouponWithOutPage(request);
         if (!records.getStatus().equals(1)) {
@@ -407,11 +409,12 @@ public class OrderInvoiceController {
      * @param response
      * @param <T>
      */
-    private <T> void export(List<?> list, Class<T> clazz, String title, HttpServletResponse response) {
+    private <T> void export(List<?> list, Class<T> clazz, String title, HttpServletResponse response) throws Exception {
         //导出
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;fileName=%s%s.xlsx", title, System.currentTimeMillis()));
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
+                URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
         ExcelWriter excelWriter = null;
         try {
             excelWriter = EasyExcel.write(response.getOutputStream(), clazz).registerWriteHandler(this.writeHandler).build();

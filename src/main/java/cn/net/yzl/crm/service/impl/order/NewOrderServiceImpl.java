@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import cn.net.yzl.common.util.YDateUtil;
+import cn.net.yzl.common.util.YLoggerUtil;
 import io.netty.util.internal.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +107,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			Integer wordCode = response.getData().getWorkCode();
 			Integer departId = response.getData().getDepartId();
 			dto.setUserName(response.getData().getName());
+			String workCodeStr = response.getData().getWorkCodeStr();
 			Integer financialOwner = null;
 			String financialOwnerName = "";
 			// 生成批次号
@@ -147,7 +150,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			List<CrowdGroup> groups = searchGroups(dto.getCustomerGroupIds());
 			// 组织群组信息
 			OrderTemp orderTemp = mkOrderTemp(groups, batchNo, dto, String.valueOf(departId), wordCode, financialOwner,
-					financialOwnerName);
+					financialOwnerName,workCodeStr);
 
 			// 总人数
 			totalCount = new AtomicInteger(groups.stream().mapToInt(CrowdGroup::getPerson_count).sum());
@@ -427,7 +430,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setInvoiceFlag(0);
 		orderM.setPayType(CommonConstant.PAY_TYPE_0);// 支付方式 货到付款
 		orderM.setPayMode(CommonConstant.PAY_MODE_K);// 快递代收
-		orderM.setPayStatus(CommonConstant.PAY_STATUS_0);// 未收款
+		orderM.setPayStatus(null);// 未收款
 		orderM.setDistrubutionMode(CommonConstant.DISTRUBUTION_MODE_KD);// 配送方式 快递
         if(StringUtils.isNullOrEmpty(orderTemp.getExpressCode())){
 			orderM.setExpressCompanyFlag(1);
@@ -479,6 +482,8 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setOrderChanal(CommonConstant.ORDER_CHANAL_2);
 		orderM.setIsHistory(CommonConstant.IS_HISTORY_0);
 		orderM.setRemark("新建订单，关联批次号：" + orderTemp.getOrderTempCode());
+		orderM.setWorkCodeStr(orderTemp.getWorkCodeStr());
+
 
 		return orderM;
 	}
@@ -593,6 +598,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		// 查询顾客群组接口
 		ComResponse<List<CrowdGroup>> response = memberGroupFeign.getCrowdGroupList(groupsStr);
 		if (response.getCode().compareTo(Integer.valueOf(200)) != 0) {
+
 			throw new BizException(response.getCode(), "查询群组信息失败>>" + response.getMessage());
 		}
 		if (response.getData() != null && (groupCodes.size() != response.getData().size())) {
@@ -609,7 +615,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 	}
 
 	private OrderTemp mkOrderTemp(List<CrowdGroup> groups, String batchNo, NewOrderDTO dto, String departId,
-			Integer wordCode, Integer financialOwner, String financialOwnerName) {
+								  Integer wordCode, Integer financialOwner, String financialOwnerName, String workCodeStr) {
 //		List<OrderTemp> list = new ArrayList<>();
 
 		groups.forEach(map -> {
@@ -633,6 +639,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderTemp.setRelationOrder(dto.getRelationOrder());
 		orderTemp.setExpressFlag(dto.getAssignExpressFlag());
 		orderTemp.setExpressCode(dto.getExpressCode());
+		orderTemp.setExpressName(dto.getExpressName());
 		orderTemp.setOprStats(0);
 		orderTemp.setCreateCode(dto.getUserNo());
 		orderTemp.setCreateName(dto.getUserName());
@@ -642,6 +649,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderTemp.setWorkCode(wordCode.toString());
 		orderTemp.setFinancialOwner(financialOwner);
 		orderTemp.setFinancialOwnerName(financialOwnerName);
+		orderTemp.setWorkCodeStr(workCodeStr);
 
 		return orderTemp;
 	}
