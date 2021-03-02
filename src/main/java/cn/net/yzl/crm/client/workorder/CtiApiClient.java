@@ -5,7 +5,9 @@ import cn.net.yzl.workorder.model.db.CallInfoBean;
 import cn.net.yzl.workorder.model.dto.CticheckDTO;
 import cn.net.yzl.workorder.model.vo.CallInfoVo;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "ctiApiClient", url = "${api.gateway.url}/workorderServer/api/call")
 //@FeignClient(name = "ctiApiClient", url = "127.0.0.1:4602/api/call")
@@ -34,4 +36,12 @@ public interface CtiApiClient {
      */
     @PostMapping("/v1/hangUp")
     ComResponse hangUp(CallInfoVo callInfoVo);
+
+    /**
+     * 挂断修改通话记录
+     * @param staffNo
+     * @return
+     */
+    @GetMapping("/v1/checkCallCount")
+    ComResponse checkCallCount(@RequestParam("staffNo") String staffNo);
 }
