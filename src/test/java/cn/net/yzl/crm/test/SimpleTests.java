@@ -252,24 +252,31 @@ public class SimpleTests {
 	public void testOrderRule3() {
 		System.err.println("计算规则三：");
 		OrderDetail taocan = new OrderDetail();
-		taocan.setMealPrice(150000);// 套餐价
-		taocan.setMealCount(2);// 套餐数量
-		taocan.setMealNo("T0000155");
-		taocan.setMealName("维维的套餐不要动");
+		taocan.setMealPrice(200 * 100);// 套餐价
+		taocan.setMealCount(1);// 套餐数量
+		taocan.setMealNo("T0000162");
+		taocan.setMealName("工单测试套餐");
 
 		OrderDetail d1 = new OrderDetail();
-		d1.setProductUnitPrice(24000);// 商品单价
-		d1.setProductCount(3 * taocan.getMealCount());// 商品数量
+		d1.setProductUnitPrice(3689);// 商品单价
+		d1.setProductCount(2 * taocan.getMealCount());// 商品数量
 		d1.setTotal(d1.getProductUnitPrice() * d1.getProductCount());// 商品总价=商品单价*商品数量
-		d1.setProductCode("10000156");
-		d1.setProductName("维维的商品不要动3");
+		d1.setProductCode("10000016");
+		d1.setProductName("王帅测库存专用商品");
 
 		OrderDetail d2 = new OrderDetail();
-		d2.setProductUnitPrice(30000);// 商品单价
-		d2.setProductCount(3 * taocan.getMealCount());// 商品数量
+		d2.setProductUnitPrice(10000);// 商品单价
+		d2.setProductCount(2 * taocan.getMealCount());// 商品数量
 		d2.setTotal(d2.getProductUnitPrice() * d2.getProductCount());
-		d2.setProductCode("10000155");
-		d2.setProductName("维维的商品不要动2");
+		d2.setProductCode("10000003");
+		d2.setProductName("测试订单专用商品");
+
+		OrderDetail d3 = new OrderDetail();
+		d3.setProductUnitPrice(10000);// 商品单价
+		d3.setProductCount(1 * taocan.getMealCount());// 商品数量
+		d3.setTotal(d3.getProductUnitPrice() * d3.getProductCount());
+		d3.setProductCode("10000003");
+		d3.setProductName("测试订单专用商品");
 
 		List<OrderDetail> orderList = Arrays.asList(d1, d2);
 		// 套餐价
