@@ -153,11 +153,7 @@ public class ScoreController {
 
     @PostMapping("scoreManagePage")
     @ApiOperation("分页查询员工积分信息")
-    ComResponse<Page<ScoreManageDTO>> scoreManagePage(@RequestBody ManageSelectVO vo,HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
-            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(), "验证用户信息失败，请尝试重新登陆！");
-        }
-        vo.setStaffNo(request.getHeader("userNo"));
+    ComResponse<Page<ScoreManageDTO>> scoreManagePage(@RequestBody ManageSelectVO vo){
         return service.scoreManagePage(vo);
     }
 
