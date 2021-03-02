@@ -66,7 +66,7 @@ public class SettlementExpressController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.set(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s.xlsx",
-                URLEncoder.encode("快递对账单导入模板", StandardCharsets.UTF_8.name())));
+                URLEncoder.encode("运费对账单", StandardCharsets.UTF_8.name())));
         return ResponseEntity.status(HttpStatus.CREATED).headers(headers)
                 .body(StreamUtils.copyToByteArray(this.templateResource.getInputStream()));
     }
