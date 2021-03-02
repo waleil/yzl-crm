@@ -40,5 +40,6 @@ public interface ScoreDetailClient {
                                                            @RequestParam("pageSize") Integer pageSize,
                                                            @RequestParam("pageNo") Integer pageNo);
 
+    @GetMapping("changeScoreStaffStatus")
     ComResponse<Void> changeScoreStaffStatus(DisableScoreVO vo);
 }
