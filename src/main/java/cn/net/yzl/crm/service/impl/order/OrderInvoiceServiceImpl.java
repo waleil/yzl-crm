@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -64,7 +65,7 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
             response.setContentType("application/vnd.ms-excel");
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-            String title = new String("结算列表".getBytes(),StandardCharsets.UTF_8.name());
+            String title = new String("订单发票列表".getBytes(),StandardCharsets.UTF_8.name());
             response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
                     URLEncoder.encode(title, StandardCharsets.UTF_8.name()), DateFormatUtil.dateToString(new Date(),CommonConstant.JSON_FORMAT_PATTERN)));
 
@@ -109,7 +110,9 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
         List<OrderInvoice4Export> list = new ArrayList<>();
         items.forEach(map ->{
             OrderInvoice4Export orderInvoice4Export = new OrderInvoice4Export();
-            orderInvoice4Export.setTaxType(CommonConstant.TAX_TYPE_0 ==map.getTaxType()?"公司":"个人");
+            if(map.getTaxWay()==null){
+                orderInvoice4Export.setTaxWay(CommonConstant.TAX_WAY_0 ==map.getTaxWay()?"专票":"普票");
+            }
             orderInvoice4Export.setTaxMoney(map.getTaxMoney());
             orderInvoice4Export.setOrderNo(map.getOrderNo());
             orderInvoice4Export.setFinancialOwnerName(map.getFinancialOwnerName());
