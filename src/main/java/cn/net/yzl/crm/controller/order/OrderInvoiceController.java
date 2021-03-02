@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -173,7 +174,7 @@ public class OrderInvoiceController {
         for (MemberIntegralRecordsResponse item : responseData.getItems()) {
             MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
                 dto.setMemberName(getMemberName(item.getMemberCard()));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
@@ -250,7 +251,7 @@ public class OrderInvoiceController {
         for (MemberRedBagRecordsResponse item : responseData.getItems()) {
             MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
                 dto.setMemberName(getMemberName(item.getMemberCard()));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
@@ -311,12 +312,7 @@ public class OrderInvoiceController {
         if (!member.getCode().equals(200)) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "顾客服务异常，" + member.getMessage());
         }
-        Member data = member.getData();
-        if (null == data) {
-            return "";
-        } else {
-            return Optional.ofNullable(data.getMember_name()).orElse("");
-        }
+        return Optional.ofNullable(member.getData()).map(Member::getMember_name).orElse("");
     }
 
     @ApiOperation(value = "顾客优惠券明细表")
@@ -349,7 +345,7 @@ public class OrderInvoiceController {
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
                 dto.setMemberName(getMemberName(item.getMemberCard()));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
