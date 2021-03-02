@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.util.JsonUtil;
+import cn.net.yzl.common.util.YLoggerUtil;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
@@ -570,6 +571,7 @@ public class WorkOrderController {
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     @ApiOperation(value = "热线&&回访-创建处理工单流水", notes = "热线&&回访-创建处理工单流水")
     public ComResponse<String> insertWorkOrderDisposeFlow(@Validated @RequestBody InsertWorkOrderDisposeFlowDTO insertWorkOrderDisposeFlowDTO) {
+        YLoggerUtil.infoLog("智能工单：我的热线工单-创建处理工单流水Request【应用层】:", JsonUtil.toJsonStr(insertWorkOrderDisposeFlowDTO));
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
@@ -582,7 +584,9 @@ public class WorkOrderController {
         insertWorkOrderDisposeFlowDTO.setCreateName(name);
         insertWorkOrderDisposeFlowDTO.setUpdateId(staffNo);
         insertWorkOrderDisposeFlowDTO.setUpdateName(name);
-        return workOrderClient.insertWorkOrderDisposeFlow(insertWorkOrderDisposeFlowDTO);
+        ComResponse<String> stringComResponse = workOrderClient.insertWorkOrderDisposeFlow(insertWorkOrderDisposeFlowDTO);
+        YLoggerUtil.infoLog("智能工单：我的热线工单-创建处理工单流水Response【应用层】:", JsonUtil.toJsonStr(stringComResponse));
+        return stringComResponse;
     }
 
     /**
