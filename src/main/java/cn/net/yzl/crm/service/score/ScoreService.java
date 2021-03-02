@@ -32,4 +32,6 @@ public interface ScoreService {
     ComResponse<Page<ScoreManageDTO>> scoreManagePage(ManageSelectVO vo);
 
     ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(String userNo, Integer pageSize, Integer pageNo);
+
+    ComResponse<Void> changeScoreStaffStatus(DisableScoreVO vo);
 }
