@@ -48,6 +48,7 @@ import cn.net.yzl.workorder.model.dto.WorkOrderUnclaimedUserDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderVisitTypeDTO;
 import cn.net.yzl.workorder.model.enums.WorkOrderTypeEnums;
 import cn.net.yzl.workorder.model.vo.*;
+import cn.net.yzl.workorder.utils.MonggoDateHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -57,6 +58,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -476,7 +478,13 @@ public class WorkOrderController {
             ComResponse.fail(ComResponse.ERROR_STATUS, "用户校验失败");
         }
         myWorkOrderHotlineListDTO.setStaffNo(userId);
-        return workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+        ComResponse<Page<MyWorkOrderHotlineListVO>> myWorkOrderHotlinePageList = workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+        List<MyWorkOrderHotlineListVO> items = myWorkOrderHotlinePageList.getData().getItems();
+        if(!StringUtils.isEmpty(items))
+            items.stream().forEach(s -> {
+                s.setAllocateTime(StringUtils.isEmpty(s.getAllocateTime())?null:MonggoDateHelper.getMongoDate(s.getAllocateTime()));
+            });
+        return myWorkOrderHotlinePageList;
     }
 
     /**
@@ -669,6 +677,7 @@ public class WorkOrderController {
             recoveryDTO.setCode(isHandInDTO.getCode());
             recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
             recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            recoveryDTO.setApplyUpMemo(isHandInDTO.getApplyUpMemo());
             workOrderClient.handIn(recoveryDTO);
             return ComResponse.success(Boolean.TRUE);
         }
@@ -725,6 +734,7 @@ public class WorkOrderController {
             recoveryDTO.setCode(isHandInDTO.getCode());
             recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
             recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            recoveryDTO.setApplyUpMemo(isHandInDTO.getApplyUpMemo());
             recoveryDTO.setStatus(CommonConstants.ONE);
             workOrderClient.handIn(recoveryDTO);
         }else {

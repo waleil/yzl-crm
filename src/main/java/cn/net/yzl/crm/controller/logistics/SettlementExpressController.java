@@ -48,7 +48,7 @@ import java.util.List;
 @RequestMapping("settlement")
 @Api(tags = "结算API")
 public class SettlementExpressController {
-    private Resource templateResource = new ClassPathResource("excel/comparisonmgt/express_template.xlsx");
+    private Resource templateResource = new ClassPathResource("excel/comparisonmgt/exptemplate.xlsx");
     @Autowired
     private LogisticsFien settlement;
 

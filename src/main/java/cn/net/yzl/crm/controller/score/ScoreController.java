@@ -8,10 +8,7 @@ import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.score.ScoreService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
-import cn.net.yzl.score.model.dto.ScoreManageDTO;
-import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
-import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.dto.*;
 import cn.net.yzl.score.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -45,9 +42,9 @@ public class ScoreController {
 
     })
     @ApiOperation("根据员工编号分页查询员工积分明细")
-    public ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(@RequestParam("pageSize") Integer pageSize,
-                                                                    @RequestParam("pageNo") Integer pageNo,
-                                                                    HttpServletRequest request){
+    public ComResponse<Page<MyScoreDetailDTO>> myExchangeRecords(@RequestParam("pageSize") Integer pageSize,
+                                                                 @RequestParam("pageNo") Integer pageNo,
+                                                                 HttpServletRequest request){
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
@@ -175,7 +172,7 @@ public class ScoreController {
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        vo.setStaffNo(request.getHeader("userNo"));
+        vo.setUpdateCode(request.getHeader("userNo"));
         return service.changeScoreStaffStatus(vo);
     }
 
