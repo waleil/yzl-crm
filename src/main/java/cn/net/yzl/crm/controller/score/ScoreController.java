@@ -175,7 +175,7 @@ public class ScoreController {
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        vo.setStaffNo(request.getHeader("userNo"));
+        vo.setUpdateCode(request.getHeader("userNo"));
         return service.changeScoreStaffStatus(vo);
     }
 

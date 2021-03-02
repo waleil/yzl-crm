@@ -143,6 +143,7 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(String userNo, Integer pageSize, Integer pageNo) {
         ComResponse<Page<MyExchangeRecordDTO>> pageComResponse = scoreDetailClient.exchangeRecords(userNo, pageSize, pageNo);
+        //增加fastdfs信息
         if (pageComResponse != null) {
             pageComResponse.getData().getItems().stream().forEach(s->{
                 s.setFastDFSUrl(fastDFSConfig.getUrl());
@@ -151,9 +152,10 @@ public class ScoreServiceImpl implements ScoreService {
         return pageComResponse;
     }
 
+
     @Override
     public ComResponse<Void> changeScoreStaffStatus(DisableScoreVO vo) {
-        return scoreDetailClient.changeScoreStaffStatus(vo);
+        return scoreDetailClient.changeStaffScoreStatus(vo);
     }
 
 }
