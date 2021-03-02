@@ -10,6 +10,7 @@ import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.order.NewOrderDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("newOrdder")
 @Api(tags = "订单管理")
+@Slf4j
 public class NewOrderController {
 
     @Autowired
@@ -46,9 +48,15 @@ public class NewOrderController {
 
     @ApiOperation(value = "发送会刊订单消息定时任务")
     @PostMapping("v1/sendHKOrderTask")
-    public ComResponse<Boolean> sendHKOrderTask() {
-
-        return newOrderService.sendHKOrderTask();
+    public ComResponse<Boolean> sendHKOrderTask() throws Exception {
+        ComResponse<Boolean> result = null;
+        try{
+            result = newOrderService.sendHKOrderTask();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            throw new Exception(e);
+        }
+        return result;
     }
 
     @ApiOperation(value = "查询群组列表",httpMethod = "POST")

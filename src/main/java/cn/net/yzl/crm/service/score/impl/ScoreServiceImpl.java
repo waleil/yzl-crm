@@ -8,10 +8,10 @@ import cn.net.yzl.crm.client.score.ScoreProductClient;
 import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.score.ScoreService;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
+import cn.net.yzl.score.model.dto.ScoreManageDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
-import cn.net.yzl.score.model.vo.ExchangeVO;
-import cn.net.yzl.score.model.vo.ScoreProductVO;
+import cn.net.yzl.score.model.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,8 +96,8 @@ public class ScoreServiceImpl implements ScoreService {
      * @date 2021/2/26 16:19
      */
     @Override
-    public ComResponse<Void> delete(Integer id, String staffNo) {
-        return scoreProductClient.delete(id,staffNo);
+    public ComResponse<Void> delete(ProductDelVO vo) {
+        return scoreProductClient.delete(vo);
     }
 
     /**
@@ -126,8 +126,29 @@ public class ScoreServiceImpl implements ScoreService {
      * @date 2021/2/27 11:43
      */
     @Override
-    public ComResponse<Void> changeStatus(Integer status, Integer id, String userNo) {
-        return scoreProductClient.changeStatus(status, id,userNo);
+    public ComResponse<Void> changeStatus(ChangeProductStatusVO vo) {
+        return scoreProductClient.changeStatus(vo);
+    }
+
+    /**
+     * @description 分页查询员工积分信息
+     * @author Majinbao
+     * @date 2021/3/2 10:38
+     */
+    @Override
+    public ComResponse<Page<ScoreManageDTO>> scoreManagePage(ManageSelectVO vo) {
+        return scoreDetailClient.scoreManagePage(vo);
+    }
+
+    @Override
+    public ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(String userNo, Integer pageSize, Integer pageNo) {
+        ComResponse<Page<MyExchangeRecordDTO>> pageComResponse = scoreDetailClient.exchangeRecords(userNo, pageSize, pageNo);
+        if (pageComResponse != null) {
+            pageComResponse.getData().getItems().stream().forEach(s->{
+                s.setFastDFSUrl(fastDFSConfig.getUrl());
+            });
+        }
+        return pageComResponse;
     }
 
 }

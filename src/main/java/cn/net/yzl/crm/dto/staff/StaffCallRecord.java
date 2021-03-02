@@ -73,4 +73,7 @@ public class StaffCallRecord {
 
     @ApiModelProperty(value = "通话状态 0、正常 1、无效 2、掐线 3、未接听")
     private Integer status;
+
+    @ApiModelProperty(value = "通话时长 单位为{ 00:00:00 }")
+    private String conversionDuration;
 }

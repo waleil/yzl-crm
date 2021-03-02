@@ -47,7 +47,7 @@ import java.util.List;
 @RequestMapping("settlement")
 @Api(tags = "结算API")
 public class SettlementExpressController {
-    private Resource templateResource = new ClassPathResource("excel/comparisonmgt/template.xlsx");
+    private Resource templateResource = new ClassPathResource("excel/comparisonmgt/express_template.xlsx");
     @Autowired
     private LogisticsFien settlement;
 
@@ -246,6 +246,18 @@ public class SettlementExpressController {
     @ApiOperation("全选生成结算单接口")
     public ComResponse allCreateSettle(@RequestBody CreateSettleByCondition createSettleByCondition){
         return settlement.allCreateSettle(createSettleByCondition);
+    }
+
+    @PostMapping("search/charge/sum")
+    @ApiOperation("金额汇总查询")
+    public ComResponse<ExpressSettlementPageVo> searchChargeSum(@RequestBody SettleBillSearchVo searchVo){
+        return settlement.searchChargeSum(searchVo);
+    }
+
+    @PostMapping("search/detail/charge/sum")
+    @ApiOperation("运费结算明细金额汇总查询")
+    public ComResponse<CountFreightVo> searchDetailSum(@RequestBody ExpressChargeSettlementDetail detail) {
+        return settlement.searchDetailSum(detail);
     }
 }
 

@@ -137,6 +137,19 @@ public class DiseaseController {
         return diseaseService.queryProductByDiseaseId(name);
     }
 
+    @GetMapping(value = "v1/queryProductByDiseaseNameAndMemberCard")
+    @ApiOperation(value = "根据病症名称和会员卡号查询所属商品")
+    public ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseNameAndMemberCard(
+            @RequestParam(value = "name",required = true) String name,
+            @RequestParam(value = "memberCard",required = true)  String memberCard){
+        if (StringUtils.isEmpty(name)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"病症名称不能为空！");
+        }else if (StringUtils.isEmpty(memberCard)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"顾客卡号不能为空！");
+        }
+        return diseaseService.queryProductByDiseaseNameAndMemberCard(name,memberCard);
+    }
+
     @ApiOperation("查询树形结构，不包含商品信息,但可以根据顾客id和操作员id查询临时表")
     @GetMapping("queryTreeNodeWithTemp")
     @ApiImplicitParams({

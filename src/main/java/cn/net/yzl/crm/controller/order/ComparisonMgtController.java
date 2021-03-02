@@ -35,6 +35,7 @@ import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.excel.ExcelResult;
 import cn.net.yzl.order.model.vo.order.CompareOrderIn;
 import cn.net.yzl.order.model.vo.order.CompareOrderParam;
@@ -43,7 +44,6 @@ import cn.net.yzl.order.model.vo.order.CompareOrderType2Out;
 import cn.net.yzl.order.model.vo.order.ImportParam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 对账订单管理
@@ -54,7 +54,6 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "结算中心")
 @RestController
 @RequestMapping("/comparisonmgt")
-@Slf4j
 public class ComparisonMgtController {
 	private Resource templateResource = new ClassPathResource("excel/comparisonmgt/template.xlsx");
 	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
@@ -82,20 +81,15 @@ public class ComparisonMgtController {
 		orderin.setPageSize(1000);// 默认每页1000条数据
 		ComResponse<Page<CompareOrderType1Out>> data = this.queryType1PageList(orderin);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-			log.error("导出待对账订单列表异常>>>{}", data);
-			return;
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出待对账订单列表异常");
 		}
 		Page<CompareOrderType1Out> page = data.getData();
 		PageParam param = page.getPageParam();
-		if (param.getPageTotal() == 0) {
-			log.info("待对账订单列表为空>>>{}", param);
-			return;
-		}
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String title = "待对账订单列表";
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-				URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), CompareOrderType1Out.class)
@@ -112,8 +106,7 @@ public class ComparisonMgtController {
 					orderin.setPageNo(i);
 					data = this.queryType1PageList(orderin);
 					if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-						log.error("导出待对账订单列表异常>>>{}", data);
-						return;
+						throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出待对账订单列表异常");
 					}
 					page = data.getData();
 					excelWriter.write(page.getItems(), writeSheet);
@@ -134,20 +127,15 @@ public class ComparisonMgtController {
 		orderin.setPageSize(1000);// 默认每页1000条数据
 		ComResponse<Page<CompareOrderType2Out>> data = this.queryType2PageList(orderin);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-			log.error("导出已对账订单列表异常>>>{}", data);
-			return;
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出已对账订单列表异常");
 		}
 		Page<CompareOrderType2Out> page = data.getData();
 		PageParam param = page.getPageParam();
-		if (param.getPageTotal() == 0) {
-			log.info("已对账订单列表为空>>>{}", param);
-			return;
-		}
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String title = "已对账订单列表";
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-				URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), CompareOrderType2Out.class)
@@ -164,8 +152,7 @@ public class ComparisonMgtController {
 					orderin.setPageNo(i);
 					data = this.queryType2PageList(orderin);
 					if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-						log.error("导出已对账订单列表异常>>>{}", data);
-						return;
+						throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出已对账订单列表异常");
 					}
 					page = data.getData();
 					excelWriter.write(page.getItems(), writeSheet);

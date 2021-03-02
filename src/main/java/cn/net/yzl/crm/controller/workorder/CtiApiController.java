@@ -2,16 +2,20 @@ package cn.net.yzl.crm.controller.workorder;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.workorder.CtiApiClient;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.workorder.model.db.CallInfoBean;
 import cn.net.yzl.workorder.model.dto.CticheckDTO;
 import cn.net.yzl.workorder.model.vo.CallInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -39,6 +43,12 @@ public class CtiApiController {
     @ApiOperation(value = "挂断-通话记录修改")
     public ComResponse hangUp(@RequestBody CallInfoVo callInfoVo){
         return ctiApiClient.hangUp(callInfoVo);
+    }
+
+    @GetMapping("/v1/checkCallCount")
+    @ApiOperation(value = "审核拨打次数")
+    public ComResponse checkCallCount(){
+        return ctiApiClient.checkCallCount(QueryIds.userNo.get());
     }
 
 }

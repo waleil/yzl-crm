@@ -13,6 +13,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public interface ProductPurchaseWarnFeignService {
 
     @GetMapping(value = "productPurchaseWarn/v1/selectProductPurchaseWarnSet")
     @ApiOperation("查询预警通知设置")
-    public ComResponse<ProductPurchaseWarnSetDTO> selectProductPurchaseWarnSet();
+    public ComResponse<ProductPurchaseWarnSetDTO> selectProductPurchaseWarnSet(@RequestParam("storeNo") String storeNo);
 
     @PostMapping(value = "productPurchaseWarn/v1/updateProductPurchaseWarnSet")
     @ApiOperation("修改预警通知设置")

@@ -280,11 +280,15 @@ public interface EhrStaffClient {
     }
 
     default List<String> getPostIdList(List<String> postIdList) {
-        ComResponse<List<String>> postId = this.getPostIdListRemote(postIdList);
-        if (null != postId && postId.getCode() == 200) {
-            return postId.getData();
+        try{
+            ComResponse<List<String>> postId = this.getPostIdListRemote(postIdList);
+            if (null != postId && postId.getCode() == 200) {
+                return postId.getData();
+            }
+            return Collections.emptyList();
+        }catch (Exception e){
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
     }
 
 

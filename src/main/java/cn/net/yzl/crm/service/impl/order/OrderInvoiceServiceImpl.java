@@ -1,9 +1,11 @@
 package cn.net.yzl.crm.service.impl.order;
+import java.util.Date;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.model.order.OrderInvoice4Export;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -57,15 +60,14 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
             PageParam param = page.getPageParam();
             if (param.getPageTotal() == 0) {
                 log.info("订单发票列表为空>>>{}", param);
-                return;
+
             }
             response.setContentType("application/vnd.ms-excel");
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            String title = "订单发票列表";
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-                    URLEncoder.encode(URLEncoder.encode(title, StandardCharsets.UTF_8.name()) ,StandardCharsets.UTF_8.name()),
-                    System.currentTimeMillis()));
 
+            String title = new String("订单发票列表".getBytes(),StandardCharsets.UTF_8.name());
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
+                    URLEncoder.encode(title, StandardCharsets.UTF_8.name()), DateFormatUtil.dateToString(new Date(),CommonConstant.JSON_FORMAT_PATTERN)));
 
             excelWriter = EasyExcel.write(response.getOutputStream(), OrderInvoice4Export.class)
                     .registerWriteHandler(this.writeHandler).build();
@@ -108,6 +110,10 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
         List<OrderInvoice4Export> list = new ArrayList<>();
         items.forEach(map ->{
             OrderInvoice4Export orderInvoice4Export = new OrderInvoice4Export();
+            if(map.getTaxWay()!=null){
+                orderInvoice4Export.setTaxWay(CommonConstant.TAX_WAY_0 ==map.getTaxWay()?"专票":"普票");
+            }
+            orderInvoice4Export.setTaxMoney(map.getTaxMoney());
             orderInvoice4Export.setOrderNo(map.getOrderNo());
             orderInvoice4Export.setFinancialOwnerName(map.getFinancialOwnerName());
             orderInvoice4Export.setTaxMode(CommonConstant.TAX_MODE_0 == map.getTaxMode()?"电子发票":"纸质发票");
@@ -117,6 +123,7 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
             orderInvoice4Export.setReveiverAddress(map.getReveiverAddress());
             orderInvoice4Export.setCreateTime(map.getCreateTime());
             orderInvoice4Export.setInvoiceTime(map.getInvoiceTime());
+
             list.add(orderInvoice4Export);
 
         });

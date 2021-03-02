@@ -64,7 +64,7 @@ public class StaffLassoController {
 
     @ApiOperation(value = "分页获取圈选群组", httpMethod = "GET")
     @GetMapping("v1/getGroupListByPage")
-    public ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(
+    public ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(
             @RequestParam(value = "crowdGroupName", required = true) @ApiParam(value = "群组名称") String crowdGroupName,
             @RequestParam(value = "status", required = false) @ApiParam(value = "状态") Integer status,
             @RequestParam(value = "startTime", required = false) @ApiParam(value = "开始时间(yyyy-MM-dd)") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startTime,

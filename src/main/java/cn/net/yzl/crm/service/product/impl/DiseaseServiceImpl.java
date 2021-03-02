@@ -62,6 +62,10 @@ public class DiseaseServiceImpl implements DiseaseService {
     public ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseId(String name) {
         return client.queryProductByDiseaseId(name);
     }
+    @Override
+    public ComResponse<List<ProductDiseaseInfo>> queryProductByDiseaseNameAndMemberCard(String name, String memberCard) {
+        return client.queryProductByDiseaseNameAndMemberCard(name,memberCard);
+    }
 
     @Override
     public ComResponse queryTreeNodeWithTemp(String memberCard, String userId) {

@@ -25,7 +25,8 @@ import java.util.List;
 @Api(tags = "商品服务")
 @RestController
 @RequestMapping("product")
-public class ProductController {
+public class
+ProductController {
 
     @Autowired
     private ProductService productService;
@@ -264,6 +265,13 @@ public class ProductController {
     @ApiImplicitParam(name = "codes",value = "codes:使用,分隔",dataType = "String", paramType = "query")
     public ComResponse<List<ProductMainDTO>> queryByProductCodes(@RequestParam @NotBlank String codes){
         return productService.queryByProductCodes(codes).setMessage(fastDFSConfig.getUrl());
+    }
+
+    @ApiOperation("根据商品编码获取库存")
+    @GetMapping("/v1/getProductStock")
+    @ApiImplicitParam(name = "productCode",value = "商品编码",dataType = "String", paramType = "query")
+    public ComResponse<Integer> getProductStock(@RequestParam @NotBlank String productCode){
+        return productService.getProductStock(productCode);
     }
 
 }

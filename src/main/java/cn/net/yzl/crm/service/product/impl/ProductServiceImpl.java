@@ -79,4 +79,9 @@ public class ProductServiceImpl implements ProductService {
         return productClient.queryByProductCodes(codes);
     }
 
+    @Override
+    public ComResponse<Integer> getProductStock(String productCode) {
+        return productClient.getProductStock(productCode);
+    }
+
 }

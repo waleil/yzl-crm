@@ -23,12 +23,12 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.AccountDetailFeignClient;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.model.vo.member.AccountDetailIn;
 import cn.net.yzl.order.model.vo.member.AccountDetailOut;
 import cn.net.yzl.order.model.vo.member.AccountDetailOut.DetailSummary;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 账户余额明细控制器
@@ -39,7 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 @Api(tags = "结算中心")
 @RestController
 @RequestMapping("/accountdetail")
-@Slf4j
 public class AccountDetailController {
 	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 	@Resource
@@ -58,20 +57,15 @@ public class AccountDetailController {
 		accountDetailIn.setPageSize(1000);// 默认每页1000条数据
 		ComResponse<Page<AccountDetailOut>> data = this.accountDetailFeignClient.queryPageList(accountDetailIn);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-			log.error("导出账户余额明细列表异常>>>{}", data);
-			return;
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出账户余额明细列表异常");
 		}
 		Page<AccountDetailOut> page = data.getData();
 		PageParam param = page.getPageParam();
-		if (param.getPageTotal() == 0) {
-			log.info("账户余额明细列表为空>>>{}", param);
-			return;
-		}
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String title = "账户余额明细";
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-				URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), AccountDetailOut.class)
@@ -88,8 +82,7 @@ public class AccountDetailController {
 					accountDetailIn.setPageNo(i);
 					data = this.accountDetailFeignClient.queryPageList(accountDetailIn);
 					if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-						log.error("导出账户余额明细列表异常>>>{}", data);
-						return;
+						throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出账户余额明细列表异常");
 					}
 					page = data.getData();
 					excelWriter.write(page.getItems(), writeSheet);

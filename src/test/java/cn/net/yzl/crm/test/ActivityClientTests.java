@@ -45,9 +45,10 @@ public class ActivityClientTests {
 	public void testCheckOrderAmount() {
 		try {
 			CheckOrderAmountRequest request = new CheckOrderAmountRequest();
-			request.setMemberCard("100000002");// 会员卡号
-			request.setProductTotal(1500L);// 商品总额 单位分
-			request.setAdvertBusNo(555L);// 广告业务主键
+			request.setMemberCard("10000055");// 会员卡号
+			request.setMemberLevelGrade(11);
+			request.setProductTotal(99800L);// 商品总额 单位分
+			request.setAdvertBusNo(1001L);// 广告业务主键
 
 			CalculateProductDto a1 = new CalculateProductDto();
 			a1.setActivityBusNo(null);// 活动业务/会员优惠业务主键
@@ -57,10 +58,11 @@ public class ActivityClientTests {
 			a1.setDiscountId(null);// 使用的优惠主键
 //			a1.setCouponDiscountId(12);// 使用的优惠券折扣ID
 //			a1.setMemberCouponId(1);// 使用的优惠券ID
-			a1.setProductCode("T0000155");// 商品code
-			a1.setProductCount(2);// 商品数量
-			a1.setLimitDownPrice(10000L);// 商品最低折扣价 单位分
-			a1.setSalePrice(20000L);// 商品销售价 单位分
+			a1.setProductCode("10000172");// 商品code
+			a1.setProductCount(1);// 商品数量
+			a1.setProductType(CommonConstant.MEAL_FLAG_0);
+			a1.setLimitDownPrice(9900L);// 商品最低折扣价 单位分
+			a1.setSalePrice(99800L);// 商品销售价 单位分
 			a1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);// 使用的优惠：0不使用，1优惠券，2优惠活动，3优惠券+优惠活动
 
 			request.setCalculateProductDto(Arrays.asList(a1));

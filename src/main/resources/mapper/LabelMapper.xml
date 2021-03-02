@@ -6,9 +6,5 @@
         select id,name as label_name from label_type_base
     </select>
 
-    <insert id="saveProvince" parameterType="cn.net.yzl.crm.model.Province" >
-        insert into province(name,code,country_id,zname,aname,pname,abbr)
-        values (#{name},#{code},#{country_id},#{zname},#{aname},#{pname},#{abbr})
-    </insert>
 
 </mapper>
