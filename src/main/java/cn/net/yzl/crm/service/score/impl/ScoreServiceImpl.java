@@ -151,4 +151,9 @@ public class ScoreServiceImpl implements ScoreService {
         return pageComResponse;
     }
 
+    @Override
+    public ComResponse<Void> changeScoreStaffStatus(DisableScoreVO vo) {
+        return scoreDetailClient.changeScoreStaffStatus(vo);
+    }
+
 }

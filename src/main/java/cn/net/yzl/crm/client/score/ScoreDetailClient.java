@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.ScoreManageDTO;
+import cn.net.yzl.score.model.vo.DisableScoreVO;
 import cn.net.yzl.score.model.vo.ManageSelectVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "scoreDetailClient", url = "${api.gateway.url}/scoreServer/detail/v1")
+//@FeignClient(name = "scoreDetailClient", url = "${api.gateway.url}/scoreServer/detail/v1")
+@FeignClient(name = "scoreDetailClient", url = "127.0.0.1:8765/detail/v1")
 public interface ScoreDetailClient {
 
     /**
@@ -37,4 +39,6 @@ public interface ScoreDetailClient {
     ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(@RequestParam("staffNo") String staffNo,
                                                            @RequestParam("pageSize") Integer pageSize,
                                                            @RequestParam("pageNo") Integer pageNo);
+
+    ComResponse<Void> changeScoreStaffStatus(DisableScoreVO vo);
 }

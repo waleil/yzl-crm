@@ -139,6 +139,7 @@ public class ScoreController {
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
+        vo.setStaffNo(request.getHeader("userNo"));
         return service.changeStatus(vo);
     }
 
@@ -166,6 +167,16 @@ public class ScoreController {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
         return service.exchangeRecords(request.getHeader("userNo"),pageSize, pageNo);
+    }
+
+    @PostMapping("changeStaffScoreStatus")
+    @ApiOperation("修改员工账户可用状态")
+    public ComResponse<Void> changeScoreStaffStatus(@RequestBody @Valid DisableScoreVO vo,HttpServletRequest request){
+        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
+        }
+        vo.setStaffNo(request.getHeader("userNo"));
+        return service.changeScoreStaffStatus(vo);
     }
 
 }

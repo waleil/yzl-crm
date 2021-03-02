@@ -17,7 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
-@FeignClient(name = "scoreProductClient", url = "${api.gateway.url}/scoreServer/scoreProduct/v1")
+//@FeignClient(name = "scoreProductClient", url = "${api.gateway.url}/scoreServer/scoreProduct/v1")
+@FeignClient(name = "scoreProductClient", url = "127.0.0.1:8765/scoreProduct/v1")
 public interface ScoreProductClient {
 
 //    @RequestMapping(value = "uploadScoreProductFile", method = RequestMethod.POST)
