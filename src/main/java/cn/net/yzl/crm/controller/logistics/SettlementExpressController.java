@@ -196,7 +196,7 @@ public class SettlementExpressController {
     }
 
 
-    @PostMapping("import/settlement/freight")
+    @PostMapping("settlement/logistics/import/freight")
     @ApiOperation("快递费用导入")
     public ComResponse<ImportResult> importSettlement(@RequestBody ExpressImportParam param){
 
