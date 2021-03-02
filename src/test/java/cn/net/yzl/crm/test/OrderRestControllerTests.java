@@ -158,23 +158,27 @@ public class OrderRestControllerTests {
 		try {
 			OrderIn order = new OrderIn();
 			order.setMediaChannel(0);
-			order.setAdvertBusNo(555L);
-			order.setMemberCardNo("100000002");
-			order.setReveiverAddressNo(482416);
-			order.setMediaChannel(0);
-			order.setMemberTelphoneNo("12345678901");
+			order.setMediaType(0);
+			order.setWorkBatchNo("3960");
+			order.setWorkOrderNo(13259);
+			order.setWorkOrderType(2);
+			order.setMemberCardNo("9000000171");
+//			order.setAdvertBusNo(555L);
 			order.setPayType(CommonConstant.PAY_TYPE_1);
+			order.setReveiverAddressNo(3604474);
+//			order.setMemberTelphoneNo("12345678901");
+			order.setProductTotal(BigDecimal.valueOf(200));
 			order.setAmountStored(BigDecimal.ZERO);
-			order.setProductTotal(BigDecimal.valueOf(1500L));
 
 			OrderDetailIn od1 = new OrderDetailIn();
-			od1.setProductCode("T0000155");
+			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
+			od1.setMealFlag(CommonConstant.MEAL_FLAG_1);
+			od1.setProductCode("T0000162");
 			od1.setProductCount(1);
 			od1.setProductType(CommonConstant.MEAL_FLAG_1);
-			od1.setGiftFlag(CommonConstant.GIFT_FLAG_0);
-			od1.setProductUnitPrice(1500D);
+//			od1.setProductUnitPrice(1500D);
 			od1.setUseDiscountType(CommonConstant.USE_DISCOUNT_TYPE_0);
-			od1.setLimitDownPrice(0L);
+//			od1.setLimitDownPrice(0L);
 
 			order.getOrderDetailIns().add(od1);
 
