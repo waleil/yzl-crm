@@ -9,12 +9,13 @@ import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.crm.service.settlement.SettlementExpressService;
 import cn.net.yzl.logistics.model.ExpressSettleDetailAddVO;
+import cn.net.yzl.logistics.model.vo.ExpressImportParam;
 import cn.net.yzl.logistics.model.vo.ExpressSettlementPageVo;
 import cn.net.yzl.logistics.model.vo.ImportResult;
 import cn.net.yzl.logistics.settleexpresscharge.*;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultExcelVo;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultRecionExcelVo;
-import cn.net.yzl.order.model.vo.order.ImportParam;
+
 import com.alibaba.excel.EasyExcel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -197,7 +198,7 @@ public class SettlementExpressController {
 
     @PostMapping("import/settlement/freight")
     @ApiOperation("快递费用导入")
-    public ComResponse<ImportResult> importSettlement(@RequestBody ImportParam param){
+    public ComResponse<ImportResult> importSettlement(@RequestBody ExpressImportParam param){
 
         if (!StringUtils.hasText(param.getExpressCompanyCode())) {
             return ComResponse.fail(ResponseCodeEnums.ERROR, "快递公司编码不能为空");
