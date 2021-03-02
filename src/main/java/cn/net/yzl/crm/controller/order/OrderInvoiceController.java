@@ -176,11 +176,11 @@ public class OrderInvoiceController {
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-                dto.setMemberName(getMemberName(item.getMemberCard()));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
+            dto.setMemberName(getMemberName(item.getMemberCard()));
             list.add(dto);
         }
         page.setItems(list);
@@ -253,11 +253,11 @@ public class OrderInvoiceController {
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-                dto.setMemberName(getMemberName(item.getMemberCard()));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
+            dto.setMemberName(getMemberName(item.getMemberCard()));
             list.add(dto);
         }
         page.setItems(list);
@@ -347,11 +347,11 @@ public class OrderInvoiceController {
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
             if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-                dto.setMemberName(getMemberName(item.getMemberCard()));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
+            dto.setMemberName(getMemberName(item.getMemberCard()));
             list.add(dto);
         }
         page.setItems(list);
