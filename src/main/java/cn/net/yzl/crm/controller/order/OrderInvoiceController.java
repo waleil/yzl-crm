@@ -383,7 +383,7 @@ public class OrderInvoiceController {
             }
             list.add(dto);
         }
-        String title = "顾客红包明细表";
+        String title = "顾客优惠券明细表";
         this.export(list, MemberCouponExportDTO.class, title, response);
     }
 

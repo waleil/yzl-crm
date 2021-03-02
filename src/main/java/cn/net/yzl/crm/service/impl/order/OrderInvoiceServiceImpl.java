@@ -110,7 +110,7 @@ public class OrderInvoiceServiceImpl implements OrderInvoiceService {
         List<OrderInvoice4Export> list = new ArrayList<>();
         items.forEach(map ->{
             OrderInvoice4Export orderInvoice4Export = new OrderInvoice4Export();
-            if(map.getTaxWay()==null){
+            if(map.getTaxWay()!=null){
                 orderInvoice4Export.setTaxWay(CommonConstant.TAX_WAY_0 ==map.getTaxWay()?"专票":"普票");
             }
             orderInvoice4Export.setTaxMoney(map.getTaxMoney());
