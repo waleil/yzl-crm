@@ -155,4 +155,9 @@ public class ScoreServiceImpl implements ScoreService {
         return scoreDetailClient.changeStaffScoreStatus(vo);
     }
 
+    @Override
+    public ComResponse<Page<ScoreStaffRecordDTO>> pageStaffScore(StaffExchangeSelectVO vo) {
+        return scoreDetailClient.pageStaffScore(vo);
+    }
+
 }

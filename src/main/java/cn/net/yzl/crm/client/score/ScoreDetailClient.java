@@ -5,8 +5,10 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
 import cn.net.yzl.score.model.dto.MyScoreDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreManageDTO;
+import cn.net.yzl.score.model.dto.ScoreStaffRecordDTO;
 import cn.net.yzl.score.model.vo.DisableScoreVO;
 import cn.net.yzl.score.model.vo.ManageSelectVO;
+import cn.net.yzl.score.model.vo.StaffExchangeSelectVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,4 +45,7 @@ public interface ScoreDetailClient {
 
     @GetMapping("changeStaffScoreStatus")
     ComResponse<Void> changeStaffScoreStatus(DisableScoreVO vo);
+
+    @PostMapping("pageStaffScore")
+    ComResponse<Page<ScoreStaffRecordDTO>> pageStaffScore(@RequestBody StaffExchangeSelectVO vo);
 }
