@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-//@FeignClient(name = "scoreDetailClient", url = "${api.gateway.url}/scoreServer/detail/v1")
-@FeignClient(name = "scoreDetailClient", url = "127.0.0.1:8765/detail/v1")
+@FeignClient(name = "scoreDetailClient", url = "${api.gateway.url}/scoreServer/detail/v1")
+//@FeignClient(name = "scoreDetailClient", url = "127.0.0.1:8765/detail/v1")
 public interface ScoreDetailClient {
 
     /**
