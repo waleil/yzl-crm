@@ -638,7 +638,7 @@ public class OrderRestController {
 		if (this.hasAmountStored(orderin)) {
 			// 组装顾客账户消费参数
 			MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
-			memberAmountDetail.setDiscountMoney(orderm.getTotal());// 订单总金额，单位分
+			memberAmountDetail.setDiscountMoney(orderin.getAmountStored().multiply(bd100).intValue());// 订单总金额，单位分
 			memberAmountDetail.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
 			memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);// 消费
 			memberAmountDetail.setOrderNo(orderm.getOrderNo());// 订单编号

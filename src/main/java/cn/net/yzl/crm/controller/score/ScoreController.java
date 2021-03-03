@@ -182,4 +182,14 @@ public class ScoreController {
         return service.pageStaffScore(vo);
     }
 
+    @PostMapping("grant")
+    @ApiOperation("发放")
+    public ComResponse<Void> grant(@RequestBody @Valid GrantVO vo,HttpServletRequest request){
+        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
+        }
+        vo.setStaffNo(request.getHeader("userNo"));
+        return service.grant(vo);
+    }
+
 }
