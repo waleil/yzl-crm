@@ -1,28 +1,5 @@
 package cn.net.yzl.crm.service.impl.order;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import cn.net.yzl.common.util.YDateUtil;
-import cn.net.yzl.common.util.YLoggerUtil;
-import io.netty.util.internal.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import com.alibaba.excel.util.CollectionUtils;
-import com.mysql.cj.util.StringUtils;
-
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.SnowFlakeUtil;
@@ -32,6 +9,7 @@ import cn.net.yzl.crm.customer.dto.address.ReveiverAddressMsgDTO;
 import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
 import cn.net.yzl.crm.customer.dto.member.MemberAddressAndLevelDTO;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
+import cn.net.yzl.crm.dto.staff.StaffChangeRecordDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
@@ -56,12 +34,33 @@ import cn.net.yzl.product.model.vo.product.dto.ProductMainDTO;
 import cn.net.yzl.product.model.vo.product.vo.BatchProductVO;
 import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
+import com.alibaba.excel.util.CollectionUtils;
+import com.mysql.cj.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class NewOrderServiceImpl implements INewOrderService {
 	private static final Logger log = LoggerFactory.getLogger(NewOrderServiceImpl.class);
 	// 每次从获取最大的客户数量
 	private static final int MAX_SIZE = 100;
+
+	//新建缓存前缀
+	private static final String CACHEKEYPREFIX = "crm-newOrder:" ;
+
+	//新建缓存前缀
+	private static final long CACHEKEY_TIMEOUT = 4*60*60*1000 ;
+
 
 	@Value("${api.gateway.url}")
 	private String path;
@@ -75,7 +74,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 	@Autowired
 	private NewOrderClient newOrderClient;
 
-	ThreadLocal<List<Map<String, Object>>> local = new ThreadLocal<>();
+
 	@Autowired
 	private ProductClient productClient;
 	@Autowired
@@ -100,16 +99,17 @@ public class NewOrderServiceImpl implements INewOrderService {
 		try {
 
 			// 查询坐席
-			ComResponse<StaffImageBaseInfoDto> response = ehrStaffClient.getDetailsByNo(dto.getUserNo());
+			ComResponse<StaffChangeRecordDto> response = ehrStaffClient.getStaffLastChangeRecord(dto.getUserNo());
 			if (response.getCode().compareTo(Integer.valueOf(200)) != 0) {
 				throw new BizException(response.getCode(), response.getMessage());
 			}
 			Integer wordCode = response.getData().getWorkCode();
 			Integer departId = response.getData().getDepartId();
 			dto.setUserName(response.getData().getName());
-			String workCodeStr = response.getData().getWorkCodeStr();
+			String workCodeStr = response.getData().getWorkName();
 			Integer financialOwner = null;
 			String financialOwnerName = "";
+			String personChangId = String.valueOf(response.getData().getId());
 			// 生成批次号
 			String batchNo = SnowFlakeUtil.getId() + "";
 
@@ -120,6 +120,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 				DepartDto depart = dresponse.getData();
 				financialOwner = depart.getFinanceDepartId();
 				financialOwnerName = depart.getFinanceDepartName();
+
 			} else {
 				throw new BizException(dresponse.getCode(), "查询财务归属失败>>" + dresponse.getMessage());
 			}
@@ -150,7 +151,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			List<CrowdGroup> groups = searchGroups(dto.getCustomerGroupIds());
 			// 组织群组信息
 			OrderTemp orderTemp = mkOrderTemp(groups, batchNo, dto, String.valueOf(departId), wordCode, financialOwner,
-					financialOwnerName,workCodeStr);
+					financialOwnerName,workCodeStr,personChangId);
 
 			// 总人数
 			totalCount = new AtomicInteger(groups.stream().mapToInt(CrowdGroup::getPerson_count).sum());
@@ -181,18 +182,24 @@ public class NewOrderServiceImpl implements INewOrderService {
 			orderRes = productClient.productReduce(vo);
 
 			if (orderRes.getCode().compareTo(Integer.valueOf(200)) != 0) {
+				log.error("扣减库存失败:" + vo);
 				throw new BizException(orderRes.getCode(),"扣减库存失败" +  orderRes.getMessage());
 			}
 			OrderTempVO orderTempVO = new OrderTempVO();
 			orderTempVO.setOrderTemp(orderTemp);
 			orderTempVO.setProducts(productDTOS);
 
+
+			redisUtil.set(CACHEKEYPREFIX + "fail" +"-"+ orderTemp.getOrderTempCode(),0,CACHEKEY_TIMEOUT);
+			redisUtil.set(CACHEKEYPREFIX + "opr" +"-"+orderTemp.getOrderTempCode(),0,CACHEKEY_TIMEOUT);
+			redisUtil.set(CACHEKEYPREFIX +  "suc" +"-"+ orderTemp.getOrderTempCode(),0,CACHEKEY_TIMEOUT);
 			// 调用新建订单接口
 			orderRes = newOrderClient.newOrderTemp(orderTempVO);
 
 			if (orderRes.getCode().compareTo(Integer.valueOf(200)) != 0) {
 				throw new BizException(orderRes.getCode(),"创建批量生产记录失败" + orderRes.getMessage());
 			}
+
 
 		} catch (BizException e) {
 			log.error(e.getMessage(), e);
@@ -204,39 +211,51 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 	@Override
 	public ComResponse<Boolean> sendHKOrderTask() {
-		// 查询未处理的会刊订单记录
-		ComResponse<List<OrderTempVO>> listComResponse = newOrderClient.selectUnOpredHKOrder();
-		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
-			throw new BizException(listComResponse.getCode(), listComResponse.getMessage());
-		}
-		List<OrderTempVO> data = listComResponse.getData();
-		if (data == null || data.size() == 0) {
-			return ComResponse.success(true);
-		}
-		data.forEach(map -> {
-			AtomicInteger successCnt = new AtomicInteger(0);
-			AtomicInteger failCnt = new AtomicInteger(0);
+	  boolean continueFlag = true;
+       do{
 
-			// 将预下单并发送到mq
-			prepareAndSendMessage(map.getOrderTemp(), map.getProducts(), successCnt, failCnt);
-			// 根据无效客户的数量，回退库存
-			if (failCnt.intValue() > 0) {
-				ComResponse<?> comResponse = increaseStore(failCnt, map);
-				if (ResponseCodeEnums.SUCCESS_CODE.getCode().compareTo(comResponse.getCode()) != 0) {
-					throw new BizException(comResponse.getCode(), comResponse.getMessage());
-				}
-			}
+		   // 查询未处理的会刊订单记录
+		   ComResponse<List<OrderTempVO>> listComResponse = newOrderClient.selectUnOpredHKOrder();
+		   if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
+			   throw new BizException(listComResponse.getCode(), listComResponse.getMessage());
+		   }
+		   List<OrderTempVO> data = listComResponse.getData();
+		   if (data == null || data.size() == 0) {
+			   continueFlag = false;
+			   break;
+		   }
+		   OrderTempVO map = data.get(0);
 
-			map.getOrderTemp().setFailCount(failCnt.intValue());
-			map.getOrderTemp().setSuccessCount(successCnt.intValue());
-			map.getOrderTemp().setOprCount(map.getOrderTemp().getFailCount() + map.getOrderTemp().getSuccessCount());
-			map.getOrderTemp().setOprStats(2);
-			// 更新订单模板表
-			ComResponse<Boolean> res = newOrderClient.updateResult(map.getOrderTemp());
-			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
-				throw new BizException(res.getCode(), res.getMessage());
-			}
-		});
+		   // 将预下单并发送到mq
+		   prepareAndSendMessage(map.getOrderTemp(), map.getProducts());
+
+
+		   // 根据无效客户的数量，回退库存
+		   int failCnt = (Integer)redisUtil.get(CACHEKEYPREFIX + "fail" +"-" + map.getOrderTemp().getOrderTempCode());
+		   int oprCnt = (Integer)redisUtil.get(CACHEKEYPREFIX + "opr"  +"-" + map.getOrderTemp().getOrderTempCode());
+		   int sucCnt = (Integer)redisUtil.get(CACHEKEYPREFIX +  "suc"   +"-" + map.getOrderTemp().getOrderTempCode());
+		   if (failCnt > 0) {
+			   ComResponse<?> comResponse = increaseStore(failCnt, map);
+			   if (ResponseCodeEnums.SUCCESS_CODE.getCode().compareTo(comResponse.getCode()) != 0) {
+				   throw new BizException(comResponse.getCode(), comResponse.getMessage());
+			   }
+		   }
+
+		   map.getOrderTemp().setFailCount(failCnt);
+		   map.getOrderTemp().setSuccessCount(sucCnt);
+		   map.getOrderTemp().setOprCount(oprCnt);
+
+		   // 更新订单模板表
+		   ComResponse<Boolean> res = newOrderClient.updateResult(map.getOrderTemp());
+		   if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
+			   throw new BizException(res.getCode(), res.getMessage());
+		   }
+
+
+
+	   }while(continueFlag);
+
+
 
 		return ComResponse.success(true);
 	}
@@ -248,12 +267,12 @@ public class NewOrderServiceImpl implements INewOrderService {
 	 * @param failCnt
 	 * @return
 	 */
-	private ComResponse<?> increaseStore(AtomicInteger failCnt, OrderTempVO orderTempVO) {
+	private ComResponse<?> increaseStore(int failCnt, OrderTempVO orderTempVO) {
 		List<ProductReduceVO> reduceVOS = new ArrayList<>();
 		orderTempVO.getProducts().forEach(map -> {
 			ProductReduceVO reduceVO = new ProductReduceVO();
 			reduceVO.setProductCode(map.getProductCode());
-			reduceVO.setNum(map.getCount() * failCnt.intValue());
+			reduceVO.setNum(map.getCount() * failCnt);
 			reduceVOS.add(reduceVO);
 
 		});
@@ -269,28 +288,35 @@ public class NewOrderServiceImpl implements INewOrderService {
 	 * 
 	 * @param orderTemp
 	 * @param product
-	 * @param successCnt
-	 * @param failCnt
+
 	 */
-	private void prepareAndSendMessage(OrderTemp orderTemp, List<OrderTempProduct> product, AtomicInteger successCnt,
-			AtomicInteger failCnt) {
+	private void prepareAndSendMessage(OrderTemp orderTemp, List<OrderTempProduct> product) {
 		List<String> groupids = Arrays.asList(orderTemp.getGroupId().split(","));
-		groupids.forEach(map -> {
+		for (String map : groupids) {
 			ComResponse<List<GroupRefMember>> listComResponse = memberGroupFeign.queryMembersByGroupId(map);
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
 				// 标记查询失败的群组
-				log.error("获取群组中顾客信息失败");
+				log.error("获取群组中顾客信息失败" + listComResponse.getCode() );
+//				throw new BizException()
 			} else {
 				List<GroupRefMember> data = listComResponse.getData();
+				if (CollectionUtils.isEmpty(data)) {
+					log.info("创建会刊订单失败，原因为：根据群组id未查询到人员,群组号：" + map);
+					orderTemp.setOprStats(3);//异常
+					continue;
+				}
 				// 分批次查询群组中的顾客
-				int offset = orderTemp.getOprCount();
+				//查询群组已经处理的顾客数
+				Object o = redisUtil.get(CACHEKEYPREFIX + "opr" + "-" + orderTemp.getOrderTempCode() + "-" + map);
+
+				int offset = o == null ? 0 : (Integer) o;
 				while (offset < data.size()) {
 
 					int toIndex = offset + MAX_SIZE > data.size() ? data.size() : offset + MAX_SIZE;
 
 					String membercards = data.subList(offset, toIndex).stream().map(GroupRefMember::getMemberCard)
 							.collect(Collectors.joining(","));
-					offset = toIndex ;
+					offset = toIndex;
 					ComResponse<List<MemberAddressAndLevelDTO>> res = memberFien
 							.getMembereAddressAndLevelByMemberCards(membercards);
 					if (res.getCode().compareTo(Integer.valueOf(200)) != 0) {
@@ -300,11 +326,15 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 					members.stream().forEach(item -> {
 						OrderInfo4Mq vo = mkOrderInfo(item, orderTemp, product, item);
+						redisUtil.incr(CACHEKEYPREFIX + "opr" + "-" + orderTemp.getOrderTempCode() + "-" + map);
+						redisUtil.incr(CACHEKEYPREFIX + "opr" + "-" + orderTemp.getOrderTempCode());
 						if (vo == null) {// 说明是无效客户，记录失败数量
-							failCnt.incrementAndGet();
+							redisUtil.incr(CACHEKEYPREFIX + "fail" + "-" +  orderTemp.getOrderTempCode());
+//							failCnt.incrementAndGet();
 						} else {
 							sendMessage(vo);
-							successCnt.incrementAndGet();
+							redisUtil.incr(CACHEKEYPREFIX + "suc" + "-" +  orderTemp.getOrderTempCode());
+//							successCnt.incrementAndGet();
 						}
 
 					});
@@ -314,8 +344,15 @@ public class NewOrderServiceImpl implements INewOrderService {
 				data.clear();
 			}
 
-		});
+		}
 
+		int totalopr = (Integer) redisUtil.get(CACHEKEYPREFIX + "opr" + "-" + orderTemp.getOrderTempCode());
+		log.info("新建会刊订单批次号：" + orderTemp.getOrderTempCode() +"共新建 " + totalopr +" 个订单");
+		if(totalopr <orderTemp.getGroupCount()){
+			orderTemp.setOprStats(3);
+		}else{
+			orderTemp.setOprStats(2);
+		}
 	}
 
 	/**
@@ -432,7 +469,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setPayMode(CommonConstant.PAY_MODE_K);// 快递代收
 		orderM.setPayStatus(null);// 未收款
 		orderM.setDistrubutionMode(CommonConstant.DISTRUBUTION_MODE_KD);// 配送方式 快递
-        if(StringUtils.isNullOrEmpty(orderTemp.getExpressCode())){
+        if(!StringUtils.isNullOrEmpty(orderTemp.getExpressCode())){
 			orderM.setExpressCompanyFlag(1);
 			orderM.setExpressCompanyCode(orderTemp.getExpressCode());
 			orderM.setExpressCompanyName(orderTemp.getExpressName());
@@ -481,8 +518,10 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setUpdateTime(new Date());
 		orderM.setOrderChanal(CommonConstant.ORDER_CHANAL_2);
 		orderM.setIsHistory(CommonConstant.IS_HISTORY_0);
-		orderM.setRemark("新建订单，关联批次号：" + orderTemp.getOrderTempCode());
+		orderM.setRemark(orderTemp.getRemark());
 		orderM.setWorkCodeStr(orderTemp.getWorkCodeStr());
+		orderM.setPersonChangeId(orderTemp.getPersonChangeId());
+		log.info("新建会刊订单，批次号：%s，订单号：%s",orderTemp.getOrderTempCode(),orderM.getOrderNo());
 
 
 		return orderM;
@@ -615,7 +654,8 @@ public class NewOrderServiceImpl implements INewOrderService {
 	}
 
 	private OrderTemp mkOrderTemp(List<CrowdGroup> groups, String batchNo, NewOrderDTO dto, String departId,
-								  Integer wordCode, Integer financialOwner, String financialOwnerName, String workCodeStr) {
+								  Integer wordCode, Integer financialOwner, String financialOwnerName, String workCodeStr
+								,String personChangId) {
 //		List<OrderTemp> list = new ArrayList<>();
 
 		groups.forEach(map -> {
@@ -644,9 +684,9 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderTemp.setCreateCode(dto.getUserNo());
 		orderTemp.setCreateName(dto.getUserName());
 		orderTemp.setUpdateCode(dto.getUserNo());
-		orderTemp.setUpdateName(dto.getUserName());
+		orderTemp.setPersonChangeId(personChangId);
 		orderTemp.setDepartId(departId);
-		orderTemp.setWorkCode(wordCode.toString());
+		orderTemp.setWorkCode(wordCode);
 		orderTemp.setFinancialOwner(financialOwner);
 		orderTemp.setFinancialOwnerName(financialOwnerName);
 		orderTemp.setWorkCodeStr(workCodeStr);
