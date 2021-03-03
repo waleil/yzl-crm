@@ -14,6 +14,7 @@ import cn.net.yzl.product.model.vo.product.vo.*;
 import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.alibaba.nacos.common.utils.StringUtils;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,6 +247,15 @@ public class MealController {
         }
         return mealClient.queryProductMealPortray(mealNo).setMessage(fastDFSConfig.getUrl());
     }
-    
+
+    @GetMapping(value = "queryMealStock")
+    @ApiImplicitParam(name = "mealNo",paramType = "query", value = "套餐编码")
+    @ApiOperation("查询套餐库存")
+    public ComResponse<Integer> queryMealStock(@RequestParam("mealNo") String mealNo){
+        if (StringUtils.isEmpty(mealNo)) {
+            return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"套餐编码不允许为空！");
+        }
+        return mealClient.queryMealStock(mealNo);
+    }
 
 }

@@ -517,6 +517,15 @@ public class WorkOrderController {
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     @ApiOperation(value = "热线&&回访-处理工单详情", notes = "热线&&回访-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        }
+        StaffImageBaseInfoDto staffImageBaseInfoDto = detailsByNo.getData();
+        updateAcceptStatusReceiveDTO.setOperator(staffImageBaseInfoDto.getName());
+        updateAcceptStatusReceiveDTO.setOperatorCode(staffImageBaseInfoDto.getStaffNo());
+        updateAcceptStatusReceiveDTO.setOperatorType(CommonConstants.TWO);
         ComResponse<FindDWorkOrderHotlineDetailsVO> dWorkOrderHotlineDetails = workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
         FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
         if(!StringUtils.isEmpty(data)){
