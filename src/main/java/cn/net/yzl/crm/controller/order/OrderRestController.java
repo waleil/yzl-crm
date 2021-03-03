@@ -62,6 +62,7 @@ import cn.net.yzl.crm.model.order.CalcOrderIn.CalculateOrderProductDto;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
 import cn.net.yzl.crm.model.order.OrderOut;
 import cn.net.yzl.crm.model.order.OrderOut.Coupon;
+import cn.net.yzl.crm.model.order.ProductStock;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -335,7 +336,7 @@ public class OrderRestController {
 		// 收集商品或套餐优惠信息
 		List<OrderCouponDetail> coupondetailList = new ArrayList<>();
 		// 收集每类商品的库存，key为商品编码，value为商品库存
-		Map<String, Integer> productStockMap = new HashMap<>();
+		Map<String, ProductStock> productStockMap = new HashMap<>();
 		// 收集订单明细里商品的购买数量
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
@@ -397,7 +398,8 @@ public class OrderRestController {
 				od.setUnit(p.getUnit());// 单位
 				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
 				od.setPackageUnit(p.getPackagingUnit());// 包装单位
-				productStockMap.put(od.getProductCode(), p.getStock());// 库存
+				productStockMap.put(od.getProductCode(),
+						new ProductStock(p.getProductCode(), p.getName(), p.getStock()));// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 				// 如果是非赠品
 				if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
@@ -527,7 +529,8 @@ public class OrderRestController {
 					od.setUnit(in.getUnit());// 单位
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
 					od.setPackageUnit(in.getPackagingUnit());// 包装单位
-					productStockMap.put(od.getProductCode(), in.getStock());// 库存
+					productStockMap.put(od.getProductCode(),
+							new ProductStock(in.getProductCode(), in.getName(), in.getStock()));// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
@@ -580,12 +583,13 @@ public class OrderRestController {
 		// 校验订单购买商品的总数是否超出库存数
 		Set<Entry<String, Integer>> entrySet = productCountMap.entrySet();
 		for (Entry<String, Integer> entry : entrySet) {
-			Integer pstock = productStockMap.get(entry.getKey());// 取出商品库存
+			ProductStock pstock = productStockMap.get(entry.getKey());// 取出商品库存
 			// 如果购买商品总数大于商品库存
-			if (entry.getValue() > pstock) {
+			if (entry.getValue() > pstock.getStock()) {
 				log.error("热线工单-购物车-提交订单>>该订单[{}]商品[{}]购买总数[{}]大于库存总数[{}]", orderm.getOrderNo(), entry.getKey(),
-						entry.getValue(), pstock);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品库存不足。");
+						entry.getValue(), pstock.getStock());
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("商品编码[{}]商品名称[{}]库存不足。", pstock.getCode(), pstock.getName()));
 			}
 		}
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
@@ -1509,6 +1513,10 @@ public class OrderRestController {
 		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
 		orderm.setCreateTime(orderm.getUpdateTime());
 		orderm.setStaffCode(orderm.getUpdateCode());
+		// 清空快递相关数据
+		orderm.setExpressCompanyCode(null);
+		orderm.setExpressCompanyName(null);
+		orderm.setExpressNumber(null);
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常
