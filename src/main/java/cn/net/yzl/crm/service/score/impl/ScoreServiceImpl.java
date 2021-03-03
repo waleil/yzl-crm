@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Service
 public class ScoreServiceImpl implements ScoreService {
 
@@ -140,13 +142,13 @@ public class ScoreServiceImpl implements ScoreService {
         ComResponse<Page<MyExchangeRecordDTO>> pageComResponse = scoreDetailClient.exchangeRecords(userNo, pageSize, pageNo);
         //增加fastdfs信息
         if (pageComResponse != null) {
-            if (pageComResponse.getData()!= null) {
-                if(!CollectionUtils.isEmpty(pageComResponse.getData().getItems())){
-                    pageComResponse.getData().getItems().stream().forEach(s->{
-                        s.setFastDFSUrl(fastDFSConfig.getUrl());
-                    });
-                }
-            }
+           if (pageComResponse.getData()!= null) {
+               if(!CollectionUtils.isEmpty(pageComResponse.getData().getItems())){
+                   pageComResponse.getData().getItems().stream().forEach(s->{
+                       s.setFastDFSUrl(fastDFSConfig.getUrl());
+                   });
+               }
+           }
         }
         return pageComResponse;
     }
