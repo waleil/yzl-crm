@@ -638,7 +638,7 @@ public class WorkOrderController {
         if(null == detailsByNo.getData()){
             return ComResponse.nodata();
         }
-        recoveryDTO.setCreateName(detailsByNo.getData().getName());
+        recoveryDTO.setStaffName(detailsByNo.getData().getName());
         recoveryDTO.setCreateId(QueryIds.userNo.get());
         recoveryDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.handIn(recoveryDTO);
