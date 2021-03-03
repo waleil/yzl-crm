@@ -219,6 +219,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
         //调用订单服务 1、记录出库预警消息 2、更新订单状态及收货人信息 3、记录审批记录 4、记录操作日志
         ComResponse<?> orderRes = orderOprClient.checkOrder(dto);
         if(orderRes.getCode().compareTo(Integer.valueOf(200))!=0){
+            log.error("调用订单服务审核订单失败"+dto);
             throw new BizException(orderRes.getCode(),orderRes.getMessage());
         }
 //        orderInfoVo.getOrder().setReveiverProvinceName(dto.getReveiverProvinceName());
