@@ -228,6 +228,7 @@ public class StaffServiceImpl implements StaffService {
                 productMealListDTOS.forEach(productMealListDTO -> {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMealListDTO.getName())
+                            .productCode(productMealListDTO.getMealNo())
                             .salePriceD(productMealListDTO.getPriceD().toString())
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
                             .applicable(String.join(",", productMealListDTO.getApplicable()))
@@ -278,6 +279,7 @@ public class StaffServiceImpl implements StaffService {
                 List<ProductMealListDTO> productMealListDTOS = mealClient.queryByIdsDefault(productCodes);
                 productMealListDTOS.forEach(productMealListDTO -> {
                     ProduceDto produceDto = ProduceDto.builder()
+                            .productCode(productMealListDTO.getMealNo())
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
