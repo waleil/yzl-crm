@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.constant.EhrParamEnum;
+import cn.net.yzl.crm.dto.biTask.BiSystemDataSourceSettingVO;
 import cn.net.yzl.crm.dto.biTask.Indicators;
 import cn.net.yzl.crm.dto.dmc.*;
 import cn.net.yzl.crm.dto.ehr.CommonPostDto;
@@ -94,6 +95,12 @@ public class CommonController {
                                                                     @RequestParam("pageSize") Integer pageSize,
                                                                     @RequestParam("indicatorsDomainType") Integer indicatorsDomainType) {
         return biTaskClient.getBiIndicatorsSettingList(pageNum, pageSize, indicatorsDomainType);
+    }
+
+    @ApiOperation(value = "查询跨系统数据配置列表")
+    @GetMapping("v1/getSystemDataSourceList")
+    public ComResponse<List<BiSystemDataSourceSettingVO>> getSystemDataSourceList(@RequestParam("systemType") Integer systemType) {
+        return biTaskClient.getSystemDataSourceList(systemType);
     }
 
     @ApiOperation(value = "所有活动")

@@ -734,7 +734,7 @@ public class WorkOrderController {
         }else{
             flag = Boolean.TRUE;
         }
-        if(flag){
+        if(flag || org.apache.commons.lang3.StringUtils.isNotBlank(isHandInDTO.getApplyUpMemo())){
             RecoveryDTO recoveryDTO = new RecoveryDTO();
             recoveryDTO.setStaffName(isHandInDTO.getStaffName());
             recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());
