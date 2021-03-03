@@ -7,6 +7,7 @@ import cn.net.yzl.crm.client.score.ScoreDetailClient;
 import cn.net.yzl.crm.client.score.ScoreProductClient;
 import cn.net.yzl.crm.service.score.ScoreService;
 import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
+import cn.net.yzl.score.model.dto.MyScoreDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
 import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
 import cn.net.yzl.score.model.vo.ScoreProductVO;
@@ -27,7 +28,7 @@ public class ScoreServiceImpl implements ScoreService {
 
 
     @Override
-    public ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(String staffNo, Integer pageSize, Integer pageNo) {
+    public ComResponse<Page<MyScoreDetailDTO>> myExchangeRecords(String staffNo, Integer pageSize, Integer pageNo) {
         return StringUtils.isEmpty(staffNo)?
                 ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"用户id不能为空！")
                 :scoreDetailClient.myExchangeRecords(staffNo, pageSize==null?10:pageSize, pageNo==null?1:pageNo);
