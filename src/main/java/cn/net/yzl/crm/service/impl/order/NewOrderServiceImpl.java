@@ -101,8 +101,10 @@ public class NewOrderServiceImpl implements INewOrderService {
 			// 查询坐席
 			ComResponse<StaffChangeRecordDto> response = ehrStaffClient.getStaffLastChangeRecord(dto.getUserNo());
 			if (response.getCode().compareTo(Integer.valueOf(200)) != 0) {
+				log.error("查询坐席详情失败>>"  ,response.getCode()+"," +response.getMessage());
 				throw new BizException(response.getCode(), response.getMessage());
 			}
+			log.info("查询坐席详细信息：" + response.getData());
 			Integer wordCode = response.getData().getWorkCode();
 			Integer departId = response.getData().getDepartId();
 			dto.setUserName(response.getData().getName());
@@ -122,9 +124,10 @@ public class NewOrderServiceImpl implements INewOrderService {
 				financialOwnerName = depart.getFinanceDepartName();
 
 			} else {
+				log.error("查询财务归属失败>>"  ,response.getCode()+"," +response.getMessage());
 				throw new BizException(dresponse.getCode(), "查询财务归属失败>>" + dresponse.getMessage());
 			}
-
+			log.info("查询坐席详细信息：" + dresponse.getData());
 			// 处理数据
 			String productCodes = dto.getProducts().stream().map(Product4OrderDTO::getProductCode)
 					.collect(Collectors.joining(","));
@@ -144,6 +147,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			// 计算总额 校验上送金额与计算商品总额是否一致
 			int total = productDTOS.stream().mapToInt(m -> m.getCount() * m.getPrice()).sum();
 			if (new BigDecimal(MathUtils.priceFenConvertYun(total)).compareTo(dto.getTotalAllAMT()) != 0) {
+				log.error("商品总金额计算不正确,价格应为："  + MathUtils.priceFenConvertYun(total));
 				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), "商品总金额计算不正确");
 			}
 
