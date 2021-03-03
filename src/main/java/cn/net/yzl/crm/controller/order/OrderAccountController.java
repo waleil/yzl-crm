@@ -30,7 +30,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("orderAccount")
-@Api(tags = "结算中心退款管理")
+@Api(tags = "结算中心")
 public class OrderAccountController {
     @Autowired
     private OrderAccountClient orderAccountClient;
