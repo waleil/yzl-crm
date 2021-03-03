@@ -214,6 +214,7 @@ public class StaffServiceImpl implements StaffService {
                             .packagingUnit(productMainDTO.getPackagingUnit())
                             .totalUseNum(productMainDTO.getTotalUseNum())
                             .unit(productMainDTO.getUnit())
+                            .productType(0)
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -233,6 +234,7 @@ public class StaffServiceImpl implements StaffService {
                             .forbidden(String.join(",", productMealListDTO.getForbidden()))
                             .diseaseName(String.join(",", productMealListDTO.getDiseaseName()))
                             .rawStock(String.join(",", productMealListDTO.getRawStock()))
+                            .productType(1)
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -263,6 +265,7 @@ public class StaffServiceImpl implements StaffService {
                             .packagingUnit(productMainDTO.getPackagingUnit())
                             .totalUseNum(productMainDTO.getTotalUseNum())
                             .unit(productMainDTO.getUnit())
+                            .productType(0)
                             .build();
                     activityProductList.add(produceDto);
                 });
@@ -282,6 +285,7 @@ public class StaffServiceImpl implements StaffService {
                             .forbidden(String.join(",", productMealListDTO.getForbidden()))
                             .diseaseName(String.join(",", productMealListDTO.getDiseaseName()))
                             .rawStock(String.join(",", productMealListDTO.getRawStock()))
+                            .productType(1)
                             .build();
                     activityProductList.add(produceDto);
                 });
