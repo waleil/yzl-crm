@@ -88,8 +88,8 @@ public class ComparisonMgtController {
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String title = "待对账订单列表";
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-				URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), CompareOrderType1Out.class)
@@ -134,8 +134,8 @@ public class ComparisonMgtController {
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String title = "已对账订单列表";
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-				URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), CompareOrderType2Out.class)

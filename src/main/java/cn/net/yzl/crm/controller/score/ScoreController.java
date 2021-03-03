@@ -8,10 +8,7 @@ import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.score.ScoreService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
-import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
-import cn.net.yzl.score.model.dto.ScoreManageDTO;
-import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
-import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.dto.*;
 import cn.net.yzl.score.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,10 +41,10 @@ public class ScoreController {
             @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query"),
 
     })
-    @ApiOperation("根据员工编号分页查询员工积分明细")
-    public ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(@RequestParam("pageSize") Integer pageSize,
-                                                                    @RequestParam("pageNo") Integer pageNo,
-                                                                    HttpServletRequest request){
+    @ApiOperation("查询我的积分明细")
+    public ComResponse<Page<MyScoreDetailDTO>> myExchangeRecords(@RequestParam("pageSize") Integer pageSize,
+                                                                 @RequestParam("pageNo") Integer pageNo,
+                                                                 HttpServletRequest request){
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
@@ -68,7 +65,7 @@ public class ScoreController {
             @ApiImplicitParam(name = "pageNo",value = "页码",paramType = "query"),
             @ApiImplicitParam(name = "hide",value = "是否显示禁用信息",paramType = "query")
     })
-    @ApiOperation("分页查询积分兑换商品总览")
+    @ApiOperation("查询积分兑换商品列表")
     public ComResponse<Page<ScoreProductMainInfoDTO>> queryPage(@RequestParam("pageSize")Integer pageSize,
                                                                 @RequestParam("pageNo")Integer pageNo,
                                                                 @RequestParam("hide") Boolean hide){
@@ -77,7 +74,7 @@ public class ScoreController {
 
     @GetMapping("queryDetail")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
-    @ApiOperation("根据id查询积分兑换指定商品明细")
+    @ApiOperation("根据id查询积分兑换指定商品信息")
     public ComResponse<ScoreProductDetailDTO> queryDetail(@RequestParam("id")Integer id){
         if (id == null) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE, "id不能为空！");
@@ -124,7 +121,7 @@ public class ScoreController {
 
 
     @PostMapping("delete")
-    @ApiOperation("根据id删除积分商品信息")
+    @ApiOperation("删除积分商品信息")
     public ComResponse<Void> delete(@RequestBody ProductDelVO vo, HttpServletRequest request){
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
@@ -139,6 +136,7 @@ public class ScoreController {
         if(StringUtils.isBlank(request.getHeader("userNo"))) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
+        vo.setStaffNo(request.getHeader("userNo"));
         return service.changeStatus(vo);
     }
 
@@ -166,6 +164,22 @@ public class ScoreController {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
         return service.exchangeRecords(request.getHeader("userNo"),pageSize, pageNo);
+    }
+
+    @PostMapping("changeStaffScoreStatus")
+    @ApiOperation("修改员工账户可用状态")
+    public ComResponse<Void> changeScoreStaffStatus(@RequestBody @Valid DisableScoreVO vo,HttpServletRequest request){
+        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
+        }
+        vo.setUpdateCode(request.getHeader("userNo"));
+        return service.changeScoreStaffStatus(vo);
+    }
+
+    @PostMapping("pageStaffScore")
+    @ApiOperation("分页查询员工兑换列表")
+    public ComResponse<Page<ScoreStaffRecordDTO>> pageStaffScore(@RequestBody StaffExchangeSelectVO vo){
+        return service.pageStaffScore(vo);
     }
 
 }

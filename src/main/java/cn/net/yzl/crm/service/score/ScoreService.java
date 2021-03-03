@@ -2,16 +2,13 @@ package cn.net.yzl.crm.service.score;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
-import cn.net.yzl.score.model.dto.ScoreManageDTO;
-import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
-import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.dto.*;
 import cn.net.yzl.score.model.vo.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 public interface ScoreService {
-    ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(String staffNo, Integer pageSize, Integer pageNo);
+    ComResponse<Page<MyScoreDetailDTO>> myExchangeRecords(String staffNo, Integer pageSize, Integer pageNo);
 
 //    ComResponse<String> uploadScoreProductFile(MultipartFile file);
 
@@ -32,4 +29,8 @@ public interface ScoreService {
     ComResponse<Page<ScoreManageDTO>> scoreManagePage(ManageSelectVO vo);
 
     ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(String userNo, Integer pageSize, Integer pageNo);
+
+    ComResponse<Void> changeScoreStaffStatus(DisableScoreVO vo);
+
+    ComResponse<Page<ScoreStaffRecordDTO>> pageStaffScore(StaffExchangeSelectVO vo);
 }

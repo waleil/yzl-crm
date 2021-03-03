@@ -7,10 +7,7 @@ import cn.net.yzl.crm.client.score.ScoreDetailClient;
 import cn.net.yzl.crm.client.score.ScoreProductClient;
 import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.score.ScoreService;
-import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
-import cn.net.yzl.score.model.dto.ScoreManageDTO;
-import cn.net.yzl.score.model.dto.ScoreProductDetailDTO;
-import cn.net.yzl.score.model.dto.ScoreProductMainInfoDTO;
+import cn.net.yzl.score.model.dto.*;
 import cn.net.yzl.score.model.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +34,7 @@ public class ScoreServiceImpl implements ScoreService {
      * @date 2021/2/26 16:18
      */
     @Override
-    public ComResponse<Page<MyExchangeRecordDTO>> myExchangeRecords(String staffNo, Integer pageSize, Integer pageNo) {
+    public ComResponse<Page<MyScoreDetailDTO>> myExchangeRecords(String staffNo, Integer pageSize, Integer pageNo) {
         return StringUtils.isEmpty(staffNo)?
                 ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"用户id不能为空！")
                 :scoreDetailClient.myExchangeRecords(staffNo, pageSize==null?10:pageSize, pageNo==null?1:pageNo);
@@ -143,12 +140,24 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(String userNo, Integer pageSize, Integer pageNo) {
         ComResponse<Page<MyExchangeRecordDTO>> pageComResponse = scoreDetailClient.exchangeRecords(userNo, pageSize, pageNo);
+        //增加fastdfs信息
         if (pageComResponse != null) {
             pageComResponse.getData().getItems().stream().forEach(s->{
                 s.setFastDFSUrl(fastDFSConfig.getUrl());
             });
         }
         return pageComResponse;
+    }
+
+
+    @Override
+    public ComResponse<Void> changeScoreStaffStatus(DisableScoreVO vo) {
+        return scoreDetailClient.changeStaffScoreStatus(vo);
+    }
+
+    @Override
+    public ComResponse<Page<ScoreStaffRecordDTO>> pageStaffScore(StaffExchangeSelectVO vo) {
+        return scoreDetailClient.pageStaffScore(vo);
     }
 
 }

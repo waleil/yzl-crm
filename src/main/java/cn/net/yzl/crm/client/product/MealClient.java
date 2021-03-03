@@ -139,4 +139,7 @@ public interface MealClient {
 		}
 		return Collections.emptyList();
 	}
+
+	@GetMapping("/queryMealStock")
+	ComResponse<Integer> queryMealStock(@RequestParam("mealNo") String mealNo);
 }

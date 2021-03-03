@@ -2,7 +2,12 @@ package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.PurchaseFeginService;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.model.dto.*;
 import cn.net.yzl.model.dto.purchase.returns.PurToReturnDto;
 import cn.net.yzl.model.vo.PurchaseOrderAddVo;
@@ -11,9 +16,12 @@ import cn.net.yzl.model.vo.PurchaseOrderUpdateVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +30,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2021/1/14 17:11
  */
+@Slf4j
 @Api(value = "仓储中心心心心心-采购订单管理", tags = {"仓储中心心心心心-采购订单管理"})
 @RequestMapping("purchase")
 @RestController
@@ -30,6 +39,8 @@ public class PurchaseOrderController {
 
     @Autowired
     private PurchaseFeginService purchaseFeginService;
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
 
     @ApiOperation(value = "采购订单列表", notes = "采购订单列表")
     @PostMapping("v1/page")
@@ -39,14 +50,20 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "新增采购订单", notes = "新增采购订单")
     @PostMapping("v1/add")
-    public ComResponse add(@RequestBody PurchaseOrderAddVo purchaseOrderAddVo)  {
+    public ComResponse add(@RequestBody PurchaseOrderAddVo purchaseOrderAddVo, HttpServletRequest request)  {
+        StaffImageBaseInfoDto user = getUser(request);
+        purchaseOrderAddVo.setCreateUser(user.getStaffNo());
+        purchaseOrderAddVo.setCreateUserName(user.getName());
         return purchaseFeginService.add(purchaseOrderAddVo);
     }
 
 
     @ApiOperation(value = "修改采购订单", notes = "修改采购订单")
     @PostMapping("v1/update")
-    public ComResponse update(@RequestBody PurchaseOrderUpdateVo purchaseOrderUpdateVo){
+    public ComResponse update(@RequestBody PurchaseOrderUpdateVo purchaseOrderUpdateVo, HttpServletRequest request){
+        StaffImageBaseInfoDto user = getUser(request);
+        purchaseOrderUpdateVo.setUpdateUser(user.getStaffNo());
+        purchaseOrderUpdateVo.setUpdateUserName(user.getName());
         return purchaseFeginService.update(purchaseOrderUpdateVo);
     }
 
@@ -61,19 +78,28 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "审核采购订单")
     @PostMapping("v1/review")
-    public ComResponse purchaseOrderReview(@RequestBody PurchaseReviewDto purchaseReviewDto){
+    public ComResponse purchaseOrderReview(@RequestBody PurchaseReviewDto purchaseReviewDto, HttpServletRequest request){
+        StaffImageBaseInfoDto user = getUser(request);
+        purchaseReviewDto.setUpdateUser(user.getStaffNo());
+        purchaseReviewDto.setUpdateUserName(user.getName());
         return purchaseFeginService.purchaseOrderReview(purchaseReviewDto);
     }
 
     @ApiOperation(value = "采购订单验收")
     @PostMapping("v1/check/accept")
-    public ComResponse purchaseCheckAccept(@RequestBody WarehousingOrderDto warehousingOrderDto){
+    public ComResponse purchaseCheckAccept(@RequestBody WarehousingOrderDto warehousingOrderDto, HttpServletRequest request){
+        StaffImageBaseInfoDto user = getUser(request);
+        warehousingOrderDto.setCreateUser(user.getStaffNo());
+        warehousingOrderDto.setCreateUserName(user.getName());
         return purchaseFeginService.purchaseCheckAccept(warehousingOrderDto);
     }
 
     @ApiOperation(value = "采购订单撤回")
     @PostMapping("v1/withdraw")
-    public ComResponse purchaseWithdraw(@RequestBody PurchaseWithdrawDto purchaseWithdrawDto) {
+    public ComResponse purchaseWithdraw(@RequestBody PurchaseWithdrawDto purchaseWithdrawDto, HttpServletRequest request) {
+        StaffImageBaseInfoDto user = getUser(request);
+        purchaseWithdrawDto.setUpdateUser(user.getStaffNo());
+        purchaseWithdrawDto.setUpdateUserName(user.getName());
         return purchaseFeginService.purchaseWithdraw(purchaseWithdrawDto);
     }
 
@@ -120,9 +146,23 @@ public class PurchaseOrderController {
      */
     @ApiOperation(value = "采购订单改为已发货", notes = "采购订单改为已发货")
     @PostMapping("v1/delivered")
-    public ComResponse delivered(@RequestBody PurchaseOrderWaybillDto purchaseOrderWaybillDto){
+    public ComResponse delivered(@RequestBody PurchaseOrderWaybillDto purchaseOrderWaybillDto, HttpServletRequest request) {
+        StaffImageBaseInfoDto user = getUser(request);
+        purchaseOrderWaybillDto.setCreateUser(user.getStaffNo());
+        purchaseOrderWaybillDto.setCreateUserName(user.getName());
         return purchaseFeginService.delivered(purchaseOrderWaybillDto);
     }
 
+    private StaffImageBaseInfoDto getUser(HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
+        log.info("user信息:{}", JsonUtil.toJsonStr(user));
+        StaffImageBaseInfoDto data = user.getData();
+        if(data != null){
+            return data;
+        }else {
+            throw new BizException(ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE);
+        }
+    }
 
 }

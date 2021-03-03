@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.util.JsonUtil;
+import cn.net.yzl.common.util.YLoggerUtil;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.client.workorder.WorkOrderClient;
@@ -47,6 +48,7 @@ import cn.net.yzl.workorder.model.dto.WorkOrderUnclaimedUserDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderVisitTypeDTO;
 import cn.net.yzl.workorder.model.enums.WorkOrderTypeEnums;
 import cn.net.yzl.workorder.model.vo.*;
+import cn.net.yzl.workorder.utils.MonggoDateHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -56,6 +58,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -475,7 +478,13 @@ public class WorkOrderController {
             ComResponse.fail(ComResponse.ERROR_STATUS, "用户校验失败");
         }
         myWorkOrderHotlineListDTO.setStaffNo(userId);
-        return workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+        ComResponse<Page<MyWorkOrderHotlineListVO>> myWorkOrderHotlinePageList = workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
+        List<MyWorkOrderHotlineListVO> items = myWorkOrderHotlinePageList.getData().getItems();
+        if(!StringUtils.isEmpty(items))
+            items.stream().forEach(s -> {
+                s.setAllocateTime(StringUtils.isEmpty(s.getAllocateTime())?null:MonggoDateHelper.getMongoDate(s.getAllocateTime()));
+            });
+        return myWorkOrderHotlinePageList;
     }
 
     /**
@@ -508,6 +517,15 @@ public class WorkOrderController {
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     @ApiOperation(value = "热线&&回访-处理工单详情", notes = "热线&&回访-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        }
+        StaffImageBaseInfoDto staffImageBaseInfoDto = detailsByNo.getData();
+        updateAcceptStatusReceiveDTO.setOperator(staffImageBaseInfoDto.getName());
+        updateAcceptStatusReceiveDTO.setOperatorCode(staffImageBaseInfoDto.getStaffNo());
+        updateAcceptStatusReceiveDTO.setOperatorType(CommonConstants.TWO);
         ComResponse<FindDWorkOrderHotlineDetailsVO> dWorkOrderHotlineDetails = workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
         FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
         if(!StringUtils.isEmpty(data)){
@@ -570,6 +588,7 @@ public class WorkOrderController {
     @PostMapping("v1/insertWorkOrderDisposeFlow")
     @ApiOperation(value = "热线&&回访-创建处理工单流水", notes = "热线&&回访-创建处理工单流水")
     public ComResponse<String> insertWorkOrderDisposeFlow(@Validated @RequestBody InsertWorkOrderDisposeFlowDTO insertWorkOrderDisposeFlowDTO) {
+        YLoggerUtil.infoLog("智能工单：我的热线工单-创建处理工单流水Request【应用层】:", JsonUtil.toJsonStr(insertWorkOrderDisposeFlowDTO));
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
@@ -582,7 +601,9 @@ public class WorkOrderController {
         insertWorkOrderDisposeFlowDTO.setCreateName(name);
         insertWorkOrderDisposeFlowDTO.setUpdateId(staffNo);
         insertWorkOrderDisposeFlowDTO.setUpdateName(name);
-        return workOrderClient.insertWorkOrderDisposeFlow(insertWorkOrderDisposeFlowDTO);
+        ComResponse<String> stringComResponse = workOrderClient.insertWorkOrderDisposeFlow(insertWorkOrderDisposeFlowDTO);
+        YLoggerUtil.infoLog("智能工单：我的热线工单-创建处理工单流水Response【应用层】:", JsonUtil.toJsonStr(stringComResponse));
+        return stringComResponse;
     }
 
     /**
@@ -665,6 +686,7 @@ public class WorkOrderController {
             recoveryDTO.setCode(isHandInDTO.getCode());
             recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
             recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            recoveryDTO.setApplyUpMemo(isHandInDTO.getApplyUpMemo());
             workOrderClient.handIn(recoveryDTO);
             return ComResponse.success(Boolean.TRUE);
         }
@@ -721,6 +743,7 @@ public class WorkOrderController {
             recoveryDTO.setCode(isHandInDTO.getCode());
             recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
             recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            recoveryDTO.setApplyUpMemo(isHandInDTO.getApplyUpMemo());
             recoveryDTO.setStatus(CommonConstants.ONE);
             workOrderClient.handIn(recoveryDTO);
         }else {

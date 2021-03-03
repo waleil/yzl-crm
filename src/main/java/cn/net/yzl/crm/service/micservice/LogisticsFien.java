@@ -10,7 +10,6 @@ import cn.net.yzl.logistics.model.pojo.*;
 import cn.net.yzl.logistics.model.vo.*;
 import cn.net.yzl.logistics.settleexpresscharge.*;
 import cn.net.yzl.model.dto.StoreToLogisticsDto;
-import cn.net.yzl.order.model.vo.order.ImportParam;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +52,7 @@ public interface LogisticsFien {
 
     @ApiOperation(value = "导入")
     @PostMapping("settlement/logistics/import/freight")
-    ComResponse<ImportResult> importFromExcel(@RequestBody ImportParam param);
+    ComResponse<ImportResult> importFromExcel(@RequestBody ExpressImportParam param);
 
     @ApiOperation(value = "快递运单查询")
     @PostMapping("/track/v1/search/orderexpress")
