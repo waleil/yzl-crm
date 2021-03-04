@@ -667,7 +667,7 @@ public class WorkOrderController {
         isHandInDTO.setStaffName(detailsByNo.getData().getName());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
         List<WorkOrderRuleConfigBean> data = listComResponse.getData();
-            if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
+        if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
             WorkOrderRuleConfigBean workOrderRuleConfigBean1 = null;
             for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data){
                 if(workOrderRuleConfigBean.getId() == 7)
