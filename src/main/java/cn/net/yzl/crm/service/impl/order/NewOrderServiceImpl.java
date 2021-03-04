@@ -337,6 +337,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 //							failCnt.incrementAndGet();
 						} else {
 							sendMessage(vo);
+							log.info("新建会刊订单，批次号：{},订单号：{}",orderTemp.getOrderTempCode(),vo.getOrderM().getOrderNo());
 							redisUtil.incr(CACHEKEYPREFIX + "suc" + "-" +  orderTemp.getOrderTempCode());
 //							successCnt.incrementAndGet();
 						}
@@ -525,7 +526,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setRemark(orderTemp.getRemark());
 		orderM.setWorkCodeStr(orderTemp.getWorkCodeStr());
 		orderM.setPersonChangeId(orderTemp.getPersonChangeId());
-		log.info("新建会刊订单，批次号：%s，订单号：%s",orderTemp.getOrderTempCode(),orderM.getOrderNo());
+		log.info("新建会刊订单，批次号：{}，订单号：{}",orderTemp.getOrderTempCode(),orderM.getOrderNo());
 
 
 		return orderM;
