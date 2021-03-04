@@ -193,7 +193,7 @@ public class ScoreController {
     }
 
 
-    @GetMapping("MainInfo")
+    @GetMapping("mainInfo")
     @ApiOperation("查询发放统计信息")
     public ComResponse<MainInfo> mainInfo(){
         return service.mainInfo();
