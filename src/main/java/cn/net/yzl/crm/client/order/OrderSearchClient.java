@@ -12,8 +12,8 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@FeignClient(name = "orderSerch", url = "${api.gateway.url}/orderService/orderSearch")
-//@FeignClient(name = "orderSerch", url = "localhost:4455/orderSearch")
+//@FeignClient(name = "orderSerch", url = "${api.gateway.url}/orderService/orderSearch")
+@FeignClient(name = "orderSerch", url = "localhost:4455/orderSearch")
 public interface OrderSearchClient {
 
     /**
@@ -127,5 +127,7 @@ public interface OrderSearchClient {
     public ComResponse<Boolean> hasRefundByMemberCardNo(@ApiParam("会员编号") @RequestParam("memberCarNo") String memberCarNo,
                                                         @ApiParam("开始时间") @RequestParam("startTime") String startTime,
                                                         @ApiParam("结束时间") @RequestParam("endTime") String endTime);
-
+    @ApiOperation(value = "根据分仓规则查询仓库")
+    @GetMapping("v1/selectSplitStore")
+    public ComResponse<String> selectSplitStore(@RequestParam Integer provienceCode);
 }
