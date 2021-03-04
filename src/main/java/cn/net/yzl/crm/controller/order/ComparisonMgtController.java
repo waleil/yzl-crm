@@ -205,7 +205,10 @@ public class ComparisonMgtController {
 	@ApiOperation(value = "对账", notes = "对账")
 	public ComResponse<Object> compareOrder(@RequestBody CompareOrderParam param) {
 		if (CollectionUtils.isEmpty(param.getExpressNums())) {
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "快递号不能为空");
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "至少选择一个快递单号进行对账");
+		}
+		if (CollectionUtils.isEmpty(param.getOrderNums())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "至少选择一个订单号进行对账");
 		}
 		if (!StringUtils.hasText(param.getUserNo())) {
 			param.setUserNo(QueryIds.userNo.get());
