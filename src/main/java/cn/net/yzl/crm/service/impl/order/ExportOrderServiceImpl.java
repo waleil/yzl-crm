@@ -13,6 +13,7 @@ import cn.net.yzl.crm.service.order.IOrderSearchService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.model.mongo.order.GoodsInTransit;
+import cn.net.yzl.order.model.mongo.order.GoodsInTransit4Excel;
 import cn.net.yzl.order.model.vo.order.*;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -58,7 +61,7 @@ public class ExportOrderServiceImpl implements ExportOrderService {
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
             log.error("导出结算列表异常>>>{}", data);
             throw new BizException(ResponseCodeEnums.API_ERROR_CODE.getCode(),
-                    "调用导出在途商品类表异常"+data.getMessage());
+                    "调用导出结算列表异常"+data.getMessage());
         }
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
@@ -139,7 +142,7 @@ public class ExportOrderServiceImpl implements ExportOrderService {
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
                 log.error("导出已结算商品列表异常>>>{}", data);
                 throw new BizException(ResponseCodeEnums.API_ERROR_CODE.getCode(),
-                        "调用导出在途商品类表异常"+data.getMessage());
+                        "调用已结算商品列表异常"+data.getMessage());
             }
             Page<ProductDetailSettlementedResDTO> page = data.getData();
             PageParam param = page.getPageParam();
@@ -168,7 +171,7 @@ public class ExportOrderServiceImpl implements ExportOrderService {
                         dto.setPageNo(i);
                         data = this.settlementFein.selectProductDetailBySettledOrder(dto);
                         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
-                            log.error("导出结算列表异常>>>{}", data);
+                            log.error("导出已结算商品列表异常>>>{}", data);
                             return;
                         }
                         page = data.getData();
@@ -211,9 +214,10 @@ public class ExportOrderServiceImpl implements ExportOrderService {
 
             Page<GoodsInTransit> page = data.getData();
             PageParam param = page.getPageParam();
+
             if (param.getPageTotal() == 0) {
                 log.info("在途商品列表为空>>>{}", param);
-                excelWriter = EasyExcel.write(response.getOutputStream(), GoodsInTransit.class)
+                excelWriter = EasyExcel.write(response.getOutputStream(), GoodsInTransit4Excel.class)
                         .registerWriteHandler(this.writeHandler).build();
                 // 写入到同一个sheet
                 WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
@@ -222,13 +226,14 @@ public class ExportOrderServiceImpl implements ExportOrderService {
                 excelWriter.write(page.getItems(), writeSheet);
             }else{
 
-                excelWriter = EasyExcel.write(response.getOutputStream(), GoodsInTransit.class)
+                excelWriter = EasyExcel.write(response.getOutputStream(), GoodsInTransit4Excel.class)
                         .registerWriteHandler(this.writeHandler).build();
                 // 写入到同一个sheet
                 WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
                 // 此处已经获取到第一页的数据
-
-                excelWriter.write(page.getItems(), writeSheet);
+                List<GoodsInTransit4Excel> result = formateGoodsInTransit(page.getItems());
+                excelWriter.write(result, writeSheet);
+                result.clear();
                 page.getItems().clear();// 存储完成后清理集合
                 // 如果总页数大于1
                 if (param.getPageTotal() > 1) {
@@ -241,8 +246,9 @@ public class ExportOrderServiceImpl implements ExportOrderService {
                             return;
                         }
                         page = data.getData();
-
-                        excelWriter.write(page.getItems(), writeSheet);
+                        result = formateGoodsInTransit(page.getItems());
+                        excelWriter.write(result, writeSheet);
+                        result.clear();
                         page.getItems().clear();// 存储完成后清理集合
                     }
                 }
@@ -257,6 +263,22 @@ public class ExportOrderServiceImpl implements ExportOrderService {
                 excelWriter.finish();
             }
         }
+    }
+
+    public List<GoodsInTransit4Excel> formateGoodsInTransit(List<GoodsInTransit> list) {
+       return list.stream().map(p -> {
+           GoodsInTransit4Excel excel = new GoodsInTransit4Excel();
+           excel.setProductNo(p.getProductNo());
+           excel.setFinanalOwnerName(p.getFinanalOwnerName());
+           excel.setProductName(p.getProductName());
+           excel.setProductBarCode(p.getProductBarCode());
+           excel.setSpec(p.getSpec() + p.getUnit());
+           excel.setPackageUnit(p.getPackageUnit());
+           excel.setBatch(p.getBatch());
+           excel.setTotalCoubnt(p.getTotalCoubnt());
+
+            return excel;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -335,16 +357,19 @@ public class ExportOrderServiceImpl implements ExportOrderService {
         List<Settlement4ExportDTO> result = new ArrayList<>();
         list.forEach(m->{
             Settlement4ExportDTO dto = new Settlement4ExportDTO();
-            dto.setExpressCompanyName(m.getExpressCompanyName());
-            dto.setExternalBillSn(m.getExternalBillSn());
-            dto.setFinancialOwnerName(m.getFinancialOwnerName());
-            dto.setFreezeTotalmoney(m.getFreezeTotalmoney());
-            dto.setServiceFeeTotalmoney(m.getServiceFeeTotalmoney());
             dto.setSettlementCode(m.getSettlementCode());
+            dto.setExpressCompanyName(m.getExpressCompanyName());
+            dto.setFinancialOwnerName(m.getFinancialOwnerName());
+            dto.setExternalBillSn(m.getExternalBillSn());
+//
+            dto.setSettleTotalmoney(m.getSettleTotalmoney());
             dto.setReceiveTotalmoney(m.getReceiveTotalmoney());
+            dto.setServiceFeeTotalmoney(m.getFreezeTotalmoney());
+            dto.setFreezeTotalmoney(m.getFreezeTotalmoney());
+            dto.setSettleStatus(m.getSettleStatus()==0?"未结算":"已结算");
             dto.setSettlementStaffName(m.getSettlementStaffName());
             dto.setSettleStartDate(DateFormatUtil.dateToString(m.getSettleStartDate(), CommonConstant.JSON_FORMAT_PATTERN_DATE)
-              + "-" + DateFormatUtil.dateToString(m.getSettleEndDate(), CommonConstant.JSON_FORMAT_PATTERN_DATE));
+              + "到" + DateFormatUtil.dateToString(m.getSettleEndDate(), CommonConstant.JSON_FORMAT_PATTERN_DATE));
             result.add(dto);
         });
     return result;
