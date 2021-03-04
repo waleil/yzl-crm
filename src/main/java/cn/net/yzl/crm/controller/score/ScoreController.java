@@ -44,6 +44,15 @@ public class ScoreController {
         return service.myScore(request.getHeader("userNo"));
     }
 
+    @GetMapping("myInfo")
+    @ApiOperation("【商城首页】查询我的基本信息")
+    public ComResponse<StaffImageBaseInfoDto> myInfo(HttpServletRequest request) {
+        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
+        }
+        return ehrClient.getDetailsByNo(request.getHeader("userNo"));
+    }
+
     @GetMapping("pageDetail")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageSize",value = "每页条数",paramType = "query"),
