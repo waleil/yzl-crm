@@ -214,6 +214,7 @@ public class StaffServiceImpl implements StaffService {
                             .packagingUnit(productMainDTO.getPackagingUnit())
                             .totalUseNum(productMainDTO.getTotalUseNum())
                             .unit(productMainDTO.getUnit())
+                            .productType(0)
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -227,12 +228,14 @@ public class StaffServiceImpl implements StaffService {
                 productMealListDTOS.forEach(productMealListDTO -> {
                     ProduceDto produceDto = ProduceDto.builder()
                             .name(productMealListDTO.getName())
+                            .productCode(productMealListDTO.getMealNo())
                             .salePriceD(productMealListDTO.getPriceD().toString())
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
                             .applicable(String.join(",", productMealListDTO.getApplicable()))
                             .forbidden(String.join(",", productMealListDTO.getForbidden()))
                             .diseaseName(String.join(",", productMealListDTO.getDiseaseName()))
                             .rawStock(String.join(",", productMealListDTO.getRawStock()))
+                            .productType(1)
                             .build();
                     marketTargetProductList.add(produceDto);
                 });
@@ -263,6 +266,7 @@ public class StaffServiceImpl implements StaffService {
                             .packagingUnit(productMainDTO.getPackagingUnit())
                             .totalUseNum(productMainDTO.getTotalUseNum())
                             .unit(productMainDTO.getUnit())
+                            .productType(0)
                             .build();
                     activityProductList.add(produceDto);
                 });
@@ -275,6 +279,7 @@ public class StaffServiceImpl implements StaffService {
                 List<ProductMealListDTO> productMealListDTOS = mealClient.queryByIdsDefault(productCodes);
                 productMealListDTOS.forEach(productMealListDTO -> {
                     ProduceDto produceDto = ProduceDto.builder()
+                            .productCode(productMealListDTO.getMealNo())
                             .name(productMealListDTO.getName())
                             .salePriceD(productMealListDTO.getPriceD().toString())
                             .imageUrl(fastDFSConfig.getUrl() + "/" + productMealListDTO.getImageUrl())
@@ -282,6 +287,7 @@ public class StaffServiceImpl implements StaffService {
                             .forbidden(String.join(",", productMealListDTO.getForbidden()))
                             .diseaseName(String.join(",", productMealListDTO.getDiseaseName()))
                             .rawStock(String.join(",", productMealListDTO.getRawStock()))
+                            .productType(1)
                             .build();
                     activityProductList.add(produceDto);
                 });

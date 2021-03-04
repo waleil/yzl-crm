@@ -164,4 +164,14 @@ public class ScoreServiceImpl implements ScoreService {
         return scoreDetailClient.pageStaffScore(vo);
     }
 
+    @Override
+    public ComResponse<Void> grant(GrantVO vo) {
+        return scoreDetailClient.grant(vo);
+    }
+
+    @Override
+    public ComResponse<MainInfo> mainInfo() {
+        return scoreDetailClient.mainInfo();
+    }
+
 }

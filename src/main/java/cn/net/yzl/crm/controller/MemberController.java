@@ -189,6 +189,9 @@ public class MemberController {
         workOrderBeanVO.setMediaName(memberReferralVO.getMediaName());
 
         if (data != null) {
+            workOrderBeanVO.setStaffNo(data.getStaffNo());
+            workOrderBeanVO.setStaffName(data.getName());
+            workOrderBeanVO.setStaffLevel(data.getPostLevelId() == null ? null : String.valueOf(data.getPostLevelId()));//岗位等级
             workOrderBeanVO.setDeptId(data.getDepartId());
             workOrderBeanVO.setDeptName(data.getDepartName());
             workOrderBeanVO.setCreateName(data.getName());

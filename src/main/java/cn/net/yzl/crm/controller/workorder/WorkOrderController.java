@@ -479,11 +479,11 @@ public class WorkOrderController {
         }
         myWorkOrderHotlineListDTO.setStaffNo(userId);
         ComResponse<Page<MyWorkOrderHotlineListVO>> myWorkOrderHotlinePageList = workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
-        List<MyWorkOrderHotlineListVO> items = myWorkOrderHotlinePageList.getData().getItems();
-        if(!StringUtils.isEmpty(items))
-            items.stream().forEach(s -> {
-                s.setAllocateTime(StringUtils.isEmpty(s.getAllocateTime())?null:MonggoDateHelper.getMongoDate(s.getAllocateTime()));
-            });
+//        List<MyWorkOrderHotlineListVO> items = myWorkOrderHotlinePageList.getData().getItems();
+//        if(!StringUtils.isEmpty(items))
+//            items.stream().forEach(s -> {
+//                s.setAllocateTime(StringUtils.isEmpty(s.getAllocateTime())?null:MonggoDateHelper.getMongoDate(s.getAllocateTime()));
+//            });
         return myWorkOrderHotlinePageList;
     }
 
@@ -638,7 +638,7 @@ public class WorkOrderController {
         if(null == detailsByNo.getData()){
             return ComResponse.nodata();
         }
-        recoveryDTO.setCreateName(detailsByNo.getData().getName());
+        recoveryDTO.setStaffName(detailsByNo.getData().getName());
         recoveryDTO.setCreateId(QueryIds.userNo.get());
         recoveryDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.handIn(recoveryDTO);

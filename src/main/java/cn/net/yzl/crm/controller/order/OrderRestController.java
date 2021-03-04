@@ -123,11 +123,11 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
 		}
-		MemberAmountDto amount = this.memberFien.getMemberAmount(orderin.getMemberCard()).getData();
-		if (amount == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账户信息", orderin.getMemberCard());
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账户信息。");
-		}
+//		MemberAmountDto amount = this.memberFien.getMemberAmount(orderin.getMemberCard()).getData();
+//		if (amount == null) {
+//			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账户信息", orderin.getMemberCard());
+//			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账户信息。");
+//		}
 		// 只匹配购买的商品或套餐，排除赠品
 		List<CalculateOrderProductDto> orderproducts = orderin.getCalculateProductDtos().stream()
 				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
@@ -252,17 +252,17 @@ public class OrderRestController {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
 		}
 		// 按顾客号查询顾客账号
-		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
+//		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
 		// 如果调用服务异常
-		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
-			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用查询顾客账号接口异常：%s", maresponse.getMessage()));
-		}
-		MemberAmountDto account = maresponse.getData();
-		if (account == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号", orderin.getMemberCardNo());
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
-		}
+//		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
+//			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
+//			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用查询顾客账号接口异常：%s", maresponse.getMessage()));
+//		}
+//		MemberAmountDto account = maresponse.getData();
+//		if (account == null) {
+//			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号", orderin.getMemberCardNo());
+//			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
+//		}
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getStaffCode());
 		// 如果服务调用异常
@@ -638,7 +638,7 @@ public class OrderRestController {
 		if (this.hasAmountStored(orderin)) {
 			// 组装顾客账户消费参数
 			MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
-			memberAmountDetail.setDiscountMoney(orderm.getTotal());// 订单总金额，单位分
+			memberAmountDetail.setDiscountMoney(orderin.getAmountStored().multiply(bd100).intValue());// 订单总金额，单位分
 			memberAmountDetail.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
 			memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);// 消费
 			memberAmountDetail.setOrderNo(orderm.getOrderNo());// 订单编号
@@ -751,7 +751,7 @@ public class OrderRestController {
 					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
 		// 再次调用顾客账户余额
-		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		orderout.setOrderNo(orderm.getOrderNo());
 		orderout.setReveiverAddress(orderm.getReveiverAddress());
 		orderout.setReveiverName(orderm.getReveiverName());
