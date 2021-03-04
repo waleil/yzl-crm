@@ -63,6 +63,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -662,19 +663,20 @@ public class MemberController {
 private ProductClient productClient;
     @ApiOperation("获取顾客购买能力")
     @GetMapping("/v1/getMemberOrderStat")
-    public GeneralResult<MemberOrderStat> getMemberOrderStat(
+    public GeneralResult<cn.net.yzl.crm.vo.order.MemberOrderStat> getMemberOrderStat(
             @RequestParam("member_card")
             @NotBlank(message = "member_card不能为空")
             @ApiParam(name = "member_card", value = "会员卡号", required = true)
                     String member_card
     ) {
+        cn.net.yzl.crm.vo.order.MemberOrderStat stat = new cn.net.yzl.crm.vo.order.MemberOrderStat();
         GeneralResult<MemberOrderStat> result = memberFien.getMemberOrderStat(member_card);
         if(result.getData()!=null){
             MemberOrderStat data = result.getData();
             // 首次的购买商品编号
             String first_buy_product_code = data.getFirst_buy_product_code();
             ComResponse<List<ProductMainDTO>> listComResponse = productClient.queryByProductCodes(first_buy_product_code);
-            if(listComResponse.getData()!=null && listComResponse.getData().size()>0){
+            if(listComResponse.getData()!=null && CollectionUtil.isNotEmpty(listComResponse.getData())){
                 StringBuffer str = new StringBuffer();
                 listComResponse.getData().forEach(productMainDTO -> {
                     String name = productMainDTO.getName();
@@ -690,7 +692,7 @@ private ProductClient productClient;
             //最后一次购买的商品标号
             String last_buy_product_code = data.getLast_buy_product_code();
             listComResponse = productClient.queryByProductCodes(last_buy_product_code);
-            if(listComResponse.getData()!=null && listComResponse.getData().size()>0){
+            if(listComResponse.getData()!=null && CollectionUtil.isNotEmpty(listComResponse.getData())){
                 StringBuffer str = new StringBuffer();
                 listComResponse.getData().forEach(productMainDTO -> {
                     String name = productMainDTO.getName();
@@ -702,9 +704,30 @@ private ProductClient productClient;
                     data.setLastBuyProductNames(str.substring(0,str.length()-1));
                 }
             }
-        }
 
-        return result;
+            BeanUtil.copyProperties(data,stat);
+            BigDecimal dBD100 = new BigDecimal("100");
+            if (stat.getTotal_counsum_amount() != null) {
+                stat.setTotal_counsum_amount((stat.getTotal_counsum_amount().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
+            }
+            if (stat.getTotal_invest_amount() != null) {
+                stat.setTotal_invest_amount((stat.getTotal_invest_amount().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
+            }
+            if (stat.getFirst_order_am() != null) {
+                stat.setFirst_order_am((stat.getFirst_order_am().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
+            }
+            if (stat.getOrder_high_am() != null) {
+                stat.setOrder_high_am((stat.getOrder_high_am().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
+            }
+            if (stat.getOrder_low_am() != null) {
+                stat.setOrder_low_am((stat.getOrder_low_am().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
+            }
+            if (stat.getOrder_avg_am() != null) {
+                stat.setOrder_avg_am((stat.getOrder_avg_am().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
+            }
+        }
+        GeneralResult<cn.net.yzl.crm.vo.order.MemberOrderStat> result1 = new GeneralResult<>().success(stat);
+        return result1;
     }
 
 //    @ApiOperation("保存顾客行为偏好")
