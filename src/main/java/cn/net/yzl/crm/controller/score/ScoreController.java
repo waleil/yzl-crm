@@ -192,4 +192,11 @@ public class ScoreController {
         return service.grant(vo);
     }
 
+
+    @GetMapping("MainInfo")
+    @ApiOperation("查询发放统计信息")
+    public ComResponse<MainInfo> mainInfo(){
+        return service.mainInfo();
+    }
+
 }

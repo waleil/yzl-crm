@@ -169,4 +169,9 @@ public class ScoreServiceImpl implements ScoreService {
         return scoreDetailClient.grant(vo);
     }
 
+    @Override
+    public ComResponse<MainInfo> mainInfo() {
+        return scoreDetailClient.mainInfo();
+    }
+
 }
