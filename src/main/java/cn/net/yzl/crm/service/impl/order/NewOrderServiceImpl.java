@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.SnowFlakeUtil;
 import cn.net.yzl.crm.client.order.NewOrderClient;
+import cn.net.yzl.crm.client.order.OrderSearchClient;
 import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.customer.dto.address.ReveiverAddressMsgDTO;
 import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
@@ -36,6 +37,7 @@ import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
 import com.alibaba.excel.util.CollectionUtils;
 import com.mysql.cj.util.StringUtils;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -87,6 +89,9 @@ public class NewOrderServiceImpl implements INewOrderService {
 	private RabbitTemplate rabbitTemplate;
 	@Autowired
 	private MemberFien memberFien;
+
+	@Autowired
+	private OrderSearchClient orderSearchClient;
 
 	/**
 	 * 新建订单
@@ -301,7 +306,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
 				// 标记查询失败的群组
 				log.error("获取群组中顾客信息失败" + listComResponse.getCode() );
-//				throw new BizException()
+				throw new BizException(listComResponse.getCode(),"获取群组信息失败!" +listComResponse.getMessage());
 			} else {
 				List<GroupRefMember> data = listComResponse.getData();
 				if (CollectionUtils.isEmpty(data)) {
@@ -375,16 +380,26 @@ public class NewOrderServiceImpl implements INewOrderService {
 		String orderNo = redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, RedisKeys.CREATE_ORDER_NO, 6);
 		ReveiverAddressMsgDTO addressMsgDTO = checkMember(member);
 		if (addressMsgDTO == null) {
+			log.info("新建会刊订单，因客户联系地址不全，无法创建，顾客编号{}",member.getMemberCard());
 			return null;
 		}
+
+
 
 		OrderInfo4Mq orderInfo = new OrderInfo4Mq();
 		// 订单主表
 		OrderM orderM = mkOrderM(orderNo, orderTemp, product, member, addressMsgDTO);
-		orderInfo.setOrderM(orderM);
-		// 订单详情表
-		List<OrderDetail> orderDetails = this.selectAndMkDetail(orderNo, orderM, product, member);
-		orderInfo.setDetailList(orderDetails);
+		if(orderM != null){
+			orderInfo.setOrderM(orderM);
+			// 订单详情表
+			List<OrderDetail> orderDetails = this.selectAndMkDetail(orderNo, orderM, product, member);
+			if(orderDetails == null){
+				return null;
+			}
+			orderInfo.setDetailList(orderDetails);
+		}
+		log.info("新建会刊订单，批次号：{}，订单号：{}",orderTemp.getOrderTempCode(),orderM.getOrderNo());
+
 		return orderInfo;
 
 	}
@@ -398,10 +413,12 @@ public class NewOrderServiceImpl implements INewOrderService {
 	private ReveiverAddressMsgDTO checkMember(MemberAddressAndLevelDTO member) {
 		ReveiverAddressMsgDTO result = null;
 		if (CollectionUtils.isEmpty(member.getPhoneNumbers())) {
+
 			return result;
 		}
 		result = member.getReveiverInformations().stream()
 				.filter(p -> this.check(p)).findFirst().orElse(null);
+
 
 		return result;
 	}
@@ -526,7 +543,6 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setRemark(orderTemp.getRemark());
 		orderM.setWorkCodeStr(orderTemp.getWorkCodeStr());
 		orderM.setPersonChangeId(orderTemp.getPersonChangeId());
-		log.info("新建会刊订单，批次号：{}，订单号：{}",orderTemp.getOrderTempCode(),orderM.getOrderNo());
 
 
 		return orderM;
@@ -546,10 +562,22 @@ public class NewOrderServiceImpl implements INewOrderService {
 		AtomicInteger no = new AtomicInteger(10);
 		List<OrderDetail> result = new ArrayList<>();
 
+		//根据顾客的省份，获取发货仓库
+		ComResponse<String> storeRes = orderSearchClient.selectSplitStore(Integer.valueOf(order.getReveiverProvince()));
+		if(Integer.compare(storeRes.getCode(),Integer.valueOf(200))!=0){
+			log.error("新建订单，调用订单服务查询发货仓失败");
+			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode()
+					,"新建订单，调用订单服务查询发货仓失败"+storeRes.getMessage());
+		}
+		if(StringUtils.isNullOrEmpty(storeRes.getData())){
+			log.info("新建订单，为顾客卡号：{} 创建订单失败，原因找不到发货仓",member.getMemberCard());
+			return null;
+		}
 		products.forEach(map -> {
 			OrderDetail orderDetail = new OrderDetail();
 			orderDetail.setOrderDetailCode(orderNo + no.incrementAndGet());
 			orderDetail.setOrderNo(orderNo);
+			orderDetail.setStoreNo(storeRes.getData());
 			orderDetail.setProductCode(map.getProductCode());
 			orderDetail.setProductBarCode(map.getProductBarCode());
 			orderDetail.setProductName(map.getProductName());

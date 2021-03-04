@@ -19,7 +19,6 @@ import java.util.List;
 //@FeignClient(name = "newOrder",url = "localhost:4455/newOrdder")
 public interface NewOrderClient {
 
-
     /**
      * 新建订单（会刊）
      */
