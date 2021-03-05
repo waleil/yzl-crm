@@ -41,6 +41,22 @@ public class DispatchRuleController {
         return comResponse;
     }
 
+
+    @ApiOperation(value = "根据Id查询 智能派单[分配规则]")
+    @GetMapping(value = "v1/getDispatchRuleById")
+    public ComResponse getDispatchRule(@ApiParam(value = "id", required = true) @RequestParam("id") String id) {
+        ComResponse<DispatchRuleDetail> comResponse = null ;
+        try{
+            comResponse = this.dispatchRuleClient.getDispatchRule(id);
+        }catch (Exception e){
+            return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(),
+                    ResponseCodeEnums.API_ERROR_CODE.getMessage());
+        }
+        return ComResponse.success(comResponse);
+    }
+
+
+
     @ApiOperation(value = "启用/停用 智能派单分配规则")
     @GetMapping(value = "v1/updateDispatchRule")
     public ComResponse updateDispatchRule(@ApiParam(value = "id", required = true) @RequestParam(value = "id", required = true) String id,

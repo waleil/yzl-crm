@@ -5,6 +5,7 @@ import cn.net.yzl.workorder.model.db.DispatchRuleDetail;
 import cn.net.yzl.workorder.model.db.DispatchRuleSetUp;
 import cn.net.yzl.workorder.model.vo.DispatchRuleVO;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,15 @@ public interface DispatchRuleClient {
      */
     @PostMapping("v1/saveDispatch")
     public ComResponse<?> saveDispatch(@RequestBody DispatchRuleDetail detail);
+
+
+    /**
+     *   通过规则Id 查询当前的派单 详情
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "v1/getDispatchRuleById")
+    public ComResponse<DispatchRuleDetail> getDispatchRule(@ApiParam(value = "id", required = true) @RequestParam("id") String id);
 
 
     /**
