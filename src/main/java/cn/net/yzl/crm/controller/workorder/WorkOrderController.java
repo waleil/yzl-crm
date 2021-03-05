@@ -225,6 +225,9 @@ public class WorkOrderController {
             workOrderUnclaimedUserVO.setFirstBuyProductCode("");
             workOrderUnclaimedUserVO.setLastBuyProductCode("");
         }
+        if(org.apache.commons.lang3.StringUtils.isBlank(productNames)){
+            return ComResponse.success(pageWorkOrderUnclaimedUserVO);
+        }
         productNames = productNames.substring(1);
         List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
