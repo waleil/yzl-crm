@@ -355,4 +355,12 @@ public class SimpleTests {
 			e.printStackTrace();
 		}
 	}
+
+	@Test
+	public void testNumber() {
+		Object a = new Long("1");
+		Object b = new Integer("2");
+		System.err.println(((Number) a).longValue());
+		System.err.println(((Number) b).longValue());
+	}
 }
