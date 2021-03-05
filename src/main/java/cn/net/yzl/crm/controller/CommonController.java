@@ -2,6 +2,8 @@ package cn.net.yzl.crm.controller;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.YLoggerUtil;
 import cn.net.yzl.crm.constant.EhrParamEnum;
 import cn.net.yzl.crm.dto.biTask.BiSystemDataSourceSettingVO;
 import cn.net.yzl.crm.dto.biTask.Indicators;
@@ -14,6 +16,7 @@ import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.BiTaskClient;
 import cn.net.yzl.crm.service.micservice.CoopCompanyMediaClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.logger.common.XSecurityUtil;
 import cn.net.yzl.model.dto.DepartDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author: liuChangFu
@@ -99,7 +103,16 @@ public class CommonController {
 
     @ApiOperation(value = "查询跨系统数据配置列表")
     @GetMapping("v1/getSystemDataSourceList")
-    public ComResponse<List<BiSystemDataSourceSettingVO>> getSystemDataSourceList(@RequestParam("systemType") Integer systemType) {
+    public ComResponse<List<BiSystemDataSourceSettingVO>> getSystemDataSourceList(/*@RequestParam("time") String time,
+                                                                                  @RequestParam("sign") String sign,
+                                                                                  @RequestParam("appId") String appId,*/
+                                                                                  @RequestParam("systemType") Integer systemType) {
+      /*  String signText = (time + appId + "$" + yzlSystemDataKey).toLowerCase();
+        YLoggerUtil.infoLog("getSystemDataSourceList signText", signText);
+        String newSign = XSecurityUtil.encodeByMD5(signText);
+        if (!Objects.equals(sign, newSign)) {
+            return ComResponse.fail(ResponseCodeEnums.SIGN_ERROR_CODE.getCode(), "签名不匹配");
+        }*/
         return biTaskClient.getSystemDataSourceList(systemType);
     }
 
