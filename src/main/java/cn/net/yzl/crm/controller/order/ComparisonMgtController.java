@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller.order;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -193,10 +194,8 @@ public class ComparisonMgtController {
 			// 按员工号查询员工信息
 			ComResponse<StaffImageBaseInfoDto> response = this.ehrStaffClient.getDetailsByNo(param.getUserNo());
 			if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
-				StaffImageBaseInfoDto dto = response.getData();
-				if (dto != null) {
-					param.setUserName(dto.getName());
-				}
+				param.setUserName(
+						Optional.ofNullable(response.getData()).map(StaffImageBaseInfoDto::getName).orElse(""));
 			}
 		}
 		return this.comparisonMgtFeignClient.importFromExcel(param);
@@ -205,20 +204,25 @@ public class ComparisonMgtController {
 	@PostMapping("/v1/compare")
 	@ApiOperation(value = "对账", notes = "对账")
 	public ComResponse<Object> compareOrder(@RequestBody CompareOrderParam param) {
+		if (CollectionUtils.isEmpty(param.getExpressNums())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "至少选择一个快递单号进行对账");
+		}
+		if (CollectionUtils.isEmpty(param.getOrderNums())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "至少选择一个订单号进行对账");
+		}
+		if (CollectionUtils.isEmpty(param.getSaleNums())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "至少选择一个售后单号进行对账");
+		}
 		if (!StringUtils.hasText(param.getUserNo())) {
 			param.setUserNo(QueryIds.userNo.get());
 		}
 		if (!StringUtils.hasText(param.getUserNo())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "登录用户编码不能为空");
 		}
-		if (!StringUtils.hasText(param.getUserName())) {
-			param.setUserName(QueryIds.userName.get());
-		}
-		if (!StringUtils.hasText(param.getUserName())) {
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "登录用户姓名不能为空");
-		}
-		if (CollectionUtils.isEmpty(param.getExpressNums())) {
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "快递号不能为空");
+		// 按员工号查询员工信息
+		ComResponse<StaffImageBaseInfoDto> response = this.ehrStaffClient.getDetailsByNo(param.getUserNo());
+		if (ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
+			param.setUserName(Optional.ofNullable(response.getData()).map(StaffImageBaseInfoDto::getName).orElse(""));
 		}
 		return this.comparisonMgtFeignClient.compareOrder(param);
 	}

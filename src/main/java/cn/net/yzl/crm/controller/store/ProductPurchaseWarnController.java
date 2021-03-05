@@ -29,6 +29,12 @@ public class ProductPurchaseWarnController {
     @Autowired
     private ProductPurchaseWarnFeignService feignService;
 
+    @GetMapping(value = "v1/selectProductPurchaseWarnSetList")
+    @ApiOperation("查询预警通知设置列表")
+    public ComResponse<List<ProductPurchaseWarnSetDTO>> selectProductPurchaseWarnSetList() {
+        return feignService.selectProductPurchaseWarnSetList();
+    }
+
     @GetMapping(value = "v1/selectProductPurchaseWarnSet")
     @ApiOperation("查询预警通知设置")
     public ComResponse<ProductPurchaseWarnSetDTO> selectProductPurchaseWarnSet(@RequestParam("storeNo") String storeNo) {

@@ -2,7 +2,11 @@ package cn.net.yzl.crm.controller.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.PurchaseReturnFeginService;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.model.dto.PurchaseReturnResDto;
 import cn.net.yzl.model.dto.PurchaseReturnReviewDto;
 import cn.net.yzl.model.dto.purchase.returns.*;
@@ -13,6 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +35,8 @@ public class PurchaseReturnOrderController {
 
     @Autowired
     private PurchaseReturnFeginService purchaseReturnFeginService;
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
     /**
      * 采购退货单分页查询
      * @param purchaseReturnCondition
@@ -44,19 +51,28 @@ public class PurchaseReturnOrderController {
 
     @ApiOperation(value = "采购退货单新增")
     @PostMapping("v1/add")
-    public ComResponse add(@RequestBody PurchaseReturnOrderAddDto purchaseReturnOrderAddDto){
+    public ComResponse add(@RequestBody PurchaseReturnOrderAddDto purchaseReturnOrderAddDto, HttpServletRequest request) {
+        StaffImageBaseInfoDto user = getUser(request);
+        purchaseReturnOrderAddDto.setCreateUser(user.getStaffNo());
+        purchaseReturnOrderAddDto.setCreateUserName(user.getName());
         return purchaseReturnFeginService.add(purchaseReturnOrderAddDto);
     }
 
     @ApiOperation(value = "采购退货单更新")
     @PostMapping("v1/update")
-    public ComResponse update(@RequestBody PurchaseReturnUpdateDto purchaseReturnUpdateDto){
+    public ComResponse update(@RequestBody PurchaseReturnUpdateDto purchaseReturnUpdateDto, HttpServletRequest request) {
+        StaffImageBaseInfoDto user = getUser(request);
+        purchaseReturnUpdateDto.setUpdateUser(user.getStaffNo());
+        purchaseReturnUpdateDto.setUpdateUserName(user.getName());
         return purchaseReturnFeginService.update(purchaseReturnUpdateDto);
     }
 
     @ApiOperation(value = "采购退货单审核")
     @PostMapping("v1/review")
-    public ComResponse review(@RequestBody @Valid PurchaseReturnReviewDto purchaseReturnReviewDto){
+    public ComResponse review(@RequestBody @Valid PurchaseReturnReviewDto purchaseReturnReviewDto, HttpServletRequest request) {
+        StaffImageBaseInfoDto user = getUser(request);
+        purchaseReturnReviewDto.setUpdateUser(user.getStaffNo());
+        purchaseReturnReviewDto.setUpdateUserName(user.getName());
         return purchaseReturnFeginService.review(purchaseReturnReviewDto);
     }
 
@@ -104,7 +120,10 @@ public class PurchaseReturnOrderController {
      */
     @ApiOperation(value = "采购退货单退回添加物流信息")
     @PostMapping("v1/add/waybill")
-    public ComResponse addWayBill(@RequestBody WaybillAddDto waybillAddDto){
+    public ComResponse addWayBill(@RequestBody WaybillAddDto waybillAddDto, HttpServletRequest request) {
+        StaffImageBaseInfoDto user = getUser(request);
+        waybillAddDto.setCreateUser(user.getStaffNo());
+        waybillAddDto.setCreateUserName(user.getName());
         return purchaseReturnFeginService.addWayBill(waybillAddDto);
     }
 
@@ -115,7 +134,10 @@ public class PurchaseReturnOrderController {
      */
     @ApiOperation(value = "采购退货单编辑物流信息")
     @PostMapping("v1/update/waybill")
-    public ComResponse updateWayBill(@RequestBody WaybillUpdateDto waybillUpdateDto){
+    public ComResponse updateWayBill(@RequestBody WaybillUpdateDto waybillUpdateDto, HttpServletRequest request) {
+        StaffImageBaseInfoDto user = getUser(request);
+        waybillUpdateDto.setUpdateUser(user.getStaffNo());
+        waybillUpdateDto.setUpdateUserName(user.getName());
         return purchaseReturnFeginService.updateWayBill(waybillUpdateDto);
     }
 
@@ -124,5 +146,17 @@ public class PurchaseReturnOrderController {
     @GetMapping("v1/waybill/detail")
     public ComResponse<WaybillDetailDto> selectWaybill(@RequestParam("id") Integer id){
         return purchaseReturnFeginService.selectWaybill(id);
+    }
+
+
+    private StaffImageBaseInfoDto getUser(HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
+        ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
+        StaffImageBaseInfoDto data = user.getData();
+        if(data != null){
+            return data;
+        }else {
+            throw new BizException(ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE);
+        }
     }
 }

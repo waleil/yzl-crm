@@ -46,6 +46,7 @@ import cn.net.yzl.workorder.model.dto.UpdateWorkOrderVisitDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderFlowDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderUnclaimedUserDTO;
 import cn.net.yzl.workorder.model.dto.WorkOrderVisitTypeDTO;
+import cn.net.yzl.workorder.model.enums.MemberLevelEnums;
 import cn.net.yzl.workorder.model.enums.WorkOrderTypeEnums;
 import cn.net.yzl.workorder.model.vo.*;
 import cn.net.yzl.workorder.utils.MonggoDateHelper;
@@ -125,37 +126,40 @@ public class WorkOrderController {
             productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
             workOrderBean.setFirstBuyProductCode("");
             workOrderBean.setLastBuyProductCode("");
+            //赋值会员级别
+            this.getMgradeCodeName(workOrderBean);
         }
-        productNames = productNames.substring(1);
-        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
-        if (!CollectionUtils.isEmpty(data)) {
-            for(int i = 0 ; i < workOrderBeans.size();i++) {
-                String lastBuyProductCode = lastBuyProductCodes.get(i);
-                String firstBuyProductCode = firstBuyProductCodes.get(i);
-                WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
-                for(ProductMainDTO productMainDTO : data) {
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
-                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
-                            workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
-                        } else {
-                            workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
-                        }
+        if(!StringUtils.isEmpty(productNames)){
+            productNames = productNames.substring(1);
+            List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
+            if (!CollectionUtils.isEmpty(data)) {
+                for(int i = 0 ; i < workOrderBeans.size();i++) {
+                    String lastBuyProductCode = lastBuyProductCodes.get(i);
+                    String firstBuyProductCode = firstBuyProductCodes.get(i);
+                    WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
+                    for(ProductMainDTO productMainDTO : data) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
+                            if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
+                                workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
+                            } else {
+                                workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
+                            }
 
-                    }
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
-                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
-                            workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
-                        } else {
-                            workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
                         }
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
+                            if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
+                                workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
+                            } else {
+                                workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
+                            }
 
+                        }
                     }
+
                 }
-
             }
+            pageWorkOrderBean.setItems(workOrderBeans);
         }
-        pageWorkOrderBean.setItems(workOrderBeans);
-
         return ComResponse.success(pageWorkOrderBean);
     }
 
@@ -225,6 +229,9 @@ public class WorkOrderController {
             workOrderUnclaimedUserVO.setFirstBuyProductCode("");
             workOrderUnclaimedUserVO.setLastBuyProductCode("");
         }
+        if(org.apache.commons.lang3.StringUtils.isBlank(productNames)){
+            return ComResponse.success(pageWorkOrderUnclaimedUserVO);
+        }
         productNames = productNames.substring(1);
         List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
@@ -293,36 +300,37 @@ public class WorkOrderController {
             workOrderBean.setFirstBuyProductCode("");
             workOrderBean.setLastBuyProductCode("");
         }
-        productNames = productNames.substring(1);
-        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
-        if (!CollectionUtils.isEmpty(data)) {
-            for(int i = 0 ; i < workOrderBeans.size();i++) {
-                String lastBuyProductCode = lastBuyProductCodes.get(i);
-                String firstBuyProductCode = firstBuyProductCodes.get(i);
-                WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
-                for(ProductMainDTO productMainDTO : data) {
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
-                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
-                            workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
-                        } else {
-                            workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
-                        }
+        if(!StringUtils.isEmpty(productNames)){
+            productNames = productNames.substring(1);
+            List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
+            if (!CollectionUtils.isEmpty(data)) {
+                for(int i = 0 ; i < workOrderBeans.size();i++) {
+                    String lastBuyProductCode = lastBuyProductCodes.get(i);
+                    String firstBuyProductCode = firstBuyProductCodes.get(i);
+                    WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
+                    for(ProductMainDTO productMainDTO : data) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
+                            if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
+                                workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
+                            } else {
+                                workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
+                            }
 
-                    }
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
-                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
-                            workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
-                        } else {
-                            workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
                         }
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
+                            if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
+                                workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
+                            } else {
+                                workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
+                            }
 
+                        }
                     }
+
                 }
-
             }
+            pageWorkOrderBean.setItems(workOrderBeans);
         }
-        pageWorkOrderBean.setItems(workOrderBeans);
-
         return ComResponse.success(pageWorkOrderBean);
     }
 
@@ -479,11 +487,11 @@ public class WorkOrderController {
         }
         myWorkOrderHotlineListDTO.setStaffNo(userId);
         ComResponse<Page<MyWorkOrderHotlineListVO>> myWorkOrderHotlinePageList = workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
-        List<MyWorkOrderHotlineListVO> items = myWorkOrderHotlinePageList.getData().getItems();
-        if(!StringUtils.isEmpty(items))
-            items.stream().forEach(s -> {
-                s.setAllocateTime(StringUtils.isEmpty(s.getAllocateTime())?null:MonggoDateHelper.getMongoDate(s.getAllocateTime()));
-            });
+//        List<MyWorkOrderHotlineListVO> items = myWorkOrderHotlinePageList.getData().getItems();
+//        if(!StringUtils.isEmpty(items))
+//            items.stream().forEach(s -> {
+//                s.setAllocateTime(StringUtils.isEmpty(s.getAllocateTime())?null:MonggoDateHelper.getMongoDate(s.getAllocateTime()));
+//            });
         return myWorkOrderHotlinePageList;
     }
 
@@ -517,6 +525,15 @@ public class WorkOrderController {
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     @ApiOperation(value = "热线&&回访-处理工单详情", notes = "热线&&回访-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        }
+        StaffImageBaseInfoDto staffImageBaseInfoDto = detailsByNo.getData();
+        updateAcceptStatusReceiveDTO.setOperator(staffImageBaseInfoDto.getName());
+        updateAcceptStatusReceiveDTO.setOperatorCode(staffImageBaseInfoDto.getStaffNo());
+        updateAcceptStatusReceiveDTO.setOperatorType(CommonConstants.TWO);
         ComResponse<FindDWorkOrderHotlineDetailsVO> dWorkOrderHotlineDetails = workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
         FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
         if(!StringUtils.isEmpty(data)){
@@ -629,7 +646,7 @@ public class WorkOrderController {
         if(null == detailsByNo.getData()){
             return ComResponse.nodata();
         }
-        recoveryDTO.setCreateName(detailsByNo.getData().getName());
+        recoveryDTO.setStaffName(detailsByNo.getData().getName());
         recoveryDTO.setCreateId(QueryIds.userNo.get());
         recoveryDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.handIn(recoveryDTO);
@@ -658,7 +675,7 @@ public class WorkOrderController {
         isHandInDTO.setStaffName(detailsByNo.getData().getName());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
         List<WorkOrderRuleConfigBean> data = listComResponse.getData();
-            if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
+        if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
             WorkOrderRuleConfigBean workOrderRuleConfigBean1 = null;
             for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data){
                 if(workOrderRuleConfigBean.getId() == 7)
@@ -725,7 +742,7 @@ public class WorkOrderController {
         }else{
             flag = Boolean.TRUE;
         }
-        if(flag){
+        if(flag || org.apache.commons.lang3.StringUtils.isNotBlank(isHandInDTO.getApplyUpMemo())){
             RecoveryDTO recoveryDTO = new RecoveryDTO();
             recoveryDTO.setStaffName(isHandInDTO.getStaffName());
             recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());
@@ -767,5 +784,33 @@ public class WorkOrderController {
     @GetMapping(value = "v1/newMember")
     public ComResponse<Boolean> newMember(@ApiParam("顾客会员号")@RequestParam("memberCard") String memberCard,@ApiParam("状态:1新顾客;2:老顾客")@RequestParam("status")Integer status ){
         return workOrderClient.newMember(memberCard,status);
+    }
+
+
+    /**
+     * 获取员工级别，赋值成员工名称
+     * @param workOrderBean
+     */
+    private void getMgradeCodeName(WorkOrderBean workOrderBean) {
+        String mGradeCode = workOrderBean.getMGradeCode();
+        if(MemberLevelEnums.MEMBER_LEVEL_NO_CARD.getCode().equals(mGradeCode)){
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_NO_CARD.getName());
+        } else if(MemberLevelEnums.MEMBER_LEVEL_CLASSIC_CARD.getCode().equals(mGradeCode)){
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_CLASSIC_CARD.getName());
+        } else if(MemberLevelEnums.MEMBER_LEVEL_COPPER_CARD.getCode().equals(mGradeCode)){
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_COPPER_CARD.getName());
+        } else if(MemberLevelEnums.MEMBER_LEVEL_SILVER_CARD.getCode().equals(mGradeCode)){
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_SILVER_CARD.getName());
+        } else if(MemberLevelEnums.MEMBER_LEVEL_GOLD_CARD.getCode().equals(mGradeCode)){
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_GOLD_CARD.getName());
+        } else if(MemberLevelEnums.MEMBER_LEVEL_DIAMOND_CARD.getCode().equals(mGradeCode)){
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_DIAMOND_CARD.getName());
+        } else if(MemberLevelEnums.MEMBER_LEVEL_VIP_CARD.getCode().equals(mGradeCode)){
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_VIP_CARD.getName());
+        } else if(MemberLevelEnums.MEMBER_LEVEL_SUPER_VIP_CARD.getCode().equals(mGradeCode)){
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_SUPER_VIP_CARD.getName());
+        } else {
+            workOrderBean.setMGradeCode(MemberLevelEnums.MEMBER_LEVEL_NO_CARD.getName());
+        }
     }
 }

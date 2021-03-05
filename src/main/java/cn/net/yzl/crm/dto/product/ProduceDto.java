@@ -56,4 +56,7 @@ public class ProduceDto {
     @ApiModelProperty(value = "商品总药量-规格")
     private String totalUseNum;
 
+    @ApiModelProperty(value = "商品类型（0：单商品，1：套餐）")
+    private Integer productType;
+
 }

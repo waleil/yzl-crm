@@ -54,7 +54,6 @@ import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
-import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
@@ -62,6 +61,7 @@ import cn.net.yzl.crm.model.order.CalcOrderIn.CalculateOrderProductDto;
 import cn.net.yzl.crm.model.order.CalcOrderOut;
 import cn.net.yzl.crm.model.order.OrderOut;
 import cn.net.yzl.crm.model.order.OrderOut.Coupon;
+import cn.net.yzl.crm.model.order.ProductStock;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -121,11 +121,6 @@ public class OrderRestController {
 		if (member == null) {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
-		}
-		MemberAmountDto amount = this.memberFien.getMemberAmount(orderin.getMemberCard()).getData();
-		if (amount == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账户信息", orderin.getMemberCard());
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账户信息。");
 		}
 		// 只匹配购买的商品或套餐，排除赠品
 		List<CalculateOrderProductDto> orderproducts = orderin.getCalculateProductDtos().stream()
@@ -250,18 +245,6 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
 		}
-		// 按顾客号查询顾客账号
-		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
-		// 如果调用服务异常
-		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
-			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用查询顾客账号接口异常：%s", maresponse.getMessage()));
-		}
-		MemberAmountDto account = maresponse.getData();
-		if (account == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号", orderin.getMemberCardNo());
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
-		}
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getStaffCode());
 		// 如果服务调用异常
@@ -297,17 +280,6 @@ public class OrderRestController {
 		}
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
-		// 如果广告ID不为空
-		if (orderin.getAdvertBusNo() != null) {
-			orderm.setAdvisorNo(orderin.getAdvertBusNo().intValue());// 广告id
-			// 查询广告
-			ComResponse<LaunchManageDto> response = this.activityClient.getLaunchManageByBusNo(orderm.getAdvisorNo());
-			LaunchManageDto dto = response.getData();
-			if (dto != null) {
-				orderm.setAdvisorName(dto.getAdvertName());// 广告名称
-				orderm.setMediaName(dto.getMediaName());// 媒介名称
-			}
-		}
 		// 组装校验订单金额参数
 		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
 		log.info("调用校验订单金额接口：{}", this.toJsonString(checkOrderAmountRequest));
@@ -335,7 +307,7 @@ public class OrderRestController {
 		// 收集商品或套餐优惠信息
 		List<OrderCouponDetail> coupondetailList = new ArrayList<>();
 		// 收集每类商品的库存，key为商品编码，value为商品库存
-		Map<String, Integer> productStockMap = new HashMap<>();
+		Map<String, ProductStock> productStockMap = new HashMap<>();
 		// 收集订单明细里商品的购买数量
 		List<Tuple> tuples = new ArrayList<>();
 		AtomicInteger seq = new AtomicInteger(10);// 循环序列
@@ -397,7 +369,8 @@ public class OrderRestController {
 				od.setUnit(p.getUnit());// 单位
 				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
 				od.setPackageUnit(p.getPackagingUnit());// 包装单位
-				productStockMap.put(od.getProductCode(), p.getStock());// 库存
+				productStockMap.put(od.getProductCode(),
+						new ProductStock(p.getProductCode(), p.getName(), p.getStock()));// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 				// 如果是非赠品
 				if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
@@ -527,7 +500,8 @@ public class OrderRestController {
 					od.setUnit(in.getUnit());// 单位
 					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
 					od.setPackageUnit(in.getPackagingUnit());// 包装单位
-					productStockMap.put(od.getProductCode(), in.getStock());// 库存
+					productStockMap.put(od.getProductCode(),
+							new ProductStock(in.getProductCode(), in.getName(), in.getStock()));// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
 					// 如果是非赠品
 					if (Integer.compare(CommonConstant.GIFT_FLAG_0, od.getGiftFlag()) == 0) {
@@ -580,12 +554,13 @@ public class OrderRestController {
 		// 校验订单购买商品的总数是否超出库存数
 		Set<Entry<String, Integer>> entrySet = productCountMap.entrySet();
 		for (Entry<String, Integer> entry : entrySet) {
-			Integer pstock = productStockMap.get(entry.getKey());// 取出商品库存
+			ProductStock pstock = productStockMap.get(entry.getKey());// 取出商品库存
 			// 如果购买商品总数大于商品库存
-			if (entry.getValue() > pstock) {
+			if (entry.getValue() > pstock.getStock()) {
 				log.error("热线工单-购物车-提交订单>>该订单[{}]商品[{}]购买总数[{}]大于库存总数[{}]", orderm.getOrderNo(), entry.getKey(),
-						entry.getValue(), pstock);
-				return ComResponse.fail(ResponseCodeEnums.ERROR, "该商品库存不足。");
+						entry.getValue(), pstock.getStock());
+				return ComResponse.fail(ResponseCodeEnums.ERROR,
+						String.format("商品编码[{}]商品名称[{}]库存不足。", pstock.getCode(), pstock.getName()));
 			}
 		}
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
@@ -608,10 +583,12 @@ public class OrderRestController {
 		orderm.setReveiverCityName(reveiverAddress.getMemberCityName());// 城市名称
 		orderm.setReveiverArea(String.valueOf(reveiverAddress.getMemberCountyNo()));// 区县编码
 		orderm.setReveiverAreaName(reveiverAddress.getMemberCountyName());// 区县名称
-		orderm.setMediaChannel(orderin.getMediaChannel());// 媒介渠道
-		orderm.setMediaName(orderin.getMediaName());// 媒介名称
-		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
-		orderm.setMediaType(orderin.getMediaType());// 媒介类型
+		orderm.setMediaChannel(orderin.getMediaChannel());// 媒体渠道
+		orderm.setMediaName(orderin.getMediaName());// 媒体名称
+		orderm.setMediaNo(orderin.getMediaNo());// 媒体编码
+		orderm.setMediaType(orderin.getMediaType());// 媒体类型
+		orderm.setAdvisorName(orderin.getAdvName());// 广告名称
+		orderm.setAdvisorNo(orderin.getAdvId());// 广告编码
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
 		// 组装扣减库存参数
 		OrderProductVO orderProduct = new OrderProductVO();
@@ -634,7 +611,7 @@ public class OrderRestController {
 		if (this.hasAmountStored(orderin)) {
 			// 组装顾客账户消费参数
 			MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
-			memberAmountDetail.setDiscountMoney(orderm.getTotal());// 订单总金额，单位分
+			memberAmountDetail.setDiscountMoney(orderin.getAmountStored().multiply(bd100).intValue());// 订单总金额，单位分
 			memberAmountDetail.setMemberCard(orderm.getMemberCardNo());// 顾客卡号
 			memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);// 消费
 			memberAmountDetail.setOrderNo(orderm.getOrderNo());// 订单编号
@@ -747,7 +724,7 @@ public class OrderRestController {
 					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
 		// 再次调用顾客账户余额
-		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		orderout.setOrderNo(orderm.getOrderNo());
 		orderout.setReveiverAddress(orderm.getReveiverAddress());
 		orderout.setReveiverName(orderm.getReveiverName());
@@ -1509,6 +1486,10 @@ public class OrderRestController {
 		orderm.setUpdateCode(QueryIds.userNo.get());// 修改人编码
 		orderm.setCreateTime(orderm.getUpdateTime());
 		orderm.setStaffCode(orderm.getUpdateCode());
+		// 清空快递相关数据
+		orderm.setExpressCompanyCode(null);
+		orderm.setExpressCompanyName(null);
+		orderm.setExpressNumber(null);
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getUpdateCode());
 		// 如果服务调用异常

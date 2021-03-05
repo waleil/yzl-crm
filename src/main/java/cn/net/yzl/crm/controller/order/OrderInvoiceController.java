@@ -1,5 +1,39 @@
 package cn.net.yzl.crm.controller.order;
 
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.handler.WriteHandler;
+import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+
 import cn.net.yzl.activity.model.requestModel.AccountRequest;
 import cn.net.yzl.activity.model.requestModel.AccountWithOutPageRequest;
 import cn.net.yzl.activity.model.responseModel.MemberCouponResponse;
@@ -11,11 +45,15 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.client.order.SettlementFein;
-import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.DmcActivityStatus;
 import cn.net.yzl.crm.customer.model.Member;
-import cn.net.yzl.crm.dto.order.*;
+import cn.net.yzl.crm.dto.order.MemberCouponDTO;
+import cn.net.yzl.crm.dto.order.MemberCouponExportDTO;
+import cn.net.yzl.crm.dto.order.MemberIntegralRecordsDTO;
+import cn.net.yzl.crm.dto.order.MemberIntegralRecordsExportDTO;
+import cn.net.yzl.crm.dto.order.MemberRedBagRecordsDTO;
+import cn.net.yzl.crm.dto.order.MemberRedBagRecordsExportDTO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.ActivityService;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
@@ -28,30 +66,9 @@ import cn.net.yzl.order.model.vo.order.OrderInvoiceDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceListDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
 import cn.net.yzl.order.model.vo.order.SettlementDetailDistinctListDTO;
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.write.handler.WriteHandler;
-import com.alibaba.excel.write.metadata.WriteSheet;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("orderInvoice")
@@ -157,13 +174,13 @@ public class OrderInvoiceController {
         for (MemberIntegralRecordsResponse item : responseData.getItems()) {
             MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-                dto.setMemberName(Optional.ofNullable(settlementDetailDistinctListDTOS.get(0).getMemberName()).orElse(getMemberName(item.getMemberCard())));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
+            dto.setMemberName(getMemberName(item.getMemberCard()));
             list.add(dto);
         }
         page.setItems(list);
@@ -234,13 +251,13 @@ public class OrderInvoiceController {
         for (MemberRedBagRecordsResponse item : responseData.getItems()) {
             MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-                dto.setMemberName(Optional.ofNullable(settlementDetailDistinctListDTOS.get(0).getMemberName()).orElse(getMemberName(item.getMemberCard())));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
+            dto.setMemberName(getMemberName(item.getMemberCard()));
             list.add(dto);
         }
         page.setItems(list);
@@ -295,12 +312,7 @@ public class OrderInvoiceController {
         if (!member.getCode().equals(200)) {
             throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "顾客服务异常，" + member.getMessage());
         }
-        Member data = member.getData();
-        if (null == data) {
-            return "";
-        } else {
-            return Optional.ofNullable(data.getMember_name()).orElse("");
-        }
+        return Optional.ofNullable(member.getData()).map(Member::getMember_name).orElse("");
     }
 
     @ApiOperation(value = "顾客优惠券明细表")
@@ -333,13 +345,13 @@ public class OrderInvoiceController {
                 dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
             }
             List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
+            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
                 //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-                dto.setMemberName(Optional.ofNullable(settlementDetailDistinctListDTOS.get(0).getMemberName()).orElse(getMemberName(item.getMemberCard())));
 //                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
                 dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
                 dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
             }
+            dto.setMemberName(getMemberName(item.getMemberCard()));
             list.add(dto);
         }
         page.setItems(list);
