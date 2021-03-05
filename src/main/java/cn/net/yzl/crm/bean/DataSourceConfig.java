@@ -26,7 +26,7 @@ import java.util.*;
  * @description:
  */
 @Configuration
-@MapperScan(basePackages = {"cn.net.yzl.crm.dao","cn.net.yzl.pm.mapper","cn.net.yzl.msg.mapper"}, sqlSessionTemplateRef = "sqlTemplate")
+@MapperScan(basePackages = {"cn.net.yzl.crm.dao","cn.net.yzl.pm.mapper"}, sqlSessionTemplateRef = "sqlTemplate")
 public class DataSourceConfig {
 
     // 主库
@@ -77,7 +77,6 @@ public class DataSourceConfig {
         List<String> mapperLocations = new ArrayList<>();
         mapperLocations.add("classpath*:mapper/*.xml");//crm本项目
         mapperLocations.add("mybatis/pm/mapping/*.xml");//中台pm项目
-        mapperLocations.add("mybatis/msg/*.xml");//msg项目
         List<Resource> resources = new ArrayList<>();
         for (String mapperLocation : mapperLocations) {
             try {
