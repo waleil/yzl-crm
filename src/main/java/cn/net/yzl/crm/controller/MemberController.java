@@ -117,7 +117,14 @@ public class MemberController {
     public ComResponse<Boolean> saveMemberReferral(@Validated @RequestBody MemberReferral memberReferralVO) throws IllegalAccessException {
         String staffNo= QueryIds.userNo.get();
         //根据员工编码获取部门
-        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(staffNo);
+        ComResponse<StaffImageBaseInfoDto> detailsByNo;
+
+        try {
+            detailsByNo = ehrStaffClient.getDetailsByNo(staffNo);
+        } catch (Exception e) {
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"获取当前用户信息失败!");
+        }
+
         YLoggerUtil.infoLog("根据员工编码获取部门 Response", JsonUtil.toJsonStr(detailsByNo));
         StaffImageBaseInfoDto data = detailsByNo.getData();
         if(null == data){
