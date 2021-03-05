@@ -129,36 +129,37 @@ public class WorkOrderController {
             //赋值会员级别
             this.getMgradeCodeName(workOrderBean);
         }
-        productNames = productNames.substring(1);
-        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
-        if (!CollectionUtils.isEmpty(data)) {
-            for(int i = 0 ; i < workOrderBeans.size();i++) {
-                String lastBuyProductCode = lastBuyProductCodes.get(i);
-                String firstBuyProductCode = firstBuyProductCodes.get(i);
-                WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
-                for(ProductMainDTO productMainDTO : data) {
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
-                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
-                            workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
-                        } else {
-                            workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
-                        }
+        if(!StringUtils.isEmpty(productNames)){
+            productNames = productNames.substring(1);
+            List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
+            if (!CollectionUtils.isEmpty(data)) {
+                for(int i = 0 ; i < workOrderBeans.size();i++) {
+                    String lastBuyProductCode = lastBuyProductCodes.get(i);
+                    String firstBuyProductCode = firstBuyProductCodes.get(i);
+                    WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
+                    for(ProductMainDTO productMainDTO : data) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
+                            if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
+                                workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
+                            } else {
+                                workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
+                            }
 
-                    }
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
-                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
-                            workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
-                        } else {
-                            workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
                         }
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
+                            if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
+                                workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
+                            } else {
+                                workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
+                            }
 
+                        }
                     }
+
                 }
-
             }
+            pageWorkOrderBean.setItems(workOrderBeans);
         }
-        pageWorkOrderBean.setItems(workOrderBeans);
-
         return ComResponse.success(pageWorkOrderBean);
     }
 
@@ -299,36 +300,37 @@ public class WorkOrderController {
             workOrderBean.setFirstBuyProductCode("");
             workOrderBean.setLastBuyProductCode("");
         }
-        productNames = productNames.substring(1);
-        List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
-        if (!CollectionUtils.isEmpty(data)) {
-            for(int i = 0 ; i < workOrderBeans.size();i++) {
-                String lastBuyProductCode = lastBuyProductCodes.get(i);
-                String firstBuyProductCode = firstBuyProductCodes.get(i);
-                WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
-                for(ProductMainDTO productMainDTO : data) {
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
-                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
-                            workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
-                        } else {
-                            workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
-                        }
+        if(!StringUtils.isEmpty(productNames)){
+            productNames = productNames.substring(1);
+            List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
+            if (!CollectionUtils.isEmpty(data)) {
+                for(int i = 0 ; i < workOrderBeans.size();i++) {
+                    String lastBuyProductCode = lastBuyProductCodes.get(i);
+                    String firstBuyProductCode = firstBuyProductCodes.get(i);
+                    WorkOrderBean workOrderBean1 = workOrderBeans.get(i);
+                    for(ProductMainDTO productMainDTO : data) {
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(firstBuyProductCode) && firstBuyProductCode.contains(productMainDTO.getProductCode())) {
+                            if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getFirstBuyProductCode())) {
+                                workOrderBean1.setFirstBuyProductCode(workOrderBean1.getFirstBuyProductCode() + "," + productMainDTO.getName());
+                            } else {
+                                workOrderBean1.setFirstBuyProductCode(productMainDTO.getName());
+                            }
 
-                    }
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
-                        if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
-                            workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
-                        } else {
-                            workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
                         }
+                        if (org.apache.commons.lang3.StringUtils.isNotBlank(lastBuyProductCode) &&lastBuyProductCode.contains(productMainDTO.getProductCode())) {
+                            if (org.apache.commons.lang3.StringUtils.isNotBlank(workOrderBean1.getLastBuyProductCode())) {
+                                workOrderBean1.setLastBuyProductCode(workOrderBean1.getLastBuyProductCode() + "," + productMainDTO.getName());
+                            } else {
+                                workOrderBean1.setLastBuyProductCode(productMainDTO.getName());
+                            }
 
+                        }
                     }
+
                 }
-
             }
+            pageWorkOrderBean.setItems(workOrderBeans);
         }
-        pageWorkOrderBean.setItems(workOrderBeans);
-
         return ComResponse.success(pageWorkOrderBean);
     }
 
