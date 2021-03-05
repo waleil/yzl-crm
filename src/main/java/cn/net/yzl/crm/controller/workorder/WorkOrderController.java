@@ -479,11 +479,11 @@ public class WorkOrderController {
         }
         myWorkOrderHotlineListDTO.setStaffNo(userId);
         ComResponse<Page<MyWorkOrderHotlineListVO>> myWorkOrderHotlinePageList = workOrderClient.findMyWorkOrderHotlinePageList(myWorkOrderHotlineListDTO);
-        List<MyWorkOrderHotlineListVO> items = myWorkOrderHotlinePageList.getData().getItems();
-        if(!StringUtils.isEmpty(items))
-            items.stream().forEach(s -> {
-                s.setAllocateTime(StringUtils.isEmpty(s.getAllocateTime())?null:MonggoDateHelper.getMongoDate(s.getAllocateTime()));
-            });
+//        List<MyWorkOrderHotlineListVO> items = myWorkOrderHotlinePageList.getData().getItems();
+//        if(!StringUtils.isEmpty(items))
+//            items.stream().forEach(s -> {
+//                s.setAllocateTime(StringUtils.isEmpty(s.getAllocateTime())?null:MonggoDateHelper.getMongoDate(s.getAllocateTime()));
+//            });
         return myWorkOrderHotlinePageList;
     }
 
@@ -517,6 +517,15 @@ public class WorkOrderController {
     @PostMapping("v1/findDWorkOrderHotlineDetails")
     @ApiOperation(value = "热线&&回访-处理工单详情", notes = "热线&&回访-处理工单详情")
     public ComResponse<FindDWorkOrderHotlineDetailsVO> findDWorkOrderHotlineDetails(@Validated @RequestBody UpdateAcceptStatusReceiveDTO updateAcceptStatusReceiveDTO) {
+        //获取当前登陆人信息
+        ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
+        if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
+            return ComResponse.fail(ComResponse.ERROR_STATUS,"用户不存在");
+        }
+        StaffImageBaseInfoDto staffImageBaseInfoDto = detailsByNo.getData();
+        updateAcceptStatusReceiveDTO.setOperator(staffImageBaseInfoDto.getName());
+        updateAcceptStatusReceiveDTO.setOperatorCode(staffImageBaseInfoDto.getStaffNo());
+        updateAcceptStatusReceiveDTO.setOperatorType(CommonConstants.TWO);
         ComResponse<FindDWorkOrderHotlineDetailsVO> dWorkOrderHotlineDetails = workOrderClient.findDWorkOrderHotlineDetails(updateAcceptStatusReceiveDTO);
         FindDWorkOrderHotlineDetailsVO data = dWorkOrderHotlineDetails.getData();
         if(!StringUtils.isEmpty(data)){
@@ -629,7 +638,7 @@ public class WorkOrderController {
         if(null == detailsByNo.getData()){
             return ComResponse.nodata();
         }
-        recoveryDTO.setCreateName(detailsByNo.getData().getName());
+        recoveryDTO.setStaffName(detailsByNo.getData().getName());
         recoveryDTO.setCreateId(QueryIds.userNo.get());
         recoveryDTO.setCreateName(detailsByNo.getData().getName());
         return workOrderClient.handIn(recoveryDTO);
@@ -658,7 +667,7 @@ public class WorkOrderController {
         isHandInDTO.setStaffName(detailsByNo.getData().getName());
         ComResponse<List<WorkOrderRuleConfigBean>> listComResponse = turnRulnClient.submissionRules(1, 2, 1, 0);
         List<WorkOrderRuleConfigBean> data = listComResponse.getData();
-            if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
+        if(null != isHandInDTO.getSouce() && isHandInDTO.getSouce() == 2){
             WorkOrderRuleConfigBean workOrderRuleConfigBean1 = null;
             for (WorkOrderRuleConfigBean workOrderRuleConfigBean : data){
                 if(workOrderRuleConfigBean.getId() == 7)
@@ -725,7 +734,7 @@ public class WorkOrderController {
         }else{
             flag = Boolean.TRUE;
         }
-        if(flag){
+        if(flag || org.apache.commons.lang3.StringUtils.isNotBlank(isHandInDTO.getApplyUpMemo())){
             RecoveryDTO recoveryDTO = new RecoveryDTO();
             recoveryDTO.setStaffName(isHandInDTO.getStaffName());
             recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());

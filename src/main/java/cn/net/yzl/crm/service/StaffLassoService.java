@@ -22,7 +22,7 @@ public interface StaffLassoService {
 
     ComResponse<CalculationResult> trialStaffNo(long groupId) throws Exception;
 
-    ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize);
+    ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize);
 
     void taskCalculation();
 

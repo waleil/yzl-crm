@@ -142,9 +142,13 @@ public class ScoreServiceImpl implements ScoreService {
         ComResponse<Page<MyExchangeRecordDTO>> pageComResponse = scoreDetailClient.exchangeRecords(userNo, pageSize, pageNo);
         //增加fastdfs信息
         if (pageComResponse != null) {
-            pageComResponse.getData().getItems().stream().forEach(s->{
-                s.setFastDFSUrl(fastDFSConfig.getUrl());
-            });
+           if (pageComResponse.getData()!= null) {
+               if(!CollectionUtils.isEmpty(pageComResponse.getData().getItems())){
+                   pageComResponse.getData().getItems().stream().forEach(s->{
+                       s.setFastDFSUrl(fastDFSConfig.getUrl());
+                   });
+               }
+           }
         }
         return pageComResponse;
     }
@@ -158,6 +162,16 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public ComResponse<Page<ScoreStaffRecordDTO>> pageStaffScore(StaffExchangeSelectVO vo) {
         return scoreDetailClient.pageStaffScore(vo);
+    }
+
+    @Override
+    public ComResponse<Void> grant(GrantVO vo) {
+        return scoreDetailClient.grant(vo);
+    }
+
+    @Override
+    public ComResponse<MainInfo> mainInfo() {
+        return scoreDetailClient.mainInfo();
     }
 
 }

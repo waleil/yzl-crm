@@ -146,7 +146,7 @@ public class OrderCommonServiceImpl implements IOrderCommonService {
 			orderProductVo.setUseSpareMoney(map.getPointsDeduction());// 积分扣减
 			orderProductVo.setUseRedPacket(map.getAmountRedEnvelope());// 红包扣减
 			orderProductVo.setCash(map.getCash());// 实收金额
-			orderProductVo.setPackagingUnit(map.getPackageunit());
+			orderProductVo.setPackagingUnit(map.getPackageUnit());
 			orderProductVo.setProductNo(map.getProductNo());
 			orderProductVo.setTotalUseNum(Integer.valueOf(map.getSpec()));
 
