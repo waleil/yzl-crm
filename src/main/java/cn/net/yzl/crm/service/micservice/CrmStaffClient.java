@@ -80,7 +80,7 @@ public interface CrmStaffClient {
 
 
     @GetMapping("/staff/v1/getGroupListByPage")
-    ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(@RequestParam("crowdGroupName") String crowdGroupName,
+    ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(@RequestParam("crowdGroupName") String crowdGroupName,
                                                                  @RequestParam("status") Integer status,
                                                                  @RequestParam("startTime") Date startTime,
                                                                  @RequestParam("endTime") Date endTime,
