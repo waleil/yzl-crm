@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableSwagger
 @SpringBootApplication(scanBasePackages = { "cn.net.yzl.crm", "cn.net.yzl.logger", "cn.net.yzl.pm", "cn.net.yzl.msg" })
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = { "cn.net.yzl.crm.service.micservice", "cn.net.yzl.crm.client" })
+@EnableFeignClients(basePackages = { "cn.net.yzl.crm.service.micservice", "cn.net.yzl.crm.client", "cn.net.yzl.msg.feign" })
 @ServletComponentScan(basePackages = { "cn.net.yzl.crm.filters" })
 @Slf4j
 public class YzlCrmApplication implements CommandLineRunner {
