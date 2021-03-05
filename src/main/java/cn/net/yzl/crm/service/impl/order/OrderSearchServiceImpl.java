@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotEmpty;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 @Slf4j
@@ -41,7 +42,10 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
     @Autowired
     private LogisticsFien logisticsFien;
 
-
+    private static final int[] CAN_SEARCH_LOGIC_STATS = new int[]{OrderStatus.ORDER_STATUS_1.getCode()
+            ,OrderStatus.ORDER_STATUS_2.getCode()
+            ,OrderStatus.ORDER_STATUS_3.getCode()
+            ,OrderStatus.ORDER_STATUS_8.getCode()};
     @Override
     public ComResponse<OrderInfoVO> selectOrderInfo(String orderNo) {
         OrderInfoVO orderInfoVO = new OrderInfoVO();
@@ -94,7 +98,7 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
             throw new BizException(ResponseCodeEnums.NO_MATCHING_RESULT_CODE.getCode(), "该订单不存在");
         }
         OrderInfoResDTO order = respons.getData();
-        if (order.getOrderStatus() < OrderStatus.ORDER_STATUS_4.getCode()) {
+        if (Arrays.asList(CAN_SEARCH_LOGIC_STATS).contains(order.getOrderStatus())) {
             return ComResponse.success(null);
         }
         if (!StringUtils.isBlank(mailid) && !StringUtils.isBlank(companyCode) &&
