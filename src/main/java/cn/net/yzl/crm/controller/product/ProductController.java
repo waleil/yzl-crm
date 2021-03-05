@@ -226,7 +226,7 @@ ProductController {
         if (StringUtils.isBlank(productCode)) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"目标商品编号不能为空！");
         }
-        return productService.queryProductPortrait(productCode);
+        return productService.queryProductPortrait(productCode).setMessage(fastDFSConfig.getUrl());
     }
 
     /**
