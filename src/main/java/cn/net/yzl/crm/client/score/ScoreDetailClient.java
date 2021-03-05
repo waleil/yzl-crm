@@ -2,10 +2,7 @@ package cn.net.yzl.crm.client.score;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.score.model.dto.MyExchangeRecordDTO;
-import cn.net.yzl.score.model.dto.MyScoreDetailDTO;
-import cn.net.yzl.score.model.dto.ScoreManageDTO;
-import cn.net.yzl.score.model.dto.ScoreStaffRecordDTO;
+import cn.net.yzl.score.model.dto.*;
 import cn.net.yzl.score.model.vo.DisableScoreVO;
 import cn.net.yzl.score.model.vo.GrantVO;
 import cn.net.yzl.score.model.vo.ManageSelectVO;
@@ -74,4 +71,9 @@ public interface ScoreDetailClient {
      */
     @PostMapping("grant")
     ComResponse<Void> grant(@RequestBody GrantVO vo);
+
+    @GetMapping("mainInfo")
+    @ApiOperation("查询发放统计信息")
+    ComResponse<MainInfo> mainInfo();
+
 }

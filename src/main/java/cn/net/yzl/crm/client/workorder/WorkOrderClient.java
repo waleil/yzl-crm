@@ -200,7 +200,7 @@ public interface WorkOrderClient {
 
     /**
      * 智能工单-顾客旅程-根据顾客会员号查询顾客工单信息
-     * @param queryWorkOrderDTO
+     * @param queryVo
      * @return
      */
 //    @GetMapping(value = "v1/queryWorkOrder")

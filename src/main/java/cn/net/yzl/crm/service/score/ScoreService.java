@@ -35,4 +35,6 @@ public interface ScoreService {
     ComResponse<Page<ScoreStaffRecordDTO>> pageStaffScore(StaffExchangeSelectVO vo);
 
     ComResponse<Void> grant(GrantVO vo);
+
+    ComResponse<MainInfo> mainInfo();
 }
