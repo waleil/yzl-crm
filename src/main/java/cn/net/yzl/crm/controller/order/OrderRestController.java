@@ -54,7 +54,6 @@ import cn.net.yzl.crm.customer.dto.amount.MemberAmountDto;
 import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
-import cn.net.yzl.crm.dto.dmc.LaunchManageDto;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.model.order.CalcOrderIn;
@@ -123,11 +122,6 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
 		}
-//		MemberAmountDto amount = this.memberFien.getMemberAmount(orderin.getMemberCard()).getData();
-//		if (amount == null) {
-//			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账户信息", orderin.getMemberCard());
-//			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账户信息。");
-//		}
 		// 只匹配购买的商品或套餐，排除赠品
 		List<CalculateOrderProductDto> orderproducts = orderin.getCalculateProductDtos().stream()
 				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
@@ -251,18 +245,6 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
 		}
-		// 按顾客号查询顾客账号
-//		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
-		// 如果调用服务异常
-//		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
-//			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
-//			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用查询顾客账号接口异常：%s", maresponse.getMessage()));
-//		}
-//		MemberAmountDto account = maresponse.getData();
-//		if (account == null) {
-//			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号", orderin.getMemberCardNo());
-//			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
-//		}
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getStaffCode());
 		// 如果服务调用异常
@@ -298,17 +280,6 @@ public class OrderRestController {
 		}
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
-		// 如果广告ID不为空
-		if (orderin.getAdvertBusNo() != null) {
-			orderm.setAdvisorNo(orderin.getAdvertBusNo().intValue());// 广告id
-			// 查询广告
-			ComResponse<LaunchManageDto> response = this.activityClient.getLaunchManageByBusNo(orderm.getAdvisorNo());
-			LaunchManageDto dto = response.getData();
-			if (dto != null) {
-				orderm.setAdvisorName(dto.getAdvertName());// 广告名称
-				orderm.setMediaName(dto.getMediaName());// 媒介名称
-			}
-		}
 		// 组装校验订单金额参数
 		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
 		log.info("调用校验订单金额接口：{}", this.toJsonString(checkOrderAmountRequest));
@@ -612,10 +583,12 @@ public class OrderRestController {
 		orderm.setReveiverCityName(reveiverAddress.getMemberCityName());// 城市名称
 		orderm.setReveiverArea(String.valueOf(reveiverAddress.getMemberCountyNo()));// 区县编码
 		orderm.setReveiverAreaName(reveiverAddress.getMemberCountyName());// 区县名称
-		orderm.setMediaChannel(orderin.getMediaChannel());// 媒介渠道
-		orderm.setMediaName(orderin.getMediaName());// 媒介名称
-		orderm.setMediaNo(orderin.getMediaNo());// 媒介唯一标识
-		orderm.setMediaType(orderin.getMediaType());// 媒介类型
+		orderm.setMediaChannel(orderin.getMediaChannel());// 媒体渠道
+		orderm.setMediaName(orderin.getMediaName());// 媒体名称
+		orderm.setMediaNo(orderin.getMediaNo());// 媒体编码
+		orderm.setMediaType(orderin.getMediaType());// 媒体类型
+		orderm.setAdvisorName(orderin.getAdvName());// 广告名称
+		orderm.setAdvisorNo(orderin.getAdvId());// 广告编码
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
 		// 组装扣减库存参数
 		OrderProductVO orderProduct = new OrderProductVO();
