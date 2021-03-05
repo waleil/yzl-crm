@@ -1,5 +1,14 @@
 package cn.net.yzl.crm.service.impl.order;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.order.OutStoreWarningClient;
 import cn.net.yzl.crm.dao.OutStoreWarningMapper;
@@ -10,14 +19,6 @@ import cn.net.yzl.order.model.vo.MailVo;
 import cn.net.yzl.order.model.vo.order.OutStoreWarningDTO;
 import cn.net.yzl.order.util.SendTask;
 import cn.net.yzl.order.util.SmsSendUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @author zhouchangsong
@@ -48,6 +49,7 @@ public class OutStoreWarningServiceImpl implements OutStoreWarningService {
 				ComResponse<List<StaffDetailDto>> staffNos = ehrStaffClient.getByStaffNos(userCodes);
 				if (Optional.ofNullable(staffNos.getData()).map(List::isEmpty).isPresent()) {
 					staffNos.getData().forEach(entity -> {
+						// TODO 测试时只给苏曼发邮件、发短信
 						if ("苏曼".equals(entity.getName())) {
 							if (!StringUtils.isEmpty(entity.getEmail())) {
 								email.add(entity.getEmail());
