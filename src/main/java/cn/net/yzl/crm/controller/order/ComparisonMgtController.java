@@ -210,6 +210,9 @@ public class ComparisonMgtController {
 		if (CollectionUtils.isEmpty(param.getOrderNums())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "至少选择一个订单号进行对账");
 		}
+		if (CollectionUtils.isEmpty(param.getSaleNums())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "至少选择一个售后单号进行对账");
+		}
 		if (!StringUtils.hasText(param.getUserNo())) {
 			param.setUserNo(QueryIds.userNo.get());
 		}
