@@ -232,20 +232,20 @@ public class StaffLassoServiceImpl implements StaffLassoService {
     }
 
     @Override
-    public ComResponse<Page<StaffCrowdGroup>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize) {
-        ComResponse<Page<StaffCrowdGroup>> groupListByPage = crmStaffClient.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
+    public ComResponse<Page<StaffCrowdGroupListDTO>> getGroupListByPage(String crowdGroupName, Integer status, Date startTime, Date endTime, Integer pageNo, Integer pageSize) {
+        ComResponse<Page<StaffCrowdGroupListDTO>> groupListByPage = crmStaffClient.getGroupListByPage(crowdGroupName, status, startTime, endTime, pageNo, pageSize);
         if (null == groupListByPage) {
             return ComResponse.success();
         }
-        Page<StaffCrowdGroup> data = groupListByPage.getData();
+        Page<StaffCrowdGroupListDTO> data = groupListByPage.getData();
         if (null == data) {
             return ComResponse.success();
         }
-        List<StaffCrowdGroup> content = data.getItems();
+        List<StaffCrowdGroupListDTO> content = data.getItems();
         if (CollectionUtils.isEmpty(content)) {
             return ComResponse.success();
         }
-        List<String> staffNos = content.stream().map(StaffCrowdGroup::getCreateCode).collect(Collectors.toList());
+        List<String> staffNos = content.stream().map(StaffCrowdGroupListDTO::getCreateCode).collect(Collectors.toList());
         Map<String, StaffDetailDto> mapByStaffNos = ehrStaffClient.getMapByStaffNos(staffNos);
 
         content.forEach(c -> {
