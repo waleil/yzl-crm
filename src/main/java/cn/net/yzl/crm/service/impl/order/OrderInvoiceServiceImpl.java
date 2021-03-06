@@ -13,28 +13,19 @@ import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.enums.OrderLogisticsStatus;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceListDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
-import cn.net.yzl.order.model.vo.order.Settlement4ExportDTO;
-import cn.net.yzl.order.model.vo.order.SettlementDTO;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 @Slf4j

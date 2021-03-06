@@ -4,7 +4,6 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.CalculationResult;
-import cn.net.yzl.crm.dto.staff.CalculationUerDetail;
 import cn.net.yzl.crm.service.StaffLassoService;
 import cn.net.yzl.crm.service.micservice.CrmStaffClient;
 import cn.net.yzl.crm.staff.dto.lasso.CalculationDto;

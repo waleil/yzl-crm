@@ -10,8 +10,6 @@ import cn.net.yzl.crm.service.product.ImageService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.order.model.vo.order.OrderAccountConfirmVO;
-import cn.net.yzl.product.model.vo.image.ImageDTO;
-import cn.net.yzl.product.model.vo.image.ImageVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
@@ -20,12 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 

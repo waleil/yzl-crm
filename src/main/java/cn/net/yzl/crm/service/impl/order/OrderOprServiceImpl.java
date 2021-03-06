@@ -19,7 +19,6 @@ import cn.net.yzl.crm.service.order.IOrderCommonService;
 import cn.net.yzl.crm.service.order.IOrderOprService;
 import cn.net.yzl.crm.sys.BizException;
 
-import cn.net.yzl.model.vo.OrderDistributeExpressVO;
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.enums.OrderStatus;
 import cn.net.yzl.order.model.db.order.OrderDetail;

@@ -5,8 +5,6 @@ import cn.net.yzl.activity.model.responseModel.*;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 
-import java.math.BigDecimal;
-
 /**
  * @author: liuChangFu
  * @date: 2021/2/4 11:58

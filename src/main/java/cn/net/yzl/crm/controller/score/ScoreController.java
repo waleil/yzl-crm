@@ -8,7 +8,6 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.score.ScoreService;
-import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.score.model.dto.*;
 import cn.net.yzl.score.model.vo.*;
 import io.swagger.annotations.Api;
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
