@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderAccountConfirmClient;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.order.OrderAccountConfirmService;
 import cn.net.yzl.crm.service.product.ImageService;
 import cn.net.yzl.crm.sys.BizException;
@@ -58,10 +59,10 @@ public class OrderAccountConfirmController {
 
     @ApiOperation(value = "上传图片")
     @PostMapping("v1/uploadImage")
-    public ComResponse<List<String>> uploadImage(@RequestPart MultipartFile[] files, HttpServletRequest request) throws Exception {
+    public ComResponse<List<String>> uploadImage(@RequestPart MultipartFile[] files) throws Exception {
 
         List<String> list = new ArrayList<>();
-        String userId = request.getHeader("userNo");
+        String userId = QueryIds.userNo.get();
         if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名！请检查您的登录状态！");
         }
