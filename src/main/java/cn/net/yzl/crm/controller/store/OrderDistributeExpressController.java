@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.OrderDistributeExpressFeignService;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.model.dto.OrderDistributeExpressDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleDetailDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleListDTO;
@@ -12,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -68,8 +68,8 @@ public class OrderDistributeExpressController {
 
     @PostMapping(value = "v1/updateOrderDistributeExpressRuleResult")
     @ApiOperation("智能分配")
-    public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody DistributeExpressVO vo, HttpServletRequest request) {
-        vo.setUpdateUser(request.getHeader("userNo"));
+    public ComResponse updateOrderDistributeExpressRuleResult(@RequestBody DistributeExpressVO vo) {
+        vo.setUpdateUser(QueryIds.userNo.get());
         return orderDistributeExpressFeignService.updateOrderDistributeExpressRuleResult(vo);
     }
 
@@ -93,8 +93,8 @@ public class OrderDistributeExpressController {
 
     @PostMapping(value = "v1/updateOrderDistributeExpressByMan")
     @ApiOperation("人工分配")
-    public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo,HttpServletRequest request) {
-        vo.setUpdateUser(request.getHeader("userNo"));
+    public ComResponse updateOrderDistributeExpressByMan(@RequestBody OrderDistributeExpressByManVO vo) {
+        vo.setUpdateUser(QueryIds.userNo.get());
         return orderDistributeExpressFeignService.updateOrderDistributeExpressByMan(vo);
     }
 

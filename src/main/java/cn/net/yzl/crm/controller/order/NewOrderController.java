@@ -2,6 +2,7 @@ package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.mongomodel.member_crowd_group;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
@@ -34,10 +33,10 @@ public class NewOrderController {
 
     @ApiOperation(value = "新建订单（会刊）")
     @PostMapping("v1/newOrder")
-    public ComResponse<Boolean> newOrder(@RequestBody NewOrderDTO dto, HttpServletRequest request) {
+    public ComResponse<Boolean> newOrder(@RequestBody NewOrderDTO dto) {
         ComResponse<Boolean> response = null;
         try {
-            String userNo = request.getHeader("userNo");
+            String userNo = QueryIds.userNo.get();
             dto.setUserNo(userNo);
             response = newOrderService.newOrder(dto);
         } catch (BizException e) {

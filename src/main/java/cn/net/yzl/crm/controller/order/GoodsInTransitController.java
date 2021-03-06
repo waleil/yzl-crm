@@ -4,7 +4,6 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.GoodsInTransitFeign;
 import cn.net.yzl.order.model.mongo.order.ProductDetailDTO;
-import cn.net.yzl.order.model.db.order.ProductDetailResDTO;
 import cn.net.yzl.order.model.mongo.order.GoodsInTransit;
 
 import cn.net.yzl.order.model.vo.order.GoodsInTransitReqDTO;

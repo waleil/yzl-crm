@@ -11,7 +11,6 @@ import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
 import cn.net.yzl.crm.customer.dto.member.MemberAddressAndLevelDTO;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
 import cn.net.yzl.crm.dto.staff.StaffChangeRecordDto;
-import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
@@ -37,7 +36,6 @@ import cn.net.yzl.product.model.vo.product.vo.OrderProductVO;
 import cn.net.yzl.product.model.vo.product.vo.ProductReduceVO;
 import com.alibaba.excel.util.CollectionUtils;
 import com.mysql.cj.util.StringUtils;
-import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -633,7 +631,6 @@ public class NewOrderServiceImpl implements INewOrderService {
 			this.rabbitTemplate.convertAndSend(CommonConstant.NEW_ORDER_EXCHANGE_NAME,
 					CommonConstant.NEW_ORDER_ROOT_KEY, infoVO);
 
-			System.err.println(infoVO);
 
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);

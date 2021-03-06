@@ -5,8 +5,6 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.score.model.dto.*;
 import cn.net.yzl.score.model.vo.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 public interface ScoreService {
     ComResponse<Page<MyScoreDetailDTO>> myExchangeRecords(String staffNo, Integer pageSize, Integer pageNo);
 

@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.PurchaseFeginService;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.sys.BizException;
@@ -20,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +49,8 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "新增采购订单", notes = "新增采购订单")
     @PostMapping("v1/add")
-    public ComResponse add(@RequestBody PurchaseOrderAddVo purchaseOrderAddVo, HttpServletRequest request)  {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse add(@RequestBody PurchaseOrderAddVo purchaseOrderAddVo)  {
+        StaffImageBaseInfoDto user = getUser();
         purchaseOrderAddVo.setCreateUser(user.getStaffNo());
         purchaseOrderAddVo.setCreateUserName(user.getName());
         return purchaseFeginService.add(purchaseOrderAddVo);
@@ -60,8 +59,8 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "修改采购订单", notes = "修改采购订单")
     @PostMapping("v1/update")
-    public ComResponse update(@RequestBody PurchaseOrderUpdateVo purchaseOrderUpdateVo, HttpServletRequest request){
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse update(@RequestBody PurchaseOrderUpdateVo purchaseOrderUpdateVo){
+        StaffImageBaseInfoDto user = getUser();
         purchaseOrderUpdateVo.setUpdateUser(user.getStaffNo());
         purchaseOrderUpdateVo.setUpdateUserName(user.getName());
         return purchaseFeginService.update(purchaseOrderUpdateVo);
@@ -78,8 +77,8 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "审核采购订单")
     @PostMapping("v1/review")
-    public ComResponse purchaseOrderReview(@RequestBody PurchaseReviewDto purchaseReviewDto, HttpServletRequest request){
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse purchaseOrderReview(@RequestBody PurchaseReviewDto purchaseReviewDto){
+        StaffImageBaseInfoDto user = getUser();
         purchaseReviewDto.setUpdateUser(user.getStaffNo());
         purchaseReviewDto.setUpdateUserName(user.getName());
         return purchaseFeginService.purchaseOrderReview(purchaseReviewDto);
@@ -87,8 +86,8 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "采购订单验收")
     @PostMapping("v1/check/accept")
-    public ComResponse purchaseCheckAccept(@RequestBody WarehousingOrderDto warehousingOrderDto, HttpServletRequest request){
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse purchaseCheckAccept(@RequestBody WarehousingOrderDto warehousingOrderDto){
+        StaffImageBaseInfoDto user = getUser();
         warehousingOrderDto.setCreateUser(user.getStaffNo());
         warehousingOrderDto.setCreateUserName(user.getName());
         return purchaseFeginService.purchaseCheckAccept(warehousingOrderDto);
@@ -96,8 +95,8 @@ public class PurchaseOrderController {
 
     @ApiOperation(value = "采购订单撤回")
     @PostMapping("v1/withdraw")
-    public ComResponse purchaseWithdraw(@RequestBody PurchaseWithdrawDto purchaseWithdrawDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse purchaseWithdraw(@RequestBody PurchaseWithdrawDto purchaseWithdrawDto) {
+        StaffImageBaseInfoDto user = getUser();
         purchaseWithdrawDto.setUpdateUser(user.getStaffNo());
         purchaseWithdrawDto.setUpdateUserName(user.getName());
         return purchaseFeginService.purchaseWithdraw(purchaseWithdrawDto);
@@ -146,15 +145,15 @@ public class PurchaseOrderController {
      */
     @ApiOperation(value = "采购订单改为已发货", notes = "采购订单改为已发货")
     @PostMapping("v1/delivered")
-    public ComResponse delivered(@RequestBody PurchaseOrderWaybillDto purchaseOrderWaybillDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse delivered(@RequestBody PurchaseOrderWaybillDto purchaseOrderWaybillDto) {
+        StaffImageBaseInfoDto user = getUser();
         purchaseOrderWaybillDto.setCreateUser(user.getStaffNo());
         purchaseOrderWaybillDto.setCreateUserName(user.getName());
         return purchaseFeginService.delivered(purchaseOrderWaybillDto);
     }
 
-    private StaffImageBaseInfoDto getUser(HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    private StaffImageBaseInfoDto getUser(){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         log.info("user信息:{}", JsonUtil.toJsonStr(user));
         StaffImageBaseInfoDto data = user.getData();

@@ -17,7 +17,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;

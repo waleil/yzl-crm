@@ -42,7 +42,6 @@ public class ValidateUtils {
                     field = "direction";
                 }
                 String val =jsonObject.get(field.trim())+"";
-                //System.out.println(field);
                 //如果没有查到那个值，就代表着传过来的字段少了
                 if (StringUtils.isBlank(val) || StringUtils.isEmpty(val) || val.trim().equals("null")) {
                     missField += field + " ";
@@ -604,62 +603,4 @@ public class ValidateUtils {
         return weekDays[w];
     }
 
-    public static void main1(String[] args) {
-        System.out.println(getLastOrNextDay(1));
-        System.out.println(getLastOrNextDay(-1));
-
-        System.out.println(getLastOrNextMonth(1));
-        System.out.println(getLastOrNextMonth(-1));
-
-        System.out.println(getLastOrNextYear(1));
-        System.out.println(getLastOrNextYear(-1));
-
-
-/*
-        String orderArrivalDate = "2020-08-01";
-        String startDate = "";
-        //String startDate = "2020-08-02";
-        //String endDate = "2020-12-03";
-        String endDate = "2020-12-03";
-
-        if(StringUtils.isNotBlank(startDate)) {
-            if (StringUtils.isNotBlank(endDate)) {
-                if(!ValidateUtils.betweenStAndEt2(orderArrivalDate,startDate,endDate)) {
-                    System.out.println("---------------日期不符");
-                }
-                else {
-                    System.out.println("==============OK");
-                }
-            } else {
-                System.out.println("==============结束日期为空");
-            }
-        } else {
-            //   淡旺季 结束日期格式: 05-01~10-31 或者 01-01~04-30,11-01~12-31
-            endDate = "05-01~10-31";
-            endDate = "01-01~04-30,11-01~12-31";
-            if (StringUtils.isNotBlank(endDate)) {
-                String tempArrivalDate = orderArrivalDate.substring(0,5);
-                String[]  danWangJi = endDate.split(",");
-                boolean validArrivalDate = false;   // 有效的游玩日期
-                for(int i=0;i<danWangJi.length;i++) {
-                    String[] danWangJiShiDuan = danWangJi[i].split("~");
-                    String sd = danWangJiShiDuan[0];
-                    sd = tempArrivalDate.concat(sd);
-                    String ed = danWangJiShiDuan[1];
-                    ed = tempArrivalDate.concat(ed);
-                    if(ValidateUtils.betweenStAndEt2(orderArrivalDate,sd,ed)) {
-                        validArrivalDate = true;
-                        break;
-                    }
-                }
-                if(!validArrivalDate) {
-                    System.out.println("-------------日期未在有效期范围内");
-                } else {
-                    System.out.println("==============2222222222OK");
-                }
-            } else {
-                System.out.println("==============22222222222结束日期为空");
-            }
-        }*/
-    }
 }

@@ -96,7 +96,7 @@ public interface CrmStaffClient {
      * @return
      */
     @GetMapping("/staff/v1/updateEnable")
-    ComResponse<Integer> updateEnable(@RequestParam("enable") int enable, @RequestParam("groupId") long groupId, @RequestParam("userNo") String userNo);
+    ComResponse<Integer> updateEnable(@RequestParam("enable") int enable, @RequestParam("groupId") long groupId, @RequestParam String userNo);
 
     /**
      * 获取圈选组 详情

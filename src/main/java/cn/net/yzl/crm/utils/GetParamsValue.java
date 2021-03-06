@@ -92,9 +92,4 @@ public class GetParamsValue {
 
 
 
-    public static void main(String[] args) {
-        Map<String,Object> notNullValidate = new HashMap<>();
-        notNullValidate.put("msg", "缺少必填参数或参数值为null:" + "toCreateUserCode toQuantity".trim());
-        System.out.println(changeAllFieldResult(notNullValidate,getStaffTalkMap()).toString());
-    }
 }

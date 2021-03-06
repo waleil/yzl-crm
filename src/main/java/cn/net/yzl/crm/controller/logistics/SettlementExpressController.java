@@ -4,6 +4,7 @@ package cn.net.yzl.crm.controller.logistics;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -32,7 +33,6 @@ import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -152,8 +152,8 @@ public class SettlementExpressController {
 
     @PostMapping("/seach/reconciliation")
     @ApiOperation("对账")
-    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<ReconExpressNum> searchVo ,HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<ReconExpressNum> searchVo ){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
 
@@ -168,8 +168,8 @@ public class SettlementExpressController {
 
     @PostMapping("/close/account")
     @ApiOperation("生成结算单")
-    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo, HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
         if(data != null){
@@ -214,8 +214,8 @@ public class SettlementExpressController {
 
     @PostMapping("/add/settle/detail")
     @ApiOperation("添加结算")
-    public ComResponse addSettleDetail(@RequestBody @Valid ExpressSettleDetailAddVO addVO, HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    public ComResponse addSettleDetail(@RequestBody @Valid ExpressSettleDetailAddVO addVO){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
         if(data != null){
