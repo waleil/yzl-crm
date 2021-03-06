@@ -19,4 +19,8 @@ public class StaffScheduleQueryDto extends EhrPageInfo {
 //    private String timeEnd;
 //    @ApiModelProperty("结束时间")
 //    private String timeStart;
+    @ApiModelProperty(value = "标识 1:标识从crm发出的请求", hidden = true)
+    private int flag = 1;
+    @ApiModelProperty(value = "staffNo 当前登录的员工工号", hidden = true)
+    private String staffNo;
 }
