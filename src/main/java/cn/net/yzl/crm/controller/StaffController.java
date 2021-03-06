@@ -289,6 +289,7 @@ public class StaffController {
     @PostMapping("/getStaffListByPage")
     public ComResponse<Page<EhrStaff>> getStaffListByPage(@RequestBody StaffQueryDto query) {
         log.info("......StaffController.getStaffListByPage()开始, 请求参数:{}......", JsonUtil.toJsonStr(query));
+        query.setStaffNo(QueryIds.userNo.get());
         ComResponse<Page<EhrStaff>> response = ehrStaffClient.getStaffListByPage(query);
         return response;
     }
