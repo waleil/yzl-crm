@@ -57,6 +57,7 @@ public class StaffController {
         if (null == staffScheduleQueryDto || staffScheduleQueryDto.getPageSize() == null || staffScheduleQueryDto.getPageNo() == null) {
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         }
+        staffScheduleQueryDto.setStaffNo(QueryIds.userNo.get());
         ComResponse<StaffScheduleInfoDto> response = ehrStaffClient.getStaffBaseInfo(staffScheduleQueryDto);
         return response;
     }
@@ -289,6 +290,7 @@ public class StaffController {
     @PostMapping("/getStaffListByPage")
     public ComResponse<Page<EhrStaff>> getStaffListByPage(@RequestBody StaffQueryDto query) {
         log.info("......StaffController.getStaffListByPage()开始, 请求参数:{}......", JsonUtil.toJsonStr(query));
+        query.setStaffNo(QueryIds.userNo.get());
         ComResponse<Page<EhrStaff>> response = ehrStaffClient.getStaffListByPage(query);
         return response;
     }
