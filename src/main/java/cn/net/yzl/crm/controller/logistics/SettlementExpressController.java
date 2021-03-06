@@ -92,7 +92,7 @@ public class SettlementExpressController {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"PD"+date+".xlsx");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费订单"+date+".xlsx");
 
 
         // 已经结账的list
@@ -102,11 +102,13 @@ public class SettlementExpressController {
         List<ResultExcelVo> inventoryProductResultExcelVoList1 = new ArrayList<>();
         for (ResultVo listComResponseDatum : listComResponseData) {
             if(searchVo.getSearchStatus()==1){
+//                httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费"+date+".xlsx");
                 ResultRecionExcelVo inventoryProductResultExcelVo = new ResultRecionExcelVo();
                 BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
                 inventoryProductResultExcelVoList.add(inventoryProductResultExcelVo);
             }
             if(searchVo.getSearchStatus()==0){
+//                httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"未对账运费"+date+".xlsx");
                 ResultExcelVo inventoryProductResultExcelVo = new ResultExcelVo();
                 BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
                 inventoryProductResultExcelVoList1.add(inventoryProductResultExcelVo);
