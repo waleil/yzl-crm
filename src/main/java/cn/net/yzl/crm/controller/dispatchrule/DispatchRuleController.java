@@ -65,7 +65,6 @@ public class DispatchRuleController {
     @ApiOperation(value = "根据Id查询 智能派单[分配规则]")
     @GetMapping(value = "v1/getDispatchRuleById")
     public ComResponse getDispatchRule(@ApiParam(value = "id", required = true) @RequestParam("id") String id) {
-
         try {
             ComResponse<StaffImageBaseInfoDto> staffResponse = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
             //智能工单--查询自己部门的数据
@@ -80,8 +79,9 @@ public class DispatchRuleController {
         try {
             comResponse = this.dispatchRuleClient.getDispatchRule(id);
         } catch (Exception e) {
+            e.printStackTrace();
             return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(),
-                    ResponseCodeEnums.API_ERROR_CODE.getMessage());
+                    "远程调用[智能派单接口异常]: {}",e.getMessage());
         }
         return ComResponse.success(comResponse);
     }

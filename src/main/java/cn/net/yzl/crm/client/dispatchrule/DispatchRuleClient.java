@@ -43,7 +43,8 @@ public interface DispatchRuleClient {
      * @return
      */
     @GetMapping(value = "v1/getDispatchRuleById")
-    public ComResponse<DispatchRuleDetail> getDispatchRule(@ApiParam(value = "id", required = true) @RequestParam("id") String id);
+    public ComResponse<DispatchRuleDetail> getDispatchRule(@ApiParam(value = "id", required = true)
+                                                               @RequestParam("id") String id);
 
 
     /**
