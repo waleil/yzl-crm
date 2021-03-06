@@ -633,7 +633,6 @@ public class NewOrderServiceImpl implements INewOrderService {
 			this.rabbitTemplate.convertAndSend(CommonConstant.NEW_ORDER_EXCHANGE_NAME,
 					CommonConstant.NEW_ORDER_ROOT_KEY, infoVO);
 
-			System.err.println(infoVO);
 
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
