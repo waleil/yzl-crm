@@ -188,7 +188,7 @@ public class MemberController {
 
         WorkOrderBeanVO workOrderBeanVO = new WorkOrderBeanVO();
         workOrderBeanVO.setMemberName(memberReferralVO.getMemberName());
-        workOrderBeanVO.setCalledPhone(memberReferralVO.getMemberPhone());
+        //workOrderBeanVO.setCalledPhone(memberReferralVO.getMemberPhone());
         workOrderBeanVO.setActivity(memberReferralVO.getActivity());
         workOrderBeanVO.setAdvId(memberReferralVO.getAdvId());
         workOrderBeanVO.setAdvName(memberReferralVO.getAdvName());

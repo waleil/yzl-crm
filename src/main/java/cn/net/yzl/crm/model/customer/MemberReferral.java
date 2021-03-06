@@ -76,8 +76,8 @@ public class MemberReferral {
     @NotBlank(message = "introNo不能为空")
     @ApiModelProperty(value = "介绍人id，如果是顾客介绍是member_card,如果是员工介绍就是staff_no",name = "introNo",required = true)
     private String introNo;
-    @NotBlank(message = "introName不能为空")
-    @ApiModelProperty(value = "介绍人姓名，如果是顾客介绍是member_name,如果是员工介绍就是staff_name",name = "introName",required = true)
+    //@NotBlank(message = "introName不能为空")
+    @ApiModelProperty(value = "介绍人姓名，如果是顾客介绍是member_name,如果是员工介绍就是staff_name",name = "introName",required = false)
     private String introName;
     @NotNull(message = "introType不能为空")
     @ApiModelProperty(value = "介绍人类型，1员工，2顾客",name = "introType",required = true)
