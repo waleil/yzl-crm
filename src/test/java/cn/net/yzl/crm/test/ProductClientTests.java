@@ -25,8 +25,8 @@ public class ProductClientTests {
 	@Test
 	public void testQueryByCodes() {
 		try {
-			String codes = "10000156,10000155,10000152";
-			this.productClient.queryByProductCodes(codes).getData().forEach(System.err::println);
+			String codes = "10000003,10000165";
+			System.err.println(this.productClient.queryByProductCodes(codes).getData());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
