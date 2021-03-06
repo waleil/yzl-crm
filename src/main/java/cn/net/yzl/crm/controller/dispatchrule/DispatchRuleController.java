@@ -83,7 +83,7 @@ public class DispatchRuleController {
             return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(),
                     "远程调用[智能派单接口异常]: {}",e.getMessage());
         }
-        return ComResponse.success(comResponse);
+        return comResponse;
     }
 
 
