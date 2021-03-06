@@ -67,6 +67,7 @@ import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.IOrderCommonService;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.logistics.model.vo.ExpressIndemnity;
 import cn.net.yzl.model.dto.DepartDto;
@@ -138,6 +139,9 @@ public class OrderRestController {
 		Map<String, ProductMealListDTO> mealMap = Optional
 				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
 				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
+		if (productMap.isEmpty() && mealMap.isEmpty()) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "购物车里的商品或套餐已下架。");
+		}
 		List<ProductPriceResponse> list = orderproducts.stream().map(cp -> {
 			if (Integer.compare(CommonConstant.MEAL_FLAG_0, cp.getProductType()) == 0) {
 				// 商品
@@ -900,6 +904,9 @@ public class OrderRestController {
 		Map<String, ProductMealListDTO> mealMap = Optional
 				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
 				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
+		if (productMap.isEmpty() && mealMap.isEmpty()) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "购物车里的商品或套餐已下架。");
+		}
 		// 商品相关信息
 		request.setCalculateProductDto(orderdetailins.stream().map(m -> {
 			CalculateProductDto dto = new CalculateProductDto();
@@ -967,6 +974,9 @@ public class OrderRestController {
 		Map<String, ProductMealListDTO> mealMap = Optional
 				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
 				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
+		if (productMap.isEmpty() && mealMap.isEmpty()) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "购物车里的商品或套餐已下架。");
+		}
 		// 订单中的商品信息
 		request.setOrderSubmitProductDtoList(orderdetailins.stream().map(m -> {
 			OrderSubmitProductDto dto = new OrderSubmitProductDto();
