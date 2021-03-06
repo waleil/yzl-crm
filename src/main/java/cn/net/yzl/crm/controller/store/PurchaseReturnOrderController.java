@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.PurchaseReturnFeginService;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.sys.BizException;
@@ -51,8 +52,8 @@ public class PurchaseReturnOrderController {
 
     @ApiOperation(value = "采购退货单新增")
     @PostMapping("v1/add")
-    public ComResponse add(@RequestBody PurchaseReturnOrderAddDto purchaseReturnOrderAddDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse add(@RequestBody PurchaseReturnOrderAddDto purchaseReturnOrderAddDto) {
+        StaffImageBaseInfoDto user = getUser();
         purchaseReturnOrderAddDto.setCreateUser(user.getStaffNo());
         purchaseReturnOrderAddDto.setCreateUserName(user.getName());
         return purchaseReturnFeginService.add(purchaseReturnOrderAddDto);
@@ -60,8 +61,8 @@ public class PurchaseReturnOrderController {
 
     @ApiOperation(value = "采购退货单更新")
     @PostMapping("v1/update")
-    public ComResponse update(@RequestBody PurchaseReturnUpdateDto purchaseReturnUpdateDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse update(@RequestBody PurchaseReturnUpdateDto purchaseReturnUpdateDto) {
+        StaffImageBaseInfoDto user = getUser();
         purchaseReturnUpdateDto.setUpdateUser(user.getStaffNo());
         purchaseReturnUpdateDto.setUpdateUserName(user.getName());
         return purchaseReturnFeginService.update(purchaseReturnUpdateDto);
@@ -69,8 +70,8 @@ public class PurchaseReturnOrderController {
 
     @ApiOperation(value = "采购退货单审核")
     @PostMapping("v1/review")
-    public ComResponse review(@RequestBody @Valid PurchaseReturnReviewDto purchaseReturnReviewDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse review(@RequestBody @Valid PurchaseReturnReviewDto purchaseReturnReviewDto) {
+        StaffImageBaseInfoDto user = getUser();
         purchaseReturnReviewDto.setUpdateUser(user.getStaffNo());
         purchaseReturnReviewDto.setUpdateUserName(user.getName());
         return purchaseReturnFeginService.review(purchaseReturnReviewDto);
@@ -120,8 +121,8 @@ public class PurchaseReturnOrderController {
      */
     @ApiOperation(value = "采购退货单退回添加物流信息")
     @PostMapping("v1/add/waybill")
-    public ComResponse addWayBill(@RequestBody WaybillAddDto waybillAddDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse addWayBill(@RequestBody WaybillAddDto waybillAddDto) {
+        StaffImageBaseInfoDto user = getUser();
         waybillAddDto.setCreateUser(user.getStaffNo());
         waybillAddDto.setCreateUserName(user.getName());
         return purchaseReturnFeginService.addWayBill(waybillAddDto);
@@ -134,8 +135,8 @@ public class PurchaseReturnOrderController {
      */
     @ApiOperation(value = "采购退货单编辑物流信息")
     @PostMapping("v1/update/waybill")
-    public ComResponse updateWayBill(@RequestBody WaybillUpdateDto waybillUpdateDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse updateWayBill(@RequestBody WaybillUpdateDto waybillUpdateDto) {
+        StaffImageBaseInfoDto user = getUser();
         waybillUpdateDto.setUpdateUser(user.getStaffNo());
         waybillUpdateDto.setUpdateUserName(user.getName());
         return purchaseReturnFeginService.updateWayBill(waybillUpdateDto);
@@ -149,8 +150,8 @@ public class PurchaseReturnOrderController {
     }
 
 
-    private StaffImageBaseInfoDto getUser(HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    private StaffImageBaseInfoDto getUser(){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
         if(data != null){
