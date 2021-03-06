@@ -185,7 +185,6 @@ public class MealController {
 
         mealVO.setUpdateNo(userId);
 
-        System.out.println(JsonUtil.toJsonStr(mealVO));
 
         return mealClient.editProductMeal(mealVO);
     }
