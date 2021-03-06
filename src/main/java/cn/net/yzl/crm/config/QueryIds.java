@@ -12,6 +12,6 @@ public class QueryIds {
     public static final ThreadLocal<String> tranceId = new ThreadLocal<>();
     public static final ThreadLocal<String> spanId = new ThreadLocal<>();
     public static final ThreadLocal<String> userNo = new ThreadLocal<>();
-    public static final ThreadLocal<String> userName = new ThreadLocal<>();
+//    public static final ThreadLocal<String> userName = new ThreadLocal<>();
 
 }
