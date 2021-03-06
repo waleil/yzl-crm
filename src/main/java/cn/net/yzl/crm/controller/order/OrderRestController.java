@@ -203,8 +203,10 @@ public class OrderRestController {
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
 		OrderM orderm = new OrderM();// 订单信息
 		this.initOrder(orderm);
-		Optional.ofNullable(orderin.getAmountStored())
-				.ifPresent(c -> orderm.setAmountStored(c.multiply(bd100).intValue()));
+		Optional.ofNullable(orderin.getAmountStored()).ifPresent(c -> {
+			orderm.setAmountStored(c.multiply(bd100).intValue());
+			orderm.setPayMode(PayMode.PAY_MODE_4.getCode());// 客户账户扣款
+		});
 		// 如果订单里没有商品
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
@@ -244,6 +246,19 @@ public class OrderRestController {
 		if (reveiverAddress == null) {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
+		}
+		// 按顾客号查询顾客账号
+		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
+		// 如果调用服务异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
+			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用查询顾客账户信息接口异常：%s", maresponse.getMessage()));
+		}
+		MemberAmountDto account = maresponse.getData();
+		if (account == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号", orderin.getMemberCardNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 		}
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getStaffCode());
@@ -548,6 +563,14 @@ public class OrderRestController {
 		orderm.setTotal(orderm.getCash());
 		orderm.setSpend(orderm.getCash());
 		orderm.setAmountCoupon(orderm.getTotalAll() - orderin.getProductTotal().multiply(bd100).intValue());
+		if (this.hasAmountStored(orderin)) {
+			// 如果订单总金额大于账户剩余金额，单位分
+			if (orderm.getTotal() > account.getValidAmount()) {
+				log.error("热线工单-购物车-提交订单>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
+						account.getValidAmount());
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足，请更换支付方式。");
+			}
+		}
 		// 统计订单明细中的每类商品的总数，key为商品编码，value为购买商品总数
 		Map<String, Integer> productCountMap = new HashMap<>();
 		tuples.stream().forEach(p -> productCountMap.merge(p.get(0), p.get(1), Integer::sum));
@@ -724,13 +747,13 @@ public class OrderRestController {
 					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
 		// 再次调用顾客账户余额
-		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		orderout.setOrderNo(orderm.getOrderNo());
 		orderout.setReveiverAddress(orderm.getReveiverAddress());
 		orderout.setReveiverName(orderm.getReveiverName());
 		orderout.setReveiverTelphoneNo(orderm.getReveiverTelphoneNo());
 		orderout.setTotal(BigDecimal.valueOf(orderm.getTotal()).divide(bd100));
-		orderout.setTotalMoney(BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100));
+		orderout.setTotalMoney(BigDecimal.valueOf(maresponse.getData().getValidAmount()).divide(bd100));
 		orderout.setOrderTime(orderm.getCreateTime());
 		orderout.setReturnPointsDeduction(orderm.getReturnPointsDeduction());
 		return ComResponse.success(orderout);
@@ -1058,10 +1081,11 @@ public class OrderRestController {
 		orderm.setRelationReissueOrderTotal(0);
 		orderm.setLogisticsClaims(0);
 		orderm.setInvoiceFlag(CommonConstant.INVOICE_0);// 不开票
-		orderm.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);
+		orderm.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);// 正常订单
 		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
 		orderm.setCreateTime(new Date());// 下单时间
 		orderm.setOrderChanal(CommonConstant.ORDER_CHANAL_1);// 购物车下单
+		orderm.setPayMode(PayMode.PAY_MODE_0.getCode());// 快递代办
 	}
 
 	/**
@@ -1339,9 +1363,9 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 			}
 			// 如果订单总金额大于账户剩余金额，单位分
-			if (orderm.getTotal() > account.getTotalMoney()) {
+			if (orderm.getTotal() > account.getValidAmount()) {
 				log.error("订单列表-编辑>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
-						account.getTotalMoney());
+						account.getValidAmount());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
 			}
 		}
