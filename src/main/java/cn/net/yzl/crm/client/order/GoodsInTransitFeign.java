@@ -2,6 +2,7 @@ package cn.net.yzl.crm.client.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.order.model.db.order.ProductDetailResDTO;
 import cn.net.yzl.order.model.mongo.order.GoodsInTransit;
 import cn.net.yzl.order.model.mongo.order.ProductDetailDTO;
 import cn.net.yzl.order.model.vo.order.GoodsInTransitReqDTO;
@@ -18,7 +19,7 @@ public interface GoodsInTransitFeign {
 
     @ApiOperation(value = "查询在途商品明细")
     @PostMapping("v1/goodsInTransitdetails")
-    public ComResponse<Page<ProductDetailDTO>>  goodsInTransitdetail (@RequestBody GoodsInTransitReqDTO dto );
+    public ComResponse<Page<ProductDetailResDTO>>  goodsInTransitdetail (@RequestBody GoodsInTransitReqDTO dto );
 
     @ApiOperation(value = "查询在途商品")
     @PostMapping("v1/selectgoodsInTransitlist")
