@@ -565,9 +565,9 @@ public class OrderRestController {
 		orderm.setAmountCoupon(orderm.getTotalAll() - orderin.getProductTotal().multiply(bd100).intValue());
 		if (this.hasAmountStored(orderin)) {
 			// 如果订单总金额大于账户剩余金额，单位分
-			if (orderm.getTotal() > account.getTotalMoney()) {
+			if (orderm.getTotal() > account.getValidAmount()) {
 				log.error("热线工单-购物车-提交订单>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
-						account.getTotalMoney());
+						account.getValidAmount());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足，请更换支付方式。");
 			}
 		}
@@ -753,7 +753,7 @@ public class OrderRestController {
 		orderout.setReveiverName(orderm.getReveiverName());
 		orderout.setReveiverTelphoneNo(orderm.getReveiverTelphoneNo());
 		orderout.setTotal(BigDecimal.valueOf(orderm.getTotal()).divide(bd100));
-		orderout.setTotalMoney(BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100));
+		orderout.setTotalMoney(BigDecimal.valueOf(maresponse.getData().getValidAmount()).divide(bd100));
 		orderout.setOrderTime(orderm.getCreateTime());
 		orderout.setReturnPointsDeduction(orderm.getReturnPointsDeduction());
 		return ComResponse.success(orderout);
@@ -1363,9 +1363,9 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 			}
 			// 如果订单总金额大于账户剩余金额，单位分
-			if (orderm.getTotal() > account.getTotalMoney()) {
+			if (orderm.getTotal() > account.getValidAmount()) {
 				log.error("订单列表-编辑>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
-						account.getTotalMoney());
+						account.getValidAmount());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
 			}
 		}
