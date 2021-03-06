@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
@@ -140,10 +139,9 @@ public class LogisticsController {
 
 	@ApiOperation(value = "取消补登")
 	@PostMapping("v1/cancel/signed/order")
-	public ComResponse<Boolean> cancelSignOrder(@RequestBody @Valid StoreToLogisticsDtoTrace storeToLogisticsDtoTrace,
-			HttpServletRequest request) {
+	public ComResponse<Boolean> cancelSignOrder(@RequestBody @Valid StoreToLogisticsDtoTrace storeToLogisticsDtoTrace) {
 
-		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 		if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
@@ -210,13 +208,12 @@ public class LogisticsController {
 
 	@ApiOperation(value = "物流-登记生产")
 	@GetMapping("v1/generateBillOrderNo")
-	public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo,
-			HttpServletRequest request) {
+	public ComResponse<StoreToLogisticsDto> generateBillOrderNo(@RequestParam("orderNo") String orderNo) {
 
 		RegistryOrderinfo registryOrderinfo = new RegistryOrderinfo();
 
 		try {
-			ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+			ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 			if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 
 				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
@@ -331,11 +328,11 @@ public class LogisticsController {
 
 	@ApiOperation(value = "编辑物流公司")
 	@PostMapping("v1/update")
-	public ComResponse<Integer> update(@RequestBody @Valid ExpressCompanySaveDTO saveDTO, HttpServletRequest request) {
+	public ComResponse<Integer> update(@RequestBody @Valid ExpressCompanySaveDTO saveDTO) {
 
 		String userName = "";
 		try {
-			ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+			ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 			if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 
 				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
@@ -363,11 +360,11 @@ public class LogisticsController {
 
 	@ApiOperation(value = "添加物流公司")
 	@PostMapping("v1/save")
-	public ComResponse<Integer> save(@RequestBody @Valid ExpressCompanySaveDTO saveDTO, HttpServletRequest request) {
+	public ComResponse<Integer> save(@RequestBody @Valid ExpressCompanySaveDTO saveDTO) {
 
 		String userName = "";
 		try {
-			ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
+			ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 			if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 
 				throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), userNo.getMessage());
