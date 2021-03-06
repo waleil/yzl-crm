@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -66,11 +68,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LogisticsController {
 
 	@Autowired
-	LogisticsFien logisticsFien;
-
-	public LogisticsController(LogisticsFien logisticsFien) {
-		this.logisticsFien = logisticsFien;
-	}
+	private LogisticsFien logisticsFien;
 
 	@Autowired
 	private EhrStaffClient ehrStaffClient;
@@ -95,8 +93,7 @@ public class LogisticsController {
 	@PostMapping("v1/signed/order")
 	public ComResponse<Boolean> signedOrder(
 			@RequestBody @Valid List<StoreToLogisticsDtoTrace> storeToLogisticsDtoTrace) {
-		String user = QueryIds.userNo.get();
-		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(user);
+		ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
 
 		if (!userNo.getStatus().equals(ComResponse.SUCCESS_STATUS)) {
 
@@ -111,27 +108,24 @@ public class LogisticsController {
 		if (StringUtils.isEmpty(data.getName())) {
 			return ComResponse.fail(ComResponse.ERROR_STATUS, "用户名不存在");
 		}
-
-		for (int i = 0; i < storeToLogisticsDtoTrace.size(); i++) {
+		Date now = new Date();
+		String userName = data.getName();
+		String template = userName + "执行了补登操作";
+		for (StoreToLogisticsDtoTrace trace : storeToLogisticsDtoTrace) {
 			// 更新订单状态的信息为空
-			if (null == (storeToLogisticsDtoTrace.get(i).getSupplementRegistry())
-					|| StringUtils.isEmpty(storeToLogisticsDtoTrace.get(i).getSupplementRegistry().getExpressNum()))
+			if (null == (trace.getSupplementRegistry())
+					|| StringUtils.isEmpty(trace.getSupplementRegistry().getExpressNum()))
 				return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE); // 没有操作的登记信息
-
 			// 人工操作的轨迹信息为空
-			if (null == (storeToLogisticsDtoTrace.get(i).getTraceInfo()))
+			if (null == (trace.getTraceInfo()))
 				return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE); // 没有操作的登记信息
 
-			String userName = data.getName();
-			String template = userName + "执行了补登操作";
-			storeToLogisticsDtoTrace.get(i).getTraceInfo().setDescription(template);
-
-			storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementorName(data.getName());
-
-			storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSupplementor(data.getStaffNo()); // 补登人 user code
-			storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setSignTime(new Date()); // signTime
-			storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setDepartId(data.getDepartId());
-			storeToLogisticsDtoTrace.get(i).getSupplementRegistry().setOrderStatus(5);
+			trace.getTraceInfo().setDescription(template);
+			trace.getSupplementRegistry().setSupplementorName(userName);
+			trace.getSupplementRegistry().setSupplementor(data.getStaffNo()); // 补登人 user code
+			trace.getSupplementRegistry().setSignTime(now); // signTime
+			trace.getSupplementRegistry().setDepartId(data.getDepartId());
+			trace.getSupplementRegistry().setOrderStatus(5);
 		}
 
 		return logisticsFien.signedOrder(storeToLogisticsDtoTrace);
@@ -284,32 +278,22 @@ public class LogisticsController {
 
 		ComResponse<List<StorePo>> list = storeFeginService.selectStoreAny();
 
-		List<String> storePoList = new ArrayList<>();
-		List<StorePo> storePoList1 = null;
 		if (list.getCode() == 200) {
-			storePoList1 = list.getData();
 
+			List<String> storePoList = new ArrayList<>();
 			if (expressSearchDTO.getWarehouseId() != null) {
-				for (int i = 0; i < storePoList1.size(); i++) {
-					if (storePoList1.get(i).getName().indexOf(expressSearchDTO.getWarehouseId()) > -1) {
-						storePoList.add(storePoList1.get(i).getNo());
-					}
-
-				}
+				storePoList = Optional.ofNullable(list.getData())
+						.orElseGet(ArrayList::new).stream()
+						.filter(p -> p.getName().indexOf(expressSearchDTO.getWarehouseId()) > -1)
+						.map(StorePo::getNo)
+						.collect(Collectors.toList());
 			}
 
-			if (storePoList != null) {
-				expressSearchDTO.setWarehouseId(StringUtils.join(storePoList.toArray(), ","));
-			} else {
-				expressSearchDTO.setWarehouseId(StringUtils.join(Collections.EMPTY_LIST.toArray(), ","));
-			}
+			expressSearchDTO.setWarehouseId(StringUtils.join(storePoList.toArray(), ","));
 		} else {
 			expressSearchDTO.setWarehouseId(StringUtils.join(Collections.EMPTY_LIST.toArray(), ","));
 		}
 
-		JSONObject json = (JSONObject) JSONObject.toJSON(expressSearchDTO);
-		String s = json.toJSONString();
-		log.info(s);
 		return logisticsFien.listPage(expressSearchDTO);
 	}
 
