@@ -245,6 +245,18 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
 		}
+		// 按顾客号查询顾客账号
+		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
+		// 如果调用服务异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
+			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCardNo(), maresponse);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, maresponse.getMessage());
+		}
+		MemberAmountDto account = maresponse.getData();
+		if (account == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号>>{}", orderin.getMemberCardNo(), account);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
+		}
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getStaffCode());
 		// 如果服务调用异常
@@ -548,6 +560,14 @@ public class OrderRestController {
 		orderm.setTotal(orderm.getCash());
 		orderm.setSpend(orderm.getCash());
 		orderm.setAmountCoupon(orderm.getTotalAll() - orderin.getProductTotal().multiply(bd100).intValue());
+		if (this.hasAmountStored(orderin)) {
+			// 如果订单总金额大于账户剩余金额，单位分
+			if (orderm.getTotal() > account.getTotalMoney()) {
+				log.error("热线工单-购物车-提交订单>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
+						account.getTotalMoney());
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足，请更换支付方式。");
+			}
+		}
 		// 统计订单明细中的每类商品的总数，key为商品编码，value为购买商品总数
 		Map<String, Integer> productCountMap = new HashMap<>();
 		tuples.stream().forEach(p -> productCountMap.merge(p.get(0), p.get(1), Integer::sum));
@@ -724,7 +744,7 @@ public class OrderRestController {
 					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
 		// 再次调用顾客账户余额
-		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		orderout.setOrderNo(orderm.getOrderNo());
 		orderout.setReveiverAddress(orderm.getReveiverAddress());
 		orderout.setReveiverName(orderm.getReveiverName());
