@@ -203,8 +203,10 @@ public class OrderRestController {
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
 		OrderM orderm = new OrderM();// 订单信息
 		this.initOrder(orderm);
-		Optional.ofNullable(orderin.getAmountStored())
-				.ifPresent(c -> orderm.setAmountStored(c.multiply(bd100).intValue()));
+		Optional.ofNullable(orderin.getAmountStored()).ifPresent(c -> {
+			orderm.setAmountStored(c.multiply(bd100).intValue());
+			orderm.setPayMode(PayMode.PAY_MODE_4.getCode());// 客户账户扣款
+		});
 		// 如果订单里没有商品
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
@@ -1079,10 +1081,11 @@ public class OrderRestController {
 		orderm.setRelationReissueOrderTotal(0);
 		orderm.setLogisticsClaims(0);
 		orderm.setInvoiceFlag(CommonConstant.INVOICE_0);// 不开票
-		orderm.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);
+		orderm.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);// 正常订单
 		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
 		orderm.setCreateTime(new Date());// 下单时间
 		orderm.setOrderChanal(CommonConstant.ORDER_CHANAL_1);// 购物车下单
+		orderm.setPayMode(PayMode.PAY_MODE_0.getCode());// 快递代办
 	}
 
 	/**
