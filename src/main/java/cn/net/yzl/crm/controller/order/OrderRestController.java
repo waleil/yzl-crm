@@ -249,12 +249,13 @@ public class OrderRestController {
 		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
 		// 如果调用服务异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
-			log.error("热线工单-购物车-提交订单>>{}>>{}", orderin.getMemberCardNo(), maresponse);
-			return ComResponse.fail(ResponseCodeEnums.ERROR, maresponse.getMessage());
+			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用查询顾客账户信息接口异常：%s", maresponse.getMessage()));
 		}
 		MemberAmountDto account = maresponse.getData();
 		if (account == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号>>{}", orderin.getMemberCardNo(), account);
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 		}
 		// 按员工号查询员工信息
