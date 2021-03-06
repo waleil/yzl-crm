@@ -23,13 +23,6 @@ public class AttributeController {
     @Autowired
     private AttributeService attributeService;
 
-    @ApiOperation(value = "添加属性")
-    @PostMapping("insertAttribute")
-    public ComResponse<?> insertProductAttribute(HttpServletRequest request) {
-        System.out.println(request.getHeader("userId"));
-        System.out.println(request.getHeader("userNo"));
-        return null;
-    }
 
     @ApiOperation(value = "通过页码和每页条数查询属性")
     @GetMapping("selectPageAttribute")
