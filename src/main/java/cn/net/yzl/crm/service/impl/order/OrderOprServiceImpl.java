@@ -18,9 +18,10 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.IOrderCommonService;
 import cn.net.yzl.crm.service.order.IOrderOprService;
 import cn.net.yzl.crm.sys.BizException;
-import cn.net.yzl.logistics.enums.OrderStatus;
+
 import cn.net.yzl.model.vo.OrderDistributeExpressVO;
 import cn.net.yzl.order.constant.CommonConstant;
+import cn.net.yzl.order.enums.OrderStatus;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.vo.order.OrderCheckDetailDTO;
 import cn.net.yzl.order.model.vo.order.OrderInfoVo;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,6 +65,10 @@ public class OrderOprServiceImpl implements IOrderOprService {
     @Autowired
     private ActivityClient activityClient;
 
+    private static final int[] CAN_CANCLE_STATS = new int[]{OrderStatus.ORDER_STATUS_1.getCode()
+            ,OrderStatus.ORDER_STATUS_2.getCode()
+            ,OrderStatus.ORDER_STATUS_3.getCode()};
+
     @Override
     public ComResponse<Boolean> cancleOrder(OrderOprDTO dto) {
 
@@ -85,83 +91,93 @@ public class OrderOprServiceImpl implements IOrderOprService {
             OrderInfoVo vo = response.getData();
 
 
-            //校验当前订单状态，审批通过后不得取消订单
-            if(vo.getOrder().getOrderStatus()==OrderStatus.ORDER_STATUS_8.getCode()){
-                throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),"该订单["+dto.getOrderNo()+"]已取消，请勿重复操作！");
+            //校验当前订单状态是否符合取消订单的条件
+            if(!Arrays.asList(CAN_CANCLE_STATS).contains(vo.getOrder().getOrderStatus())){
+                log.error("订单号：{},当前状态：{}，不能取消订单",dto.getOrderNo(),OrderStatus.codeToName(vo.getOrder().getOrderStatus()));
+                throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(),"该订单当前状态不可取消订单，当前状态为：" + OrderStatus.codeToName(vo.getOrder().getOrderStatus()));
             }
 
+            //如果当前状态是审核未通过，因为在审核通过时已经释放库存、余额等资源，只做订单状态变更
+            if(vo.getOrder().getOrderStatus() == OrderStatus.ORDER_STATUS_2.getCode()){
+                ComResponse<?> res = orderOprClient.cancleOrderM(dto);
+                if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
+                    log.error("取消订单>>调用订单服务接口失败>>订单号：{} ,{}", dto.getOrderNo(),res);
+                    throw new BizException(res.getCode(),res.getMessage());
+                }
+            }else{
+                //释放库存
+                List<OrderDetail> detailList = vo.getDetails();
+                OrderProductVO productVO = new OrderProductVO();
+                Map<String, List<OrderDetail>> collect = detailList.stream().collect(Collectors.groupingBy(OrderDetail::getProductCode));
+                List<ProductReduceVO> list = new ArrayList<>();
+                collect.entrySet().forEach(map ->{
+                    ProductReduceVO productReduceVO = new ProductReduceVO();
+                    productReduceVO.setProductCode(map.getValue().get(0).getProductCode());
+                    productReduceVO.setNum(map.getValue().stream().mapToInt(OrderDetail::getProductCount).sum());
+                    productReduceVO.setOrderNo(dto.getOrderNo());
+                    list.add(productReduceVO);
 
-            //释放库存
-            List<OrderDetail> detailList = vo.getDetails();
-            OrderProductVO productVO = new OrderProductVO();
-            Map<String, List<OrderDetail>> collect = detailList.stream().collect(Collectors.groupingBy(OrderDetail::getProductCode));
-            List<ProductReduceVO> list = new ArrayList<>();
-            collect.entrySet().forEach(map ->{
-                ProductReduceVO productReduceVO = new ProductReduceVO();
-                productReduceVO.setProductCode(map.getValue().get(0).getProductCode());
-                productReduceVO.setNum(map.getValue().stream().mapToInt(OrderDetail::getProductCount).sum());
-                productReduceVO.setOrderNo(dto.getOrderNo());
-                list.add(productReduceVO);
+                });
+                productVO.setOrderNo(dto.getOrderNo());
+                productVO.setProductReduceVOS(list);
+                ComResponse<?> stockRes = productClient.increaseStock(productVO);
+                if(stockRes.getCode().compareTo(Integer.valueOf(200))!=0){
+                    throw new BizException(stockRes.getCode(),stockRes.getMessage());
+                }
 
-            });
-            productVO.setOrderNo(dto.getOrderNo());
-            productVO.setProductReduceVOS(list);
-            ComResponse<?> stockRes = productClient.increaseStock(productVO);
-            if(stockRes.getCode().compareTo(Integer.valueOf(200))!=0){
-                throw new BizException(stockRes.getCode(),stockRes.getMessage());
-            }
+                //释放已使用的余额
+                MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
+                if(vo.getOrder().getAmountStored() >0){
+                    // 组装顾客账户消费参数
+                    memberAmountDetail.setDiscountMoney(vo.getOrder().getAmountStored());// 使用充值金额
+                    memberAmountDetail.setMemberCard(vo.getOrder().getMemberCardNo());// 顾客卡号
+                    memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 消费
+                    memberAmountDetail.setOrderNo(vo.getOrder().getOrderNo());// 订单编号
+                    memberAmountDetail.setRemark("取消订单，回退已用金额");// 备注
+                    // 调用顾客账户消费服务接口
+                    ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
+                    // 如果调用服务接口失败
+                    if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
+                        log.error("取消订单,订单号：{} ->调用顾客账户消费服务接口失败>>{}", dto.getOrderNo(),customerAmountOperation);
+                        this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
+                                ProductClient.INCREASE_STOCK_URL, dto.getOprCode(), dto.getOrderNo());
+                        throw new BizException(customerAmountOperation.getCode(),customerAmountOperation.getMessage());
+                    }
 
-            //释放已使用的余额
-             MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
-            if(vo.getOrder().getAmountStored() >0){
-                // 组装顾客账户消费参数
-                memberAmountDetail.setDiscountMoney(vo.getOrder().getAmountStored());// 使用充值金额
-                memberAmountDetail.setMemberCard(vo.getOrder().getMemberCardNo());// 顾客卡号
-                memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 消费
-                memberAmountDetail.setOrderNo(vo.getOrder().getOrderNo());// 订单编号
-                memberAmountDetail.setRemark("取消订单，回退已用金额");// 备注
-                // 调用顾客账户消费服务接口
-                ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
+                }
+
+
+                //释放已使用的优惠
+                RejectionOrderRequest rejectionOrderRequest = new RejectionOrderRequest();
+                rejectionOrderRequest.setMemberCard(vo.getOrder().getMemberCardNo());
+                rejectionOrderRequest.setOrderNo(vo.getOrder().getOrderNo());
+                rejectionOrderRequest.setUserNo(sresponse.getData().getStaffNo());
+                rejectionOrderRequest.setRejectionType(RejectionTypeEnum.CANCEL_ORDER);
+
+                ComResponse activRes = activityClient.rejectionOrder(rejectionOrderRequest);
                 // 如果调用服务接口失败
-                if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
-                    log.error("取消订单>>调用顾客账户消费服务接口失败>>{}", customerAmountOperation);
+                if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(activRes.getCode())) {
+                    log.error("取消订单,订单号{}->调用释放优惠券接口失败>{}", dto.getOrderNo(),activRes);
                     this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
                             ProductClient.INCREASE_STOCK_URL, dto.getOprCode(), dto.getOrderNo());
-                    throw new BizException(customerAmountOperation.getCode(),customerAmountOperation.getMessage());
+                    throw new BizException(activRes.getCode(),activRes.getMessage());
                 }
+                //更新订单状态
+                ComResponse<?> res = orderOprClient.cancleOrderM(dto);
+                if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
+                    log.error("取消订单,订单号：{}->调用订单服务接口失败>>{}",dto.getOrderNo(), res);
+                    this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
+                            ProductClient.INCREASE_STOCK_URL, dto.getOprCode(), dto.getOrderNo());
+//                    if(vo.getOrder().getAmountStored() >0){//未提供回调接口
+//                        memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);//
+//                        this.orderCommonService.insert(memberAmountDetail, MemberFien.CUSTOMER_AMOUNT_OPERATION_URL,
+//                                MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, dto.getOprCode(), dto.getOrderNo());
+//                    }
 
-            }
-
-
-            //释放已使用的优惠
-             RejectionOrderRequest rejectionOrderRequest = new RejectionOrderRequest();
-             rejectionOrderRequest.setMemberCard(vo.getOrder().getMemberCardNo());
-             rejectionOrderRequest.setOrderNo(vo.getOrder().getOrderNo());
-             rejectionOrderRequest.setUserNo(sresponse.getData().getStaffNo());
-             rejectionOrderRequest.setRejectionType(RejectionTypeEnum.CANCEL_ORDER);
-
-            ComResponse activRes = activityClient.rejectionOrder(rejectionOrderRequest);
-            // 如果调用服务接口失败
-            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(activRes.getCode())) {
-                log.error("取消订单>>调用释放优惠券接口失败>{}", activRes);
-//                this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
-//                        ProductClient.INCREASE_STOCK_URL, dto.getOprCode(), dto.getOrderNo());
-                throw new BizException(activRes.getCode(),activRes.getMessage());
-            }
-        //更新订单状态
-            ComResponse<?> res = orderOprClient.cancleOrderM(dto);
-            if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(res.getCode())) {
-                log.error("取消订单>>调用订单服务接口失败>>{}", res);
-                this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
-                        ProductClient.INCREASE_STOCK_URL, dto.getOprCode(), dto.getOrderNo());
-                if(vo.getOrder().getAmountStored() >0){
-                    memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);//
-                    this.orderCommonService.insert(memberAmountDetail, MemberFien.CUSTOMER_AMOUNT_OPERATION_URL,
-                            MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, dto.getOprCode(), dto.getOrderNo());
+                    throw new BizException(res.getCode(),res.getMessage());
                 }
-
-                throw new BizException(res.getCode(),res.getMessage());
             }
+
 
             return ComResponse.success(true);
 
@@ -183,6 +199,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
         //查询订单信息及当前状态
         ComResponse<OrderInfoVo> response = orderSearchClient.selectOrderInfo4Opr(dto.getOrderNo());
         if(response.getCode().compareTo(Integer.valueOf(200))!=0){
+            log.error("审核订单，订单号{}->调用订单服务查询订单信息失败 {}",dto.getOrderNo(),response);
             throw new BizException(response.getCode(),response.getMessage());
         }
         OrderInfoVo vo = response.getData();
@@ -192,8 +209,10 @@ public class OrderOprServiceImpl implements IOrderOprService {
         }
 
         //校验状态
-        if(vo.getOrder().getOrderStatus().compareTo(Integer.valueOf(cn.net.yzl.order.enums.OrderStatus.ORDER_STATUS_1.getCode())) != 0 ){
-            throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(), "订单号:[" + dto.getOrderNo() + "] 已审核，请勿重复提交！");
+        //校验当前订单状态是否符合审核订单的条件
+        if(vo.getOrder().getOrderStatus()!=OrderStatus.ORDER_STATUS_1.getCode()){
+            log.error("订单号：{},当前状态：{}，不能审批订单",dto.getOrderNo(),OrderStatus.codeToName(vo.getOrder().getOrderStatus()));
+            throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(),"该订单当前非待审核状态，不能审核，当前状态为：" + OrderStatus.codeToName(vo.getOrder().getOrderStatus()));
         }
         if(vo.getOrder().getOrderNature().compareTo(Integer.valueOf(CommonConstant.ORDER_NATURE_T)) == 0) {
             throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(), "订单号:[" + dto.getOrderNo() + "] 是免审订单，无需审核！");
@@ -222,33 +241,18 @@ public class OrderOprServiceImpl implements IOrderOprService {
             log.error("调用订单服务审核订单失败"+dto);
             throw new BizException(orderRes.getCode(),orderRes.getMessage());
         }
-//        orderInfoVo.getOrder().setReveiverProvinceName(dto.getReveiverProvinceName());
-//        orderInfoVo.getOrder().setReveiverProvince(dto.getReveiverProvince());
-//        orderInfoVo.getOrder().setReveiverCityName(dto.getReveiverCityName());
-//        orderInfoVo.getOrder().setReveiverCity(dto.getReveiverCity());
-//        orderInfoVo.getOrder().setReveiverAreaName(dto.getReveiverAreaName());
-//        orderInfoVo.getOrder().setReveiverArea(dto.getReveiverArea());
-//        orderInfoVo.getOrder().setReveiverTelphoneNo(dto.getReveiverTelphoneNo());
-//        orderInfoVo.getOrder().setReveiverAddress(dto.getReveiverAddress());
-        // 给仓库发通知，生成出库单
-//        List<OrderDistributeExpressVO> list = new ArrayList<>();
-//        OrderDistributeExpressVO vo= orderCommonService.mkOrderDistributeExpressData(orderInfoVo);
-//
-//
-//        list.add(vo);
 
-
-//        ComResponse<?> response = orderDistributeExpressFeignService.insertOrderDistributeExpress(list);
-//        if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
-//            log.error(response.getClass()+":"+response.getMessage());
-//            //todo 记录状态，定时任务重新发送
-//            log.error("发送出库通知失败-》订单号：" +dto.getOrderNo());
-//        }
     }
 
 
 
     private void disAggreeOrder(OrderCheckDetailDTO dto,OrderInfoVo vo) {
+        //校验当前订单状态是否符合审核订单的条件
+        if(vo.getOrder().getOrderStatus()!=OrderStatus.ORDER_STATUS_1.getCode()){
+            log.error("订单号：{},当前状态：{}，不能审批订单",dto.getOrderNo(),OrderStatus.codeToName(vo.getOrder().getOrderStatus()));
+            throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(),"该订单当前非待审核状态，不能审核，当前状态为：" + OrderStatus.codeToName(vo.getOrder().getOrderStatus()));
+        }
+
         //释放库存
         List<OrderDetail> detailList = vo.getDetails();
         OrderProductVO productVO = new OrderProductVO();
@@ -258,11 +262,11 @@ public class OrderOprServiceImpl implements IOrderOprService {
             ProductReduceVO productReduceVO = new ProductReduceVO();
             productReduceVO.setProductCode(map.getValue().get(0).getProductCode());
             productReduceVO.setNum(map.getValue().stream().mapToInt(OrderDetail::getProductCount).sum());
-            productReduceVO.setOrderNo(vo.getOrder().getOrderNo());
+            productReduceVO.setOrderNo(dto.getOrderNo());
             list.add(productReduceVO);
 
         });
-        productVO.setOrderNo(vo.getOrder().getOrderNo());
+        productVO.setOrderNo(dto.getOrderNo());
         productVO.setProductReduceVOS(list);
         ComResponse<?> stockRes = productClient.increaseStock(productVO);
         if(stockRes.getCode().compareTo(Integer.valueOf(200))!=0){
@@ -270,9 +274,9 @@ public class OrderOprServiceImpl implements IOrderOprService {
         }
 
         //释放已使用的余额
+        MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
         if(vo.getOrder().getAmountStored() >0){
             // 组装顾客账户消费参数
-            MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
             memberAmountDetail.setDiscountMoney(vo.getOrder().getAmountStored());// 使用充值金额
             memberAmountDetail.setMemberCard(vo.getOrder().getMemberCardNo());// 顾客卡号
             memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 消费
@@ -282,22 +286,43 @@ public class OrderOprServiceImpl implements IOrderOprService {
             ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
             // 如果调用服务接口失败
             if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
-                log.error("取消订单>>调用顾客账户消费服务接口失败>>{}", customerAmountOperation);
+                log.error("取消订单,订单号：{} ->调用顾客账户消费服务接口失败>>{}", dto.getOrderNo(),customerAmountOperation);
+                this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
+                        ProductClient.INCREASE_STOCK_URL, dto.getCheckUserNo(), dto.getOrderNo());
                 throw new BizException(customerAmountOperation.getCode(),customerAmountOperation.getMessage());
             }
 
         }
 
 
-        //todo 释放已使用的优惠
-        if(vo.getCouponDetail() !=null && vo.getCouponDetail().size()>0){
+        //释放已使用的优惠
+        RejectionOrderRequest rejectionOrderRequest = new RejectionOrderRequest();
+        rejectionOrderRequest.setMemberCard(vo.getOrder().getMemberCardNo());
+        rejectionOrderRequest.setOrderNo(vo.getOrder().getOrderNo());
+        rejectionOrderRequest.setUserNo(dto.getCheckUserNo());
+        rejectionOrderRequest.setRejectionType(RejectionTypeEnum.CANCEL_ORDER);
 
+        ComResponse activRes = activityClient.rejectionOrder(rejectionOrderRequest);
+        // 如果调用服务接口失败
+        if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(activRes.getCode())) {
+            log.error("取消订单,订单号{}->调用释放优惠券接口失败>{}", dto.getOrderNo(),activRes);
+            this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
+                    ProductClient.INCREASE_STOCK_URL, dto.getCheckUserNo(), dto.getOrderNo());
+            throw new BizException(activRes.getCode(),activRes.getMessage());
         }
 
         //调用订单信息更新
         //调用订单服务 1、记录出库预警消息 2、更新订单状态及收货人信息 3、记录审批记录 4、记录操作日志
         ComResponse<?> orderRes = orderOprClient.checkOrder(dto);
         if(orderRes.getCode().compareTo(Integer.valueOf(200))!=0){
+            log.error("审核订单,订单号：{}->调用订单服务接口失败>>{}",dto.getOrderNo(), orderRes);
+            this.orderCommonService.insert(productVO, ProductClient.SUFFIX_URL,
+                    ProductClient.INCREASE_STOCK_URL, dto.getCheckUserNo(), dto.getOrderNo());
+//                    if(vo.getOrder().getAmountStored() >0){//未提供回调接口
+//                        memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_2);//
+//                        this.orderCommonService.insert(memberAmountDetail, MemberFien.CUSTOMER_AMOUNT_OPERATION_URL,
+//                                MemberFien.CUSTOMER_AMOUNT_OPERATION_URL, dto.getOprCode(), dto.getOrderNo());
+//                    }
             throw new BizException(orderRes.getCode(),orderRes.getMessage());
         }
 

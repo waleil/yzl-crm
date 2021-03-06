@@ -109,7 +109,12 @@ public class NewOrderServiceImpl implements INewOrderService {
 				log.error("查询坐席详情失败>>"  ,response.getCode()+"," +response.getMessage());
 				throw new BizException(response.getCode(), response.getMessage());
 			}
-			log.info("查询坐席详细信息：" + response.getData());
+			if(response.getCode() == null){
+				log.error("查询坐席详细信息失败，坐席号：" + dto.getUserNo());
+				throw new BizException(response.getCode(),
+						"查询坐席详细信息失败，坐席号：" + dto.getUserNo()+response.getMessage());
+			}
+
 			Integer wordCode = response.getData().getWorkCode();
 			Integer departId = response.getData().getDepartId();
 			dto.setUserName(response.getData().getName());

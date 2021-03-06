@@ -2,8 +2,20 @@ package cn.net.yzl.crm.service.impl.order;
 
 import java.util.Optional;
 
+import cn.net.yzl.activity.model.enums.RejectionTypeEnum;
+import cn.net.yzl.activity.model.requestModel.RejectionOrderRequest;
+import cn.net.yzl.crm.client.order.OrderSearchClient;
+import cn.net.yzl.crm.client.product.ProductClient;
 import cn.net.yzl.crm.client.store.StoreFeginService;
+import cn.net.yzl.crm.constant.ObtainType;
+import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
+import cn.net.yzl.crm.service.micservice.MemberFien;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.model.vo.StoreVO;
+import cn.net.yzl.order.enums.PayMode;
+import cn.net.yzl.order.model.db.order.OrderM;
+import cn.net.yzl.order.model.vo.order.OrderInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +46,15 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
     private RedisUtil redisUtil;
     @Autowired
     private StoreFeginService storeFeginService;
+
+    @Autowired
+    private OrderSearchClient orderSearchClient;
+
+    @Autowired
+    private ActivityClient activityClient;
+
+    @Autowired
+    private MemberFien memberFien;
 
     /**
      * @param orderRejectionAddDTO
@@ -82,6 +103,44 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
                 return ComResponse.fail(ResponseCodeEnums.ERROR, "添加失败，仓库未启用。");
             }
 
+        }
+        ComResponse<OrderInfoVo> response = orderSearchClient.selectOrderInfo4Opr(dto.getOrderNo());
+        if(response.getCode().compareTo(Integer.valueOf(200))!=0){
+            log.error("新建拒收单，订单号{}->调用订单服务查询订单信息失败 {}",dto.getOrderNo(),response);
+            throw new BizException(response.getCode(),response.getMessage());
+        }
+
+        //调用dmc接口，释放赠送的优惠
+        OrderM orderM = response.getData().getOrder();
+        RejectionOrderRequest entity = new RejectionOrderRequest();
+        entity.setMemberCard(orderM.getMemberCardNo());
+        entity.setOrderNo(orderM.getOrderNo());
+        entity.setUserNo(dto.getUserNo());
+        entity.setRejectionType(RejectionTypeEnum.REJECTION_ORDER);
+        ComResponse comResponse = activityClient.rejectionOrder(entity);
+        if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(comResponse.getCode())) {
+            return ComResponse.fail(ResponseCodeEnums.ERROR, "DMC扣除顾客积分，红包，优惠券异常");
+        }
+        if(orderM.getPayMode() == PayMode.PAY_MODE_4.getCode()){
+            //已冻结的账户余额 解冻
+            //释放已使用的余额
+            MemberAmountDetailVO memberAmountDetail = new MemberAmountDetailVO();
+            if(orderM.getAmountStored() >0){
+                // 组装顾客账户消费参数
+                memberAmountDetail.setDiscountMoney(orderM.getAmountStored());// 使用充值金额
+                memberAmountDetail.setMemberCard(orderM.getMemberCardNo());// 顾客卡号
+                memberAmountDetail.setObtainType(ObtainType.OBTAIN_TYPE_1);// 消费
+                memberAmountDetail.setOrderNo(orderM.getOrderNo());// 订单编号
+                memberAmountDetail.setRemark("拒收，释放冻结的余额");// 备注
+                // 调用顾客账户消费服务接口
+                ComResponse<?> customerAmountOperation = this.memberFien.customerAmountOperation(memberAmountDetail);
+                // 如果调用服务接口失败
+                if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(customerAmountOperation.getCode())) {
+                    log.error("新增拒收单,订单号：{} ->调用顾客账户消费服务接口失败>>{}", dto.getOrderNo(),customerAmountOperation);
+                    throw new BizException(customerAmountOperation.getCode(),customerAmountOperation.getMessage());
+                }
+
+            }
         }
         return orderRejectionClient.addOrderRejection(dto);
     }

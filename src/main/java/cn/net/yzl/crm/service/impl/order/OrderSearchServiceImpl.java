@@ -101,6 +101,9 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
         if (Arrays.asList(CAN_SEARCH_LOGIC_STATS).contains(order.getOrderStatus())) {
             return ComResponse.success(null);
         }
+        if(StringUtils.isBlank(order.getExpressNumber())){
+            return ComResponse.success(null);
+        }
         if (!StringUtils.isBlank(mailid) && !StringUtils.isBlank(companyCode) &&
                 !StringUtils.isBlank(order.getExpressNumber()) && !mailid.equals(order.getExpressNumber())) {
             log.error("您要查询的快递号，不属于该订单，订单号：" + orderNo);
