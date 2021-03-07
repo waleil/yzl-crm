@@ -190,8 +190,10 @@ public class OrderOprServiceImpl implements IOrderOprService {
         if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(sresponse.getCode())) {
             throw new BizException(sresponse.getCode(),sresponse.getMessage());
         }
-        dto.setDepartId(String.valueOf(sresponse.getData().getDepartId()));
-        dto.setCheckDepartId(String.valueOf( sresponse.getData().getDepartId()));
+        if (sresponse.getData().getDepartId()!=null) {
+        	dto.setDepartId(sresponse.getData().getDepartId().toString());
+        	dto.setCheckDepartId(dto.getDepartId());
+		}
         dto.setCheckUserName(sresponse.getData().getName());
         dto.setCheckUserNo(QueryIds.userNo.get());
 
