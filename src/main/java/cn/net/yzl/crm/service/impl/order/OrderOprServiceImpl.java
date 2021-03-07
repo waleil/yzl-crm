@@ -191,7 +191,7 @@ public class OrderOprServiceImpl implements IOrderOprService {
             throw new BizException(sresponse.getCode(),sresponse.getMessage());
         }
         dto.setDepartId(String.valueOf(sresponse.getData().getDepartId()));
-        dto.setCheckDepartId(sresponse.getData().getDepartId());
+        dto.setCheckDepartId(String.valueOf( sresponse.getData().getDepartId()));
         dto.setCheckUserName(sresponse.getData().getName());
         dto.setCheckUserNo(QueryIds.userNo.get());
 
