@@ -144,4 +144,12 @@ public class DownImageInController {
     }
 
 
+    @PostMapping(value = "v1/exportExpressPrintInfo")
+    @ApiOperation("导出快递模板")
+    public void exportExpressPrintInfo(@RequestBody OutStoreOrderInfoParamVo outStoreOrderInfoParamVo,
+                                       HttpServletResponse httpServletResponse) throws IOException {
+        downImageInService.exportExpressPrintInfo(outStoreOrderInfoParamVo, httpServletResponse);
+    }
+
+
 }

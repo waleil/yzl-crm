@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.service;
 
+import cn.net.yzl.model.vo.OutStoreOrderInfoParamVo;
 import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -15,4 +16,6 @@ public interface DownImageInService {
     void exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException;
 
     void exportExcelOfProductPurchaseWarn(ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO,HttpServletResponse httpServletResponse) throws IOException;
+
+    void exportExpressPrintInfo(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo, HttpServletResponse httpServletResponse) throws IOException;
 }

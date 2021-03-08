@@ -5,6 +5,8 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.ProductPurchaseWarnDTO;
 import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
 import cn.net.yzl.model.dto.ProductPurchaseWarnSetDTO;
+import cn.net.yzl.model.dto.express.ExpressOrderInfo;
+import cn.net.yzl.model.vo.OutStoreOrderInfoParamVo;
 import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.model.vo.ProductPurchaseWarnSetVO;
 import cn.net.yzl.model.vo.ProductPurchaseWarnVO;
@@ -49,4 +51,10 @@ public interface ProductPurchaseWarnFeignService {
     @PostMapping(value = "productPurchaseWarn/v1/selectExcelOfProductPurchaseWarn")
     @ApiOperation("预警商品导出EXCEL")
     public ComResponse<List<ProductPurchaseWarnExcelDTO>> selectExcelOfProductPurchaseWarn(@RequestBody ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO);
+
+    @PostMapping(value = "productPurchaseWarn/v1/getSenderExpressInfo")
+    @ApiOperation("导出快递信息")
+    public ComResponse<List<ExpressOrderInfo>> getSenderExpressInfo(@RequestBody OutStoreOrderInfoParamVo outStoreOrderInfoParamVo);
+
+
 }
