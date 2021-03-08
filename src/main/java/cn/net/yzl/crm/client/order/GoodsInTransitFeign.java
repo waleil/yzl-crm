@@ -19,7 +19,7 @@ public interface GoodsInTransitFeign {
 
     @ApiOperation(value = "查询在途商品明细")
     @PostMapping("v1/goodsInTransitdetails")
-    public ComResponse<Page<ProductDetailDTO>>  goodsInTransitdetail (@RequestBody GoodsInTransitReqDTO dto );
+    public ComResponse<Page<ProductDetailResDTO>>  goodsInTransitdetail (@RequestBody GoodsInTransitReqDTO dto );
 
     @ApiOperation(value = "查询在途商品")
     @PostMapping("v1/selectgoodsInTransitlist")

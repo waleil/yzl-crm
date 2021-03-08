@@ -386,7 +386,7 @@ public class OrderRestController {
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价，单位分
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
-				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
+				Optional.ofNullable(p.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 				od.setPackageUnit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(),
 						new ProductStock(p.getProductCode(), p.getName(), p.getStock()));// 库存
@@ -517,7 +517,7 @@ public class OrderRestController {
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
-					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
+					Optional.ofNullable(in.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 					od.setPackageUnit(in.getPackagingUnit());// 包装单位
 					productStockMap.put(od.getProductCode(),
 							new ProductStock(in.getProductCode(), in.getName(), in.getStock()));// 库存
@@ -587,7 +587,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>该订单[{}]商品[{}]购买总数[{}]大于库存总数[{}]", orderm.getOrderNo(), entry.getKey(),
 						entry.getValue(), pstock.getStock());
 				return ComResponse.fail(ResponseCodeEnums.ERROR,
-						String.format("商品编码[{}]商品名称[{}]库存不足。", pstock.getCode(), pstock.getName()));
+						String.format("商品编码[%s]商品名称[%s]库存不足。", pstock.getCode(), pstock.getName()));
 			}
 		}
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
@@ -1240,7 +1240,7 @@ public class OrderRestController {
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价，单位分
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
-				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
+				Optional.ofNullable(p.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 				od.setPackageUnit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
@@ -1319,7 +1319,7 @@ public class OrderRestController {
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
-					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
+					Optional.ofNullable(in.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 					od.setPackageUnit(in.getPackagingUnit());// 包装单位
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
@@ -1627,7 +1627,7 @@ public class OrderRestController {
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价，单位分
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
-				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
+				Optional.ofNullable(p.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 				od.setPackageUnit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
@@ -1706,7 +1706,7 @@ public class OrderRestController {
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
-					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
+					Optional.ofNullable(in.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 					od.setPackageUnit(in.getPackagingUnit());// 包装单位
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
