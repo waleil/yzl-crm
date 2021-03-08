@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.ProductPurchaseWarnFeignService;
 import cn.net.yzl.crm.client.store.ProductStockFeignService;
 import cn.net.yzl.crm.service.DownImageInService;
@@ -15,6 +16,7 @@ import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.model.vo.ProductStockExcelVo;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -35,6 +37,7 @@ import java.util.List;
  * @date 2021/1/22 12:47
  */
 @Service
+@Slf4j
 public class DownImageInServiceImpl implements DownImageInService {
 
     @Autowired
@@ -119,6 +122,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 
     public void exportExpressPrintInfo(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo, HttpServletResponse httpServletResponse) throws IOException {
         ComResponse<List<ExpressOrderInfo>> senderExpressInfo = feignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
+        log.info("仓储中心数据物流:{}", JsonUtil.toJsonStr(senderExpressInfo));
         if (senderExpressInfo==null || senderExpressInfo.getCode() !=200L){
             httpServletResponse.setContentType("application/json;charset=utf-8");
             PrintWriter out = httpServletResponse.getWriter();
@@ -187,7 +191,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 //        Date date = new Date();
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        String sysDate = simpleDateFormat.format(date);
-
+        log.info("EMS表格数据:{}",JsonUtil.toJsonStr(postalExcelModels));
         String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
@@ -225,6 +229,7 @@ public class DownImageInServiceImpl implements DownImageInService {
             dpExcelModels.add(dpExcelModel);
         }
 
+        log.info("德邦表格数据:{}",JsonUtil.toJsonStr(dpExcelModels));
         String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
@@ -259,6 +264,7 @@ public class DownImageInServiceImpl implements DownImageInService {
             yunDaExcelModel.setCustom1(expressOrderInfo.getDeliverCode());
             yunDaExcelModels.add(yunDaExcelModel);
         }
+        log.info("韵达表格数据:{}",JsonUtil.toJsonStr(yunDaExcelModels));
         String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
