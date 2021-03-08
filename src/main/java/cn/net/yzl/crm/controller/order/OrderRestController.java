@@ -67,6 +67,7 @@ import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.IOrderCommonService;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.RedisUtil;
 import cn.net.yzl.logistics.model.vo.ExpressIndemnity;
 import cn.net.yzl.model.dto.DepartDto;
@@ -138,6 +139,9 @@ public class OrderRestController {
 		Map<String, ProductMealListDTO> mealMap = Optional
 				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
 				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
+		if (productMap.isEmpty() && mealMap.isEmpty()) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "购物车里的商品或套餐已下架。");
+		}
 		List<ProductPriceResponse> list = orderproducts.stream().map(cp -> {
 			if (Integer.compare(CommonConstant.MEAL_FLAG_0, cp.getProductType()) == 0) {
 				// 商品
@@ -203,8 +207,10 @@ public class OrderRestController {
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
 		OrderM orderm = new OrderM();// 订单信息
 		this.initOrder(orderm);
-		Optional.ofNullable(orderin.getAmountStored())
-				.ifPresent(c -> orderm.setAmountStored(c.multiply(bd100).intValue()));
+		Optional.ofNullable(orderin.getAmountStored()).ifPresent(c -> {
+			orderm.setAmountStored(c.multiply(bd100).intValue());
+			orderm.setPayMode(PayMode.PAY_MODE_4.getCode());// 客户账户扣款
+		});
 		// 如果订单里没有商品
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
@@ -244,6 +250,19 @@ public class OrderRestController {
 		if (reveiverAddress == null) {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]收货地址", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客收货地址。");
+		}
+		// 按顾客号查询顾客账号
+		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderin.getMemberCardNo());
+		// 如果调用服务异常
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(maresponse.getCode())) {
+			log.error("热线工单-购物车-提交订单>>{}", orderin.getMemberCardNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用查询顾客账户信息接口异常：%s", maresponse.getMessage()));
+		}
+		MemberAmountDto account = maresponse.getData();
+		if (account == null) {
+			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]账号", orderin.getMemberCardNo());
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 		}
 		// 按员工号查询员工信息
 		ComResponse<StaffImageBaseInfoDto> sresponse = this.ehrStaffClient.getDetailsByNo(orderm.getStaffCode());
@@ -367,7 +386,7 @@ public class OrderRestController {
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价，单位分
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
-				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
+				Optional.ofNullable(p.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 				od.setPackageUnit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(),
 						new ProductStock(p.getProductCode(), p.getName(), p.getStock()));// 库存
@@ -498,7 +517,7 @@ public class OrderRestController {
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
-					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
+					Optional.ofNullable(in.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 					od.setPackageUnit(in.getPackagingUnit());// 包装单位
 					productStockMap.put(od.getProductCode(),
 							new ProductStock(in.getProductCode(), in.getName(), in.getStock()));// 库存
@@ -548,6 +567,14 @@ public class OrderRestController {
 		orderm.setTotal(orderm.getCash());
 		orderm.setSpend(orderm.getCash());
 		orderm.setAmountCoupon(orderm.getTotalAll() - orderin.getProductTotal().multiply(bd100).intValue());
+		if (this.hasAmountStored(orderin)) {
+			// 如果订单总金额大于账户剩余金额，单位分
+			if (orderm.getTotal() > account.getValidAmount()) {
+				log.error("热线工单-购物车-提交订单>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
+						account.getValidAmount());
+				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足，请更换支付方式。");
+			}
+		}
 		// 统计订单明细中的每类商品的总数，key为商品编码，value为购买商品总数
 		Map<String, Integer> productCountMap = new HashMap<>();
 		tuples.stream().forEach(p -> productCountMap.merge(p.get(0), p.get(1), Integer::sum));
@@ -560,7 +587,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>该订单[{}]商品[{}]购买总数[{}]大于库存总数[{}]", orderm.getOrderNo(), entry.getKey(),
 						entry.getValue(), pstock.getStock());
 				return ComResponse.fail(ResponseCodeEnums.ERROR,
-						String.format("商品编码[{}]商品名称[{}]库存不足。", pstock.getCode(), pstock.getName()));
+						String.format("商品编码[%s]商品名称[%s]库存不足。", pstock.getCode(), pstock.getName()));
 			}
 		}
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
@@ -724,13 +751,13 @@ public class OrderRestController {
 					MemberFien.DEAL_ORDER_CREATE_UPDATE_MEMBER_DATA_URL, orderm.getStaffCode(), orderm.getOrderNo());
 		}
 		// 再次调用顾客账户余额
-		ComResponse<MemberAmountDto> maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
+		maresponse = this.memberFien.getMemberAmount(orderm.getMemberCardNo());
 		orderout.setOrderNo(orderm.getOrderNo());
 		orderout.setReveiverAddress(orderm.getReveiverAddress());
 		orderout.setReveiverName(orderm.getReveiverName());
 		orderout.setReveiverTelphoneNo(orderm.getReveiverTelphoneNo());
 		orderout.setTotal(BigDecimal.valueOf(orderm.getTotal()).divide(bd100));
-		orderout.setTotalMoney(BigDecimal.valueOf(maresponse.getData().getTotalMoney()).divide(bd100));
+		orderout.setTotalMoney(BigDecimal.valueOf(maresponse.getData().getValidAmount()).divide(bd100));
 		orderout.setOrderTime(orderm.getCreateTime());
 		orderout.setReturnPointsDeduction(orderm.getReturnPointsDeduction());
 		return ComResponse.success(orderout);
@@ -877,6 +904,9 @@ public class OrderRestController {
 		Map<String, ProductMealListDTO> mealMap = Optional
 				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
 				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
+		if (productMap.isEmpty() && mealMap.isEmpty()) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "购物车里的商品或套餐已下架。");
+		}
 		// 商品相关信息
 		request.setCalculateProductDto(orderdetailins.stream().map(m -> {
 			CalculateProductDto dto = new CalculateProductDto();
@@ -944,6 +974,9 @@ public class OrderRestController {
 		Map<String, ProductMealListDTO> mealMap = Optional
 				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
 				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
+		if (productMap.isEmpty() && mealMap.isEmpty()) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "购物车里的商品或套餐已下架。");
+		}
 		// 订单中的商品信息
 		request.setOrderSubmitProductDtoList(orderdetailins.stream().map(m -> {
 			OrderSubmitProductDto dto = new OrderSubmitProductDto();
@@ -1058,10 +1091,11 @@ public class OrderRestController {
 		orderm.setRelationReissueOrderTotal(0);
 		orderm.setLogisticsClaims(0);
 		orderm.setInvoiceFlag(CommonConstant.INVOICE_0);// 不开票
-		orderm.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);
+		orderm.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);// 正常订单
 		orderm.setStaffCode(QueryIds.userNo.get());// 下单坐席编码
 		orderm.setCreateTime(new Date());// 下单时间
 		orderm.setOrderChanal(CommonConstant.ORDER_CHANAL_1);// 购物车下单
+		orderm.setPayMode(PayMode.PAY_MODE_0.getCode());// 快递代办
 	}
 
 	/**
@@ -1206,7 +1240,7 @@ public class OrderRestController {
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价，单位分
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
-				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
+				Optional.ofNullable(p.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 				od.setPackageUnit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
@@ -1285,7 +1319,7 @@ public class OrderRestController {
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
-					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
+					Optional.ofNullable(in.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 					od.setPackageUnit(in.getPackagingUnit());// 包装单位
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
@@ -1339,9 +1373,9 @@ public class OrderRestController {
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客账号。");
 			}
 			// 如果订单总金额大于账户剩余金额，单位分
-			if (orderm.getTotal() > account.getTotalMoney()) {
+			if (orderm.getTotal() > account.getValidAmount()) {
 				log.error("订单列表-编辑>>订单[{}]总金额[{}]大于账户剩余金额[{}]", orderm.getOrderNo(), orderm.getTotal(),
-						account.getTotalMoney());
+						account.getValidAmount());
 				return ComResponse.fail(ResponseCodeEnums.ERROR, "账户余额不足。");
 			}
 		}
@@ -1593,7 +1627,7 @@ public class OrderRestController {
 				od.setProductUnitPrice(BigDecimal.valueOf(Double.valueOf(p.getSalePrice())).multiply(bd100).intValue());// 商品单价，单位分
 				od.setProductCount(in.getProductCount());// 商品数量
 				od.setUnit(p.getUnit());// 单位
-				od.setSpec(String.valueOf(p.getTotalUseNum()));// 商品规格
+				Optional.ofNullable(p.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 				od.setPackageUnit(p.getPackagingUnit());// 包装单位
 				productStockMap.put(od.getProductCode(), p.getStock());// 库存
 				tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数
@@ -1672,7 +1706,7 @@ public class OrderRestController {
 					od.setProductUnitPrice(in.getSalePrice());// 商品单价，单位分
 					od.setProductCount(in.getProductNum() * mealCount);// 商品数量*套餐数量
 					od.setUnit(in.getUnit());// 单位
-					od.setSpec(String.valueOf(in.getTotalUseNum()));// 商品规格
+					Optional.ofNullable(in.getTotalUseNum()).ifPresent(c -> od.setSpec(String.valueOf(c)));// 商品规格
 					od.setPackageUnit(in.getPackagingUnit());// 包装单位
 					productStockMap.put(od.getProductCode(), in.getStock());// 库存
 					tuples.add(new Tuple(od.getProductCode(), od.getProductCount()));// 商品总数

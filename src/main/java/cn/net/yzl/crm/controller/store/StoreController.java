@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.StoreFeginService;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.model.dto.DepartDto;
@@ -22,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -72,8 +72,8 @@ public class StoreController {
 
     @ApiOperation(value = "编辑/修改仓库", notes = "编辑/修改仓库")
     @PostMapping("v1/updateStore")
-    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO,HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    public ComResponse<Integer> updateStore(@RequestBody StoreVO storeVO){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> ehrStaffClientDetailsByNo = ehrStaffClient.getDetailsByNo(userNo);
         storeVO.setUpdator(userNo);
         storeVO.setUpdatorName(ehrStaffClientDetailsByNo.getData().getName());
@@ -83,8 +83,8 @@ public class StoreController {
 
     @ApiOperation(value = "新增仓库", notes = "新增仓库")
     @PostMapping("v1/insertStore")
-    public ComResponse insertStore(@RequestBody StoreVO storeVO,HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    public ComResponse insertStore(@RequestBody StoreVO storeVO){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> ehrStaffClientDetailsByNo = ehrStaffClient.getDetailsByNo(userNo);
         storeVO.setCreator(userNo);
         storeVO.setCreatorName(ehrStaffClientDetailsByNo.getData().getName());
@@ -100,10 +100,9 @@ public class StoreController {
 
     @ApiOperation(value = "新增库位", notes = "新增库位")
     @PostMapping("v1/insertStoreLocal")
-    public ComResponse insertStoreLocal(@RequestBody StoreLocalVo storeLocalVo, HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    public ComResponse insertStoreLocal(@RequestBody StoreLocalVo storeLocalVo){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> ehrStaffClientDetailsByNo = ehrStaffClient.getDetailsByNo(userNo);
-        //ComResponse<StaffImageBaseInfoDto> userNo = ehrStaffClient.getDetailsByNo(request.getHeader("userNo"));
         storeLocalVo.setCreator(userNo);
         storeLocalVo.setCreatorName(ehrStaffClientDetailsByNo.getData().getName());
         return storeFeginService.insertStoreLocal(storeLocalVo);
@@ -118,8 +117,8 @@ public class StoreController {
 
     @ApiOperation(value = "编辑库位", notes = "编辑库位")
     @PostMapping("v1/updateStoreLocal")
-    public ComResponse updateStoreLocal(@RequestBody StoreLocalVo storeLocalVo,HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    public ComResponse updateStoreLocal(@RequestBody StoreLocalVo storeLocalVo){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> ehrStaffClientDetailsByNo = ehrStaffClient.getDetailsByNo(userNo);
         storeLocalVo.setUpdator(userNo);
         storeLocalVo.setUpdatorName(ehrStaffClientDetailsByNo.getData().getName());

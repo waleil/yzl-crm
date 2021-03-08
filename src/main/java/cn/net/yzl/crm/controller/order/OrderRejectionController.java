@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.order;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.OrderRejectionClient;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.order.OrderRejectionAddDTO;
 import cn.net.yzl.crm.service.order.OrderRejectionService;
 import cn.net.yzl.order.model.vo.order.OderListResDTO;
@@ -14,7 +15,6 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -61,8 +61,8 @@ public class OrderRejectionController {
 
     @PostMapping("v1/addOrderRejection")
     @ApiOperation(value = "新增拒收订单")
-    public ComResponse addOrderRejection(HttpServletRequest request, @Valid @RequestBody OrderRejectionAddDTO orderRejectionAddDTO) {
-        String userNo = request.getHeader("userNo");
+    public ComResponse addOrderRejection( @Valid @RequestBody OrderRejectionAddDTO orderRejectionAddDTO) {
+        String userNo = QueryIds.userNo.get();
         return orderRejectionService.addOrderRejection(orderRejectionAddDTO, userNo);
     }
 }

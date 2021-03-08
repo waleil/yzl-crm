@@ -65,10 +65,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -402,40 +398,6 @@ public class MemberController {
         return result;
     }
 
-//    public static void main(String[] args) {
-//        WorkOrderFlowVO  w1 = new WorkOrderFlowVO();
-//        w1.setStaffNo("1");
-//        w1.setStartTime(DateFormatUtil.stringToDate("20210-1-10",DateFormatUtil.SQL_FORMAT));
-//        w1.setEndTime(DateFormatUtil.stringToDate("20210-1-11",DateFormatUtil.SQL_FORMAT));
-//        WorkOrderFlowVO  w2 = new WorkOrderFlowVO();
-//        w2.setStaffNo("1");
-//        w2.setStartTime(DateFormatUtil.stringToDate("20210-1-13",DateFormatUtil.SQL_FORMAT));
-//        w2.setEndTime(DateFormatUtil.stringToDate("20210-1-14",DateFormatUtil.SQL_FORMAT));
-//        WorkOrderFlowVO  w3 = new WorkOrderFlowVO();
-//        w3.setStaffNo("2");
-//        w3.setStartTime(DateFormatUtil.stringToDate("20210-1-16",DateFormatUtil.SQL_FORMAT));
-//        w3.setEndTime(DateFormatUtil.stringToDate("20210-1-17",DateFormatUtil.SQL_FORMAT));
-//        WorkOrderFlowVO  w4 = new WorkOrderFlowVO();
-//        w4.setStaffNo("2");
-//        w4.setStartTime(DateFormatUtil.stringToDate("20210-1-19",DateFormatUtil.SQL_FORMAT));
-//        w4.setEndTime(DateFormatUtil.stringToDate("20210-1-20",DateFormatUtil.SQL_FORMAT));
-//
-//        WorkOrderFlowVO  w5 = new WorkOrderFlowVO();
-//        w5.setStaffNo("1");
-//        w5.setStartTime(DateFormatUtil.stringToDate("20210-1-22",DateFormatUtil.SQL_FORMAT));
-//        w5.setEndTime(DateFormatUtil.stringToDate("20210-1-25",DateFormatUtil.SQL_FORMAT));
-//
-//
-//        WorkOrderFlowVO  w6 = new WorkOrderFlowVO();
-//        w6.setStaffNo("1");
-//        w6.setStartTime(DateFormatUtil.stringToDate("20210-1-27",DateFormatUtil.SQL_FORMAT));
-//        w6.setEndTime(DateFormatUtil.stringToDate("20210-1-28",DateFormatUtil.SQL_FORMAT));
-//        List<WorkOrderFlowVO> list = new ArrayList<>();
-//        list.add(w1);list.add(w2);list.add(w3);list.add(w4);list.add(w5);list.add(w6);
-//
-//
-//        System.err.println(JSONUtil.toJsonStr(orderdingWorkOrderFlowVOList(list)));
-//    }
 
 
     @Autowired
@@ -670,13 +632,12 @@ public class MemberController {
 private ProductClient productClient;
     @ApiOperation("获取顾客购买能力")
     @GetMapping("/v1/getMemberOrderStat")
-    public GeneralResult<cn.net.yzl.crm.vo.order.MemberOrderStat> getMemberOrderStat(
+    public GeneralResult<MemberOrderStat> getMemberOrderStat(
             @RequestParam("member_card")
             @NotBlank(message = "member_card不能为空")
             @ApiParam(name = "member_card", value = "会员卡号", required = true)
                     String member_card
     ) {
-        cn.net.yzl.crm.vo.order.MemberOrderStat stat = new cn.net.yzl.crm.vo.order.MemberOrderStat();
         GeneralResult<MemberOrderStat> result = memberFien.getMemberOrderStat(member_card);
         if(result.getData()!=null){
             MemberOrderStat data = result.getData();
@@ -711,30 +672,9 @@ private ProductClient productClient;
                     data.setLastBuyProductNames(str.substring(0,str.length()-1));
                 }
             }
-
-            BeanUtil.copyProperties(data,stat);
-            BigDecimal dBD100 = new BigDecimal("100");
-            if (stat.getTotal_counsum_amount() != null) {
-                stat.setTotal_counsum_amount((stat.getTotal_counsum_amount().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
-            }
-            if (stat.getTotal_invest_amount() != null) {
-                stat.setTotal_invest_amount((stat.getTotal_invest_amount().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
-            }
-            if (stat.getFirst_order_am() != null) {
-                stat.setFirst_order_am((stat.getFirst_order_am().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
-            }
-            if (stat.getOrder_high_am() != null) {
-                stat.setOrder_high_am((stat.getOrder_high_am().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
-            }
-            if (stat.getOrder_low_am() != null) {
-                stat.setOrder_low_am((stat.getOrder_low_am().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
-            }
-            if (stat.getOrder_avg_am() != null) {
-                stat.setOrder_avg_am((stat.getOrder_avg_am().divide(dBD100).setScale(2,BigDecimal.ROUND_DOWN)));
-            }
         }
-        GeneralResult<cn.net.yzl.crm.vo.order.MemberOrderStat> result1 = new GeneralResult<>().success(stat);
-        return result1;
+
+        return result;
     }
 
 //    @ApiOperation("保存顾客行为偏好")

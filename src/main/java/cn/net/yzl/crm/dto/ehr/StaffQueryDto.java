@@ -22,7 +22,7 @@ public class StaffQueryDto extends PageDto {
     @ApiModelProperty(value = "属性(1:正编,2:外包)")
     private Integer nature;
     @ApiModelProperty(value = "标识 1:标识从crm发出的请求", hidden = true)
-    private int flag = 1;
+    private int flag;
     @ApiModelProperty(value = "staffNo 当前登录的员工工号", hidden = true)
     private String staffNo;
 }

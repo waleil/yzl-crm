@@ -4,10 +4,10 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.score.ScoreService;
-import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.score.model.dto.*;
 import cn.net.yzl.score.model.vo.*;
 import io.swagger.annotations.Api;
@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -37,20 +36,22 @@ public class ScoreController {
 
     @GetMapping("myScore")
     @ApiOperation("【商城首页】查询我的积分")
-    public ComResponse<Integer> myScore(HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+    public ComResponse<Integer> myScore(){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        return service.myScore(request.getHeader("userNo"));
+        return service.myScore(userNo);
     }
 
     @GetMapping("myInfo")
     @ApiOperation("【商城首页】查询我的基本信息")
-    public ComResponse<StaffImageBaseInfoDto> myInfo(HttpServletRequest request) {
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+    public ComResponse<StaffImageBaseInfoDto> myInfo() {
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        return ehrClient.getDetailsByNo(request.getHeader("userNo"));
+        return ehrClient.getDetailsByNo(userNo);
     }
 
     @GetMapping("pageDetail")
@@ -61,23 +62,23 @@ public class ScoreController {
     })
     @ApiOperation("【商城首页】查询我的积分明细")
     public ComResponse<Page<MyScoreDetailDTO>> myExchangeRecords(@RequestParam("pageSize") Integer pageSize,
-                                                                 @RequestParam("pageNo") Integer pageNo,
-                                                                 HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+                                                                 @RequestParam("pageNo") Integer pageNo){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        return service.myExchangeRecords(request.getHeader("userNo"), pageSize, pageNo);
+        return service.myExchangeRecords(userNo, pageSize, pageNo);
     }
 
     @GetMapping("exchangeRecord")
     @ApiOperation("【商城首页】分页查询我的兑换明细")
     public ComResponse<Page<MyExchangeRecordDTO>> exchangeRecords(@RequestParam("pageSize")Integer pageSize,
-                                                                  @RequestParam("pageNo")Integer pageNo,
-                                                                  HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+                                                                  @RequestParam("pageNo")Integer pageNo){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        return service.exchangeRecords(request.getHeader("userNo"),pageSize, pageNo);
+        return service.exchangeRecords(userNo,pageSize, pageNo);
     }
 
     @GetMapping("queryPage")
@@ -95,21 +96,23 @@ public class ScoreController {
 
     @PostMapping("exchange")
     @ApiOperation("【商城首页】兑换商品")
-    public ComResponse<Void> exchange(@RequestBody @Valid ExchangeVO vo,HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+    public ComResponse<Void> exchange(@RequestBody @Valid ExchangeVO vo){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        vo.setStaffNo(request.getHeader("userNo"));
+        vo.setStaffNo(userNo);
         return service.exchange(vo);
     }
 
     @PostMapping("changeStatus")
     @ApiOperation("【兑换商品管理】修改积分商品启用禁用状态")
-    public ComResponse<Void> changeStatus(@RequestBody @Valid ChangeProductStatusVO vo, HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+    public ComResponse<Void> changeStatus(@RequestBody @Valid ChangeProductStatusVO vo){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        vo.setStaffNo(request.getHeader("userNo"));
+        vo.setStaffNo(userNo);
         return service.changeStatus(vo);
     }
 
@@ -127,21 +130,23 @@ public class ScoreController {
 
     @PostMapping("edit")
     @ApiOperation("【兑换商品管理】编辑积分兑换商品信息")
-    public ComResponse<Void> edit(@RequestBody @Valid ScoreProductVO vo,HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+    public ComResponse<Void> edit(@RequestBody @Valid ScoreProductVO vo){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        vo.setStaffNo(request.getHeader("userNo"));
+        vo.setStaffNo(userNo);
         return service.edit(vo);
     }
 
     @PostMapping("delete")
     @ApiOperation("【兑换商品管理】删除积分商品信息")
-    public ComResponse<Void> delete(@RequestBody ProductDelVO vo, HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+    public ComResponse<Void> delete(@RequestBody ProductDelVO vo){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        vo.setStaffNo(request.getHeader("userNo"));
+        vo.setStaffNo(userNo);
         return service.delete(vo);
     }
 
@@ -159,11 +164,12 @@ public class ScoreController {
 
     @PostMapping("changeStaffScoreStatus")
     @ApiOperation("【员工积分管理】修改员工账户可用状态")
-    public ComResponse<Void> changeScoreStaffStatus(@RequestBody @Valid DisableScoreVO vo,HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+    public ComResponse<Void> changeScoreStaffStatus(@RequestBody @Valid DisableScoreVO vo){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        vo.setUpdateCode(request.getHeader("userNo"));
+        vo.setUpdateCode(userNo);
         return service.changeScoreStaffStatus(vo);
     }
 
@@ -190,11 +196,12 @@ public class ScoreController {
 
     @PostMapping("grant")
     @ApiOperation("【员工兑换管理】发放")
-    public ComResponse<Void> grant(@RequestBody @Valid GrantVO vo,HttpServletRequest request){
-        if(StringUtils.isBlank(request.getHeader("userNo"))) {
+    public ComResponse<Void> grant(@RequestBody @Valid GrantVO vo){
+    	String userNo = QueryIds.userNo.get();
+        if(StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"验证用户信息失败，请尝试重新登陆！");
         }
-        vo.setStaffNo(request.getHeader("userNo"));
+        vo.setStaffNo(userNo);
         return service.grant(vo);
     }
 

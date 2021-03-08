@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.store.ReturnReceiptFeginService;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.sys.BizException;
@@ -15,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +36,8 @@ public class ReturnReceiptController {
      */
     @ApiOperation(value = "确认收货", notes = "确认收货")
     @PostMapping("v1/confirm/receipt")
-    public ComResponse confirmReceipt(@RequestBody RefuseReturnDto refuseReturnDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse confirmReceipt(@RequestBody RefuseReturnDto refuseReturnDto) {
+        StaffImageBaseInfoDto user = getUser();
         refuseReturnDto.setDepartId(String.valueOf(user.getDepartId()));
         refuseReturnDto.setCreateUser(user.getStaffNo());
         refuseReturnDto.setCreateUserName(user.getName());
@@ -51,8 +51,8 @@ public class ReturnReceiptController {
      */
     @ApiOperation(value = "拒绝收货", notes = "拒绝收货")
     @PostMapping("v1/refuse/return")
-    public ComResponse refuseReturn(@RequestBody RefuseReturnDto refuseReturnDto, HttpServletRequest request) {
-        StaffImageBaseInfoDto user = getUser(request);
+    public ComResponse refuseReturn(@RequestBody RefuseReturnDto refuseReturnDto) {
+        StaffImageBaseInfoDto user = getUser();
         refuseReturnDto.setDepartId(String.valueOf(user.getDepartId()));
         refuseReturnDto.setCreateUser(user.getStaffNo());
         refuseReturnDto.setCreateUserName(user.getName());
@@ -107,8 +107,8 @@ public class ReturnReceiptController {
     public ComResponse<List<ReturnToStoreDto>> scanningProduct(@RequestBody ReturnGoodsScanDto returnGoodsScanDto){
         return returnReceiptFeginService.scanningProduct(returnGoodsScanDto);
     }
-    private StaffImageBaseInfoDto getUser(HttpServletRequest request){
-        String userNo = request.getHeader("userNo");
+    private StaffImageBaseInfoDto getUser(){
+        String userNo = QueryIds.userNo.get();
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
         if(data != null){

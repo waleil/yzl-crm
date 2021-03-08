@@ -4,13 +4,12 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.OrderAccountConfirmClient;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.order.OrderAccountConfirmService;
 import cn.net.yzl.crm.service.product.ImageService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.order.model.vo.order.OrderAccountConfirmVO;
-import cn.net.yzl.product.model.vo.image.ImageDTO;
-import cn.net.yzl.product.model.vo.image.ImageVO;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import io.swagger.annotations.*;
 import org.apache.commons.lang.StringUtils;
@@ -19,12 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -58,10 +54,10 @@ public class OrderAccountConfirmController {
 
     @ApiOperation(value = "上传图片")
     @PostMapping("v1/uploadImage")
-    public ComResponse<List<String>> uploadImage(@RequestPart MultipartFile[] files, HttpServletRequest request) throws Exception {
+    public ComResponse<List<String>> uploadImage(@RequestPart MultipartFile[] files) throws Exception {
 
         List<String> list = new ArrayList<>();
-        String userId = request.getHeader("userNo");
+        String userId = QueryIds.userNo.get();
         if (StringUtils.isBlank(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名！请检查您的登录状态！");
         }

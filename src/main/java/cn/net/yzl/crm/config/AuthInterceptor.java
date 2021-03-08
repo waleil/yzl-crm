@@ -34,7 +34,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         QueryIds.tranceId.set (request.getHeader("traceId"));
         QueryIds.spanId.set(spanId);
         QueryIds.userNo.set (request.getHeader("userNo"));
-        QueryIds.userName.set (request.getHeader("userName"));
+//        QueryIds.userName.set (request.getHeader("userName"));
         String requestURI = request.getRequestURI();
         boolean isIgnore = false;
         if (!CollectionUtils.isEmpty(ignoreUrlConfig.getUrlsSet())) {
@@ -65,7 +65,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         QueryIds.tranceId.remove();
         QueryIds.spanId.remove();
         QueryIds.userNo.remove();
-        QueryIds.userName.remove();
+//        QueryIds.userName.remove();
     }
 
     private void returnJson(HttpServletResponse response, ComResponse<Object> result) {

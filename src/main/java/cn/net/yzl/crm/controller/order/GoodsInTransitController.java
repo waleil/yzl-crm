@@ -3,8 +3,10 @@ package cn.net.yzl.crm.controller.order;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.GoodsInTransitFeign;
-import cn.net.yzl.order.model.mongo.order.GoodsInTransit;
+import cn.net.yzl.order.model.db.order.ProductDetailResDTO;
 import cn.net.yzl.order.model.mongo.order.ProductDetailDTO;
+import cn.net.yzl.order.model.mongo.order.GoodsInTransit;
+
 import cn.net.yzl.order.model.vo.order.GoodsInTransitReqDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +30,7 @@ public class GoodsInTransitController {
 
     @ApiOperation(value = "查询在途商品明细")
     @PostMapping("v1/goodsInTransitdetails")
-    public ComResponse<Page<ProductDetailDTO>>  goodsInTransitdetail (@RequestBody GoodsInTransitReqDTO dto ){
+    public ComResponse<Page<ProductDetailResDTO>>  goodsInTransitdetail (@RequestBody GoodsInTransitReqDTO dto ){
         return goodsInTransitdetails.goodsInTransitdetail(dto);
     }
 

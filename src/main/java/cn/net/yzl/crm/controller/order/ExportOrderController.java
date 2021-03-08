@@ -1,7 +1,6 @@
 package cn.net.yzl.crm.controller.order;
 
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.service.order.ExportOrderService;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 //import cn.net.yzl.crm.client.order.ExportOrderService;
 

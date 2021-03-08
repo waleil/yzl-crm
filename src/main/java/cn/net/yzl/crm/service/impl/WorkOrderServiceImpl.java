@@ -86,7 +86,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
             }
             for (WorkOrderFlowDTO workOrderFlowDTO : list) {
                 workOrderFlowDTO.setCreateId(staffNo);
-                workOrderFlowDTO.setCreateName(org.springframework.util.StringUtils.isEmpty(name)?name:QueryIds.userName.get());
+                workOrderFlowDTO.setCreateName(name);
                 workOrderFlowDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
             }
             workOrderReceiveDTO.setWorkOrderFlows(list);
