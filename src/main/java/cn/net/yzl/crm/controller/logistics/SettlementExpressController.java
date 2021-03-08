@@ -92,9 +92,21 @@ public class SettlementExpressController {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
 
-                URLEncoder.encode("对账运费订单","utf-8")+date+".xlsx");
+
+        if (searchVo.getSearchStatus() == 1) {
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
+
+                    URLEncoder.encode("对账运费","utf-8")+date+".xlsx");
+        }
+
+        if (searchVo.getSearchStatus() == 0) {
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
+
+                    URLEncoder.encode("未对账运费","utf-8")+date+".xlsx");
+        }
+
+//        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费订单"+date+".xlsx");
 
 
         // 已经结账的list
