@@ -37,6 +37,7 @@ public class OrderInvoiceControllerTests {
 			AccountRequest request = new AccountRequest();
 			request.setPageNo(1);
 			request.setPageSize(10);
+			request.setMemberCard("常立雷");
 			System.err.println(this.controller.getMemberIntegralRecords(request).getData().getItems());
 		} catch (Exception e) {
 			e.printStackTrace();
