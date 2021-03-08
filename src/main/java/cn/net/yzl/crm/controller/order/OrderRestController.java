@@ -587,7 +587,7 @@ public class OrderRestController {
 				log.error("热线工单-购物车-提交订单>>该订单[{}]商品[{}]购买总数[{}]大于库存总数[{}]", orderm.getOrderNo(), entry.getKey(),
 						entry.getValue(), pstock.getStock());
 				return ComResponse.fail(ResponseCodeEnums.ERROR,
-						String.format("商品编码[{}]商品名称[{}]库存不足。", pstock.getCode(), pstock.getName()));
+						String.format("商品编码[%s]商品名称[%s]库存不足。", pstock.getCode(), pstock.getName()));
 			}
 		}
 		orderm.setWorkOrderNo(orderin.getWorkOrderNo());// 工单号
