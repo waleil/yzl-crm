@@ -78,6 +78,6 @@ public interface ComparisonMgtFeignClient {
 	 * @author zhangweiwei
 	 * @date 2021年3月9日,上午3:03:55
 	 */
-	@PostMapping("/v1/settlementtimes")
+	@PostMapping("/comparisonmgt/v1/settlementtimes")
 	ComResponse<Map<String, Date>> querySettlementtimes(@RequestParam List<String> orderNoList);
 }
