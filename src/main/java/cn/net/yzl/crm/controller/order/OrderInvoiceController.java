@@ -16,11 +16,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +40,8 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
+import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.config.QueryIds;
@@ -69,12 +68,13 @@ import cn.net.yzl.order.model.vo.order.SettlementDetailDistinctListDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/orderInvoice")
 @Api(tags = "结算中心")
+@Slf4j
 public class OrderInvoiceController {
-    Logger logger = LoggerFactory.getLogger(OrderInvoiceController.class);
 
     private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 
@@ -94,6 +94,10 @@ public class OrderInvoiceController {
     private SettlementFein settlementFein;
     @Autowired
     private MemberFien memberFien;
+    @Resource
+    private OrderFeignClient orderFeignClient;
+    @Resource
+    private ComparisonMgtFeignClient comparisonMgtFeignClient;
 
     @ApiOperation("查询订单发票申请列表")
     @PostMapping("v1/selectInvoiceApplyOrderList")
@@ -150,42 +154,45 @@ public class OrderInvoiceController {
 
     @ApiOperation(value = "顾客积分明细表")
     @PostMapping("/v1/getMemberIntegralRecords")
-    public ComResponse<Page<MemberIntegralRecordsDTO>> getMemberIntegralRecords(@RequestBody AccountRequest request) {
-        ComResponse<Page<MemberIntegralRecordsResponse>> response = activityService.getMemberIntegralRecords(request);
-        if (!response.getStatus().equals(1)) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
-        }
-        Page<MemberIntegralRecordsResponse> responseData = response.getData();
-        if (responseData.getItems().size() == 0) {
-            return ComResponse.success();
-        }
-        List<String> orderNoList = responseData.getItems().stream().map(MemberIntegralRecordsResponse::getOrderNo).distinct().collect(Collectors.toList());
-        //查询订单服务积分数据
-        ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein.getSettlementDetailGroupByOrderNo(orderNoList);
-        List<SettlementDetailDistinctListDTO> data = dtos.getData();
-        Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
-        if (data != null) {
-            collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
-        }
-
-        Page<MemberIntegralRecordsDTO> page = new Page<>();
-        page.setPageParam(responseData.getPageParam());
-        List<MemberIntegralRecordsDTO> list = new ArrayList<>();
-        for (MemberIntegralRecordsResponse item : responseData.getItems()) {
-            MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
-            List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
-                //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-//                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
-                dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
-                dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
-            }
-            dto.setMemberName(getMemberName(item.getMemberCard()));
-            list.add(dto);
-        }
-        page.setItems(list);
-        return ComResponse.success(page);
-    }
+	public ComResponse<Page<MemberIntegralRecordsDTO>> getMemberIntegralRecords(@RequestBody AccountRequest request) {
+		ComResponse<Page<MemberIntegralRecordsResponse>> response = activityService.getMemberIntegralRecords(request);
+		if (Integer.compare(response.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("顾客积分明细表异常>>>{}", response);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用DMC接口异常：%s", response.getMessage()));
+		}
+		Page<MemberIntegralRecordsResponse> responseData = response.getData();
+		if (responseData.getItems().isEmpty()) {
+			return ComResponse.success();
+		}
+		List<String> orderNoList = responseData.getItems().stream().map(MemberIntegralRecordsResponse::getOrderNo)
+				.distinct().collect(Collectors.toList());
+		// 查询订单服务积分数据
+		ComResponse<Map<String, String>> queryFinancialNames = this.orderFeignClient.queryFinancialNames(orderNoList);
+		if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用订单财务名称集合异常：%s", queryFinancialNames.getMessage()));
+		}
+		ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
+				.querySettlementtimes(orderNoList);
+		if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用订单对账时间集合异常：%s", querySettlementtimes.getMessage()));
+		}
+		Map<String, String> financialNames = queryFinancialNames.getData();
+		Map<String, Date> settlementtimes = querySettlementtimes.getData();
+		Page<MemberIntegralRecordsDTO> page = new Page<>();
+		page.setPageParam(responseData.getPageParam());
+		page.setItems(responseData.getItems().stream().map(item -> {
+			MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
+			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
+			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
+			dto.setMemberName(getMemberName(item.getMemberCard()));
+			return dto;
+		}).collect(Collectors.toList()));
+		return ComResponse.success(page);
+	}
 
     @ApiOperation(value = "顾客积分明细表——导出")
     @PostMapping("v1/exportMemberIntegralRecords")
@@ -227,42 +234,45 @@ public class OrderInvoiceController {
 
     @ApiOperation(value = "顾客红包明细表")
     @PostMapping("v1/getMemberRedBagRecords")
-    public ComResponse<Page<MemberRedBagRecordsDTO>> getMemberRedBagRecords(@RequestBody AccountRequest request) {
-        ComResponse<Page<MemberRedBagRecordsResponse>> response = activityService.getMemberRedBagRecords(request);
-        if (!response.getStatus().equals(1)) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
-        }
-        Page<MemberRedBagRecordsResponse> responseData = response.getData();
-        if (responseData.getItems().size() == 0) {
-            return ComResponse.success();
-        }
-        List<String> orderNoList = responseData.getItems().stream().map(MemberRedBagRecordsResponse::getOrderNo).distinct().collect(Collectors.toList());
-        //查询订单服务积分数据
-        ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein.getSettlementDetailGroupByOrderNo(orderNoList);
-        List<SettlementDetailDistinctListDTO> data = dtos.getData();
-        Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
-        if (data != null) {
-            collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
-        }
-
-        Page<MemberRedBagRecordsDTO> page = new Page<>();
-        page.setPageParam(responseData.getPageParam());
-        List<MemberRedBagRecordsDTO> list = new ArrayList<>();
-        for (MemberRedBagRecordsResponse item : responseData.getItems()) {
-            MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
-            List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
-                //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-//                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
-                dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
-                dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
-            }
-            dto.setMemberName(getMemberName(item.getMemberCard()));
-            list.add(dto);
-        }
-        page.setItems(list);
-        return ComResponse.success(page);
-    }
+	public ComResponse<Page<MemberRedBagRecordsDTO>> getMemberRedBagRecords(@RequestBody AccountRequest request) {
+		ComResponse<Page<MemberRedBagRecordsResponse>> response = activityService.getMemberRedBagRecords(request);
+		if (Integer.compare(response.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("顾客红包明细表异常>>>{}", response);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用DMC接口异常：%s", response.getMessage()));
+		}
+		Page<MemberRedBagRecordsResponse> responseData = response.getData();
+		if (responseData.getItems().isEmpty()) {
+			return ComResponse.success();
+		}
+		List<String> orderNoList = responseData.getItems().stream().map(MemberRedBagRecordsResponse::getOrderNo)
+				.distinct().collect(Collectors.toList());
+		// 查询订单服务积分数据
+		ComResponse<Map<String, String>> queryFinancialNames = this.orderFeignClient.queryFinancialNames(orderNoList);
+		if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用订单财务名称集合异常：%s", queryFinancialNames.getMessage()));
+		}
+		ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
+				.querySettlementtimes(orderNoList);
+		if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用订单对账时间集合异常：%s", querySettlementtimes.getMessage()));
+		}
+		Map<String, String> financialNames = queryFinancialNames.getData();
+		Map<String, Date> settlementtimes = querySettlementtimes.getData();
+		Page<MemberRedBagRecordsDTO> page = new Page<>();
+		page.setPageParam(responseData.getPageParam());
+		page.setItems(responseData.getItems().stream().map(item -> {
+			MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
+			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
+			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
+			dto.setMemberName(getMemberName(item.getMemberCard()));
+			return dto;
+		}).collect(Collectors.toList()));
+		return ComResponse.success(page);
+	}
 
     @ApiOperation(value = "顾客红包明细表——导出")
     @PostMapping("v1/exportMemberRedBagRecords")
@@ -317,46 +327,49 @@ public class OrderInvoiceController {
 
     @ApiOperation(value = "顾客优惠券明细表")
     @PostMapping("v1/getMemberCoupon")
-    public ComResponse<Page<MemberCouponDTO>> getMemberCoupon(@RequestBody AccountRequest request) {
-        ComResponse<Page<MemberCouponResponse>> response = activityService.getMemberCoupon(request);
-        if (!response.getStatus().equals(1)) {
-            throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + response.getMessage());
-        }
-        Page<MemberCouponResponse> responseData = response.getData();
-        if (responseData.getItems().size() == 0) {
-            return ComResponse.success();
-        }
-        List<String> orderNoList = responseData.getItems().stream().map(MemberCouponResponse::getOrderNo).distinct().collect(Collectors.toList());
-        //查询订单服务积分数据
-        ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein.getSettlementDetailGroupByOrderNo(orderNoList);
-        List<SettlementDetailDistinctListDTO> data = dtos.getData();
-        Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
-        if (data != null) {
-            collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
-        }
-
-        Page<MemberCouponDTO> page = new Page<>();
-        page.setPageParam(responseData.getPageParam());
-        List<MemberCouponDTO> list = new ArrayList<>();
-        for (MemberCouponResponse item : responseData.getItems()) {
-            MemberCouponDTO dto = BeanCopyUtils.transfer(item, MemberCouponDTO.class);
-            if (item.getCouponDiscountRulesDto().size() > 0) {
-                dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getConditionFullD());
-                dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
-            }
-            List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-            if (!CollectionUtils.isEmpty(settlementDetailDistinctListDTOS)) {
-                //TODO 因为dmc的数据是mock的，所以顾客名，财物归属，结算时间关联不上，测试完成后记得改回来，目前响应时间过长
-//                dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
-                dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
-                dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
-            }
-            dto.setMemberName(getMemberName(item.getMemberCard()));
-            list.add(dto);
-        }
-        page.setItems(list);
-        return ComResponse.success(page);
-    }
+	public ComResponse<Page<MemberCouponDTO>> getMemberCoupon(@RequestBody AccountRequest request) {
+		ComResponse<Page<MemberCouponResponse>> response = activityService.getMemberCoupon(request);
+		if (Integer.compare(response.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("顾客优惠券明细表异常>>>{}", response);
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用DMC接口异常：%s", response.getMessage()));
+		}
+		Page<MemberCouponResponse> responseData = response.getData();
+		if (responseData.getItems().isEmpty()) {
+			return ComResponse.success();
+		}
+		List<String> orderNoList = responseData.getItems().stream().map(MemberCouponResponse::getOrderNo).distinct()
+				.collect(Collectors.toList());
+		// 查询订单服务积分数据
+		ComResponse<Map<String, String>> queryFinancialNames = this.orderFeignClient.queryFinancialNames(orderNoList);
+		if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用订单财务名称集合异常：%s", queryFinancialNames.getMessage()));
+		}
+		ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
+				.querySettlementtimes(orderNoList);
+		if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用订单对账时间集合异常：%s", querySettlementtimes.getMessage()));
+		}
+		Map<String, String> financialNames = queryFinancialNames.getData();
+		Map<String, Date> settlementtimes = querySettlementtimes.getData();
+		Page<MemberCouponDTO> page = new Page<>();
+		page.setPageParam(responseData.getPageParam());
+		page.setItems(responseData.getItems().stream().map(item -> {
+			MemberCouponDTO dto = BeanCopyUtils.transfer(item, MemberCouponDTO.class);
+			if (!item.getCouponDiscountRulesDto().isEmpty()) {
+				dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getConditionFullD());
+				dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
+			}
+			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
+			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
+			dto.setMemberName(getMemberName(item.getMemberCard()));
+			return dto;
+		}).collect(Collectors.toList()));
+		return ComResponse.success(page);
+	}
 
     @ApiOperation(value = "顾客优惠券明细表——导出")
     @PostMapping("v1/exportMemberCoupon")
