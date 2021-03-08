@@ -205,16 +205,25 @@ public class OrderRestController {
 	@PostMapping("/v1/submitorder")
 	@ApiOperation(value = "热线工单-购物车-提交订单", notes = "热线工单-购物车-提交订单")
 	public ComResponse<OrderOut> submitOrder(@RequestBody OrderIn orderin) {
+		// 如果订单里没有商品
+		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
+		}
+		if (!StringUtils.hasText(orderin.getMemberCardNo())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客号不能为空。");
+		}
+		if (!StringUtils.hasText(orderin.getMemberName())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客姓名不能为空。");
+		}
+		if (!StringUtils.hasText(orderin.getMemberTelphoneNo())) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客联系方式不能为空。");
+		}
 		OrderM orderm = new OrderM();// 订单信息
 		this.initOrder(orderm);
 		Optional.ofNullable(orderin.getAmountStored()).ifPresent(c -> {
 			orderm.setAmountStored(c.multiply(bd100).intValue());
 			orderm.setPayMode(PayMode.PAY_MODE_4.getCode());// 客户账户扣款
 		});
-		// 如果订单里没有商品
-		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
-		}
 		// 按顾客号查询顾客信息
 		GeneralResult<Member> mresult = this.memberFien.getMember(orderin.getMemberCardNo());
 		// 如果服务调用异常
