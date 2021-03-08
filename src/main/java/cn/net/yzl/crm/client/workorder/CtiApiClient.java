@@ -43,5 +43,5 @@ public interface CtiApiClient {
      * @return
      */
     @GetMapping("/v1/checkCallCount")
-    ComResponse checkCallCount(@RequestParam("staffNo") String staffNo);
+    ComResponse checkCallCount(@RequestParam("staffNo") String staffNo,@RequestParam("workOrderType") Integer workOrderType);
 }
