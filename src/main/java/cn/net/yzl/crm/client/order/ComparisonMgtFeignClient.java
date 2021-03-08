@@ -1,8 +1,13 @@
 package cn.net.yzl.crm.client.order;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
@@ -64,4 +69,15 @@ public interface ComparisonMgtFeignClient {
 	 */
 	@PostMapping("/comparisonmgt/v1/compare")
 	ComResponse<Object> compareOrder(@RequestBody CompareOrderParam param);
+
+	/**
+	 * 订单对账时间集合
+	 * 
+	 * @param orderNoList 订单号集合
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年3月9日,上午3:03:55
+	 */
+	@PostMapping("/v1/settlementtimes")
+	ComResponse<Map<String, Date>> querySettlementtimes(@RequestParam List<String> orderNoList);
 }
