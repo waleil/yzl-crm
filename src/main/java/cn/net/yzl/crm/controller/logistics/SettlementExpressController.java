@@ -92,7 +92,10 @@ public class SettlementExpressController {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费订单"+date+".xlsx");
+
+
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
+                URLEncoder.encode("对账运费订单"+date+".xlsx","utf-8"));
 
 
         // 已经结账的list
