@@ -4,7 +4,6 @@ package cn.net.yzl.crm.controller.logistics;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
-import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -14,6 +13,7 @@ import cn.net.yzl.logistics.model.vo.ExpressImportParam;
 import cn.net.yzl.logistics.model.vo.ExpressSettlementPageVo;
 import cn.net.yzl.logistics.model.vo.ImportResult;
 import cn.net.yzl.logistics.settleexpresscharge.*;
+import cn.net.yzl.logistics.settleexpresscharge.excel.ResultExcelBDVo;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultExcelVo;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultRecionExcelVo;
 
@@ -33,6 +33,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -78,11 +79,11 @@ public class SettlementExpressController {
 
     @ApiOperation(value = "导出对账或者未对账数据",notes = "运费对账订单的导出")
     @PostMapping("v1/exportInventoryExcel")
-    public ComResponse<List<ResultVo>> exportExpressChargeExcel(@RequestBody SearchVo searchVo, HttpServletResponse httpServletResponse) throws IOException {
-        ComResponse<List<ResultVo>> listComResponse = settlement.exportExpressChargeExcel(searchVo);
+    public ComResponse<List<ResultExportVo>> exportExpressChargeExcel(@RequestBody SearchVo searchVo, HttpServletResponse httpServletResponse) throws IOException {
+        ComResponse<List<ResultExportVo>> listComResponse = settlement.exportExpressChargeExcel(searchVo);
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
-        List<ResultVo> listComResponseData = listComResponse.getData();
+        List<ResultExportVo> listComResponseData = listComResponse.getData();
         //盘点日期
         Date inventoryDate = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -92,15 +93,29 @@ public class SettlementExpressController {
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
         httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费订单"+date+".xlsx");
+
+
+        if (searchVo.getSearchStatus() == 1) {
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
+
+                    URLEncoder.encode("对账运费","utf-8")+date+".xlsx");
+        }
+
+        if (searchVo.getSearchStatus() == 0) {
+            httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
+
+                    URLEncoder.encode("未对账运费","utf-8")+date+".xlsx");
+        }
+
+//        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费订单"+date+".xlsx");
 
 
         // 已经结账的list
         List<ResultRecionExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
 
 
-        List<ResultExcelVo> inventoryProductResultExcelVoList1 = new ArrayList<>();
-        for (ResultVo listComResponseDatum : listComResponseData) {
+        List<ResultExcelBDVo> inventoryProductResultExcelVoList1 = new ArrayList<>();
+        for (ResultExportVo listComResponseDatum : listComResponseData) {
             if(searchVo.getSearchStatus()==1){
 //                httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费"+date+".xlsx");
                 ResultRecionExcelVo inventoryProductResultExcelVo = new ResultRecionExcelVo();
@@ -109,13 +124,10 @@ public class SettlementExpressController {
             }
             if(searchVo.getSearchStatus()==0){
 //                httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"未对账运费"+date+".xlsx");
-                ResultExcelVo inventoryProductResultExcelVo = new ResultExcelVo();
+                ResultExcelBDVo inventoryProductResultExcelVo = new ResultExcelBDVo();
                 BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
                 inventoryProductResultExcelVoList1.add(inventoryProductResultExcelVo);
             }
-
-
-
         }
         //向前端写入文件流流
         if (searchVo.getSearchStatus() == 1) {
@@ -152,8 +164,8 @@ public class SettlementExpressController {
 
     @PostMapping("/seach/reconciliation")
     @ApiOperation("对账")
-    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<ReconExpressNum> searchVo ){
-        String userNo = QueryIds.userNo.get();
+    public  ComResponse<Boolean>  settlementInterface(@RequestBody @Valid List<ReconExpressNum> searchVo ,HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
 
@@ -168,8 +180,8 @@ public class SettlementExpressController {
 
     @PostMapping("/close/account")
     @ApiOperation("生成结算单")
-    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo){
-        String userNo = QueryIds.userNo.get();
+    public  ComResponse<Boolean>  closeAccount(@RequestBody @Valid GeneratorSettVo searchVo, HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
         if(data != null){
@@ -193,7 +205,7 @@ public class SettlementExpressController {
 
     @PostMapping("seach/nosett")
     @ApiOperation("未对账数据查询")
-    public  ComResponse<Page<ResultVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo){
+    public  ComResponse<Page<ResultDecimalVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo){
         return  settlement.searchSettlementData(searchVo);
     }
 
@@ -214,8 +226,8 @@ public class SettlementExpressController {
 
     @PostMapping("/add/settle/detail")
     @ApiOperation("添加结算")
-    public ComResponse addSettleDetail(@RequestBody @Valid ExpressSettleDetailAddVO addVO){
-        String userNo = QueryIds.userNo.get();
+    public ComResponse addSettleDetail(@RequestBody @Valid ExpressSettleDetailAddVO addVO, HttpServletRequest request){
+        String userNo = request.getHeader("userNo");
         ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
         StaffImageBaseInfoDto data = user.getData();
         if(data != null){

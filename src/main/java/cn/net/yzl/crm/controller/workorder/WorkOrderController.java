@@ -643,7 +643,7 @@ public class WorkOrderController {
         }
         recoveryDTO.setStaffName(detailsByNo.getData().getName());
         recoveryDTO.setCreateId(QueryIds.userNo.get());
-        recoveryDTO.setCreateName(detailsByNo.getData().getName());
+        recoveryDTO.setDeptId(detailsByNo.getData().getDepartId());
         return workOrderClient.handIn(recoveryDTO);
     }
 
@@ -747,6 +747,8 @@ public class WorkOrderController {
             recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
             recoveryDTO.setMemberName(isHandInDTO.getMemberName());
             recoveryDTO.setApplyUpMemo(isHandInDTO.getApplyUpMemo());
+            recoveryDTO.setDeptId(detailsByNo.getData().getDepartId());
+            recoveryDTO.setDeptName(detailsByNo.getData().getDepartName());
             recoveryDTO.setStatus(CommonConstants.ONE);
             workOrderClient.handIn(recoveryDTO);
         }else {

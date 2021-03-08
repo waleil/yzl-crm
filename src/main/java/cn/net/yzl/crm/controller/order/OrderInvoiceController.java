@@ -71,7 +71,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @RestController
-@RequestMapping("orderInvoice")
+@RequestMapping("/orderInvoice")
 @Api(tags = "结算中心")
 public class OrderInvoiceController {
     Logger logger = LoggerFactory.getLogger(OrderInvoiceController.class);
@@ -149,7 +149,7 @@ public class OrderInvoiceController {
 
 
     @ApiOperation(value = "顾客积分明细表")
-    @PostMapping("v1/getMemberIntegralRecords")
+    @PostMapping("/v1/getMemberIntegralRecords")
     public ComResponse<Page<MemberIntegralRecordsDTO>> getMemberIntegralRecords(@RequestBody AccountRequest request) {
         ComResponse<Page<MemberIntegralRecordsResponse>> response = activityService.getMemberIntegralRecords(request);
         if (!response.getStatus().equals(1)) {

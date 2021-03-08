@@ -6,6 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -142,6 +143,9 @@ public class OrderSaleController {
 	@GetMapping("/v1/selectOrderSaleProductInfoByOrderNo")
 	public ComResponse<CreateOrderSaleForSearchDTO> selectOrderSaleProductInfoByOrderNo(
 			@RequestParam @ApiParam(value = "订单编号") String orderNo) {
+		if (!StringUtils.hasText(orderNo)) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR,"订单号不能为空!");
+		}
 		return orderSaleClient.selectOrderSaleProductInfoByOrderNo(orderNo);
 	}
 
