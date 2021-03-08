@@ -13,6 +13,7 @@ import cn.net.yzl.logistics.model.vo.ExpressImportParam;
 import cn.net.yzl.logistics.model.vo.ExpressSettlementPageVo;
 import cn.net.yzl.logistics.model.vo.ImportResult;
 import cn.net.yzl.logistics.settleexpresscharge.*;
+import cn.net.yzl.logistics.settleexpresscharge.excel.ResultExcelBDVo;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultExcelVo;
 import cn.net.yzl.logistics.settleexpresscharge.excel.ResultRecionExcelVo;
 
@@ -78,11 +79,11 @@ public class SettlementExpressController {
 
     @ApiOperation(value = "导出对账或者未对账数据",notes = "运费对账订单的导出")
     @PostMapping("v1/exportInventoryExcel")
-    public ComResponse<List<ResultVo>> exportExpressChargeExcel(@RequestBody SearchVo searchVo, HttpServletResponse httpServletResponse) throws IOException {
-        ComResponse<List<ResultVo>> listComResponse = settlement.exportExpressChargeExcel(searchVo);
+    public ComResponse<List<ResultExportVo>> exportExpressChargeExcel(@RequestBody SearchVo searchVo, HttpServletResponse httpServletResponse) throws IOException {
+        ComResponse<List<ResultExportVo>> listComResponse = settlement.exportExpressChargeExcel(searchVo);
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
-        List<ResultVo> listComResponseData = listComResponse.getData();
+        List<ResultExportVo> listComResponseData = listComResponse.getData();
         //盘点日期
         Date inventoryDate = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -113,8 +114,8 @@ public class SettlementExpressController {
         List<ResultRecionExcelVo> inventoryProductResultExcelVoList = new ArrayList<>();
 
 
-        List<ResultExcelVo> inventoryProductResultExcelVoList1 = new ArrayList<>();
-        for (ResultVo listComResponseDatum : listComResponseData) {
+        List<ResultExcelBDVo> inventoryProductResultExcelVoList1 = new ArrayList<>();
+        for (ResultExportVo listComResponseDatum : listComResponseData) {
             if(searchVo.getSearchStatus()==1){
 //                httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费"+date+".xlsx");
                 ResultRecionExcelVo inventoryProductResultExcelVo = new ResultRecionExcelVo();
@@ -123,13 +124,10 @@ public class SettlementExpressController {
             }
             if(searchVo.getSearchStatus()==0){
 //                httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"未对账运费"+date+".xlsx");
-                ResultExcelVo inventoryProductResultExcelVo = new ResultExcelVo();
+                ResultExcelBDVo inventoryProductResultExcelVo = new ResultExcelBDVo();
                 BeanUtils.copyProperties(listComResponseDatum,inventoryProductResultExcelVo);
                 inventoryProductResultExcelVoList1.add(inventoryProductResultExcelVo);
             }
-
-
-
         }
         //向前端写入文件流流
         if (searchVo.getSearchStatus() == 1) {
