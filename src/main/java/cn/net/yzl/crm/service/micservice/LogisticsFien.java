@@ -52,7 +52,7 @@ public interface LogisticsFien {
 
     @PostMapping("settlement/seach/nosett")
     @ApiOperation("未对账数据查询")
-    public  ComResponse<Page<ResultVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo);
+    public  ComResponse<Page<ResultDecimalVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo);
 
     @ApiOperation(value = "导入")
     @PostMapping("settlement/logistics/import/freight")
