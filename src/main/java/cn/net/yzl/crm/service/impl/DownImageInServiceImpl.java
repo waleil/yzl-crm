@@ -173,12 +173,10 @@ public class DownImageInServiceImpl implements DownImageInService {
             if("1".equals(payType)) {
 
                 postalExcelModel.setAgentMoney("是");
-                //待处理
 //                postalExcelModel.setReceivableMoney(expressOrderInfo.getCash());
                 postalExcelModel.setReceivableMoney(handleMoney(expressOrderInfo.getCash()));
             }else{
                 postalExcelModel.setAgentMoney("否");
-                //待处理
                 postalExcelModel.setReceivableMoney("0");
             }
             postalExcelModel.setInInfo(expressOrderInfo.getDeliverCode());
@@ -221,8 +219,7 @@ public class DownImageInServiceImpl implements DownImageInService {
             dpExcelModel.setFreightType("月结");
             dpExcelModel.setProductName(expressOrderInfo.getProductName());
             dpExcelModel.setProxyReturnMoney("三日退");
-            //todo
-            dpExcelModel.setProxyMoney(expressOrderInfo.getCash());
+            dpExcelModel.setProxyMoney(handleMoney(expressOrderInfo.getCash()));
 //            dpExcelModel.setOpenName();
             dpExcelModel.setProxyAccount(expressOrderInfo.getMonthAccount());
             dpExcelModels.add(dpExcelModel);
