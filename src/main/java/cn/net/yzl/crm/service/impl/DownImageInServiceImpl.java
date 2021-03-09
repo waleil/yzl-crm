@@ -162,7 +162,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         List<PostalExcelModel> postalExcelModels = new ArrayList<>();
         for (ExpressOrderInfo expressOrderInfo : expressOrderInfos) {
             PostalExcelModel postalExcelModel = new PostalExcelModel();
-            postalExcelModel.setExpressNum(expressOrderInfo.getExpressNum());
+            postalExcelModel.setExpressNum(expressOrderInfo.getDeliverCode());
             postalExcelModel.setOprName(expressOrderInfo.getOprName());
             postalExcelModel.setPhone(expressOrderInfo.getPhone());
             String sendAddrDetail = StrUtil.builder(expressOrderInfo.getProvince()).append(expressOrderInfo.getCity())
