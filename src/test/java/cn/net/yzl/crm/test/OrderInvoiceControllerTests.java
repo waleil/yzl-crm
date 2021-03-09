@@ -29,7 +29,9 @@ public class OrderInvoiceControllerTests {
 			AccountRequest request = new AccountRequest();
 			request.setPageNo(1);
 			request.setPageSize(10);
-			System.err.println(this.controller.getMemberCoupon(request).getData().getItems());
+			request.setMemberCard("常立雷1");
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(this.controller.getMemberCoupon(request)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -41,7 +43,7 @@ public class OrderInvoiceControllerTests {
 			AccountRequest request = new AccountRequest();
 			request.setPageNo(1);
 			request.setPageSize(10);
-//			request.setMemberCard("常立雷");
+			request.setMemberCard("常立雷1");
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter()
 					.writeValueAsString(this.controller.getMemberIntegralRecords(request)));
 		} catch (Exception e) {
@@ -55,7 +57,9 @@ public class OrderInvoiceControllerTests {
 			AccountRequest request = new AccountRequest();
 			request.setPageNo(1);
 			request.setPageSize(10);
-			System.err.println(this.controller.getMemberRedBagRecords(request).getData().getItems());
+			request.setMemberCard("常立雷1");
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(this.controller.getMemberRedBagRecords(request)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
