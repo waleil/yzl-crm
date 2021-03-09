@@ -11,33 +11,35 @@ import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
  */
 public class ExcelStyleUtils {
 
-
-    /**
-     * 生成表头样式
-     * @return
-     */
-    public static HorizontalCellStyleStrategy getHorizontalCellStyleStrategy(){
-        // 头部的样式
-        WriteCellStyle headWriteCellStyle = new WriteCellStyle();
-        // 背景颜色
-        headWriteCellStyle.setFillForegroundColor((short)41);
-        //头部字体
-        WriteFont headWriteFont = new WriteFont();
-        //头部字体大小
-        headWriteFont.setFontHeightInPoints((short) 12);
-        headWriteFont.setFontName("Microsoft YaHei Regular");
-        headWriteCellStyle.setWriteFont(headWriteFont);
-        // 内容的策略
-        WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
-        WriteFont contentWriteFont = new WriteFont();
-        //字体名称
-        contentWriteFont.setFontName("Microsoft YaHei Regular");
-        // 字体大小
-        contentWriteFont.setFontHeightInPoints((short) 12);
-        contentWriteCellStyle.setWriteFont(contentWriteFont);
-        // 这个策略是 头是头的样式 内容是内容的样式 其他的策略可以自己实现
-        HorizontalCellStyleStrategy horizontalCellStyleStrategy = new HorizontalCellStyleStrategy(headWriteCellStyle,
-                contentWriteCellStyle);
-        return horizontalCellStyleStrategy;
-    }
+	/**
+	 * 生成表头样式
+	 * 
+	 * @return
+	 */
+	public static HorizontalCellStyleStrategy getHorizontalCellStyleStrategy() {
+		// 头部的样式
+		WriteCellStyle headWriteCellStyle = new WriteCellStyle();
+		// 头部背景颜色
+		headWriteCellStyle.setFillForegroundColor((short) 41);
+		// 头部字体
+		WriteFont headWriteFont = new WriteFont();
+		// 头部字体大小
+		headWriteFont.setFontHeightInPoints((short) 12);
+		headWriteCellStyle.setWriteFont(headWriteFont);
+		headWriteCellStyle.setShrinkToFit(true);
+		// 内容的样式
+		WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
+		// 内容字体
+		WriteFont contentWriteFont = new WriteFont();
+		// 内容字体名称
+		contentWriteFont.setFontName("Microsoft YaHei Regular");
+		// 内容字体大小
+		contentWriteFont.setFontHeightInPoints((short) 12);
+		contentWriteCellStyle.setWriteFont(contentWriteFont);
+		contentWriteCellStyle.setShrinkToFit(true);
+		// 这个策略是 头是头的样式 内容是内容的样式 其他的策略可以自己实现
+		HorizontalCellStyleStrategy horizontalCellStyleStrategy = new HorizontalCellStyleStrategy(headWriteCellStyle,
+				contentWriteCellStyle);
+		return horizontalCellStyleStrategy;
+	}
 }
