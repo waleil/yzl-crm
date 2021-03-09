@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.client.order;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -91,4 +92,15 @@ public interface OrderFeignClient {
 	 */
 	@GetMapping("/order/v1/memberfirstorderchannel/{memberCard}")
 	ComResponse<MemberChannel> queryMemberFirstOrderChannel(@PathVariable String memberCard);
+
+	/**
+	 * 订单财务名称集合
+	 * 
+	 * @param orderNoList 订单号集合
+	 * @return
+	 * @author zhangweiwei
+	 * @date 2021年3月9日,上午3:02:19
+	 */
+	@PostMapping("/order/v1/financialnames")
+	ComResponse<Map<String, String>> queryFinancialNames(@RequestParam List<String> orderNoList);
 }

@@ -5,6 +5,8 @@ import javax.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import cn.net.yzl.activity.model.requestModel.AccountRequest;
 import cn.net.yzl.crm.controller.order.OrderInvoiceController;
 
@@ -18,6 +20,8 @@ import cn.net.yzl.crm.controller.order.OrderInvoiceController;
 public class OrderInvoiceControllerTests {
 	@Resource
 	private OrderInvoiceController controller;
+	@Resource
+	private ObjectMapper objectMapper;
 
 	@Test
 	public void testGetMemberCoupon() {
@@ -25,7 +29,9 @@ public class OrderInvoiceControllerTests {
 			AccountRequest request = new AccountRequest();
 			request.setPageNo(1);
 			request.setPageSize(10);
-			System.err.println(this.controller.getMemberCoupon(request).getData().getItems());
+			request.setMemberCard("常立雷1");
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(this.controller.getMemberCoupon(request)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -37,7 +43,9 @@ public class OrderInvoiceControllerTests {
 			AccountRequest request = new AccountRequest();
 			request.setPageNo(1);
 			request.setPageSize(10);
-			System.err.println(this.controller.getMemberIntegralRecords(request).getData().getItems());
+			request.setMemberCard("常立雷1");
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(this.controller.getMemberIntegralRecords(request)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -49,7 +57,9 @@ public class OrderInvoiceControllerTests {
 			AccountRequest request = new AccountRequest();
 			request.setPageNo(1);
 			request.setPageSize(10);
-			System.err.println(this.controller.getMemberRedBagRecords(request).getData().getItems());
+			request.setMemberCard("常立雷1");
+			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter()
+					.writeValueAsString(this.controller.getMemberRedBagRecords(request)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -52,7 +52,7 @@ public interface LogisticsFien {
 
     @PostMapping("settlement/seach/nosett")
     @ApiOperation("未对账数据查询")
-    public  ComResponse<Page<ResultVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo);
+    public  ComResponse<Page<ResultDecimalVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo);
 
     @ApiOperation(value = "导入")
     @PostMapping("settlement/logistics/import/freight")
@@ -226,7 +226,7 @@ public interface LogisticsFien {
 
     @PostMapping("settlement/export/ExpressChargeExcel")
     @ApiOperation("已对账未对账导出")
-    ComResponse<List<ResultVo>> exportExpressChargeExcel(SearchVo searchVo);
+    ComResponse<List<ResultExportVo>> exportExpressChargeExcel(SearchVo searchVo);
 
 
     @PostMapping("settlement/v1/allCreateSettle")

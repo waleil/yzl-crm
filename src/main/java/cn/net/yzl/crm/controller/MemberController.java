@@ -175,6 +175,11 @@ public class MemberController {
             member.setUpdator_name(data.getName());
         }
 
+        member.setAdver_code(memberReferralVO.getAdvId());
+        member.setAdver_name(memberReferralVO.getAdvName());
+
+        member.setMedia_id(memberReferralVO.getMediaId());
+        member.setMedia_name(memberReferralVO.getMediaName());
         //介绍人信息
         member.setIntro_no(memberReferralVO.getIntroNo());
         member.setIntro_name(memberReferralVO.getIntroName());
