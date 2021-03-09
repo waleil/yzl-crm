@@ -121,7 +121,7 @@ public class DispatchRuleController {
         try {
             ComResponse<StaffImageBaseInfoDto> staffResponse = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
             if(null == staffResponse || staffResponse.getCode() != 200){
-                return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), "请求[员工接口]，返回有误");
+                return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), "[员工接口]，返回异常");
             }
         } catch (Exception e) {
             log.error("请求[用户接口] 异常 ，异常信息:{}", e.getMessage());
