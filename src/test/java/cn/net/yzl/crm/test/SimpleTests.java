@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,18 @@ import cn.net.yzl.order.model.vo.order.OrderIn;
  * @date 2021年1月18日,下午7:10:59
  */
 public class SimpleTests {
+	@Test
+	public void testRegex() {
+		try {
+			Pattern pattern = Pattern.compile("^\\d+$");
+			System.err.println(pattern.matcher("131479").matches());
+			System.err.println(pattern.matcher("131我是谁479").matches());
+			System.err.println(pattern.matcher("-131.479").matches());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Test
 	public void testValues() {
 		int code = 1;
