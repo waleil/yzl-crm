@@ -3,6 +3,7 @@ package cn.net.yzl.crm.client.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.model.dto.*;
+import cn.net.yzl.model.dto.express.ExpressOrderInfo;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -78,6 +79,8 @@ public interface RemoveStockFeignService {
     @PostMapping("removestock/v1/updateOutStoreOrderStatus")
     public ComResponse updateOutStoreOrderPrintStatus(@RequestBody List<OrderNoPrintStatusVo> orderNoPrintStatusVoList);
 
-
+    @PostMapping(value = "removestock/v1/getSenderExpressInfo")
+    @ApiOperation("导出快递信息")
+    public ComResponse<List<ExpressOrderInfo>> getSenderExpressInfo(@RequestBody OutStoreOrderInfoParamVo outStoreOrderInfoParamVo);
 
 }

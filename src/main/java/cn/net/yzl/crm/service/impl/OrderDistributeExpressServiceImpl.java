@@ -34,7 +34,7 @@ public class OrderDistributeExpressServiceImpl implements OrderDistributeExpress
         ExcelReader excelReader = null;
         try {
             //读取excel
-            excelReader = EasyExcel.read(file.getInputStream(), InventoryProductVo.class, expressExcelListener).build();
+            excelReader = EasyExcel.read(file.getInputStream(), ExpressImportModel.class, expressExcelListener).build();
             excelReader.readAll();
             //获取错误信息
             Map<String, String> errorMessageMap = expressExcelListener.getErrorMessageMap();

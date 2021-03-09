@@ -7,6 +7,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.ProductPurchaseWarnFeignService;
 import cn.net.yzl.crm.client.store.ProductStockFeignService;
+import cn.net.yzl.crm.client.store.RemoveStockFeignService;
 import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.logistics.print.AppreciationDTOS;
@@ -48,6 +49,8 @@ public class DownImageInServiceImpl implements DownImageInService {
     @Autowired
     private ProductPurchaseWarnFeignService feignService;
 
+    @Autowired
+    private RemoveStockFeignService removeStockFeignService;
 
     @Override
     public void exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException {
@@ -128,7 +131,7 @@ public class DownImageInServiceImpl implements DownImageInService {
     }
 
     public void exportExpressPrintInfo(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo, HttpServletResponse httpServletResponse) throws IOException {
-        ComResponse<List<ExpressOrderInfo>> senderExpressInfo = feignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
+        ComResponse<List<ExpressOrderInfo>> senderExpressInfo = removeStockFeignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
         log.info("仓储中心数据物流:{}", JsonUtil.toJsonStr(senderExpressInfo));
         if (senderExpressInfo==null || senderExpressInfo.getCode() !=200L){
             httpServletResponse.setContentType("application/json;charset=utf-8");
@@ -243,7 +246,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
-                +URLEncoder.encode("德邦_"+sysDate+".xlsx", "utf-8")+".xlsx");
+                +URLEncoder.encode("德邦_"+sysDate+".xlsx", "utf-8"));
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), NewDPExcelModel.class)
@@ -278,7 +281,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
-                +URLEncoder.encode("韵达_"+sysDate+".xlsx", "utf-8")+".xlsx");
+                +URLEncoder.encode("韵达_"+sysDate+".xlsx", "utf-8"));
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), YunDaExcelModel.class)
