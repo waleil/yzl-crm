@@ -153,7 +153,7 @@ public class DownImageInServiceImpl implements DownImageInService {
             handleDP(expressOrderInfos,httpServletResponse);
         }else if ("YUNDA".equals(expressNo)){
             handleYUNDA(expressOrderInfos,httpServletResponse);
-        }else if ("EMS".equals(expressNo)){
+        }else if ("EMS".equals(expressNo) || "sjzyj".equals(expressNo) || "bdyj".equals(expressNo)){
             handleEMS(expressOrderInfos,httpServletResponse);
         }
     }
@@ -162,7 +162,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         List<PostalExcelModel> postalExcelModels = new ArrayList<>();
         for (ExpressOrderInfo expressOrderInfo : expressOrderInfos) {
             PostalExcelModel postalExcelModel = new PostalExcelModel();
-            postalExcelModel.setExpressNum(expressOrderInfo.getExpressNum());
+            postalExcelModel.setExpressNum(expressOrderInfo.getDeliverCode());
             postalExcelModel.setOprName(expressOrderInfo.getOprName());
             postalExcelModel.setPhone(expressOrderInfo.getPhone());
             String sendAddrDetail = StrUtil.builder(expressOrderInfo.getProvince()).append(expressOrderInfo.getCity())
@@ -225,7 +225,7 @@ public class DownImageInServiceImpl implements DownImageInService {
                     .append(expressOrderInfo.getArea()).append(expressOrderInfo.getAddr()).toString();
             dpExcelModel.setSendAddr(sendAddrDetail);
             dpExcelModel.setMemberName(expressOrderInfo.getMemberName());
-            dpExcelModel.setMemberPhone(expressOrderInfo.getMemberPhone());
+            dpExcelModel.setMobilePhone(expressOrderInfo.getMemberPhone());
             String targetAddrDetail = StrUtil.builder(expressOrderInfo.getTargetProvince()).append(expressOrderInfo.getTargetCity())
                     .append(expressOrderInfo.getTargetArea()).append(expressOrderInfo.getTargetAddr()).toString();
             dpExcelModel.setAddr(targetAddrDetail);
@@ -236,6 +236,7 @@ public class DownImageInServiceImpl implements DownImageInService {
             dpExcelModel.setProxyMoney(handleMoney(expressOrderInfo.getCash()));
 //            dpExcelModel.setOpenName();
             dpExcelModel.setProxyAccount(expressOrderInfo.getMonthAccount());
+            dpExcelModel.setOpenName(expressOrderInfo.getFinancialOwner());
             dpExcelModels.add(dpExcelModel);
         }
 
@@ -246,7 +247,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
-                +URLEncoder.encode("德邦_"+sysDate+".xlsx", "utf-8"));
+                +URLEncoder.encode("DEPPON_"+sysDate+".xlsx", "utf-8"));
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), NewDPExcelModel.class)
@@ -265,7 +266,7 @@ public class DownImageInServiceImpl implements DownImageInService {
                     .append(expressOrderInfo.getArea()).append(expressOrderInfo.getAddr()).toString();
             yunDaExcelModel.setSendAddr(sendAddrDetail);
             yunDaExcelModel.setMemberName(expressOrderInfo.getMemberName());
-            yunDaExcelModel.setMemberPhone(expressOrderInfo.getMemberPhone());
+            yunDaExcelModel.setMobilePhone(expressOrderInfo.getMemberPhone());
             String targetAddrDetail = StrUtil.builder(expressOrderInfo.getTargetProvince()).append(expressOrderInfo.getTargetCity())
                     .append(expressOrderInfo.getTargetArea()).append(expressOrderInfo.getTargetAddr()).toString();
             yunDaExcelModel.setAddrDetail(targetAddrDetail);
@@ -281,7 +282,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
-                +URLEncoder.encode("韵达_"+sysDate+".xlsx", "utf-8"));
+                +URLEncoder.encode("YUNDA_"+sysDate+".xlsx", "utf-8"));
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), YunDaExcelModel.class)

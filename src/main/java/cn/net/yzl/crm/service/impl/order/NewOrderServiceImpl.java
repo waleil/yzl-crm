@@ -544,6 +544,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setOrderChanal(CommonConstant.ORDER_CHANAL_2);
 		orderM.setIsHistory(CommonConstant.IS_HISTORY_0);
 		orderM.setRemark(orderTemp.getRemark());
+		orderM.setWorkCode(orderTemp.getWorkCode());
 		orderM.setWorkCodeStr(orderTemp.getWorkCodeStr());
 		orderM.setPersonChangeId(orderTemp.getPersonChangeId());
 

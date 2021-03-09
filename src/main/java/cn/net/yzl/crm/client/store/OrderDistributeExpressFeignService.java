@@ -2,7 +2,6 @@ package cn.net.yzl.crm.client.store;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.model.dto.InventoryProductDto;
 import cn.net.yzl.model.dto.OrderDistributeExpressDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleDetailDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleListDTO;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
