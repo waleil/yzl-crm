@@ -3,9 +3,13 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.crm.client.store.InventoryFeginService;
 import cn.net.yzl.crm.service.DownImageInService;
+import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.model.vo.*;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.metadata.style.WriteCellStyle;
+import com.alibaba.excel.write.metadata.style.WriteFont;
+import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -87,6 +91,10 @@ public class DownImageInController {
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
 
+//        WriteCellStyle writeCellStyle = new WriteCellStyle();
+//        WriteFont writeFont = new WriteFont();
+
+
         Integer status = inventoryExcelVo.getStatus();
         List<InventoryProductExcelVo> listComResponseData = listComResponse.getData();
 
@@ -104,9 +112,13 @@ public class DownImageInController {
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"PD"+date+".xlsx");
 
+
+        //表头样式
+        HorizontalCellStyleStrategy horizontalCellStyleStrategy = ExcelStyleUtils.getHorizontalCellStyleStrategy();
+
         if (status==1){
             //向前端写入文件流流
-            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class)
+            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductExcelVo.class).registerWriteHandler(horizontalCellStyleStrategy)
                     .sheet("盘点商品库存表").doWrite(listComResponseData);
         }else if (status==2 || status==3){
 
@@ -117,7 +129,7 @@ public class DownImageInController {
                 inventoryProductResultExcelVoList.add(inventoryProductResultExcelVo);
             }
             //向前端写入文件流流
-            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductResultExcelVo.class)
+            EasyExcel.write(httpServletResponse.getOutputStream(), InventoryProductResultExcelVo.class).registerWriteHandler(horizontalCellStyleStrategy)
                     .sheet("盘点商品库存表").doWrite(inventoryProductResultExcelVoList);
         }
 

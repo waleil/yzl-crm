@@ -8,6 +8,7 @@ import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.ProductPurchaseWarnFeignService;
 import cn.net.yzl.crm.client.store.ProductStockFeignService;
 import cn.net.yzl.crm.service.DownImageInService;
+import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.logistics.print.AppreciationDTOS;
 import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
 import cn.net.yzl.model.dto.express.*;
@@ -15,6 +16,7 @@ import cn.net.yzl.model.vo.OutStoreOrderInfoParamVo;
 import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.model.vo.ProductStockExcelVo;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +78,11 @@ public class DownImageInServiceImpl implements DownImageInService {
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +"productStock"+sysDate +".xlsx");
 
 
+        //表头样式
+        HorizontalCellStyleStrategy horizontalCellStyleStrategy = ExcelStyleUtils.getHorizontalCellStyleStrategy();
 
         //向前端写入文件流流
-        EasyExcel.write(httpServletResponse.getOutputStream(), ProductStockExcelVo.class)
+        EasyExcel.write(httpServletResponse.getOutputStream(), ProductStockExcelVo.class).registerWriteHandler(horizontalCellStyleStrategy)
                 .sheet("库存表").doWrite(listComResponseData);
     }
 
@@ -115,8 +119,11 @@ public class DownImageInServiceImpl implements DownImageInService {
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=" +"spcgyj"+sysDate +".xlsx");
 
+        //表头样式
+        HorizontalCellStyleStrategy horizontalCellStyleStrategy = ExcelStyleUtils.getHorizontalCellStyleStrategy();
+
         //向前端写入文件流流
-        EasyExcel.write(httpServletResponse.getOutputStream(), ProductPurchaseWarnExcelDTO.class)
+        EasyExcel.write(httpServletResponse.getOutputStream(), ProductPurchaseWarnExcelDTO.class).registerWriteHandler(horizontalCellStyleStrategy)
                 .sheet("商品库存预警").doWrite(listComResponseData);
     }
 
