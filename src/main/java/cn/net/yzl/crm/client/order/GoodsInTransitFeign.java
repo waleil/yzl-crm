@@ -2,9 +2,9 @@ package cn.net.yzl.crm.client.order;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
-import cn.net.yzl.order.model.db.order.ProductDetailDTO;
 import cn.net.yzl.order.model.db.order.ProductDetailResDTO;
 import cn.net.yzl.order.model.mongo.order.GoodsInTransit;
+import cn.net.yzl.order.model.mongo.order.ProductDetailDTO;
 import cn.net.yzl.order.model.vo.order.GoodsInTransitReqDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;

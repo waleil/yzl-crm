@@ -50,6 +50,10 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
 	public ComResponse<OrderInfoVO> selectOrderInfo(String orderNo) {
 		OrderInfoVO orderInfoVO = new OrderInfoVO();
 		ComResponse<List<OrderInfoResDTO>> respons = orderSearchClient.selectOrderInfo(orderNo);
+		if(respons == null){
+			log.info("查询订单详情失败，订单号：{}" ,orderNo);
+			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(),"调用查询订单详情接口失败");
+		}
 		if (respons.getCode().compareTo(Integer.valueOf(200)) != 0) {
 			throw new BizException(respons.getCode(), respons.getMessage());
 		}
@@ -61,6 +65,11 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
 
 		orderInfoVO.setOrderInfoResDTOList(list);
 		GeneralResult<Member> member = memberFien.getMember(list.get(0).getMemberCardNo());
+		if(member == null){
+			log.info("查询顾客信息，顾客卡号：{}，顾客信息：{}" ,list.get(0).getMemberCardNo(),member);
+			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(),"查询顾客信息失败");
+		}
+
 		if (member.getCode().compareTo(Integer.valueOf(200)) != 0) {
 			log.error("查询顾客信息异常，顾客卡号：" + list.get(0).getMemberCardNo());
 			throw new BizException(member.getCode(), member.getMessage());
@@ -77,6 +86,11 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
 	public ComResponse<OrderLogistcInfo> selectLogisticInfo(String orderNo, String companyCode, String mailid) {
 
 		ComResponse<OrderInfoResDTO> respons = orderSearchClient.selectOrderInfoOnly(orderNo);
+		if(respons == null){
+			log.error("调用订单服务失败：{} - {}", respons.getCode(), respons.getMessage());
+			throw new BizException(respons.getCode(), "调用订单服务失败");
+
+		}
 		if (respons.getCode().compareTo(Integer.valueOf(200)) != 0) {
 			log.error("调用订单服务失败：{} - {}", respons.getCode(), respons.getMessage());
 			throw new BizException(respons.getCode(), respons.getMessage());

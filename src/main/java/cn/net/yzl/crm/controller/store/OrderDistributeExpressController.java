@@ -4,15 +4,21 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.OrderDistributeExpressFeignService;
 import cn.net.yzl.crm.config.QueryIds;
+import cn.net.yzl.crm.service.OrderDistributeExpressService;
+import cn.net.yzl.model.dto.InventoryProductDto;
 import cn.net.yzl.model.dto.OrderDistributeExpressDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleDetailDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleListDTO;
+import cn.net.yzl.model.dto.express.ExpressImportModel;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -29,6 +35,8 @@ public class OrderDistributeExpressController {
 
     @Autowired
     private OrderDistributeExpressFeignService orderDistributeExpressFeignService;
+    @Autowired
+    private OrderDistributeExpressService orderDistributeExpressService;
 
     @PostMapping(value = "v1/selectOrderDistributeExpressRuleList")
     @ApiOperation("智能分配快递规则列表查询")
@@ -116,4 +124,9 @@ public class OrderDistributeExpressController {
         return orderDistributeExpressFeignService.updateOrderDistributeExpressStatusToCancel(vo);
     }
 
+    @ApiOperation(value = "导入快递信息",notes = "导入快递信息")
+    @PostMapping("v1/readExpressExcelInfo")
+    public ComResponse readExpressExcelInfo(@RequestParam("file") MultipartFile file) {
+        return orderDistributeExpressService.readExpressExcelInfo(file);
+    }
 }
