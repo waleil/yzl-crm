@@ -120,12 +120,12 @@ public class DispatchRuleController {
 
         try {
             ComResponse<StaffImageBaseInfoDto> staffResponse = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
-            if (StringUtils.isEmpty(staffResponse) || StringUtils.isEmpty(staffResponse.getData())) {
-                return ComResponse.fail(ComResponse.ERROR_STATUS, "用户不存在");
+            if(null == staffResponse || staffResponse.getCode() != 200){
+                return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), "请求[员工接口]，返回有误");
             }
         } catch (Exception e) {
             log.error("请求[用户接口] 异常 ，异常信息:{}", e.getMessage());
-            return ComResponse.fail(ComResponse.ERROR_STATUS, "请求[用户接口异常]");
+            return ComResponse.fail(ResponseCodeEnums.API_ERROR_CODE.getCode(), "请求[用户接口]异常");
         }
         ComResponse<Page> comResponse = null;
         try {
