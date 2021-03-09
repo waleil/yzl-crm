@@ -7,6 +7,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.ProductPurchaseWarnFeignService;
 import cn.net.yzl.crm.client.store.ProductStockFeignService;
+import cn.net.yzl.crm.client.store.RemoveStockFeignService;
 import cn.net.yzl.crm.service.DownImageInService;
 import cn.net.yzl.logistics.print.AppreciationDTOS;
 import cn.net.yzl.model.dto.ProductPurchaseWarnExcelDTO;
@@ -46,6 +47,8 @@ public class DownImageInServiceImpl implements DownImageInService {
     @Autowired
     private ProductPurchaseWarnFeignService feignService;
 
+    @Autowired
+    private RemoveStockFeignService removeStockFeignService;
 
     @Override
     public void exportProductStockExcel(String codeAndName, String storeNo, HttpServletResponse httpServletResponse) throws IOException {
@@ -121,7 +124,7 @@ public class DownImageInServiceImpl implements DownImageInService {
     }
 
     public void exportExpressPrintInfo(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo, HttpServletResponse httpServletResponse) throws IOException {
-        ComResponse<List<ExpressOrderInfo>> senderExpressInfo = feignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
+        ComResponse<List<ExpressOrderInfo>> senderExpressInfo = removeStockFeignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
         log.info("仓储中心数据物流:{}", JsonUtil.toJsonStr(senderExpressInfo));
         if (senderExpressInfo==null || senderExpressInfo.getCode() !=200L){
             httpServletResponse.setContentType("application/json;charset=utf-8");
