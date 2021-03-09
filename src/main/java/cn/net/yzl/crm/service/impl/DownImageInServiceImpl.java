@@ -246,7 +246,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
-                +URLEncoder.encode("德邦_"+sysDate+".xlsx", "utf-8")+".xlsx");
+                +URLEncoder.encode("德邦_"+sysDate+".xlsx", "utf-8"));
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), NewDPExcelModel.class)
@@ -281,7 +281,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 
         httpServletResponse.setContentType("application/vnd.ms-excel");
         httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
-                +URLEncoder.encode("韵达_"+sysDate+".xlsx", "utf-8")+".xlsx");
+                +URLEncoder.encode("韵达_"+sysDate+".xlsx", "utf-8"));
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), YunDaExcelModel.class)
