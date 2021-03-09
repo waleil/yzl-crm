@@ -153,7 +153,7 @@ public class DownImageInServiceImpl implements DownImageInService {
             handleDP(expressOrderInfos,httpServletResponse);
         }else if ("YUNDA".equals(expressNo)){
             handleYUNDA(expressOrderInfos,httpServletResponse);
-        }else if ("EMS".equals(expressNo)){
+        }else if ("EMS".equals(expressNo) || "sjzyj".equals(expressNo) || "bdyj".equals(expressNo)){
             handleEMS(expressOrderInfos,httpServletResponse);
         }
     }
