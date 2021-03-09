@@ -17,6 +17,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;
@@ -91,6 +92,9 @@ public interface EhrStaffClient {
      */
     @GetMapping("/postLevel/getListByPostId")
     ComResponse<EhrPostLevelDto> getPostLevelListByPostId(@RequestParam("postId") Integer postId);
+
+    @GetMapping(value = "/depart/getChildTreeById")
+    ComResponse<List<DepartDto>> getChildTreeById(@RequestParam("departId")Integer departId);
 
     /**
      * 获取岗位列表通过部门id

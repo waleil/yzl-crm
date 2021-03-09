@@ -29,7 +29,8 @@ public class OrderSeachControllerTests {
 			OderListReqDTO dto = new OderListReqDTO();
 			dto.setPageNo(1);
 			dto.setPageSize(10);
-			dto.setMemberCardNo("4006926372");
+			dto.setMemberCardNo("8006650485");
+			dto.setCouponNeedFlag(1);
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter()
 					.writeValueAsString(this.orderSeachController.selectOrderList(dto)));
 		} catch (Exception e) {

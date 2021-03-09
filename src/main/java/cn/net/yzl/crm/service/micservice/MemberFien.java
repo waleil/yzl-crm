@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import cn.net.yzl.crm.customer.vo.MemberAndAddWorkOrderVO;
-import cn.net.yzl.crm.customer.vo.member.MemberGrandSelectVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,10 +31,12 @@ import cn.net.yzl.crm.customer.model.MemberPhone;
 import cn.net.yzl.crm.customer.model.MemberProductEffect;
 import cn.net.yzl.crm.customer.model.ProductConsultation;
 import cn.net.yzl.crm.customer.vo.MemberAmountDetailVO;
+import cn.net.yzl.crm.customer.vo.MemberAndAddWorkOrderVO;
 import cn.net.yzl.crm.customer.vo.MemberDiseaseIdUpdateVO;
 import cn.net.yzl.crm.customer.vo.ProductConsultationInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressInsertVO;
 import cn.net.yzl.crm.customer.vo.address.ReveiverAddressUpdateVO;
+import cn.net.yzl.crm.customer.vo.member.MemberGrandSelectVo;
 import cn.net.yzl.crm.customer.vo.order.OrderCreateInfoVO;
 import cn.net.yzl.crm.customer.vo.work.MemberWorkOrderInfoVO;
 import cn.net.yzl.crm.dto.member.MemberDiseaseDto;
@@ -176,10 +176,10 @@ public interface MemberFien {
 			@ApiImplicitParam(name = "memberCard", value = "会员卡号", required = true, dataType = "string", paramType = "query") })
 	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordList(@NotBlank String memberCard);
 
-
 	@ApiOperation("根据时间范围获取会员级别记录")
 	@PostMapping("v1/getMemberGradeRecordListByTimeRange")
-	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordListByTimeRange(@RequestBody MemberGrandSelectVo vo);
+	public ComResponse<List<MemberGradeRecordDto>> getMemberGradeRecordListByTimeRange(
+			@RequestBody MemberGrandSelectVo vo);
 
 	@ApiOperation("顾客病症-根据病症id更新顾客病症")
 	@PostMapping("/v1/updateMemberDiseaseByDiseaseId")
@@ -216,4 +216,15 @@ public interface MemberFien {
 	@ApiOperation("保存转介绍用户")
 	@PostMapping("/v1/saveMemberReferral")
 	ComResponse<Boolean> saveMemberReferral(MemberAndAddWorkOrderVO memberReferralVO);
+
+	/**
+	 * 按顾客姓名查询顾客卡号列表
+	 * 
+	 * @param memberName 顾客姓名
+	 * @return 顾客卡号列表
+	 * @author zhangweiwei
+	 * @date 2021年3月9日,下午2:05:38
+	 */
+	@PostMapping("/v1/querymembercards")
+	ComResponse<List<String>> queryMemberCards(@RequestParam String memberName);
 }

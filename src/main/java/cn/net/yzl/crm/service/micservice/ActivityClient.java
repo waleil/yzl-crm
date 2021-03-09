@@ -15,6 +15,7 @@ import cn.net.yzl.activity.model.requestModel.AccountRequest;
 import cn.net.yzl.activity.model.requestModel.AccountWithOutPageRequest;
 import cn.net.yzl.activity.model.requestModel.CalculateRequest;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
+import cn.net.yzl.activity.model.requestModel.ListAccountRequest;
 import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
 import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
@@ -50,6 +51,18 @@ public interface ActivityClient {
 	@PostMapping("db/v1/getMemberIntegralRecords")
 	ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecords(@RequestBody AccountRequest request);
 
+	/**
+	 * 根据多个顾客卡号 查询查询积分明细表
+	 * 
+	 * @param request {@link ListAccountRequest}
+	 * @return 积分历史记录
+	 * @author zhangweiwei
+	 * @date 2021年3月9日,下午2:14:50
+	 */
+	@PostMapping("/db/v1/getMemberIntegralRecordsByMemberCards")
+	ComResponse<Page<MemberIntegralRecordsResponse>> getMemberIntegralRecordsByMemberCards(
+			@RequestBody ListAccountRequest request);
+
 	@ApiOperation(value = "顾客积分明细表 - 不分页")
 	@PostMapping("db/v1/getMemberIntegralRecordsWithOutPage")
 	ComResponse<List<MemberIntegralRecordsResponse>> getMemberIntegralRecordsWithOutPage(
@@ -59,6 +72,18 @@ public interface ActivityClient {
 	@PostMapping("db/v1/getMemberRedBagRecords")
 	ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecords(@RequestBody AccountRequest request);
 
+	/**
+	 * 根据多个顾客卡号 查询顾客红包明细表
+	 * 
+	 * @param request {@link ListAccountRequest}
+	 * @return 红包历史记录
+	 * @author zhangweiwei
+	 * @date 2021年3月9日,下午2:21:02
+	 */
+	@PostMapping("/db/v1/getMemberRedBagRecordsByMemberCards")
+	ComResponse<Page<MemberRedBagRecordsResponse>> getMemberRedBagRecordsByMemberCards(
+			@RequestBody ListAccountRequest request);
+
 	@ApiOperation(value = "顾客红包明细表 - 不分页")
 	@PostMapping("db/v1/getMemberRedBagRecordsWithOutPage")
 	ComResponse<List<MemberRedBagRecordsResponse>> getMemberRedBagRecordsWithOutPage(
@@ -67,6 +92,17 @@ public interface ActivityClient {
 	@ApiOperation(value = "顾客优惠券明细表")
 	@PostMapping("db/v1/getMemberCoupon")
 	ComResponse<Page<MemberCouponResponse>> getMemberCoupon(@RequestBody AccountRequest request);
+
+	/**
+	 * 根据多个顾客卡号 查询顾客优惠券明细表
+	 * 
+	 * @param request {@link ListAccountRequest}
+	 * @return 优惠券历史记录
+	 * @author zhangweiwei
+	 * @date 2021年3月9日,下午2:11:48
+	 */
+	@PostMapping("/db/v1/getMemberCouponByMemberCards")
+	ComResponse<Page<MemberCouponResponse>> getMemberCouponByMemberCards(@RequestBody ListAccountRequest request);
 
 	@ApiOperation(value = "顾客优惠券明细表 - 不分页")
 	@PostMapping("db/v1/getMemberCouponWithOutPage")
