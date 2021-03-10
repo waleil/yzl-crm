@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -49,23 +50,24 @@ public class SimpleTests {
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 			return 1;
 		}), CompletableFuture.supplyAsync(() -> {
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 			return 2;
 		}) };
 		CompletableFuture.allOf(allof);
 		int sum = Arrays.stream(allof).mapToInt(m -> {
 			try {
-				return (Integer) (m.get());
+				return (Integer) (m.get(1, TimeUnit.SECONDS));
 			} catch (Exception e) {
-				return 0;
+//				e.printStackTrace();
+				return -1;
 			}
 		}).sum();
 		long end = System.currentTimeMillis() - begin;
