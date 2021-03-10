@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
@@ -51,6 +52,18 @@ public class OrderDistributeExpressServiceImpl implements OrderDistributeExpress
             }
             ImportExpressAllInfo importExpressAllInfo = new ImportExpressAllInfo();
             List<ExpressImportModel> expressImportModels = expressExcelListener.getExpressImportModels();
+            if(CollectionUtils.isEmpty(expressImportModels)){
+                return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"表格数据为空!");
+            }
+            for (ExpressImportModel expressImportModel : expressImportModels) {
+                if (StrUtil.isBlank(expressImportModel.getExpressNum())){
+                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"快递单号不可为空!");
+                }
+                if (StrUtil.isBlank(expressImportModel.getDeliverCode())){
+                    return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"发货码不可为空!");
+                }
+            }
+
             importExpressAllInfo.setList(expressImportModels);
             StaffImageBaseInfoDto user = getUser();
             importExpressAllInfo.setUserNo(user.getStaffNo());
@@ -58,9 +71,6 @@ public class OrderDistributeExpressServiceImpl implements OrderDistributeExpress
             importExpressAllInfo.setDepartId(String.valueOf(user.getDepartId()));
             //获取数据
             log.info("导入数据解析结果:{}",expressImportModels);
-            if (CollectionUtils.isEmpty(expressImportModels))
-                return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),ResponseCodeEnums.NO_DATA_CODE.getMessage());
-
             return orderDistributeExpressFeignService.readExpressExcelInfo(importExpressAllInfo);
 
         } catch (IOException e) {
