@@ -3,6 +3,7 @@ package cn.net.yzl.crm.utils;
 import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
+import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 
 /**
  * @author wangxiao
@@ -10,6 +11,12 @@ import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
  * @date 2021/3/9 21:13
  */
 public class ExcelStyleUtils {
+	/**
+	 * 禁止外部实例化
+	 */
+	private ExcelStyleUtils() {
+		
+	}
 
 	/**
 	 * 生成表头样式
@@ -25,6 +32,8 @@ public class ExcelStyleUtils {
 		WriteFont headWriteFont = new WriteFont();
 		// 头部字体大小
 		headWriteFont.setFontHeightInPoints((short) 12);
+		// 头部字体名称
+		headWriteFont.setFontName("Microsoft YaHei Regular");
 		headWriteCellStyle.setWriteFont(headWriteFont);
 		headWriteCellStyle.setShrinkToFit(true);
 		// 内容的样式
@@ -41,5 +50,14 @@ public class ExcelStyleUtils {
 		HorizontalCellStyleStrategy horizontalCellStyleStrategy = new HorizontalCellStyleStrategy(headWriteCellStyle,
 				contentWriteCellStyle);
 		return horizontalCellStyleStrategy;
+	}
+	
+	/**
+	 * @return {@link LongestMatchColumnWidthStyleStrategy}
+	 * @author zhangweiwei
+	 * @date 2021年3月10日,上午10:58:51
+	 */
+	public static LongestMatchColumnWidthStyleStrategy getLongestMatchColumnWidthStyleStrategy() {
+		return new LongestMatchColumnWidthStyleStrategy();
 	}
 }
