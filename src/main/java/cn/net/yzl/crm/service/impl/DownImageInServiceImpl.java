@@ -289,7 +289,7 @@ public class DownImageInServiceImpl implements DownImageInService {
                     .append(expressOrderInfo.getTargetArea()).append(expressOrderInfo.getTargetAddr()).toString();
             yunDaExcelModel.setAddrDetail(targetAddrDetail);
             yunDaExcelModel.setContent(expressOrderInfo.getProductName());
-            yunDaExcelModel.setMoney(expressOrderInfo.getCash());
+            yunDaExcelModel.setMoney(handleMoney(expressOrderInfo.getCash()));
             yunDaExcelModel.setCustom1(expressOrderInfo.getDeliverCode());
             yunDaExcelModels.add(yunDaExcelModel);
         }
