@@ -216,7 +216,7 @@ public class OrderInvoiceController {
 			MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
+			dto.setMemberName(this.getMemberName(item.getMemberCard()));
 			return dto;
 		}).collect(Collectors.toList()));
 		return ComResponse.success(page);
@@ -328,7 +328,7 @@ public class OrderInvoiceController {
 			MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
+			dto.setMemberName(this.getMemberName(item.getMemberCard()));
 			return dto;
 		}).collect(Collectors.toList()));
 		return ComResponse.success(page);
@@ -376,10 +376,10 @@ public class OrderInvoiceController {
 	}
 
 	/**
-	 * TODO 获取顾客信息，测试完后就没用了
+	 * 获取顾客信息
 	 *
-	 * @param memberCardNo
-	 * @return
+	 * @param memberCardNo 顾客号
+	 * @return 顾客信息
 	 */
 	public String getMemberName(String memberCardNo) {
 		GeneralResult<Member> member = memberFien.getMember(memberCardNo);
@@ -456,7 +456,7 @@ public class OrderInvoiceController {
 			}
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
+			dto.setMemberName(this.getMemberName(item.getMemberCard()));
 			return dto;
 		}).collect(Collectors.toList()));
 		return ComResponse.success(page);
