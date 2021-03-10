@@ -189,7 +189,8 @@ public class OrderInvoiceController {
 		}
 		Page<MemberIntegralRecordsResponse> responseData = response.getData();
 		if (responseData.getItems().isEmpty()) {
-			return ComResponse.success();
+			return ComResponse
+					.success(AssemblerResultUtil.resultAssembler(Collections.<MemberIntegralRecordsDTO>emptyList()));
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberIntegralRecordsResponse::getOrderNo)
 				.distinct().collect(Collectors.toList());
@@ -300,7 +301,8 @@ public class OrderInvoiceController {
 		}
 		Page<MemberRedBagRecordsResponse> responseData = response.getData();
 		if (responseData.getItems().isEmpty()) {
-			return ComResponse.success();
+			return ComResponse
+					.success(AssemblerResultUtil.resultAssembler(Collections.<MemberRedBagRecordsDTO>emptyList()));
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberRedBagRecordsResponse::getOrderNo)
 				.distinct().collect(Collectors.toList());
@@ -424,7 +426,7 @@ public class OrderInvoiceController {
 		}
 		Page<MemberCouponResponse> responseData = response.getData();
 		if (responseData.getItems().isEmpty()) {
-			return ComResponse.success();
+			return ComResponse.success(AssemblerResultUtil.resultAssembler(Collections.<MemberCouponDTO>emptyList()));
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberCouponResponse::getOrderNo).distinct()
 				.collect(Collectors.toList());
