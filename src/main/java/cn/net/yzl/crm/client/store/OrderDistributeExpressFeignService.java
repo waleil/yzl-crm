@@ -6,6 +6,7 @@ import cn.net.yzl.model.dto.OrderDistributeExpressDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleDetailDTO;
 import cn.net.yzl.model.dto.OrderDistributeExpressRuleListDTO;
 import cn.net.yzl.model.dto.express.ExpressImportModel;
+import cn.net.yzl.model.dto.express.ImportExpressAllInfo;
 import cn.net.yzl.model.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -85,5 +86,5 @@ public interface OrderDistributeExpressFeignService {
 
     @PostMapping(value = "orderDistributeExpress/v1/readExpressExcelInfo")
     @ApiOperation("导入快递信息")
-    ComResponse readExpressExcelInfo(@RequestBody List<ExpressImportModel> expressImportModels);
+    ComResponse readExpressExcelInfo(@RequestBody ImportExpressAllInfo importExpressAllInfo);
 }

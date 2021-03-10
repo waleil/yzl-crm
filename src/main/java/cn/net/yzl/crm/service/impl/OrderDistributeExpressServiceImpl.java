@@ -2,10 +2,16 @@ package cn.net.yzl.crm.service.impl;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.OrderDistributeExpressFeignService;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.controller.store.listen.ExpressExcelListener;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.OrderDistributeExpressService;
+import cn.net.yzl.crm.service.micservice.EhrStaffClient;
+import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.model.dto.express.ExpressImportModel;
+import cn.net.yzl.model.dto.express.ImportExpressAllInfo;
 import cn.net.yzl.model.vo.InventoryProductVo;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelReader;
@@ -25,6 +31,8 @@ public class OrderDistributeExpressServiceImpl implements OrderDistributeExpress
 
     @Autowired
     private OrderDistributeExpressFeignService orderDistributeExpressFeignService;
+    @Autowired
+    private EhrStaffClient ehrStaffClient;
 
     @Override
     public ComResponse readExpressExcelInfo(MultipartFile file) {
@@ -41,17 +49,35 @@ public class OrderDistributeExpressServiceImpl implements OrderDistributeExpress
             if (!CollectionUtils.isEmpty(errorMessageMap)){
                 return ComResponse.fail(ResponseCodeEnums.EXCEL_HEAD_ERROR.getCode(),errorMessageMap.get("msg"));
             }
-            //获取数据
+            ImportExpressAllInfo importExpressAllInfo = new ImportExpressAllInfo();
             List<ExpressImportModel> expressImportModels = expressExcelListener.getExpressImportModels();
+            importExpressAllInfo.setList(expressImportModels);
+            StaffImageBaseInfoDto user = getUser();
+            importExpressAllInfo.setUserNo(user.getStaffNo());
+            importExpressAllInfo.setUserName(user.getName());
+            importExpressAllInfo.setDepartId(String.valueOf(user.getDepartId()));
+            //获取数据
             log.info("导入数据解析结果:{}",expressImportModels);
             if (CollectionUtils.isEmpty(expressImportModels))
                 return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),ResponseCodeEnums.NO_DATA_CODE.getMessage());
 
-            return orderDistributeExpressFeignService.readExpressExcelInfo(expressImportModels);
+            return orderDistributeExpressFeignService.readExpressExcelInfo(importExpressAllInfo);
 
         } catch (IOException e) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_TYPE_ERROR_CODE.getCode(),ResponseCodeEnums.PARAMS_TYPE_ERROR_CODE.getMessage());
         }
 
+    }
+
+    private StaffImageBaseInfoDto getUser(){
+        String userNo = QueryIds.userNo.get();
+        ComResponse<StaffImageBaseInfoDto> user = ehrStaffClient.getDetailsByNo(userNo);
+        log.info("user信息:{}", JsonUtil.toJsonStr(user));
+        StaffImageBaseInfoDto data = user.getData();
+        if(data != null){
+            return data;
+        }else {
+            throw new BizException(ResponseCodeEnums.TOKEN_INVALID_ERROR_CODE);
+        }
     }
 }
