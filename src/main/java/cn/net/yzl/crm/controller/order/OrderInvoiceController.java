@@ -29,9 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 
 import cn.net.yzl.activity.model.requestModel.AccountRequest;
 import cn.net.yzl.activity.model.requestModel.AccountWithOutPageRequest;
@@ -64,6 +62,7 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.BeanCopyUtils;
+import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceListDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
@@ -79,7 +78,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OrderInvoiceController {
 
-	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 	private static final Pattern NUMBER_PATTERN = Pattern.compile("^\\d+$");
 
 	@Resource
@@ -517,8 +515,9 @@ public class OrderInvoiceController {
 				URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
 		ExcelWriter excelWriter = null;
 		try {
-			excelWriter = EasyExcel.write(response.getOutputStream(), clazz).registerWriteHandler(this.writeHandler)
-					.build();
+			excelWriter = EasyExcel.write(response.getOutputStream(), clazz)
+					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
+					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy()).build();
 			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
 			excelWriter.write(list, writeSheet);
 		} catch (Exception e) {
