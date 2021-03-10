@@ -25,6 +25,8 @@ public class ExcelStyleUtils {
 		WriteFont headWriteFont = new WriteFont();
 		// 头部字体大小
 		headWriteFont.setFontHeightInPoints((short) 12);
+		// 头部字体名称
+		headWriteFont.setFontName("Microsoft YaHei Regular");
 		headWriteCellStyle.setWriteFont(headWriteFont);
 		headWriteCellStyle.setShrinkToFit(true);
 		// 内容的样式
