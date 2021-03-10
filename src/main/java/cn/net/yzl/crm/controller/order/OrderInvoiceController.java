@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,6 +43,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
@@ -165,6 +168,12 @@ public class OrderInvoiceController {
 					return ComResponse.fail(ResponseCodeEnums.ERROR,
 							String.format("调用顾客姓名查询顾客卡号列表接口异常：%s", queryMemberCards.getMessage()));
 				}
+				if (CollectionUtils.isEmpty(queryMemberCards.getData())) {
+					return ComResponse
+							.success(AssemblerResultUtil
+									.resultAssembler(Collections.<MemberIntegralRecordsDTO>emptyList()))
+							.setMessage("调用顾客姓名查询顾客卡号列表接口：没有查询到数据。");
+				}
 				ListAccountRequest listRequest = new ListAccountRequest();
 				listRequest.setMemberCards(queryMemberCards.getData());
 				listRequest.setPageNo(request.getPageNo());
@@ -269,6 +278,12 @@ public class OrderInvoiceController {
 					log.error("按顾客姓名查询顾客卡号列表异常>>>{}", queryMemberCards);
 					return ComResponse.fail(ResponseCodeEnums.ERROR,
 							String.format("调用顾客姓名查询顾客卡号列表接口异常：%s", queryMemberCards.getMessage()));
+				}
+				if (CollectionUtils.isEmpty(queryMemberCards.getData())) {
+					return ComResponse
+							.success(AssemblerResultUtil
+									.resultAssembler(Collections.<MemberRedBagRecordsDTO>emptyList()))
+							.setMessage("调用顾客姓名查询顾客卡号列表接口：没有查询到数据。");
 				}
 				ListAccountRequest listRequest = new ListAccountRequest();
 				listRequest.setMemberCards(queryMemberCards.getData());
@@ -388,6 +403,11 @@ public class OrderInvoiceController {
 					log.error("按顾客姓名查询顾客卡号列表异常>>>{}", queryMemberCards);
 					return ComResponse.fail(ResponseCodeEnums.ERROR,
 							String.format("调用顾客姓名查询顾客卡号列表接口异常：%s", queryMemberCards.getMessage()));
+				}
+				if (CollectionUtils.isEmpty(queryMemberCards.getData())) {
+					return ComResponse
+							.success(AssemblerResultUtil.resultAssembler(Collections.<MemberCouponDTO>emptyList()))
+							.setMessage("调用顾客姓名查询顾客卡号列表接口：没有查询到数据。");
 				}
 				ListAccountRequest listRequest = new ListAccountRequest();
 				listRequest.setMemberCards(queryMemberCards.getData());
