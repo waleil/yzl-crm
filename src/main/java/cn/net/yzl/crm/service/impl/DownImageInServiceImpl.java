@@ -16,6 +16,7 @@ import cn.net.yzl.model.dto.express.*;
 import cn.net.yzl.model.vo.OutStoreOrderInfoParamVo;
 import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.model.vo.ProductStockExcelVo;
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.fastjson.JSON;
@@ -140,12 +141,6 @@ public class DownImageInServiceImpl implements DownImageInService {
             return;
         }
         List<ExpressOrderInfo> expressOrderInfos = senderExpressInfo.getData();
-        if (CollectionUtils.isEmpty(expressOrderInfos)){
-            httpServletResponse.setContentType("application/json;charset=utf-8");
-            PrintWriter out = httpServletResponse.getWriter();
-            out.write(JSON.toJSONString(expressOrderInfos));
-            return;
-        }
         ExpressOrderInfo expressOrderInfo = expressOrderInfos.get(0);
         String expressNo = expressOrderInfo.getExpressNo();
         //TODO
@@ -160,6 +155,18 @@ public class DownImageInServiceImpl implements DownImageInService {
 
     private void handleEMS(List<ExpressOrderInfo> expressOrderInfos, HttpServletResponse httpServletResponse) throws IOException{
         List<PostalExcelModel> postalExcelModels = new ArrayList<>();
+
+        String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        //响应内容格式
+
+        httpServletResponse.setContentType("application/vnd.ms-excel");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=EMS_"+sysDate+".xlsx");
+        if (CollectionUtils.isEmpty(expressOrderInfos)){
+            EasyExcel.write(httpServletResponse.getOutputStream(), PostalExcelModel.class)
+                    .sheet("导入模板").doWrite(postalExcelModels);
+            return;
+        }
         for (ExpressOrderInfo expressOrderInfo : expressOrderInfos) {
             PostalExcelModel postalExcelModel = new PostalExcelModel();
             postalExcelModel.setExpressNum(expressOrderInfo.getDeliverCode());
@@ -202,12 +209,6 @@ public class DownImageInServiceImpl implements DownImageInService {
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        String sysDate = simpleDateFormat.format(date);
         log.info("EMS表格数据:{}",JsonUtil.toJsonStr(postalExcelModels));
-        String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
-        httpServletResponse.setCharacterEncoding("UTF-8");
-        //响应内容格式
-
-        httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName=EMS_"+sysDate+".xlsx");
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), PostalExcelModel.class)
@@ -216,6 +217,18 @@ public class DownImageInServiceImpl implements DownImageInService {
 
     private void handleDP(List<ExpressOrderInfo> expressOrderInfos, HttpServletResponse httpServletResponse) throws IOException{
         List<NewDPExcelModel> dpExcelModels = new ArrayList<>();
+        String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        //响应内容格式
+
+        httpServletResponse.setContentType("application/vnd.ms-excel");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
+                +URLEncoder.encode("DEPPON_"+sysDate+".xlsx", "utf-8"));
+        if(CollectionUtils.isEmpty(expressOrderInfos)){
+            EasyExcel.write(httpServletResponse.getOutputStream(), NewDPExcelModel.class)
+                    .sheet("导入模板").doWrite(dpExcelModels);
+            return;
+        }
         for (ExpressOrderInfo expressOrderInfo : expressOrderInfos) {
             NewDPExcelModel dpExcelModel = new NewDPExcelModel();
             dpExcelModel.setOrderNo(expressOrderInfo.getDeliverCode());
@@ -241,13 +254,6 @@ public class DownImageInServiceImpl implements DownImageInService {
         }
 
         log.info("德邦表格数据:{}",JsonUtil.toJsonStr(dpExcelModels));
-        String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
-        httpServletResponse.setCharacterEncoding("UTF-8");
-        //响应内容格式
-
-        httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
-                +URLEncoder.encode("DEPPON_"+sysDate+".xlsx", "utf-8"));
 
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), NewDPExcelModel.class)
@@ -257,6 +263,18 @@ public class DownImageInServiceImpl implements DownImageInService {
 
     private void handleYUNDA(List<ExpressOrderInfo> expressOrderInfos, HttpServletResponse httpServletResponse) throws IOException{
         List<YunDaExcelModel> yunDaExcelModels = new ArrayList<>();
+        String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
+        httpServletResponse.setCharacterEncoding("UTF-8");
+        //响应内容格式
+
+        httpServletResponse.setContentType("application/vnd.ms-excel");
+        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
+                +URLEncoder.encode("YUNDA_"+sysDate+".xlsx", "utf-8"));
+        if (CollectionUtils.isEmpty(expressOrderInfos)){
+            EasyExcel.write(httpServletResponse.getOutputStream(), YunDaExcelModel.class)
+                    .sheet("导入模板").doWrite(yunDaExcelModels);
+            return;
+        }
         for (ExpressOrderInfo expressOrderInfo : expressOrderInfos) {
             YunDaExcelModel yunDaExcelModel = new YunDaExcelModel();
             yunDaExcelModel.setExpressNum(expressOrderInfo.getDeliverCode());
@@ -276,14 +294,6 @@ public class DownImageInServiceImpl implements DownImageInService {
             yunDaExcelModels.add(yunDaExcelModel);
         }
         log.info("韵达表格数据:{}",JsonUtil.toJsonStr(yunDaExcelModels));
-        String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
-        httpServletResponse.setCharacterEncoding("UTF-8");
-        //响应内容格式
-
-        httpServletResponse.setContentType("application/vnd.ms-excel");
-        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="
-                +URLEncoder.encode("YUNDA_"+sysDate+".xlsx", "utf-8"));
-
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), YunDaExcelModel.class)
                 .sheet("导入模板").doWrite(yunDaExcelModels);
