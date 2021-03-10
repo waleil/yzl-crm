@@ -40,6 +40,7 @@ import cn.net.yzl.order.model.vo.order.OrderIn;
  * @author zhangweiwei
  * @date 2021年1月18日,下午7:10:59
  */
+@SuppressWarnings("rawtypes")
 public class SimpleTests {
 	@Test
 	public void testCompletableFuture() {
