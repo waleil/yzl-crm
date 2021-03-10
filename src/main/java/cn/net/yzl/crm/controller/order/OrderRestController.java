@@ -690,7 +690,7 @@ public class OrderRestController {
 		log.info("订单信息: {}", this.toJsonString(orderm));
 		log.info("订单明细信息: {}", this.toJsonString(orderdetailList));
 		// 组装提交订单送积分和优惠券参数
-		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, member, orderm);
+		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, member, orderm, productPriceMap);
 		log.info("调用提交订单送积分和优惠券接口：{}", this.toJsonString(orderSubmitRequest));
 		// 提交订单送积分和优惠券
 		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
@@ -970,14 +970,16 @@ public class OrderRestController {
 	/**
 	 * 组装提交订单送积分和优惠券接口参数
 	 * 
-	 * @param orderin {@link OrderIn}
-	 * @param member  {@link Member}
-	 * @param orderm  {@link OrderM}
+	 * @param orderin         {@link OrderIn}
+	 * @param member          {@link Member}
+	 * @param orderm          {@link OrderM}
+	 * @param productPriceMap {@link ProductPriceResponse}
 	 * @return {@link OrderSubmitRequest}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午9:52:00
 	 */
-	private OrderSubmitRequest getOrderSubmitRequest(OrderIn orderin, Member member, OrderM orderm) {
+	private OrderSubmitRequest getOrderSubmitRequest(OrderIn orderin, Member member, OrderM orderm,
+			Map<String, ProductPriceResponse> productPriceMap) {
 		OrderSubmitRequest request = new OrderSubmitRequest();
 		request.setAdvertBusNo(orderin.getAdvertBusNo());// 广告业务主键
 		request.setMemberCard(orderin.getMemberCardNo());// 会员卡号
@@ -990,21 +992,6 @@ public class OrderRestController {
 		List<OrderDetailIn> orderdetailins = orderin.getOrderDetailIns().stream()
 				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
 				.collect(Collectors.toList());
-		// 用,拼接商品编码
-		String productCodes = orderdetailins.stream().map(OrderDetailIn::getProductCode)
-				.collect(Collectors.joining(","));
-		// 商品列表
-		Map<String, ProductMainDTO> productMap = Optional
-				.ofNullable(this.productClient.queryByProductCodes(productCodes).getData())
-				.orElse(Collections.emptyList()).stream()
-				.collect(Collectors.toMap(ProductMainDTO::getProductCode, Function.identity()));
-		// 套餐列表
-		Map<String, ProductMealListDTO> mealMap = Optional
-				.ofNullable(this.mealClient.queryByIds(productCodes).getData()).orElse(Collections.emptyList()).stream()
-				.collect(Collectors.toMap(ProductMealListDTO::getMealNo, Function.identity()));
-		if (productMap.isEmpty() && mealMap.isEmpty()) {
-			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "购物车里的商品或套餐已下架。");
-		}
 		// 订单中的商品信息
 		request.setOrderSubmitProductDtoList(orderdetailins.stream().map(m -> {
 			OrderSubmitProductDto dto = new OrderSubmitProductDto();
@@ -1016,16 +1003,8 @@ public class OrderRestController {
 			dto.setMemberCouponId(m.getMemberCouponId());// 使用的优惠券ID
 			dto.setProductCode(m.getProductCode());// 商品code
 			dto.setProductCount(m.getProductCount());// 商品数量
-			if (Integer.compare(CommonConstant.MEAL_FLAG_0, m.getProductType()) == 0) {
-				// 商品
-				ProductMainDTO product = productMap.get(m.getProductCode());
-				dto.setProductTotal(
-						BigDecimal.valueOf(Double.valueOf(product.getSalePrice())).multiply(bd100).longValue());// 商品销售价,单位分
-			} else {
-				// 套餐
-				ProductMealListDTO meal = mealMap.get(m.getProductCode());
-				dto.setProductTotal(BigDecimal.valueOf(meal.getPriceD()).multiply(bd100).longValue());// 商品销售价,单位分
-			}
+			ProductPriceResponse product = productPriceMap.get(m.getProductCode());
+			dto.setProductTotal(product.getProductTotal().multiply(bd100).longValue());// 商品销售价,单位分
 			dto.setUseDiscountTypeEnum(this.getUseDiscountTypeEnum(m.getUseDiscountType()));// 使用的优惠
 			return dto;
 		}).collect(Collectors.toList()));
