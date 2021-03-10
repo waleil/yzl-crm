@@ -209,11 +209,14 @@ public class OrderRestController {
 		if (CollectionUtils.isEmpty(orderin.getOrderDetailIns())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "订单里没有商品或套餐信息。");
 		}
+		if (orderin.getWorkOrderType() == null) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "工单类型不能为空。");
+		}
+		if (orderin.getPayType() == null) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "支付方式不能为空。");
+		}
 		if (!StringUtils.hasText(orderin.getMemberCardNo())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客号不能为空。");
-		}
-		if (!StringUtils.hasText(orderin.getMemberName())) {
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客姓名不能为空。");
 		}
 		if (!StringUtils.hasText(orderin.getMemberTelphoneNo())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客联系方式不能为空。");
@@ -635,6 +638,11 @@ public class OrderRestController {
 		orderm.setAdvisorName(orderin.getAdvName());// 广告名称
 		orderm.setAdvisorNo(orderin.getAdvId());// 广告编码
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
+		// 如果工单类型是热线，并且顾客姓名为空，则用收货人姓名作为顾客姓名
+		if (Integer.compare(CommonConstant.WORK_ORDER_TYPE_1, orderin.getWorkOrderType()) == 0
+				&& !StringUtils.hasText(orderin.getMemberName())) {
+			orderm.setMemberName(reveiverAddress.getMemberName());// 收货人姓名
+		}
 		// 组装扣减库存参数
 		OrderProductVO orderProduct = new OrderProductVO();
 		orderProduct.setOrderNo(orderm.getOrderNo());// 订单编号
