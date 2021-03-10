@@ -10,11 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.web.util.HtmlUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,6 +41,43 @@ import cn.net.yzl.order.model.vo.order.OrderIn;
  * @date 2021年1月18日,下午7:10:59
  */
 public class SimpleTests {
+	@Test
+	public void testCompletableFuture() {
+		long begin = System.currentTimeMillis();
+		CompletableFuture[] allof = { CompletableFuture.supplyAsync(() -> {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return 1;
+		}), CompletableFuture.supplyAsync(() -> {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return 2;
+		}) };
+		CompletableFuture.allOf(allof);
+		int sum = Arrays.stream(allof).mapToInt(m -> {
+			try {
+				return (Integer) (m.get());
+			} catch (Exception e) {
+				return 0;
+			}
+		}).sum();
+		long end = System.currentTimeMillis() - begin;
+		System.err.println(String.format("求和：%s, 耗时：%s秒", sum, end / 1000));
+	}
+
+	@Test
+	public void testHtmlUtils() {
+		System.err.println(HtmlUtils.htmlEscape("<p>我是一个段落标记</p><script>alert(123)</script><div>我是一个div</div>"));
+		System.err.println(HtmlUtils.htmlUnescape(
+				"&lt;p&gt;我是一个段落标记&lt;/p&gt;&lt;script&gt;alert(123)&lt;/script&gt;&lt;div&gt;我是一个div&lt;/div&gt;"));
+	}
+
 	@Test
 	public void testRegex() {
 		try {
