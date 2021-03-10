@@ -581,12 +581,14 @@ public class OrderRestController {
 		// 计算使用红包的金额，单位分
 		orderm.setAmountRedEnvelope(productPriceList.stream()
 				.filter(p -> p.getDiscountType() != null
-						&& Integer.compare(CommonConstant.COUPON_TYPE_2, p.getDiscountType()) == 0)
-				.mapToInt(m -> m.getCouponDiscountPrice().multiply(bd100).intValue()).sum());
+						&& Integer.compare(CommonConstant.COUPON_TYPE_2, p.getDiscountType()) == 0
+						&& p.getActivityDiscountPrice() != null)
+				.mapToInt(m -> m.getActivityDiscountPrice().multiply(bd100).intValue()).sum());
 		// 计算使用非红包的金额，也就是使用优惠券的金额，单位分
 		orderm.setAmountCoupon(productPriceList.stream()
 				.filter(p -> p.getDiscountType() != null
-						&& Integer.compare(CommonConstant.COUPON_TYPE_2, p.getDiscountType()) != 0)
+						&& Integer.compare(CommonConstant.COUPON_TYPE_2, p.getDiscountType()) != 0
+						&& p.getCouponDiscountPrice() != null)
 				.mapToInt(m -> m.getCouponDiscountPrice().multiply(bd100).intValue()).sum());
 		if (this.hasAmountStored(orderin)) {
 			// 如果订单总金额大于账户剩余金额，单位分
