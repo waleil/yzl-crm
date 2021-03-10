@@ -101,6 +101,8 @@ public class OrderRejectionServiceImpl implements OrderRejectionService {
             if (!storeVO.getStatus().equals(1)) {
                 return ComResponse.fail(ResponseCodeEnums.ERROR, "添加失败，仓库未启用。");
             }
+            dto.setStoreName(storeVO.getName());
+            dto.setStoreNo(storeVO.getNo());
 
         }
         ComResponse<OrderInfoVo> response = orderSearchClient.selectOrderInfo4Opr(dto.getOrderNo());
