@@ -280,7 +280,9 @@ public class LogisticsController {
 		if (list.getCode() == 200) {
 
 			List<String> storePoList = new ArrayList<>();
-			if (expressSearchDTO.getWarehouseId() != null) {
+			if (expressSearchDTO.getWarehouseId() != null && expressSearchDTO.getWarehouseId()!=""
+			&& !StringUtils.isEmpty(expressSearchDTO.getWarehouseId())
+			) {
 				storePoList = Optional.ofNullable(list.getData())
 						.orElseGet(ArrayList::new).stream()
 						.filter(p -> p.getName().indexOf(expressSearchDTO.getWarehouseId()) > -1)
