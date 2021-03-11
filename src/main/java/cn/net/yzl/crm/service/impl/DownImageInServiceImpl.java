@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.net.yzl.common.entity.ComResponse;
+import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.client.store.ProductPurchaseWarnFeignService;
 import cn.net.yzl.crm.client.store.ProductStockFeignService;
@@ -131,7 +132,25 @@ public class DownImageInServiceImpl implements DownImageInService {
                 .sheet("商品库存预警").doWrite(listComResponseData);
     }
 
+    @Override
+    public ComResponse<Integer> getExpressExportCount(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo){
+        String expressNo = outStoreOrderInfoParamVo.getExpressNo();
+        if(!("DEPPON".equals(expressNo) || "YUNDA".equals(expressNo) || "EMS".equals(expressNo)
+                || "sjzyj".equals(expressNo) || "bdyj".equals(expressNo))){
+            return ComResponse.fail(ResponseCodeEnums.ERROR.getCode(),"快递公司请选择韵达、德邦、邮政！");
+        }
+        ComResponse<List<ExpressOrderInfo>> senderExpressInfo = removeStockFeignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
+        List<ExpressOrderInfo> data = senderExpressInfo.getData();
+        if(CollectionUtils.isEmpty(data)){
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),"您选择的快递公司无未打印数据。");
+        }else {
+            return ComResponse.success(1,200,"导出无快递单号和未打印数据共"+data.size()+"条!",data.size());
+        }
+
+    }
+
     public void exportExpressPrintInfo(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo, HttpServletResponse httpServletResponse) throws IOException {
+        String expressNo = outStoreOrderInfoParamVo.getExpressNo();
         ComResponse<List<ExpressOrderInfo>> senderExpressInfo = removeStockFeignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
         log.info("仓储中心数据物流:{}", JsonUtil.toJsonStr(senderExpressInfo));
         if (senderExpressInfo==null || senderExpressInfo.getCode() !=200L){
@@ -141,7 +160,6 @@ public class DownImageInServiceImpl implements DownImageInService {
             return;
         }
         List<ExpressOrderInfo> expressOrderInfos = senderExpressInfo.getData();
-        String expressNo = outStoreOrderInfoParamVo.getExpressNo();
         //TODO
         if("DEPPON".equals(expressNo)){
             handleDP(expressOrderInfos,httpServletResponse);
