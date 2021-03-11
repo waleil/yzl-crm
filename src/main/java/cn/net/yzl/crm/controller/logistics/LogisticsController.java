@@ -274,10 +274,13 @@ public class LogisticsController {
 	@ApiOperation(value = "分页查询物流公司列表")
 	@PostMapping("v1/expresscompany/listPage")
 	public ComResponse<Page<ExpressCompany>> listPage(@RequestBody @Valid ExpressSearchDTO expressSearchDTO) {
+		ComResponse<List<StorePo>> list=null;
+		if (!StringUtils.isEmpty(expressSearchDTO.getWarehouseId())) {
+			list = storeFeginService.selectStoreAny();
+		}
+//		ComResponse<List<StorePo>> list = storeFeginService.selectStoreAny();
 
-		ComResponse<List<StorePo>> list = storeFeginService.selectStoreAny();
-
-		if (list.getCode() == 200) {
+		if (list!=null && list.getCode() == 200) {
 
 			List<String> storePoList = new ArrayList<>();
 			if (expressSearchDTO.getWarehouseId() != null && expressSearchDTO.getWarehouseId()!=""
