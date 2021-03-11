@@ -120,7 +120,7 @@ public class OrderSearchServiceImpl implements IOrderSearchService {
 		GeneralResult<List<ExpressTraceResDTO>> logisticsTraces = logisticsFien.findLogisticsTraces(dto);
 		if (logisticsTraces.getCode().compareTo(Integer.valueOf(200)) != 0) {
 			log.error("调用物流服务查询物流轨迹失败，订单号：{} - {}", orderNo, respons.getMessage());
-			throw new BizException(logisticsTraces.getCode(), logisticsTraces.getMessage());
+			throw new BizException(logisticsTraces.getCode(), "调用物流服务查询物流轨迹失败");
 		}
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		List<LogisticsInfo> list = Optional.ofNullable(logisticsTraces.getData())

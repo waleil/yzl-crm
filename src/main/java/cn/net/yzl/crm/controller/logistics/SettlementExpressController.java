@@ -98,13 +98,13 @@ public class SettlementExpressController {
         if (searchVo.getSearchStatus() == 1) {
             httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
 
-                    URLEncoder.encode("对账运费","utf-8")+date+".xlsx");
+                    URLEncoder.encode("对账运费"+date+".xlsx","utf-8"));
         }
-
+//        URLEncoder.encode("结算运费订单"+sysDate+".xlsx", "utf-8"));
         if (searchVo.getSearchStatus() == 0) {
             httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
 
-                    URLEncoder.encode("未对账运费","utf-8")+date+".xlsx");
+                    URLEncoder.encode("未对账运费"+date+".xlsx","utf-8"));
         }
 
 //        httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+"对账运费订单"+date+".xlsx");

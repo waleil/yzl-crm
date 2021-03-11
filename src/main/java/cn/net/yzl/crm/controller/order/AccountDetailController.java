@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
@@ -24,6 +22,7 @@ import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.order.AccountDetailFeignClient;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.order.model.vo.member.AccountDetailIn;
 import cn.net.yzl.order.model.vo.member.AccountDetailOut;
 import cn.net.yzl.order.model.vo.member.AccountDetailOut.DetailSummary;
@@ -40,7 +39,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/accountdetail")
 public class AccountDetailController {
-	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 	@Resource
 	private AccountDetailFeignClient accountDetailFeignClient;
 
@@ -69,7 +67,8 @@ public class AccountDetailController {
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), AccountDetailOut.class)
-					.registerWriteHandler(this.writeHandler).build();
+					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy())
+					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy()).build();
 			// 写入到同一个sheet
 			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
 			// 此处已经获取到第一页的数据

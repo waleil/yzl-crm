@@ -8,16 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import cn.net.yzl.crm.controller.store.listen.InventoryExcelListener;
-import cn.net.yzl.model.vo.InventoryProductVo;
-import com.alibaba.excel.ExcelReader;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.junit.jupiter.api.Test;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.alibaba.excel.write.metadata.style.WriteCellStyle;
+import com.alibaba.excel.write.metadata.style.WriteFont;
+import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 
+import cn.net.yzl.crm.controller.store.listen.InventoryExcelListener;
+import cn.net.yzl.model.vo.InventoryProductVo;
 import cn.net.yzl.order.model.vo.member.AccountDetailOut;
 
 /**
@@ -32,11 +36,11 @@ public class EasyExcelTests {
 	private List<AccountDetailOut> queryData() {
 		List<AccountDetailOut> list = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
-			list.add(new AccountDetailOut(String.format("MemberCardNo%s", index.incrementAndGet()),
-					String.format("MemberName%s", index.get()), LocalDateTime.now(),
-					String.format("OrderNo%s", index.get()), String.format("ExpressCompanyName%s", index.get()),
-					String.format("ExpressNumber%s", index.get()), LocalDateTime.now(), LocalDateTime.now(),
-					String.format("BusinessType%s", index.get()), BigDecimal.valueOf(index.get()),
+			list.add(new AccountDetailOut(String.format("会员卡号一二三四五六七八九十%s", index.incrementAndGet()),
+					String.format("会员姓名一二三四五六七八九十%s", index.get()), LocalDateTime.now(),
+					String.format("订单号一二三四五六七八九十%s", index.get()), String.format("快递公司一二三四五六七八九十%s", index.get()),
+					String.format("快递号一二三四五六七八九十%s", index.get()), LocalDateTime.now(), LocalDateTime.now(),
+					String.format("业务类型一二三四五六七八九十%s", index.get()), BigDecimal.valueOf(index.get()),
 					BigDecimal.valueOf(index.get()), LocalDateTime.now()));
 		}
 		return list;
@@ -44,12 +48,54 @@ public class EasyExcelTests {
 
 	@Test
 	public void testWrite() {
+		// 头部的样式
+		WriteCellStyle headWriteCellStyle = new WriteCellStyle();
+		// 头部背景颜色
+		headWriteCellStyle.setFillForegroundColor((short) 41);
+		// 头部字体
+		WriteFont headWriteFont = new WriteFont();
+		// 头部字体大小
+		headWriteFont.setFontHeightInPoints((short) 14);
+		// 头部字体名称
+		headWriteFont.setFontName("Microsoft YaHei Regular");
+		headWriteCellStyle.setWriteFont(headWriteFont);
+		headWriteCellStyle.setShrinkToFit(true);
+		// 设置下边框
+		headWriteCellStyle.setBorderBottom(BorderStyle.THIN);
+		// 设置左边框
+		headWriteCellStyle.setBorderLeft(BorderStyle.THIN);
+		// 设置右边框
+		headWriteCellStyle.setBorderRight(BorderStyle.THIN);
+		// 设置上边框
+		headWriteCellStyle.setBorderTop(BorderStyle.THIN);
+		// 内容的样式
+		WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
+		// 内容字体
+		WriteFont contentWriteFont = new WriteFont();
+		// 内容字体名称
+		contentWriteFont.setFontName("Microsoft YaHei Regular");
+		// 内容字体大小
+		contentWriteFont.setFontHeightInPoints((short) 12);
+		contentWriteCellStyle.setWriteFont(contentWriteFont);
+		contentWriteCellStyle.setShrinkToFit(true);
+		// 设置下边框
+		contentWriteCellStyle.setBorderBottom(BorderStyle.THIN);
+		// 设置左边框
+		contentWriteCellStyle.setBorderLeft(BorderStyle.THIN);
+		// 设置右边框
+		contentWriteCellStyle.setBorderRight(BorderStyle.THIN);
+		// 设置上边框
+		contentWriteCellStyle.setBorderTop(BorderStyle.THIN);
+		// 这个策略是 头是头的样式 内容是内容的样式 其他的策略可以自己实现
+		HorizontalCellStyleStrategy horizontalCellStyleStrategy = new HorizontalCellStyleStrategy(headWriteCellStyle,
+				contentWriteCellStyle);
 		// 方法1 如果写到同一个sheet
 		ExcelWriter excelWriter = null;
 		try {
 			// 这里 需要指定写用哪个class去写
 			excelWriter = EasyExcel.write(Paths.get("d:", "test.xlsx").toFile(), AccountDetailOut.class)
-					.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).build();
+					.registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+					.registerWriteHandler(horizontalCellStyleStrategy).build();
 			// 这里注意 如果同一个sheet只要创建一次
 			WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
 			// 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来
@@ -67,18 +113,17 @@ public class EasyExcelTests {
 		}
 	}
 
-
 	@Test
-	public void testReadStore(){
+	public void testReadStore() {
 
-		//创建监听器
+		// 创建监听器
 		InventoryExcelListener inventoryExcelListener = new InventoryExcelListener();
-		ExcelReader build = EasyExcel.read(Paths.get("D:\\PD2021-02-20 00_00_00 (3).xlsx").toFile(), InventoryProductVo.class, inventoryExcelListener).build();
+		ExcelReader build = EasyExcel.read(Paths.get("D:\\PD2021-02-20 00_00_00 (3).xlsx").toFile(),
+				InventoryProductVo.class, inventoryExcelListener).build();
 		build.readAll();
 
 		Map<String, String> errorMessageMap = inventoryExcelListener.getErrorMessageMap();
 		System.out.println(errorMessageMap);
-
 
 	}
 

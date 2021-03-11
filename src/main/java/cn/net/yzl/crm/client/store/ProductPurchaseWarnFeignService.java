@@ -52,9 +52,6 @@ public interface ProductPurchaseWarnFeignService {
     @ApiOperation("预警商品导出EXCEL")
     public ComResponse<List<ProductPurchaseWarnExcelDTO>> selectExcelOfProductPurchaseWarn(@RequestBody ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO);
 
-    @PostMapping(value = "productPurchaseWarn/v1/getSenderExpressInfo")
-    @ApiOperation("导出快递信息")
-    public ComResponse<List<ExpressOrderInfo>> getSenderExpressInfo(@RequestBody OutStoreOrderInfoParamVo outStoreOrderInfoParamVo);
 
 
 }

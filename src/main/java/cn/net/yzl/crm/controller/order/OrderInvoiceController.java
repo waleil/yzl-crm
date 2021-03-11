@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 
 import cn.net.yzl.activity.model.requestModel.AccountRequest;
 import cn.net.yzl.activity.model.requestModel.AccountWithOutPageRequest;
@@ -43,6 +43,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
@@ -64,6 +65,7 @@ import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.BeanCopyUtils;
+import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceListDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
@@ -79,7 +81,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OrderInvoiceController {
 
-	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 	private static final Pattern NUMBER_PATTERN = Pattern.compile("^\\d+$");
 
 	@Resource
@@ -167,6 +168,12 @@ public class OrderInvoiceController {
 					return ComResponse.fail(ResponseCodeEnums.ERROR,
 							String.format("调用顾客姓名查询顾客卡号列表接口异常：%s", queryMemberCards.getMessage()));
 				}
+				if (CollectionUtils.isEmpty(queryMemberCards.getData())) {
+					return ComResponse
+							.success(AssemblerResultUtil
+									.resultAssembler(Collections.<MemberIntegralRecordsDTO>emptyList()))
+							.setMessage("调用顾客姓名查询顾客卡号列表接口：没有查询到数据。");
+				}
 				ListAccountRequest listRequest = new ListAccountRequest();
 				listRequest.setMemberCards(queryMemberCards.getData());
 				listRequest.setPageNo(request.getPageNo());
@@ -182,7 +189,8 @@ public class OrderInvoiceController {
 		}
 		Page<MemberIntegralRecordsResponse> responseData = response.getData();
 		if (responseData.getItems().isEmpty()) {
-			return ComResponse.success();
+			return ComResponse
+					.success(AssemblerResultUtil.resultAssembler(Collections.<MemberIntegralRecordsDTO>emptyList()));
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberIntegralRecordsResponse::getOrderNo)
 				.distinct().collect(Collectors.toList());
@@ -208,7 +216,7 @@ public class OrderInvoiceController {
 			MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
+			dto.setMemberName(this.getMemberName(item.getMemberCard()));
 			return dto;
 		}).collect(Collectors.toList()));
 		return ComResponse.success(page);
@@ -272,6 +280,12 @@ public class OrderInvoiceController {
 					return ComResponse.fail(ResponseCodeEnums.ERROR,
 							String.format("调用顾客姓名查询顾客卡号列表接口异常：%s", queryMemberCards.getMessage()));
 				}
+				if (CollectionUtils.isEmpty(queryMemberCards.getData())) {
+					return ComResponse
+							.success(AssemblerResultUtil
+									.resultAssembler(Collections.<MemberRedBagRecordsDTO>emptyList()))
+							.setMessage("调用顾客姓名查询顾客卡号列表接口：没有查询到数据。");
+				}
 				ListAccountRequest listRequest = new ListAccountRequest();
 				listRequest.setMemberCards(queryMemberCards.getData());
 				listRequest.setPageNo(request.getPageNo());
@@ -287,7 +301,8 @@ public class OrderInvoiceController {
 		}
 		Page<MemberRedBagRecordsResponse> responseData = response.getData();
 		if (responseData.getItems().isEmpty()) {
-			return ComResponse.success();
+			return ComResponse
+					.success(AssemblerResultUtil.resultAssembler(Collections.<MemberRedBagRecordsDTO>emptyList()));
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberRedBagRecordsResponse::getOrderNo)
 				.distinct().collect(Collectors.toList());
@@ -313,7 +328,7 @@ public class OrderInvoiceController {
 			MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
+			dto.setMemberName(this.getMemberName(item.getMemberCard()));
 			return dto;
 		}).collect(Collectors.toList()));
 		return ComResponse.success(page);
@@ -361,10 +376,10 @@ public class OrderInvoiceController {
 	}
 
 	/**
-	 * TODO 获取顾客信息，测试完后就没用了
+	 * 获取顾客信息
 	 *
-	 * @param memberCardNo
-	 * @return
+	 * @param memberCardNo 顾客号
+	 * @return 顾客信息
 	 */
 	public String getMemberName(String memberCardNo) {
 		GeneralResult<Member> member = memberFien.getMember(memberCardNo);
@@ -391,6 +406,11 @@ public class OrderInvoiceController {
 					return ComResponse.fail(ResponseCodeEnums.ERROR,
 							String.format("调用顾客姓名查询顾客卡号列表接口异常：%s", queryMemberCards.getMessage()));
 				}
+				if (CollectionUtils.isEmpty(queryMemberCards.getData())) {
+					return ComResponse
+							.success(AssemblerResultUtil.resultAssembler(Collections.<MemberCouponDTO>emptyList()))
+							.setMessage("调用顾客姓名查询顾客卡号列表接口：没有查询到数据。");
+				}
 				ListAccountRequest listRequest = new ListAccountRequest();
 				listRequest.setMemberCards(queryMemberCards.getData());
 				listRequest.setPageNo(request.getPageNo());
@@ -406,7 +426,7 @@ public class OrderInvoiceController {
 		}
 		Page<MemberCouponResponse> responseData = response.getData();
 		if (responseData.getItems().isEmpty()) {
-			return ComResponse.success();
+			return ComResponse.success(AssemblerResultUtil.resultAssembler(Collections.<MemberCouponDTO>emptyList()));
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberCouponResponse::getOrderNo).distinct()
 				.collect(Collectors.toList());
@@ -436,7 +456,7 @@ public class OrderInvoiceController {
 			}
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
+			dto.setMemberName(this.getMemberName(item.getMemberCard()));
 			return dto;
 		}).collect(Collectors.toList()));
 		return ComResponse.success(page);
@@ -517,8 +537,9 @@ public class OrderInvoiceController {
 				URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
 		ExcelWriter excelWriter = null;
 		try {
-			excelWriter = EasyExcel.write(response.getOutputStream(), clazz).registerWriteHandler(this.writeHandler)
-					.build();
+			excelWriter = EasyExcel.write(response.getOutputStream(), clazz)
+					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
+					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy()).build();
 			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
 			excelWriter.write(list, writeSheet);
 		} catch (Exception e) {

@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
@@ -37,6 +35,7 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.sys.BizException;
+import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.order.model.excel.ExcelResult;
 import cn.net.yzl.order.model.vo.order.CompareOrderIn;
 import cn.net.yzl.order.model.vo.order.CompareOrderParam;
@@ -57,7 +56,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/comparisonmgt")
 public class ComparisonMgtController {
 	private Resource templateResource = new ClassPathResource("excel/comparisonmgt/template.xlsx");
-	private WriteHandler writeHandler = new LongestMatchColumnWidthStyleStrategy();
 	@Autowired
 	private ComparisonMgtFeignClient comparisonMgtFeignClient;
 	@Autowired
@@ -94,7 +92,8 @@ public class ComparisonMgtController {
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), CompareOrderType1Out.class)
-					.registerWriteHandler(this.writeHandler).build();
+					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
+					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy()).build();
 			// 写入到同一个sheet
 			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
 			// 此处已经获取到第一页的数据
@@ -140,7 +139,8 @@ public class ComparisonMgtController {
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), CompareOrderType2Out.class)
-					.registerWriteHandler(this.writeHandler).build();
+					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
+					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy()).build();
 			// 写入到同一个sheet
 			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
 			// 此处已经获取到第一页的数据

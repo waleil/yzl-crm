@@ -21,6 +21,7 @@ import cn.net.yzl.crm.sys.BizException;
 
 import cn.net.yzl.order.constant.CommonConstant;
 import cn.net.yzl.order.enums.OrderStatus;
+import cn.net.yzl.order.enums.PayType;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.vo.order.OrderCheckDetailDTO;
 import cn.net.yzl.order.model.vo.order.OrderInfoVo;
@@ -64,9 +65,9 @@ public class OrderOprServiceImpl implements IOrderOprService {
     @Autowired
     private ActivityClient activityClient;
 
-    private static final int[] CAN_CANCLE_STATS = new int[]{OrderStatus.ORDER_STATUS_1.getCode()
+    private static final List<Integer> CAN_CANCLE_STATS = Arrays.asList(OrderStatus.ORDER_STATUS_1.getCode()
             ,OrderStatus.ORDER_STATUS_2.getCode()
-            ,OrderStatus.ORDER_STATUS_3.getCode()};
+            ,OrderStatus.ORDER_STATUS_3.getCode());
 
     @Override
     public ComResponse<Boolean> cancleOrder(OrderOprDTO dto) {
@@ -89,9 +90,13 @@ public class OrderOprServiceImpl implements IOrderOprService {
             }
             OrderInfoVo vo = response.getData();
 
-
+            //款到发货，不可以取消订单
+            if(vo.getOrder().getPayType() == PayType.PAY_TYPE_1.getCode()){
+                log.error("订单号：{}，付款类型为款到发货，不能取消订单",dto.getOrderNo());
+                throw  new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(),"款到发货，不可以取消订单");
+            }
             //校验当前订单状态是否符合取消订单的条件
-            if(!Arrays.asList(CAN_CANCLE_STATS).contains(vo.getOrder().getOrderStatus())){
+            if(!CAN_CANCLE_STATS.contains(vo.getOrder().getOrderStatus()) ){
                 log.error("订单号：{},当前状态：{}，不能取消订单",dto.getOrderNo(),OrderStatus.codeToName(vo.getOrder().getOrderStatus()));
                 throw new BizException(ResponseCodeEnums.VALIDATE_ERROR_CODE.getCode(),"该订单当前状态不可取消订单，当前状态为：" + OrderStatus.codeToName(vo.getOrder().getOrderStatus()));
             }
