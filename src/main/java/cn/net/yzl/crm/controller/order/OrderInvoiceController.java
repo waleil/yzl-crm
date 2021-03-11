@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -66,6 +68,7 @@ import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.crm.sys.BizException;
 import cn.net.yzl.crm.utils.BeanCopyUtils;
 import cn.net.yzl.crm.utils.ExcelStyleUtils;
+import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceListDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
@@ -194,31 +197,50 @@ public class OrderInvoiceController {
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberIntegralRecordsResponse::getOrderNo)
 				.distinct().collect(Collectors.toList());
-		// 查询订单服务积分数据
-		ComResponse<Map<String, String>> queryFinancialNames = this.orderFeignClient.queryFinancialNames(orderNoList);
-		if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
-			log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
-			return ComResponse.fail(ResponseCodeEnums.ERROR,
-					String.format("调用订单财务名称集合异常：%s", queryFinancialNames.getMessage()));
+		Map<String, OrderM> financialNames = Collections.emptyMap();
+		CompletableFuture<Map<String, OrderM>> cf1 = CompletableFuture.supplyAsync(() -> {
+			// 查询订单服务积分数据
+			ComResponse<Map<String, OrderM>> queryFinancialNames = this.orderFeignClient
+					.queryFinancialNames(orderNoList);
+			if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+				log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
+				return Collections.emptyMap();
+			}
+			return queryFinancialNames.getData();
+		});
+		Map<String, Date> settlementtimes = Collections.emptyMap();
+		CompletableFuture<Map<String, Date>> cf2 = CompletableFuture.supplyAsync(() -> {
+			ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
+					.querySettlementtimes(orderNoList);
+			if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+				log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
+				return Collections.emptyMap();
+			}
+			return querySettlementtimes.getData();
+		});
+		CompletableFuture.allOf(cf1, cf2);
+		try {
+			financialNames = cf1.get();
+		} catch (InterruptedException | ExecutionException e) {
+			log.error(e.getLocalizedMessage(), e);
 		}
-		ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
-				.querySettlementtimes(orderNoList);
-		if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
-			log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
-			return ComResponse.fail(ResponseCodeEnums.ERROR,
-					String.format("调用订单对账时间集合异常：%s", querySettlementtimes.getMessage()));
+		try {
+			settlementtimes = cf2.get();
+		} catch (InterruptedException | ExecutionException e) {
+			log.error(e.getLocalizedMessage(), e);
 		}
-		Map<String, String> financialNames = queryFinancialNames.getData();
-		Map<String, Date> settlementtimes = querySettlementtimes.getData();
 		Page<MemberIntegralRecordsDTO> page = new Page<>();
 		page.setPageParam(responseData.getPageParam());
-		page.setItems(responseData.getItems().stream().map(item -> {
+		page.setItems(new ArrayList<>());
+		List<MemberIntegralRecordsResponse> items = responseData.getItems();
+		for (MemberIntegralRecordsResponse item : items) {
 			MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
-			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
-			return dto;
-		}).collect(Collectors.toList()));
+			OrderM order = financialNames.get(item.getOrderNo());
+			dto.setFinancialOwnerName(Optional.ofNullable(order).map(OrderM::getFinancialOwnerName).orElse("-"));
+			dto.setMemberName(Optional.ofNullable(order).map(OrderM::getMemberName).orElse("-"));
+			page.getItems().add(dto);
+		}
 		return ComResponse.success(page);
 	}
 
@@ -306,31 +328,50 @@ public class OrderInvoiceController {
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberRedBagRecordsResponse::getOrderNo)
 				.distinct().collect(Collectors.toList());
-		// 查询订单服务积分数据
-		ComResponse<Map<String, String>> queryFinancialNames = this.orderFeignClient.queryFinancialNames(orderNoList);
-		if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
-			log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
-			return ComResponse.fail(ResponseCodeEnums.ERROR,
-					String.format("调用订单财务名称集合异常：%s", queryFinancialNames.getMessage()));
+		Map<String, OrderM> financialNames = Collections.emptyMap();
+		CompletableFuture<Map<String, OrderM>> cf1 = CompletableFuture.supplyAsync(() -> {
+			// 查询订单服务积分数据
+			ComResponse<Map<String, OrderM>> queryFinancialNames = this.orderFeignClient
+					.queryFinancialNames(orderNoList);
+			if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+				log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
+				return Collections.emptyMap();
+			}
+			return queryFinancialNames.getData();
+		});
+		Map<String, Date> settlementtimes = Collections.emptyMap();
+		CompletableFuture<Map<String, Date>> cf2 = CompletableFuture.supplyAsync(() -> {
+			ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
+					.querySettlementtimes(orderNoList);
+			if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+				log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
+				return Collections.emptyMap();
+			}
+			return querySettlementtimes.getData();
+		});
+		CompletableFuture.allOf(cf1, cf2);
+		try {
+			financialNames = cf1.get();
+		} catch (InterruptedException | ExecutionException e) {
+			log.error(e.getLocalizedMessage(), e);
 		}
-		ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
-				.querySettlementtimes(orderNoList);
-		if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
-			log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
-			return ComResponse.fail(ResponseCodeEnums.ERROR,
-					String.format("调用订单对账时间集合异常：%s", querySettlementtimes.getMessage()));
+		try {
+			settlementtimes = cf2.get();
+		} catch (InterruptedException | ExecutionException e) {
+			log.error(e.getLocalizedMessage(), e);
 		}
-		Map<String, String> financialNames = queryFinancialNames.getData();
-		Map<String, Date> settlementtimes = querySettlementtimes.getData();
 		Page<MemberRedBagRecordsDTO> page = new Page<>();
 		page.setPageParam(responseData.getPageParam());
-		page.setItems(responseData.getItems().stream().map(item -> {
+		page.setItems(new ArrayList<>());
+		List<MemberRedBagRecordsResponse> items = responseData.getItems();
+		for (MemberRedBagRecordsResponse item : items) {
 			MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
-			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
-			return dto;
-		}).collect(Collectors.toList()));
+			OrderM order = financialNames.get(item.getOrderNo());
+			dto.setFinancialOwnerName(Optional.ofNullable(order).map(OrderM::getFinancialOwnerName).orElse("-"));
+			dto.setMemberName(Optional.ofNullable(order).map(OrderM::getMemberName).orElse("-"));
+			page.getItems().add(dto);
+		}
 		return ComResponse.success(page);
 	}
 
@@ -376,10 +417,10 @@ public class OrderInvoiceController {
 	}
 
 	/**
-	 * TODO 获取顾客信息，测试完后就没用了
+	 * 获取顾客信息
 	 *
-	 * @param memberCardNo
-	 * @return
+	 * @param memberCardNo 顾客号
+	 * @return 顾客信息
 	 */
 	public String getMemberName(String memberCardNo) {
 		GeneralResult<Member> member = memberFien.getMember(memberCardNo);
@@ -430,35 +471,54 @@ public class OrderInvoiceController {
 		}
 		List<String> orderNoList = responseData.getItems().stream().map(MemberCouponResponse::getOrderNo).distinct()
 				.collect(Collectors.toList());
-		// 查询订单服务积分数据
-		ComResponse<Map<String, String>> queryFinancialNames = this.orderFeignClient.queryFinancialNames(orderNoList);
-		if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
-			log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
-			return ComResponse.fail(ResponseCodeEnums.ERROR,
-					String.format("调用订单财务名称集合异常：%s", queryFinancialNames.getMessage()));
+		Map<String, OrderM> financialNames = Collections.emptyMap();
+		CompletableFuture<Map<String, OrderM>> cf1 = CompletableFuture.supplyAsync(() -> {
+			// 查询订单服务积分数据
+			ComResponse<Map<String, OrderM>> queryFinancialNames = this.orderFeignClient
+					.queryFinancialNames(orderNoList);
+			if (Integer.compare(queryFinancialNames.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+				log.error("订单财务名称集合异常>>>{}", queryFinancialNames);
+				return Collections.emptyMap();
+			}
+			return queryFinancialNames.getData();
+		});
+		Map<String, Date> settlementtimes = Collections.emptyMap();
+		CompletableFuture<Map<String, Date>> cf2 = CompletableFuture.supplyAsync(() -> {
+			ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
+					.querySettlementtimes(orderNoList);
+			if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+				log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
+				return Collections.emptyMap();
+			}
+			return querySettlementtimes.getData();
+		});
+		CompletableFuture.allOf(cf1, cf2);
+		try {
+			financialNames = cf1.get();
+		} catch (InterruptedException | ExecutionException e) {
+			log.error(e.getLocalizedMessage(), e);
 		}
-		ComResponse<Map<String, Date>> querySettlementtimes = this.comparisonMgtFeignClient
-				.querySettlementtimes(orderNoList);
-		if (Integer.compare(querySettlementtimes.getStatus(), ComResponse.ERROR_STATUS) == 0) {
-			log.error("订单对账时间集合异常>>>{}", querySettlementtimes);
-			return ComResponse.fail(ResponseCodeEnums.ERROR,
-					String.format("调用订单对账时间集合异常：%s", querySettlementtimes.getMessage()));
+		try {
+			settlementtimes = cf2.get();
+		} catch (InterruptedException | ExecutionException e) {
+			log.error(e.getLocalizedMessage(), e);
 		}
-		Map<String, String> financialNames = queryFinancialNames.getData();
-		Map<String, Date> settlementtimes = querySettlementtimes.getData();
 		Page<MemberCouponDTO> page = new Page<>();
 		page.setPageParam(responseData.getPageParam());
-		page.setItems(responseData.getItems().stream().map(item -> {
+		page.setItems(new ArrayList<>());
+		List<MemberCouponResponse> items = responseData.getItems();
+		for (MemberCouponResponse item : items) {
 			MemberCouponDTO dto = BeanCopyUtils.transfer(item, MemberCouponDTO.class);
 			if (!item.getCouponDiscountRulesDto().isEmpty()) {
 				dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getConditionFullD());
 				dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
 			}
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
-			dto.setFinancialOwnerName(Optional.ofNullable(financialNames.get(item.getOrderNo())).orElse("-"));
-			dto.setMemberName(getMemberName(item.getMemberCard()));
-			return dto;
-		}).collect(Collectors.toList()));
+			OrderM order = financialNames.get(item.getOrderNo());
+			dto.setFinancialOwnerName(Optional.ofNullable(order).map(OrderM::getFinancialOwnerName).orElse("-"));
+			dto.setMemberName(Optional.ofNullable(order).map(OrderM::getMemberName).orElse("-"));
+			page.getItems().add(dto);
+		}
 		return ComResponse.success(page);
 	}
 
