@@ -1,5 +1,7 @@
 package cn.net.yzl.crm.utils;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+
 import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
@@ -15,7 +17,7 @@ public class ExcelStyleUtils {
 	 * 禁止外部实例化
 	 */
 	private ExcelStyleUtils() {
-		
+
 	}
 
 	/**
@@ -36,6 +38,14 @@ public class ExcelStyleUtils {
 		headWriteFont.setFontName("Microsoft YaHei Regular");
 		headWriteCellStyle.setWriteFont(headWriteFont);
 		headWriteCellStyle.setShrinkToFit(true);
+		// 设置下边框
+		headWriteCellStyle.setBorderBottom(BorderStyle.THIN);
+		// 设置左边框
+		headWriteCellStyle.setBorderLeft(BorderStyle.THIN);
+		// 设置右边框
+		headWriteCellStyle.setBorderRight(BorderStyle.THIN);
+		// 设置上边框
+		headWriteCellStyle.setBorderTop(BorderStyle.THIN);
 		// 内容的样式
 		WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
 		// 内容字体
@@ -46,12 +56,20 @@ public class ExcelStyleUtils {
 		contentWriteFont.setFontHeightInPoints((short) 12);
 		contentWriteCellStyle.setWriteFont(contentWriteFont);
 		contentWriteCellStyle.setShrinkToFit(true);
+		// 设置下边框
+		contentWriteCellStyle.setBorderBottom(BorderStyle.THIN);
+		// 设置左边框
+		contentWriteCellStyle.setBorderLeft(BorderStyle.THIN);
+		// 设置右边框
+		contentWriteCellStyle.setBorderRight(BorderStyle.THIN);
+		// 设置上边框
+		contentWriteCellStyle.setBorderTop(BorderStyle.THIN);
 		// 这个策略是 头是头的样式 内容是内容的样式 其他的策略可以自己实现
 		HorizontalCellStyleStrategy horizontalCellStyleStrategy = new HorizontalCellStyleStrategy(headWriteCellStyle,
 				contentWriteCellStyle);
 		return horizontalCellStyleStrategy;
 	}
-	
+
 	/**
 	 * @return {@link LongestMatchColumnWidthStyleStrategy}
 	 * @author zhangweiwei

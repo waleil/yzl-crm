@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.junit.jupiter.api.Test;
 
 import com.alibaba.excel.EasyExcel;
@@ -59,6 +60,14 @@ public class EasyExcelTests {
 		headWriteFont.setFontName("Microsoft YaHei Regular");
 		headWriteCellStyle.setWriteFont(headWriteFont);
 		headWriteCellStyle.setShrinkToFit(true);
+		// 设置下边框
+		headWriteCellStyle.setBorderBottom(BorderStyle.THIN);
+		// 设置左边框
+		headWriteCellStyle.setBorderLeft(BorderStyle.THIN);
+		// 设置右边框
+		headWriteCellStyle.setBorderRight(BorderStyle.THIN);
+		// 设置上边框
+		headWriteCellStyle.setBorderTop(BorderStyle.THIN);
 		// 内容的样式
 		WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
 		// 内容字体
@@ -69,6 +78,14 @@ public class EasyExcelTests {
 		contentWriteFont.setFontHeightInPoints((short) 12);
 		contentWriteCellStyle.setWriteFont(contentWriteFont);
 		contentWriteCellStyle.setShrinkToFit(true);
+		// 设置下边框
+		contentWriteCellStyle.setBorderBottom(BorderStyle.THIN);
+		// 设置左边框
+		contentWriteCellStyle.setBorderLeft(BorderStyle.THIN);
+		// 设置右边框
+		contentWriteCellStyle.setBorderRight(BorderStyle.THIN);
+		// 设置上边框
+		contentWriteCellStyle.setBorderTop(BorderStyle.THIN);
 		// 这个策略是 头是头的样式 内容是内容的样式 其他的策略可以自己实现
 		HorizontalCellStyleStrategy horizontalCellStyleStrategy = new HorizontalCellStyleStrategy(headWriteCellStyle,
 				contentWriteCellStyle);
