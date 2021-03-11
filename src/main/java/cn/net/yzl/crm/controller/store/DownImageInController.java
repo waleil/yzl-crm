@@ -164,7 +164,7 @@ public class DownImageInController {
     }
 
     @PostMapping(value = "v1/expressExportCount")
-    @ApiOperation("导出快递模板")
+    @ApiOperation("导出快递数量统计")
     public ComResponse getExpressExportCount(@RequestBody OutStoreOrderInfoParamVo outStoreOrderInfoParamVo) {
         return downImageInService.getExpressExportCount(outStoreOrderInfoParamVo);
     }
