@@ -65,7 +65,7 @@ public interface WorkOrderClient {
      * @return
      */
     @PostMapping(value = "v1/updateSingleAdjust")
-    ComResponse<Void> updateSingleAdjust(UpdateSingleAdjustDTO updateSingleAdjustDTO);
+    ComResponse<Boolean> updateSingleAdjust(UpdateSingleAdjustDTO updateSingleAdjustDTO);
 
     /**
      * 智能工单:回访工单管理-查询所有用户首次购买商品
@@ -90,7 +90,7 @@ public interface WorkOrderClient {
      * @return
      */
     @PostMapping(value = "v1/updateMoreAdjust")
-    ComResponse<Void> updateMoreAdjust(UpdateMoreAdjustDTO updateMoreAdjustDTO);
+    ComResponse<Boolean> updateMoreAdjust(UpdateMoreAdjustDTO updateMoreAdjustDTO);
 
     /**
      * 智能工单-单条调整

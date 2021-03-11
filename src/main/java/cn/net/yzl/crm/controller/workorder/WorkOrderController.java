@@ -346,7 +346,7 @@ public class WorkOrderController {
      */
     @PostMapping("v1/updateSingleAdjust")
     @ApiOperation(value = "热线工单管理-单数据调整", notes = "热线工单管理-单数据调整")
-    public ComResponse<Void> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO) {
+    public ComResponse<Boolean> updateSingleAdjust(@Validated @RequestBody UpdateSingleAdjustDTO updateSingleAdjustDTO) {
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
@@ -368,7 +368,11 @@ public class WorkOrderController {
 
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为未接受（热线的不管自动分配还是人工分配都需要接收）
-        return workOrderClient.updateSingleAdjust(updateSingleAdjustDTO).setMessage("成功");
+        ComResponse<Boolean> comResponse = workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
+        if(comResponse.getData()){
+            comResponse.setMessage("成功");
+        }
+        return comResponse;
     }
 
     @ApiOperation(value = "查询所有用户首次购买商品", notes = "查询所有用户首次购买商品")
@@ -413,7 +417,7 @@ public class WorkOrderController {
      */
     @PostMapping("v1/updateMoreAdjust")
     @ApiOperation(value = "热线工单管理-多数据调整", notes = "热线工单管理-多数据调整")
-    public ComResponse<Void> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO) {
+    public ComResponse<Boolean> updateMoreAdjust(@Validated @RequestBody UpdateMoreAdjustDTO updateMoreAdjustDTO) {
         //获取当前登陆人信息
         ComResponse<StaffImageBaseInfoDto> detailsByNo = ehrStaffClient.getDetailsByNo(QueryIds.userNo.get());
         if(StringUtils.isEmpty(detailsByNo) || StringUtils.isEmpty(detailsByNo.getData())){
