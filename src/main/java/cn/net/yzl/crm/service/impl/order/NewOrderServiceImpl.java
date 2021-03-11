@@ -10,7 +10,9 @@ import cn.net.yzl.crm.customer.dto.address.ReveiverAddressMsgDTO;
 import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
 import cn.net.yzl.crm.customer.dto.member.MemberAddressAndLevelDTO;
 import cn.net.yzl.crm.customer.model.CrowdGroup;
+import cn.net.yzl.crm.dto.order.MemberCouponInfoDTO;
 import cn.net.yzl.crm.dto.staff.StaffChangeRecordDto;
+import cn.net.yzl.crm.service.micservice.ActivityClient;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.micservice.MemberGroupFeign;
@@ -48,6 +50,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class NewOrderServiceImpl implements INewOrderService {
@@ -90,6 +93,9 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 	@Autowired
 	private OrderSearchClient orderSearchClient;
+
+	@Autowired
+	private ActivityClient activityClient;
 
 	/**
 	 * 新建订单
@@ -228,8 +234,9 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 		   // 查询未处理的会刊订单记录
 		   ComResponse<List<OrderTempVO>> listComResponse = newOrderClient.selectUnOpredHKOrder();
-		   if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
-			   throw new BizException(listComResponse.getCode(), listComResponse.getMessage());
+		   if (listComResponse == null ||!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
+			  log.error("查询待执行的会刊任务失败！ {}-{}",listComResponse.getCode(),listComResponse.getMessage());
+			   throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "调用订单服务查询待执行会刊任务失败");
 		   }
 		   List<OrderTempVO> data = listComResponse.getData();
 		   if (data == null || data.size() == 0) {
@@ -306,10 +313,10 @@ public class NewOrderServiceImpl implements INewOrderService {
 		List<String> groupids = Arrays.asList(orderTemp.getGroupId().split(","));
 		for (String map : groupids) {
 			ComResponse<List<GroupRefMember>> listComResponse = memberGroupFeign.queryMembersByGroupId(map);
-			if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
+			if (listComResponse==null ||!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(listComResponse.getCode())) {
 				// 标记查询失败的群组
-				log.error("获取群组中顾客信息失败" + listComResponse.getCode() );
-				throw new BizException(listComResponse.getCode(),"获取群组信息失败!" +listComResponse.getMessage());
+				log.error("获取群组中顾客信息失败！{}-{}" , listComResponse.getCode() ,listComResponse.getMessage());
+				throw new BizException(listComResponse.getCode(),"获取群组信息失败!" );
 			} else {
 				List<GroupRefMember> data = listComResponse.getData();
 				if (CollectionUtils.isEmpty(data)) {
@@ -328,16 +335,26 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 					String membercards = data.subList(offset, toIndex).stream().map(GroupRefMember::getMemberCard)
 							.collect(Collectors.joining(","));
-					offset = toIndex;
+
 					ComResponse<List<MemberAddressAndLevelDTO>> res = memberFien
 							.getMembereAddressAndLevelByMemberCards(membercards);
 					if (res.getCode().compareTo(Integer.valueOf(200)) != 0) {
 						throw new BizException(res.getCode(), res.getMessage());
 					}
 					List<MemberAddressAndLevelDTO> members = res.getData();
-
+					//查询顾客当前积分优惠券情况
+					ComResponse<List<MemberCouponInfoDTO>> accountByMemberCardsRes = activityClient.getAccountByMemberCards(data.subList(offset, toIndex).stream()
+							.map(GroupRefMember::getMemberCard).collect(Collectors.toList()));
+					if(accountByMemberCardsRes == null || Integer.compare(accountByMemberCardsRes.getCode(),Integer.valueOf(200))!=0){
+						log.error("调用dmc查询顾客优惠信息失败",accountByMemberCardsRes);
+						throw new BizException(ResponseCodeEnums.SAVE_DATA_ERROR_CODE.getCode(),"调用dmc查询顾客优惠信息失败");
+					}
+					List<MemberCouponInfoDTO> memberCouponInfoDTOS = accountByMemberCardsRes.getData();
+					Map<String, MemberCouponInfoDTO> collect = memberCouponInfoDTOS.stream().collect(Collectors.toMap(MemberCouponInfoDTO::getMemberCard, memberCouponInfoDTO -> memberCouponInfoDTO));
+					offset = toIndex;
 					members.stream().forEach(item -> {
-						OrderInfo4Mq vo = mkOrderInfo(item, orderTemp, product, item);
+						MemberCouponInfoDTO memberCouponInfoDTO = collect.get(item.getMemberCard());
+						OrderInfo4Mq vo = mkOrderInfo(item, orderTemp, product, item,memberCouponInfoDTO);
 						redisUtil.incr(CACHEKEYPREFIX + "opr" + "-" + orderTemp.getOrderTempCode() + "-" + map);
 						redisUtil.incr(CACHEKEYPREFIX + "opr" + "-" + orderTemp.getOrderTempCode());
 						if (vo == null) {// 说明是无效客户，记录失败数量
@@ -374,10 +391,11 @@ public class NewOrderServiceImpl implements INewOrderService {
 	 * @param item
 	 * @param orderTemp
 	 * @param product
+	 * @param memberCouponInfoDTO
 	 * @return
 	 */
 	private OrderInfo4Mq mkOrderInfo(MemberAddressAndLevelDTO item, OrderTemp orderTemp, List<OrderTempProduct> product,
-			MemberAddressAndLevelDTO member) {
+									 MemberAddressAndLevelDTO member, MemberCouponInfoDTO memberCouponInfoDTO) {
 
 		// 订单号
 		String orderNo = redisUtil.getSeqNo(RedisKeys.CREATE_ORDER_NO_PREFIX, RedisKeys.CREATE_ORDER_NO, 6);
@@ -387,11 +405,9 @@ public class NewOrderServiceImpl implements INewOrderService {
 			return null;
 		}
 
-
-
 		OrderInfo4Mq orderInfo = new OrderInfo4Mq();
 		// 订单主表
-		OrderM orderM = mkOrderM(orderNo, orderTemp, product, member, addressMsgDTO);
+		OrderM orderM = mkOrderM(orderNo, orderTemp, product, member, addressMsgDTO,memberCouponInfoDTO);
 		if(orderM != null){
 			orderInfo.setOrderM(orderM);
 			// 订单详情表
@@ -401,7 +417,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			}
 			orderInfo.setDetailList(orderDetails);
 		}
-		log.info("新建会刊订单，批次号：{}，订单号：{}",orderTemp.getOrderTempCode(),orderM.getOrderNo());
+
 
 		return orderInfo;
 
@@ -448,10 +464,11 @@ public class NewOrderServiceImpl implements INewOrderService {
 	 * @param products
 	 * @param member
 	 * @param addressMsgDTO
+	 * @param memberCouponInfoDTO
 	 * @return
 	 */
 	private OrderM mkOrderM(String orderNo, OrderTemp orderTemp, List<OrderTempProduct> products,
-			MemberAddressAndLevelDTO member, ReveiverAddressMsgDTO addressMsgDTO) {
+							MemberAddressAndLevelDTO member, ReveiverAddressMsgDTO addressMsgDTO, MemberCouponInfoDTO memberCouponInfoDTO) {
 		OrderM orderM = new OrderM();
 		orderM.setOrderNo(orderNo);
 		orderM.setDepartId(orderTemp.getDepartId());
@@ -501,7 +518,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		}
 
 		orderM.setRelationOrder(orderTemp.getRelationOrder());
-		// todo 地址唯一标识
+		//  地址唯一标识
 		orderM.setReveiverAddressNo(addressMsgDTO.getId());
 		orderM.setReveiverProvince(String.valueOf(addressMsgDTO.getProvinceNo()));
 		orderM.setReveiverProvinceName(addressMsgDTO.getProvinceName());
@@ -523,20 +540,21 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setEstimateArrivalTime(null);
 		orderM.setSignTime(null);
 
-		orderM.setMemberLevelBefor(member.getGradeCode());
+		orderM.setMemberLevelBefor(member.getGradeId());
 		orderM.setMemberTypeBefor(member.getMemberType());
-		orderM.setMemberLevelAfter(null);
-		orderM.setMemberTypeAfter(null);
+		orderM.setMemberLevelAfter(member.getGradeId());
+		orderM.setMemberTypeAfter(member.getMemberType());
+		orderM.setOrderAfterSpare(MathUtils.strPriceToLong(String.valueOf(member.getTotalMoney())));// 单后余额
 
 		orderM.setFinancialOwner(orderTemp.getFinancialOwner());
 		orderM.setFinancialOwnerName(orderTemp.getFinancialOwnerName());
 		orderM.setRelationReissueOrderNo(CommonConstant.RELATION_REISSUE_ORDER_NO);
 		orderM.setLogisticsClaims(null);
 		orderM.setRelationReissueOrderTotal(null);
-		// todo 等dmc数据
-		orderM.setOrderAfterIntegral(0);
-		orderM.setOrderAfterRebate(0);
-		orderM.setOrderAfterRed(0);
+        //单后优惠信息
+		orderM.setOrderAfterIntegral(memberCouponInfoDTO.getMemberIntegral()==null?0:memberCouponInfoDTO.getMemberIntegral());//单后积分
+		orderM.setOrderAfterRebate(memberCouponInfoDTO.getMemberCouponSize()==null?0:memberCouponInfoDTO.getMemberRedBag());//单后优惠券
+		orderM.setOrderAfterRed(memberCouponInfoDTO.getMemberRedBag()==null?0:memberCouponInfoDTO.getMemberRedBag());//单后红包
 		orderM.setOrderAfterSpare(MathUtils.strPriceToLong(String.valueOf(member.getTotalMoney())));// 单后余额
 
 		orderM.setCreateTime(new Date());
@@ -547,6 +565,8 @@ public class NewOrderServiceImpl implements INewOrderService {
 		orderM.setWorkCode(orderTemp.getWorkCode());
 		orderM.setWorkCodeStr(orderTemp.getWorkCodeStr());
 		orderM.setPersonChangeId(orderTemp.getPersonChangeId());
+
+
 
 
 		return orderM;
@@ -568,10 +588,10 @@ public class NewOrderServiceImpl implements INewOrderService {
 
 		//根据顾客的省份，获取发货仓库
 		ComResponse<String> storeRes = orderSearchClient.selectSplitStore(Integer.valueOf(order.getReveiverProvince()));
-		if(Integer.compare(storeRes.getCode(),Integer.valueOf(200))!=0){
+		if(storeRes == null ||Integer.compare(storeRes.getCode(),Integer.valueOf(200))!=0){
 			log.error("新建订单，调用订单服务查询发货仓失败");
 			throw new BizException(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode()
-					,"新建订单，调用订单服务查询发货仓失败"+storeRes.getMessage());
+					,"新建订单，调用订单服务查询发货仓失败!");
 		}
 		if(StringUtils.isNullOrEmpty(storeRes.getData())){
 			log.info("新建订单，为顾客卡号：{} 创建订单失败，原因找不到发货仓",member.getMemberCard());

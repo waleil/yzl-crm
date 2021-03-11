@@ -239,7 +239,7 @@ public class OrderRestController {
 			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCardNo());
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
 		}
-		orderm.setMemberLevelBefor(member.getM_grade_code());// 单前顾客级别
+		Optional.ofNullable(member.getMGradeId()).ifPresent(c -> orderm.setMemberLevelBefor(c.toString()));// 单前顾客级别
 		orderm.setMemberTypeBefor(member.getMember_type());// 单前顾客类型
 		orderm.setMemberName(member.getMember_name());// 顾客姓名
 		orderm.setMemberCardNo(orderin.getMemberCardNo());// 顾客卡号

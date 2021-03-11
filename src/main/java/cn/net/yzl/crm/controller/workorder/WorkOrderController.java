@@ -52,10 +52,10 @@ import cn.net.yzl.workorder.model.vo.WorkOrderVisitVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -126,6 +126,9 @@ public class WorkOrderController {
         }
         if(!StringUtils.isEmpty(productNames)){
             productNames = productNames.substring(1);
+            productNames = Arrays.asList(productNames.split(",")).stream()
+                    .distinct()
+                    .collect(Collectors.joining(","));
             List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
             if (!CollectionUtils.isEmpty(data)) {
                 for(int i = 0 ; i < workOrderBeans.size();i++) {
@@ -228,6 +231,9 @@ public class WorkOrderController {
             return ComResponse.success(pageWorkOrderUnclaimedUserVO);
         }
         productNames = productNames.substring(1);
+        productNames = Arrays.asList(productNames.split(",")).stream()
+                .distinct()
+                .collect(Collectors.joining(","));
         List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
         if (!CollectionUtils.isEmpty(data)) {
             for(int i = 0 ; i < workOrderUnclaimedUserVOS.size();i++) {
@@ -297,6 +303,9 @@ public class WorkOrderController {
         }
         if(!StringUtils.isEmpty(productNames)){
             productNames = productNames.substring(1);
+            productNames = Arrays.asList(productNames.split(",")).stream()
+                    .distinct()
+                    .collect(Collectors.joining(","));
             List<ProductMainDTO> data = productClient.queryByProductCodes(productNames).getData();
             if (!CollectionUtils.isEmpty(data)) {
                 for(int i = 0 ; i < workOrderBeans.size();i++) {
