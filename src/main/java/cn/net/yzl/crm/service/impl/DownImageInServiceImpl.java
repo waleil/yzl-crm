@@ -141,8 +141,7 @@ public class DownImageInServiceImpl implements DownImageInService {
             return;
         }
         List<ExpressOrderInfo> expressOrderInfos = senderExpressInfo.getData();
-        ExpressOrderInfo expressOrderInfo = expressOrderInfos.get(0);
-        String expressNo = expressOrderInfo.getExpressNo();
+        String expressNo = outStoreOrderInfoParamVo.getExpressNo();
         //TODO
         if("DEPPON".equals(expressNo)){
             handleDP(expressOrderInfos,httpServletResponse);
