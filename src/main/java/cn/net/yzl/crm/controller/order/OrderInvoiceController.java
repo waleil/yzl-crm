@@ -66,7 +66,6 @@ import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.MemberFien;
 import cn.net.yzl.crm.service.order.OrderInvoiceService;
 import cn.net.yzl.crm.sys.BizException;
-import cn.net.yzl.crm.utils.BeanCopyUtils;
 import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceDTO;
@@ -234,7 +233,13 @@ public class OrderInvoiceController {
 		page.setItems(new ArrayList<>());
 		List<MemberIntegralRecordsResponse> items = responseData.getItems();
 		for (MemberIntegralRecordsResponse item : items) {
-			MemberIntegralRecordsDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsDTO.class);
+			MemberIntegralRecordsDTO dto = new MemberIntegralRecordsDTO();
+			dto.setCreateTime(item.getCreateTime());
+			dto.setIntegral(item.getIntegral());
+			dto.setMemberCard(item.getMemberCard());
+			dto.setOperationType(item.getOperationType());
+			dto.setOrderNo(item.getOrderNo());
+			dto.setStatus(item.getStatus());
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			OrderM order = financialNames.get(item.getOrderNo());
 			dto.setFinancialOwnerName(Optional.ofNullable(order).map(OrderM::getFinancialOwnerName).orElse("-"));
@@ -271,7 +276,11 @@ public class OrderInvoiceController {
 		// 组装数据
 		List<MemberIntegralRecordsExportDTO> list = new ArrayList<>();
 		for (MemberIntegralRecordsResponse item : responseData) {
-			MemberIntegralRecordsExportDTO dto = BeanCopyUtils.transfer(item, MemberIntegralRecordsExportDTO.class);
+			MemberIntegralRecordsExportDTO dto = new MemberIntegralRecordsExportDTO();
+			dto.setCreateTime(item.getCreateTime());
+			dto.setIntegral(item.getIntegral());
+			dto.setMemberCard(item.getMemberCard());
+			dto.setOrderNo(item.getOrderNo());
 			dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
 			List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
 			if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
@@ -365,7 +374,13 @@ public class OrderInvoiceController {
 		page.setItems(new ArrayList<>());
 		List<MemberRedBagRecordsResponse> items = responseData.getItems();
 		for (MemberRedBagRecordsResponse item : items) {
-			MemberRedBagRecordsDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsDTO.class);
+			MemberRedBagRecordsDTO dto = new MemberRedBagRecordsDTO();
+			Optional.ofNullable(item.getAmount()).ifPresent(c -> dto.setAmount(BigDecimal.valueOf(c)));
+			dto.setCreateTime(item.getCreateTime());
+			dto.setMemberCard(item.getMemberCard());
+			dto.setOperationType(item.getOperationType());
+			dto.setOrderNo(item.getOrderNo());
+			dto.setStatus(item.getStatus());
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			OrderM order = financialNames.get(item.getOrderNo());
 			dto.setFinancialOwnerName(Optional.ofNullable(order).map(OrderM::getFinancialOwnerName).orElse("-"));
@@ -402,7 +417,11 @@ public class OrderInvoiceController {
 		// 组装数据
 		List<MemberRedBagRecordsExportDTO> list = new ArrayList<>();
 		for (MemberRedBagRecordsResponse item : responseData) {
-			MemberRedBagRecordsExportDTO dto = BeanCopyUtils.transfer(item, MemberRedBagRecordsExportDTO.class);
+			MemberRedBagRecordsExportDTO dto = new MemberRedBagRecordsExportDTO();
+			Optional.ofNullable(item.getAmount()).ifPresent(c -> dto.setAmount(BigDecimal.valueOf(c)));
+			dto.setCreateTime(item.getCreateTime());
+			dto.setMemberCard(item.getMemberCard());
+			dto.setOrderNo(item.getOrderNo());
 			dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
 			List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
 			if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
@@ -508,7 +527,11 @@ public class OrderInvoiceController {
 		page.setItems(new ArrayList<>());
 		List<MemberCouponResponse> items = responseData.getItems();
 		for (MemberCouponResponse item : items) {
-			MemberCouponDTO dto = BeanCopyUtils.transfer(item, MemberCouponDTO.class);
+			MemberCouponDTO dto = new MemberCouponDTO();
+			dto.setCreateTime(item.getCreateTime());
+			dto.setMemberCard(item.getMemberCard());
+			dto.setOrderNo(item.getOrderNo());
+			dto.setStatus(item.getStatus());
 			if (!item.getCouponDiscountRulesDto().isEmpty()) {
 				dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getConditionFullD());
 				dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
@@ -548,7 +571,10 @@ public class OrderInvoiceController {
 		// 组装数据
 		List<MemberCouponExportDTO> list = new ArrayList<>();
 		for (MemberCouponResponse item : responseData) {
-			MemberCouponExportDTO dto = BeanCopyUtils.transfer(item, MemberCouponExportDTO.class);
+			MemberCouponExportDTO dto = new MemberCouponExportDTO();
+			dto.setCreateTime(item.getCreateTime());
+			dto.setMemberCard(item.getMemberCard());
+			dto.setOrderNo(item.getOrderNo());
 			if (item.getCouponDiscountRulesDto().size() > 0) {
 				dto.setReduceAmount(
 						BigDecimal.valueOf(item.getCouponDiscountRulesDto().get(0).getReduceAmount() / 100));
