@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.micservice;
 
 import java.util.List;
 
+import cn.net.yzl.crm.dto.order.MemberCouponInfoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -186,4 +187,14 @@ public interface ActivityClient {
 	 */
 	@PostMapping("/db/v1/orderSubmit")
 	ComResponse<OrderSubmitResponse> orderSubmit(@RequestBody OrderSubmitRequest request);
+	/**
+	 * 提交订单送积分和优惠券
+	 *
+	 * @param  memberCards
+	 * @return {@link OrderSubmitResponse}
+	 * @author zhangweiwei
+	 * @date 2021年2月21日,上午5:08:19
+	 */
+	@PostMapping("/db/v1/getAccountByMemberCards")
+	ComResponse<List<MemberCouponInfoDTO>> getAccountByMemberCards(@RequestBody List<String> memberCards);
 }

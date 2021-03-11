@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -40,7 +41,12 @@ public class InventoryController {
 
     @ApiOperation(value = "新增盘点",notes = "新增盘点")
     @PostMapping("v1/insertInventory")
-    public ComResponse insertInventory(@RequestBody InventoryVo inventoryVo){
+    public ComResponse insertInventory(@RequestBody InventoryVo inventoryVo, HttpServletRequest httpServletRequest){
+        //员工编号
+        String userNo = httpServletRequest.getHeader("userNo");
+        if (inventoryVo != null){
+            inventoryVo.setCreator(userNo);
+        }
         return inventoryFeginService.insertInventory(inventoryVo);
     }
 
@@ -66,7 +72,11 @@ public class InventoryController {
 
     @ApiOperation(value = "修改盘点商品库存数据",notes = "修改盘点商品库存数据")
     @PostMapping("v1/updateInventoryProduct")
-    public ComResponse updateInventoryProduct(@RequestBody InventoryAllProductVo inventoryAllProductVo){
+    public ComResponse updateInventoryProduct(@RequestBody InventoryAllProductVo inventoryAllProductVo,HttpServletRequest httpServletRequest){
+        String userNo = httpServletRequest.getHeader("userNo");
+        if (inventoryAllProductVo != null){
+            inventoryAllProductVo.setUpdator(userNo);
+        }
         return inventoryFeginService.updateInventoryProduct(inventoryAllProductVo);
     }
 
