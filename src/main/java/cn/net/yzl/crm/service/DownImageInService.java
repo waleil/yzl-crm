@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.service;
 
+import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.model.vo.OutStoreOrderInfoParamVo;
 import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import javax.servlet.http.HttpServletResponse;
@@ -18,4 +19,6 @@ public interface DownImageInService {
     void exportExcelOfProductPurchaseWarn(ProductPurchaseWarnExcelVO productPurchaseWarnExcelVO,HttpServletResponse httpServletResponse) throws IOException;
 
     void exportExpressPrintInfo(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo, HttpServletResponse httpServletResponse) throws IOException;
+
+    ComResponse getExpressExportCount(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo);
 }
