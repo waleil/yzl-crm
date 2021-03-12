@@ -28,6 +28,10 @@ public class CalcOrderIn {
 	private String memberCard;
 	@ApiModelProperty(value = "使用储值金额 单位元", required = false)
 	private BigDecimal amountStored = BigDecimal.ZERO;
+	@ApiModelProperty(value = "使用的优惠券折扣ID,针对订单使用的", required = false)
+	private Integer couponDiscountIdForOrder;
+	@ApiModelProperty(value = "使用的优惠券ID,针对订单使用的", required = false)
+	private Integer memberCouponIdForOrder;
 	@ApiModelProperty(value = "商品相关信息", required = true)
 	private List<CalculateOrderProductDto> calculateProductDtos = new ArrayList<>(0);
 
