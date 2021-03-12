@@ -144,7 +144,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         if(CollectionUtils.isEmpty(data)){
             return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),"您选择的快递公司无未打印数据。");
         }else {
-            return ComResponse.success(1,200,"导出无快递单号和未打印数据共"+data.size()+"条!",data.size());
+            return ComResponse.success(200,1,"导出无快递单号和未打印数据共"+data.size()+"条!",data.size());
         }
 
     }
