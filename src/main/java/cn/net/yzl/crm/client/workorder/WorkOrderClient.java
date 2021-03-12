@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * 智能工单
  */
-@FeignClient(name = "workOrder", url = "${api.gateway.url}/workorderServer/workOrder")
-//@FeignClient(name = "workOrder", url = "127.0.0.1:4602/workOrder")
+//@FeignClient(name = "workOrder", url = "${api.gateway.url}/workorderServer/workOrder")
+@FeignClient(name = "workOrder", url = "127.0.0.1:4602/workOrder")
 public interface WorkOrderClient {
 
     /**
@@ -99,7 +99,7 @@ public interface WorkOrderClient {
      * @return
      */
     @PostMapping(value = "v1/adjustment")
-    ComResponse<Void> adjustment(UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO);
+    ComResponse<Boolean> adjustment(UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO);
 
     /**
      * 智能工单-批量调整
@@ -108,7 +108,7 @@ public interface WorkOrderClient {
      * @return
      */
     @PostMapping(value = "v1/batchAdjustment")
-    ComResponse<Void> batchAdjustment(UpdateBatchDTO updateBatchDTO);
+    ComResponse<Boolean> batchAdjustment(UpdateBatchDTO updateBatchDTO);
 
     /**
      * 智能工单：我的热线工单-列表
