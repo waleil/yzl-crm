@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.micservice;
 
 import java.util.List;
 
+import cn.net.yzl.activity.model.dto.MemberRedBagDto;
 import cn.net.yzl.crm.dto.order.MemberCouponInfoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,4 +198,8 @@ public interface ActivityClient {
 	 */
 	@PostMapping("/db/v1/getAccountByMemberCards")
 	ComResponse<List<MemberCouponInfoDTO>> getAccountByMemberCards(@RequestBody List<String> memberCards);
+
+	@ApiOperation(value = "根据顾客卡号获取顾客红包信息")
+	@GetMapping("db/v1/memberRedBag/getDtoByMemberCard")
+	ComResponse<MemberRedBagDto> getDtoByMemberCard(@RequestParam("memberCard") String memberCard);
 }

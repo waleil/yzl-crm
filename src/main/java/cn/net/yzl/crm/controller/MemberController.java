@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import cn.net.yzl.activity.model.dto.MemberRedBagDto;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
@@ -786,6 +787,13 @@ private ProductClient productClient;
     public ComResponse<Boolean> dealWorkOrderUpdateMemberData(@RequestBody @Validated  MemberWorkOrderInfoVO workOrderInfoVO) {
         ComResponse<Boolean> result = memberFien.dealWorkOrderUpdateMemberData(workOrderInfoVO);
         return result;
+    }
+
+
+    @ApiOperation(value = "根据顾客卡号获取顾客红包信息")
+    @GetMapping("/v1/memberRedBag/getDtoByMemberCard")
+    public ComResponse<MemberRedBagDto> getDtoByMemberCard(@RequestParam("memberCard") String memberCard) {
+        return activityClient.getDtoByMemberCard(memberCard);
     }
 
 
