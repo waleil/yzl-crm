@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,14 +35,13 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 
 import cn.net.yzl.activity.model.requestModel.AccountRequest;
-import cn.net.yzl.activity.model.requestModel.AccountWithOutPageRequest;
 import cn.net.yzl.activity.model.requestModel.ListAccountRequest;
 import cn.net.yzl.activity.model.responseModel.MemberCouponResponse;
 import cn.net.yzl.activity.model.responseModel.MemberIntegralRecordsResponse;
 import cn.net.yzl.activity.model.responseModel.MemberRedBagRecordsResponse;
 import cn.net.yzl.common.entity.ComResponse;
-import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.entity.PageParam;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
@@ -51,8 +49,6 @@ import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.config.QueryIds;
-import cn.net.yzl.crm.constant.DmcActivityStatus;
-import cn.net.yzl.crm.customer.model.Member;
 import cn.net.yzl.crm.dto.order.MemberCouponDTO;
 import cn.net.yzl.crm.dto.order.MemberCouponExportDTO;
 import cn.net.yzl.crm.dto.order.MemberIntegralRecordsDTO;
@@ -71,7 +67,6 @@ import cn.net.yzl.order.model.db.order.OrderM;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceListDTO;
 import cn.net.yzl.order.model.vo.order.OrderInvoiceReqDTO;
-import cn.net.yzl.order.model.vo.order.SettlementDetailDistinctListDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -251,47 +246,51 @@ public class OrderInvoiceController {
 
 	@ApiOperation(value = "顾客积分明细表——导出")
 	@PostMapping("v1/exportMemberIntegralRecords")
-	public void exportMemberIntegralRecords(@RequestBody AccountWithOutPageRequest request,
-			HttpServletResponse response) throws Exception {
-		formatParams(request);
-		ComResponse<List<MemberIntegralRecordsResponse>> records = activityClient
-				.getMemberIntegralRecordsWithOutPage(request);
-		if (!records.getStatus().equals(1)) {
-			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
+	public void exportMemberIntegralRecords(@RequestBody AccountRequest request, HttpServletResponse response)
+			throws Exception {
+		this.formatParams(request);
+		request.setPageNo(1);// 默认第1页
+		request.setPageSize(1000);// 默认每页1000条数据
+		ComResponse<Page<MemberIntegralRecordsDTO>> data = this.getMemberIntegralRecords(request);
+		if (Integer.compare(data.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出顾客积分明细表异常");
 		}
-		List<MemberIntegralRecordsResponse> responseData = records.getData();
-		if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
-			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC未查询出数据");
-		}
-		List<String> orderNoList = responseData.stream().map(MemberIntegralRecordsResponse::getOrderNo).distinct()
-				.collect(Collectors.toList());
-		// 查询订单服务积分数据
-		ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein
-				.getSettlementDetailGroupByOrderNo(orderNoList);
-		List<SettlementDetailDistinctListDTO> data = dtos.getData();
-		Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
-		if (data != null) {
-			collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
-		}
-		// 组装数据
-		List<MemberIntegralRecordsExportDTO> list = new ArrayList<>();
-		for (MemberIntegralRecordsResponse item : responseData) {
-			MemberIntegralRecordsExportDTO dto = new MemberIntegralRecordsExportDTO();
-			dto.setCreateTime(item.getCreateTime());
-			dto.setIntegral(item.getIntegral());
-			dto.setMemberCard(item.getMemberCard());
-			dto.setOrderNo(item.getOrderNo());
-			dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
-			List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-			if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
-				dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
-				dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
-				dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
-			}
-			list.add(dto);
-		}
+		Page<MemberIntegralRecordsDTO> page = data.getData();
+		PageParam param = page.getPageParam();
+		response.setContentType("application/vnd.ms-excel");
+		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String title = "顾客积分明细表";
-		this.export(list, MemberIntegralRecordsExportDTO.class, title, response);
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
+		ExcelWriter excelWriter = null;
+		try {
+			excelWriter = EasyExcel.write(response.getOutputStream(), MemberIntegralRecordsExportDTO.class)
+					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy())
+					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy()).build();
+			// 写入到同一个sheet
+			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
+			// 此处已经获取到第一页的数据
+			excelWriter.write(page.getItems(), writeSheet);
+			page.getItems().clear();// 存储完成后清理集合
+			// 如果总页数大于1
+			if (param.getPageTotal() > 1) {
+				// 直接从第二页开始获取
+				for (int i = 2; i <= param.getPageTotal(); i++) {
+					request.setPageNo(i);
+					data = this.getMemberIntegralRecords(request);
+					if (Integer.compare(data.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+						throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出顾客积分明细表异常");
+					}
+					page = data.getData();
+					excelWriter.write(page.getItems(), writeSheet);
+					page.getItems().clear();// 存储完成后清理集合
+				}
+			}
+		} finally {
+			if (excelWriter != null) {
+				excelWriter.finish();
+			}
+		}
 	}
 
 	@ApiOperation(value = "顾客红包明细表")
@@ -392,61 +391,51 @@ public class OrderInvoiceController {
 
 	@ApiOperation(value = "顾客红包明细表——导出")
 	@PostMapping("v1/exportMemberRedBagRecords")
-	public void exportMemberRedBagRecords(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response)
+	public void exportMemberRedBagRecords(@RequestBody AccountRequest request, HttpServletResponse response)
 			throws Exception {
-		formatParams(request);
-		ComResponse<List<MemberRedBagRecordsResponse>> records = activityClient
-				.getMemberRedBagRecordsWithOutPage(request);
-		if (!records.getStatus().equals(1)) {
-			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
+		this.formatParams(request);
+		request.setPageNo(1);// 默认第1页
+		request.setPageSize(1000);// 默认每页1000条数据
+		ComResponse<Page<MemberRedBagRecordsDTO>> data = this.getMemberRedBagRecords(request);
+		if (Integer.compare(data.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出顾客红包明细表异常");
 		}
-		List<MemberRedBagRecordsResponse> responseData = records.getData();
-		if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
-			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC未查询出数据");
-		}
-		List<String> orderNoList = responseData.stream().map(MemberRedBagRecordsResponse::getOrderNo).distinct()
-				.collect(Collectors.toList());
-		// 查询订单服务积分数据
-		ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein
-				.getSettlementDetailGroupByOrderNo(orderNoList);
-		List<SettlementDetailDistinctListDTO> data = dtos.getData();
-		Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
-		if (data != null) {
-			collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
-		}
-		// 组装数据
-		List<MemberRedBagRecordsExportDTO> list = new ArrayList<>();
-		for (MemberRedBagRecordsResponse item : responseData) {
-			MemberRedBagRecordsExportDTO dto = new MemberRedBagRecordsExportDTO();
-			Optional.ofNullable(item.getAmount()).ifPresent(c -> dto.setAmount(BigDecimal.valueOf(c)));
-			dto.setCreateTime(item.getCreateTime());
-			dto.setMemberCard(item.getMemberCard());
-			dto.setOrderNo(item.getOrderNo());
-			dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
-			List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-			if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
-				dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
-				dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
-				dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
-			}
-			list.add(dto);
-		}
+		Page<MemberRedBagRecordsDTO> page = data.getData();
+		PageParam param = page.getPageParam();
+		response.setContentType("application/vnd.ms-excel");
+		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		String title = "顾客红包明细表";
-		this.export(list, MemberRedBagRecordsExportDTO.class, title, response);
-	}
-
-	/**
-	 * 获取顾客信息
-	 *
-	 * @param memberCardNo 顾客号
-	 * @return 顾客信息
-	 */
-	public String getMemberName(String memberCardNo) {
-		GeneralResult<Member> member = memberFien.getMember(memberCardNo);
-		if (!member.getCode().equals(200)) {
-			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "顾客服务异常，" + member.getMessage());
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
+		ExcelWriter excelWriter = null;
+		try {
+			excelWriter = EasyExcel.write(response.getOutputStream(), MemberRedBagRecordsExportDTO.class)
+					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy())
+					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy()).build();
+			// 写入到同一个sheet
+			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
+			// 此处已经获取到第一页的数据
+			excelWriter.write(page.getItems(), writeSheet);
+			page.getItems().clear();// 存储完成后清理集合
+			// 如果总页数大于1
+			if (param.getPageTotal() > 1) {
+				// 直接从第二页开始获取
+				for (int i = 2; i <= param.getPageTotal(); i++) {
+					request.setPageNo(i);
+					data = this.getMemberRedBagRecords(request);
+					if (Integer.compare(data.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+						throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出顾客红包明细表异常");
+					}
+					page = data.getData();
+					excelWriter.write(page.getItems(), writeSheet);
+					page.getItems().clear();// 存储完成后清理集合
+				}
+			}
+		} finally {
+			if (excelWriter != null) {
+				excelWriter.finish();
+			}
 		}
-		return Optional.ofNullable(member.getData()).map(Member::getMember_name).orElse("");
 	}
 
 	@ApiOperation(value = "顾客优惠券明细表")
@@ -547,94 +536,62 @@ public class OrderInvoiceController {
 
 	@ApiOperation(value = "顾客优惠券明细表——导出")
 	@PostMapping("v1/exportMemberCoupon")
-	public void exportMemberCoupon(@RequestBody AccountWithOutPageRequest request, HttpServletResponse response)
-			throws Exception {
-		formatParams(request);
-		ComResponse<List<MemberCouponResponse>> records = activityClient.getMemberCouponWithOutPage(request);
-		if (!records.getStatus().equals(1)) {
-			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC异常，" + records.getMessage());
+	public void exportMemberCoupon(@RequestBody AccountRequest request, HttpServletResponse response) throws Exception {
+		this.formatParams(request);
+		request.setPageNo(1);// 默认第1页
+		request.setPageSize(1000);// 默认每页1000条数据
+		ComResponse<Page<MemberCouponDTO>> data = this.getMemberCoupon(request);
+		if (Integer.compare(data.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出顾客优惠券明细表异常");
 		}
-		List<MemberCouponResponse> responseData = records.getData();
-		if (!Optional.ofNullable(responseData).map(List::isEmpty).isPresent()) {
-			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "DMC未查询出数据");
-		}
-		List<String> orderNoList = responseData.stream().map(MemberCouponResponse::getOrderNo).distinct()
-				.collect(Collectors.toList());
-		// 查询订单服务积分数据
-		ComResponse<List<SettlementDetailDistinctListDTO>> dtos = settlementFein
-				.getSettlementDetailGroupByOrderNo(orderNoList);
-		List<SettlementDetailDistinctListDTO> data = dtos.getData();
-		Map<String, List<SettlementDetailDistinctListDTO>> collectMap = new HashMap<>();
-		if (data != null) {
-			collectMap = data.stream().collect(Collectors.groupingBy(SettlementDetailDistinctListDTO::getOrderNo));
-		}
-		// 组装数据
-		List<MemberCouponExportDTO> list = new ArrayList<>();
-		for (MemberCouponResponse item : responseData) {
-			MemberCouponExportDTO dto = new MemberCouponExportDTO();
-			dto.setCreateTime(item.getCreateTime());
-			dto.setMemberCard(item.getMemberCard());
-			dto.setOrderNo(item.getOrderNo());
-			if (item.getCouponDiscountRulesDto().size() > 0) {
-				dto.setReduceAmount(
-						BigDecimal.valueOf(item.getCouponDiscountRulesDto().get(0).getReduceAmount() / 100));
-				dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
-			}
-			dto.setStatusName(DmcActivityStatus.getName(item.getStatus()));
-			List<SettlementDetailDistinctListDTO> settlementDetailDistinctListDTOS = collectMap.get(item.getOrderNo());
-			if (Optional.ofNullable(settlementDetailDistinctListDTOS).map(List::isEmpty).isPresent()) {
-				dto.setMemberName(settlementDetailDistinctListDTOS.get(0).getMemberName());
-				dto.setReconciliationTime(settlementDetailDistinctListDTOS.get(0).getCreateTime());
-				dto.setFinancialOwnerName(settlementDetailDistinctListDTOS.get(0).getFinancialOwnerName());
-			}
-			list.add(dto);
-		}
-		String title = "顾客优惠券明细表";
-		this.export(list, MemberCouponExportDTO.class, title, response);
-	}
-
-	private void formatParams(AccountWithOutPageRequest request) {
-		// 若不传起止时间，则默认一年的时间范围
-		if (null == request.getBeginTime() && null == request.getEndTime()) {
-			Calendar c = Calendar.getInstance();
-			Date thisDate = new Date();
-			c.setTime(thisDate);
-			c.add(Calendar.YEAR, -1);
-			Date y = c.getTime();
-			request.setBeginTime(y);
-			request.setEndTime(thisDate);
-		}
-	}
-
-	/**
-	 * 导出
-	 *
-	 * @param list
-	 * @param clazz
-	 * @param title
-	 * @param response
-	 * @param <T>
-	 */
-	private <T> void export(List<T> list, Class<T> clazz, String title, HttpServletResponse response) throws Exception {
-		// 导出
+		Page<MemberCouponDTO> page = data.getData();
+		PageParam param = page.getPageParam();
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+		String title = "顾客优惠券明细表";
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
 				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
-			excelWriter = EasyExcel.write(response.getOutputStream(), clazz)
-					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
-					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy()).build();
+			excelWriter = EasyExcel.write(response.getOutputStream(), MemberCouponExportDTO.class)
+					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy())
+					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy()).build();
+			// 写入到同一个sheet
 			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
-			excelWriter.write(list, writeSheet);
-		} catch (Exception e) {
-			log.error(e.getLocalizedMessage(), e);
-			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "报表导出异常，请稍后再试");
+			// 此处已经获取到第一页的数据
+			excelWriter.write(page.getItems(), writeSheet);
+			page.getItems().clear();// 存储完成后清理集合
+			// 如果总页数大于1
+			if (param.getPageTotal() > 1) {
+				// 直接从第二页开始获取
+				for (int i = 2; i <= param.getPageTotal(); i++) {
+					request.setPageNo(i);
+					data = this.getMemberCoupon(request);
+					if (Integer.compare(data.getStatus(), ComResponse.ERROR_STATUS) == 0) {
+						throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出顾客优惠券明细表异常");
+					}
+					page = data.getData();
+					excelWriter.write(page.getItems(), writeSheet);
+					page.getItems().clear();// 存储完成后清理集合
+				}
+			}
 		} finally {
 			if (excelWriter != null) {
 				excelWriter.finish();
 			}
+		}
+	}
+
+	private void formatParams(AccountRequest request) {
+		// 起止时间：当前时间所在的月份减去一个月
+		if (null == request.getBeginTime() && null == request.getEndTime()) {
+			Calendar c = Calendar.getInstance();
+			Date thisDate = new Date();
+			c.setTime(thisDate);
+			c.add(Calendar.MONTH, -1);
+			Date y = c.getTime();
+			request.setBeginTime(y);
+			request.setEndTime(thisDate);
 		}
 	}
 
