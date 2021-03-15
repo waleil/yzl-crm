@@ -7,6 +7,7 @@ import cn.net.yzl.crm.client.workorder.TurnRulnClient;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.model.dto.DepartDto;
+import cn.net.yzl.order.model.vo.order.CustomerNearSignOrderStatusDTO;
 import cn.net.yzl.workorder.common.CommonConstants;
 import cn.net.yzl.workorder.model.db.WorkOrderRuleConfigBean;
 import cn.net.yzl.workorder.model.dto.IsHandInDTO;
@@ -56,8 +57,12 @@ public class HandInUtils{
         calendar.add(Calendar.MONTH, -Integer.valueOf(split[0]));
         Date time = calendar.getTime();
         String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
-        return orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData().getNearNoSignStatus();
+        CustomerNearSignOrderStatusDTO data = orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData();
+        if(StringUtils.isEmpty(data)){
+            return Boolean.TRUE;
+        }
 
+        return data.getNearNoSignStatus();
     }
 
     /**
