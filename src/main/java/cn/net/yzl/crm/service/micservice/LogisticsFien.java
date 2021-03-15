@@ -50,10 +50,10 @@ public interface LogisticsFien {
 //
 
 
-//    @PostMapping("settlement/seach/nosett")
+//    @PostMapping("settlement/seach/nosett")settlement
     @PostMapping("settlement/seach/nosett/decimal")
     @ApiOperation("未对账数据查询")
-    public  ComResponse<Page<ResultDecimalVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo);
+    public  ComResponse<Page<ResultDecimalVo>>  searchSettlementDataDecimal(@RequestBody @Valid SearchVo searchVo);
 
     @ApiOperation(value = "导入")
     @PostMapping("settlement/logistics/import/freight")

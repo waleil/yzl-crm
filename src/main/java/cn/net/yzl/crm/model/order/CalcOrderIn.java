@@ -32,6 +32,10 @@ public class CalcOrderIn {
 	private Integer couponDiscountIdForOrder;
 	@ApiModelProperty(value = "使用的优惠券ID,针对订单使用的", required = false)
 	private Integer memberCouponIdForOrder;
+	@ApiModelProperty(value = "订单使用优惠方式：0=订单未使用优惠，1=优惠券，2=红包", required = false)
+	private Integer orderDiscountType;
+	@ApiModelProperty(value = "订单使用的红包金额", required = false)
+	private BigDecimal redBagAmount;
 	@ApiModelProperty(value = "商品相关信息", required = true)
 	private List<CalculateOrderProductDto> calculateProductDtos = new ArrayList<>(0);
 
