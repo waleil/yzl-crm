@@ -4,6 +4,7 @@ package cn.net.yzl.crm.controller.logistics;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -81,14 +82,13 @@ public class SettlementExpressController {
     @PostMapping("v1/exportInventoryExcel")
     public ComResponse<List<ResultExportVo>> exportExpressChargeExcel(@RequestBody SearchVo searchVo, HttpServletResponse httpServletResponse) throws IOException {
         ComResponse<List<ResultExportVo>> listComResponse = settlement.exportExpressChargeExcel(searchVo);
+        log.info("对账数据查询结果:{}", JsonUtil.toJsonStr(listComResponse));
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
         List<ResultExportVo> listComResponseData = listComResponse.getData();
-        //盘点日期
         Date inventoryDate = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = simpleDateFormat.format(inventoryDate);
-        //仓库名称
 //        String storeName = inventoryExcelVo.getStoreName();
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
@@ -97,13 +97,11 @@ public class SettlementExpressController {
 
         if (searchVo.getSearchStatus() == 1) {
             httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
-
                     URLEncoder.encode("对账运费"+date+".xlsx","utf-8"));
         }
 //        URLEncoder.encode("结算运费订单"+sysDate+".xlsx", "utf-8"));
         if (searchVo.getSearchStatus() == 0) {
             httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
-
                     URLEncoder.encode("未对账运费"+date+".xlsx","utf-8"));
         }
 
@@ -206,7 +204,7 @@ public class SettlementExpressController {
     @PostMapping("seach/nosett")
     @ApiOperation("未对账数据查询")
     public  ComResponse<Page<ResultDecimalVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo){
-        return  settlement.searchSettlementData(searchVo);
+        return  settlement.searchSettlementDataDecimal(searchVo);
     }
 
 
