@@ -318,13 +318,13 @@ public class OrderRestController {
 		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
 		log.info("调用校验订单金额接口：{}", this.toJsonString(checkOrderAmountRequest));
 		// 调用校验订单金额接口
-		ComResponse<List<ProductPriceResponse>> ppresponse = this.activityClient
+		ComResponse<CalculationOrderResponse> ppresponse = this.activityClient
 				.checkOrderAmount(checkOrderAmountRequest);
 		// 如果服务调用异常
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(ppresponse.getCode())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用校验订单金额接口异常：%s", ppresponse.getMessage()));
 		}
-		List<ProductPriceResponse> productPriceList = ppresponse.getData();
+		List<ProductPriceResponse> productPriceList = ppresponse.getData().getProductPriceResponseList();
 		if (CollectionUtils.isEmpty(productPriceList)) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到商品或套餐的优惠价格");
 		}
@@ -899,6 +899,8 @@ public class OrderRestController {
 		request.setMemberLevelGrade(member.getMGradeId());// 会员级别
 		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
 		request.setProductTotal(orderin.getProductTotal().multiply(bd100).longValue());// 商品总额，订单中所有商品,单位分
+		request.setOrderDiscountType(orderin.getOrderDiscountType());// 订单使用优惠方式：0=订单未使用优惠，1=优惠券，2=红包
+		request.setRedBagAmount(orderin.getRedBagAmount());// 订单使用的红包金额
 		// 只匹配购买的商品或套餐，排除赠品
 		List<OrderDetailIn> orderdetailins = orderin.getOrderDetailIns().stream()
 				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
