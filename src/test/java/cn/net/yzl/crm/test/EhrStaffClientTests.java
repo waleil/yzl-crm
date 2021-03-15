@@ -45,7 +45,7 @@ public class EhrStaffClientTests {
 	public void testGetDetailsByNo() {
 		try {
 			String staffno = "7018";
-			System.err.println(this.ehrStaffClient.getDetailsByNo(staffno).getData().getDepartId());
+			System.err.println(this.ehrStaffClient.getDetailsByNo(staffno).getData());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

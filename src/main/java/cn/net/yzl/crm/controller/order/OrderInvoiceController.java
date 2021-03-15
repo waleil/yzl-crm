@@ -615,12 +615,12 @@ public class OrderInvoiceController {
 	 * @param response
 	 * @param <T>
 	 */
-	private <T> void export(List<?> list, Class<T> clazz, String title, HttpServletResponse response) throws Exception {
+	private <T> void export(List<T> list, Class<T> clazz, String title, HttpServletResponse response) throws Exception {
 		// 导出
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s%s.xlsx",
-				URLEncoder.encode(title, StandardCharsets.UTF_8.name()), System.currentTimeMillis()));
+		response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
 			excelWriter = EasyExcel.write(response.getOutputStream(), clazz)
@@ -629,7 +629,7 @@ public class OrderInvoiceController {
 			WriteSheet writeSheet = EasyExcel.writerSheet(title).build();
 			excelWriter.write(list, writeSheet);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getLocalizedMessage(), e);
 			throw new BizException(ResponseCodeEnums.SERVICE_ERROR_CODE.getCode(), "报表导出异常，请稍后再试");
 		} finally {
 			if (excelWriter != null) {
