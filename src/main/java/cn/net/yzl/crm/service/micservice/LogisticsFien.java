@@ -1,5 +1,6 @@
 package cn.net.yzl.crm.service.micservice;
 
+import java.text.ParseException;
 import java.util.List;
 import cn.net.yzl.common.entity.ComResponse;
 
@@ -50,10 +51,14 @@ public interface LogisticsFien {
 //
 
 
-//    @PostMapping("settlement/seach/nosett")settlement
+////    @PostMapping("settlement/seach/nosett")settlement
+//    @PostMapping("settlement/seach/nosett/decimal")
+//    @ApiOperation("未对账数据查询")
+//    public  ComResponse<Page<ResultDecimalVo>>  searchSettlementDataDecimal(@RequestBody @Valid SearchVo searchVo);
+
     @PostMapping("settlement/seach/nosett/decimal")
-    @ApiOperation("未对账数据查询")
-    public  ComResponse<Page<ResultDecimalVo>>  searchSettlementDataDecimal(@RequestBody @Valid SearchVo searchVo);
+    @ApiOperation("未对账数据查询精确小数")
+    public ComResponse<Page<ResultDecimalVo>> searchSettlementDataDecimal(@RequestBody @Valid SearchVo searchVo) throws ParseException;
 
     @ApiOperation(value = "导入")
     @PostMapping("settlement/logistics/import/freight")
