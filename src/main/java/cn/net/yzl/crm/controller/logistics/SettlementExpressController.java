@@ -204,7 +204,13 @@ public class SettlementExpressController {
     @PostMapping("seach/nosett")
     @ApiOperation("未对账数据查询")
     public  ComResponse<Page<ResultDecimalVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo){
-        return  settlement.searchSettlementDataDecimal(searchVo);
+        log.info("结算API=="+"searchSettlementData");
+        try {
+            return  settlement.searchSettlementDataDecimal(searchVo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ComResponse.fail(ResponseCodeEnums.BIZ_ERROR_CODE, "数据查询失败！");
     }
 
 
