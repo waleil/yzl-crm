@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * 智能工单
  */
-@FeignClient(name = "workOrder", url = "${api.gateway.url}/workorderServer/workOrder")
-//@FeignClient(name = "workOrder", url = "127.0.0.1:4602/workOrder")
+//@FeignClient(name = "workOrder", url = "${api.gateway.url}/workorderServer/workOrder")
+@FeignClient(name = "workOrder", url = "127.0.0.1:4602/workOrder")
 public interface WorkOrderClient {
 
     /**
@@ -65,7 +65,7 @@ public interface WorkOrderClient {
      * @return
      */
     @PostMapping(value = "v1/updateSingleAdjust")
-    ComResponse<Void> updateSingleAdjust(UpdateSingleAdjustDTO updateSingleAdjustDTO);
+    ComResponse<Boolean> updateSingleAdjust(UpdateSingleAdjustDTO updateSingleAdjustDTO);
 
     /**
      * 智能工单:回访工单管理-查询所有用户首次购买商品
@@ -90,7 +90,7 @@ public interface WorkOrderClient {
      * @return
      */
     @PostMapping(value = "v1/updateMoreAdjust")
-    ComResponse<Void> updateMoreAdjust(UpdateMoreAdjustDTO updateMoreAdjustDTO);
+    ComResponse<Boolean> updateMoreAdjust(UpdateMoreAdjustDTO updateMoreAdjustDTO);
 
     /**
      * 智能工单-单条调整
@@ -99,7 +99,7 @@ public interface WorkOrderClient {
      * @return
      */
     @PostMapping(value = "v1/adjustment")
-    ComResponse<Void> adjustment(UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO);
+    ComResponse<Boolean> adjustment(UpdateWorkOrderVisitDTO updateWorkOrderVisitDTO);
 
     /**
      * 智能工单-批量调整
@@ -108,7 +108,7 @@ public interface WorkOrderClient {
      * @return
      */
     @PostMapping(value = "v1/batchAdjustment")
-    ComResponse<Void> batchAdjustment(UpdateBatchDTO updateBatchDTO);
+    ComResponse<Boolean> batchAdjustment(UpdateBatchDTO updateBatchDTO);
 
     /**
      * 智能工单：我的热线工单-列表
