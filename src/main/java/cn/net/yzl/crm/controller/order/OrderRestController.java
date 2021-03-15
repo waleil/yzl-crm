@@ -1817,15 +1817,27 @@ public class OrderRestController {
 	public ComResponse<List<LeaderBoard>> queryLeaderboard(
 			@ApiParam("今日/3日/7日") @RequestParam LeaderBoardType boardType,
 			@ApiParam("1：热线，2：回访") @RequestParam int workOrderType) {
-
+		String bussinessAttrId = null;
 		if (Integer.compare(WorkOrderType.WORK_ORDER_TYPE_1.getType(), workOrderType) == 0) {
-
+			bussinessAttrId = WorkOrderType.WORK_ORDER_TYPE_1.getId();
 		} else if (Integer.compare(WorkOrderType.WORK_ORDER_TYPE_2.getType(), workOrderType) == 0) {
-
+			bussinessAttrId = WorkOrderType.WORK_ORDER_TYPE_2.getId();
 		} else {
-
+			return ComResponse.fail(ResponseCodeEnums.ERROR, "参数[workOrderType]不正确");
 		}
-		List<LeaderBoard> data = this.orderFeignClient.queryLeaderboard(boardType, workOrderType).getData();
+		// 按业务属性id获取对应的部门列表
+		ComResponse<List<DepartDto>> getListByBusinessAttrId = this.ehrStaffClient
+				.getListByBusinessAttrId(bussinessAttrId);
+		if (Integer.compare(ComResponse.ERROR_STATUS, getListByBusinessAttrId.getStatus()) == 0
+				|| getListByBusinessAttrId.getData() == null || getListByBusinessAttrId.getData().isEmpty()) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR,
+					String.format("调用业务属性获取部门接口异常：%s", getListByBusinessAttrId.getMessage()));
+		}
+		// 收集部门id
+		List<Integer> departIds = getListByBusinessAttrId.getData().stream().map(DepartDto::getId)
+				.collect(Collectors.toList());
+		// 查询业绩排行榜
+		List<LeaderBoard> data = this.orderFeignClient.queryLeaderboard(boardType, departIds).getData();
 		if (!CollectionUtils.isEmpty(data)) {
 			List<String> staffCodes = data.stream().map(LeaderBoard::getStaffCode).collect(Collectors.toList());
 			List<StaffDetail> details = this.ehrStaffClient.getDetailsListByNo(staffCodes).getData();
