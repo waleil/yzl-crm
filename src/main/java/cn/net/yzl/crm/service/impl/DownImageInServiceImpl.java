@@ -19,6 +19,8 @@ import cn.net.yzl.model.vo.ProductPurchaseWarnExcelVO;
 import cn.net.yzl.model.vo.ProductStockExcelVo;
 import com.alibaba.druid.sql.visitor.functions.If;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
@@ -172,6 +174,10 @@ public class DownImageInServiceImpl implements DownImageInService {
 
     private void handleEMS(List<ExpressOrderInfo> expressOrderInfos, HttpServletResponse httpServletResponse) throws IOException{
         List<PostalExcelModel> postalExcelModels = new ArrayList<>();
+        List<PostalExcelModel> ZBExcelModels = new ArrayList<>();
+        List<PostalExcelModel> XTExcelModels = new ArrayList<>();
+        List<PostalExcelModel> QXExcelModels = new ArrayList<>();
+        List<PostalExcelModel> FBExcelModels = new ArrayList<>();
 
         String sysDate = DateUtil.format(new Date(),"yyyyMMddHHmmssSSS");
         httpServletResponse.setCharacterEncoding("UTF-8");
@@ -218,7 +224,19 @@ public class DownImageInServiceImpl implements DownImageInService {
                 postalExcelModel.setReceivableMoney("0");
             }
             postalExcelModel.setInInfo(expressOrderInfo.getDeliverCode());
-            postalExcelModels.add(postalExcelModel);
+            String deliverCode = expressOrderInfo.getDeliverCode();
+//            if(StrUtil.startWith(deliverCode,"ZB")){
+//                ZBExcelModels.add(postalExcelModel);
+//            }else if (StrUtil.startWith(deliverCode,"XT")){
+//                XTExcelModels.add(postalExcelModel);
+//            }else if (StrUtil.startWith(deliverCode,"QX")){
+//                QXExcelModels.add(postalExcelModel);
+//
+//            }else if (StrUtil.startWith(deliverCode,"FB")){
+//                FBExcelModels.add(postalExcelModel);
+//            }else{
+                postalExcelModels.add(postalExcelModel);
+//            }
         }
 
         //系统时间
@@ -226,7 +244,18 @@ public class DownImageInServiceImpl implements DownImageInService {
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        String sysDate = simpleDateFormat.format(date);
         log.info("EMS表格数据:{}",JsonUtil.toJsonStr(postalExcelModels));
-
+//        ExcelWriter excelWriter = EasyExcel.write(httpServletResponse.getOutputStream()).build();
+//        WriteSheet ZB = EasyExcel.writerSheet(0, "河北御芝林生物科技有限公司").head(PostalExcelModel.class).build();
+//        WriteSheet XT = EasyExcel.writerSheet(1, "河北御芝林网络科技有限公司").head(PostalExcelModel.class).build();
+//        WriteSheet QX = EasyExcel.writerSheet(2, "河北御芝林电子商务有限公司").head(PostalExcelModel.class).build();
+//        WriteSheet FB = EasyExcel.writerSheet(3, "石家庄御芝林网络科技有限公司").head(PostalExcelModel.class).build();
+//        WriteSheet other = EasyExcel.writerSheet(4, "其它").head(PostalExcelModel.class).build();
+//        excelWriter.write(ZBExcelModels,ZB);
+//        excelWriter.write(XTExcelModels,XT);
+//        excelWriter.write(QXExcelModels,QX);
+//        excelWriter.write(FBExcelModels,FB);
+//        excelWriter.write(postalExcelModels,other);
+//        excelWriter.finish();
         //向前端写入文件流流
         EasyExcel.write(httpServletResponse.getOutputStream(), PostalExcelModel.class)
                 .sheet("导入模板").doWrite(postalExcelModels);

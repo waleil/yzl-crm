@@ -4,6 +4,7 @@ package cn.net.yzl.crm.controller.logistics;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
+import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
@@ -81,14 +82,13 @@ public class SettlementExpressController {
     @PostMapping("v1/exportInventoryExcel")
     public ComResponse<List<ResultExportVo>> exportExpressChargeExcel(@RequestBody SearchVo searchVo, HttpServletResponse httpServletResponse) throws IOException {
         ComResponse<List<ResultExportVo>> listComResponse = settlement.exportExpressChargeExcel(searchVo);
+        log.info("对账数据查询结果:{}", JsonUtil.toJsonStr(listComResponse));
         if (listComResponse==null || listComResponse.getCode() != 200)
             return listComResponse;
         List<ResultExportVo> listComResponseData = listComResponse.getData();
-        //盘点日期
         Date inventoryDate = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String date = simpleDateFormat.format(inventoryDate);
-        //仓库名称
 //        String storeName = inventoryExcelVo.getStoreName();
         httpServletResponse.setCharacterEncoding("UTF-8");
         //响应内容格式
