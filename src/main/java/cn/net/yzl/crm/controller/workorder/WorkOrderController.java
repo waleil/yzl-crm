@@ -656,7 +656,7 @@ public class WorkOrderController {
         }
         recoveryDTO.setStaffName(detailsByNo.getData().getName());
         recoveryDTO.setCreateId(QueryIds.userNo.get());
-        recoveryDTO.setDeptId(detailsByNo.getData().getDepartId());
+        //recoveryDTO.setDeptId(detailsByNo.getData().getDepartId());
         return workOrderClient.handIn(recoveryDTO);
     }
 
@@ -737,10 +737,10 @@ public class WorkOrderController {
                     flag = handInUtils.mCustomerLExceeded(isHandInDTO,wORCBean);
                     break;*/
 
-                    case 8:
+                    /*case 8:
                         flag = handInUtils.overtimeReturnVisit(isHandInDTO, wORCBean);
                         break;
-
+*/
                     default: {
                     }
                 }
@@ -766,8 +766,17 @@ public class WorkOrderController {
             recoveryDTO.setStatus(CommonConstants.ONE);
             workOrderClient.handIn(recoveryDTO);
         }else {
-            isHandInDTO.setApplyUpStatus(1);
-            turnRulnClient.rulesHandedIn(isHandInDTO);
+            RecoveryDTO recoveryDTO = new RecoveryDTO();
+            StaffImageBaseInfoDto staffImageBaseInfoDto = detailsByNo.getData();
+            recoveryDTO.setCode(isHandInDTO.getCode());
+            recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
+            recoveryDTO.setMemberName(isHandInDTO.getMemberName());
+            recoveryDTO.setStaffName(staffImageBaseInfoDto.getName());
+            recoveryDTO.setCreateId(staffImageBaseInfoDto.getStaffNo());
+            recoveryDTO.setDeptId(staffImageBaseInfoDto.getDepartId());
+            workOrderClient.handIn(recoveryDTO);
+           /* isHandInDTO.setApplyUpStatus(1);
+            turnRulnClient.rulesHandedIn(isHandInDTO);*/
         }
         return ComResponse.success(flag);
     }
