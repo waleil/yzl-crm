@@ -711,29 +711,9 @@ public class OrderRestController {
 		// 如果本次下单送的优惠券不为空
 		List<MemberCouponSaveDto> memberCouponDtos = orderSubmitResponse.getMemberCouponSaveDtoList();
 		if (!CollectionUtils.isEmpty(memberCouponDtos)) {
-			// key为商品编码，value为订单明细对象
-			Map<String, List<OrderDetail>> odMap = orderdetailList.stream()
-					.collect(Collectors.groupingBy(OrderDetail::getProductCode));
-			for (MemberCouponSaveDto memberCoupon : memberCouponDtos) {
-				OrderCouponDetail cd = new OrderCouponDetail();
-				OrderDetail od = odMap.get(memberCoupon.getProductCode()).get(0);
-				// 优惠使用记录表业务主键
-				cd.setOrderCouponDetailNo(String.format("%s%s", od.getOrderDetailCode(), seq.incrementAndGet()));
-				cd.setOrderDetailCode(od.getOrderDetailCode());// 订单明细表业务标识
-				cd.setOrderNo(od.getOrderNo());// 订单号
-				cd.setMealFlag(od.getMealFlag());// 是否套餐
-				cd.setProductCode(memberCoupon.getProductCode());// 商品唯一标识
-				cd.setActivityType(memberCoupon.getSourceType());// 优惠途径
-				cd.setCouponCode(memberCoupon.getCouponBusNo().intValue());// 优惠编号
-				cd.setCouponName(memberCoupon.getCouponName());// 优惠券名称
-//				cd.setCouponType(pp.getDiscountType());// 优惠方式
-//				cd.setCouponAmt(pp.getActivityDiscountPrice().multiply(bd100).intValue());// 优惠金额 单位分
-				cd.setCouponMode(CommonConstant.COUPON_MODE_1);// 活动类型
-				cd.setCouponDirection(CommonConstant.COUPON_DIRECTION_2);// 优惠方向
-				coupondetailList.add(cd);
-				orderout.getCoupons().add(new Coupon(memberCoupon.getStartData(), memberCoupon.getEndData(),
-						memberCoupon.getCouponName()));
-			}
+			orderout.setCoupons(
+					memberCouponDtos.stream().map(m -> new Coupon(m.getStartData(), m.getEndData(), m.getCouponName()))
+							.collect(Collectors.toList()));
 		}
 		// 调用创建订单服务接口
 		ComResponse<?> submitOrder = this.orderFeignClient
