@@ -97,13 +97,11 @@ public class SettlementExpressController {
 
         if (searchVo.getSearchStatus() == 1) {
             httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
-
                     URLEncoder.encode("对账运费"+date+".xlsx","utf-8"));
         }
 //        URLEncoder.encode("结算运费订单"+sysDate+".xlsx", "utf-8"));
         if (searchVo.getSearchStatus() == 0) {
             httpServletResponse.setHeader("Content-Disposition", "attachment;fileName="+
-
                     URLEncoder.encode("未对账运费"+date+".xlsx","utf-8"));
         }
 
@@ -206,7 +204,7 @@ public class SettlementExpressController {
     @PostMapping("seach/nosett")
     @ApiOperation("未对账数据查询")
     public  ComResponse<Page<ResultDecimalVo>>  searchSettlementData(@RequestBody @Valid SearchVo searchVo){
-        return  settlement.searchSettlementData(searchVo);
+        return  settlement.searchSettlementDataDecimal(searchVo);
     }
 
 
