@@ -163,5 +163,12 @@ public class DownImageInController {
         downImageInService.exportExpressPrintInfo(outStoreOrderInfoParamVo, httpServletResponse);
     }
 
+    @PostMapping(value = "v1/expressExportCount")
+    @ApiOperation("导出快递数量统计")
+    @ResponseBody
+    public ComResponse getExpressExportCount(@RequestBody OutStoreOrderInfoParamVo outStoreOrderInfoParamVo) {
+        return downImageInService.getExpressExportCount(outStoreOrderInfoParamVo);
+    }
+
 
 }
