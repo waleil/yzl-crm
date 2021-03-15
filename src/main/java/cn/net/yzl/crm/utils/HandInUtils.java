@@ -62,7 +62,7 @@ public class HandInUtils{
             return Boolean.TRUE;
         }
 
-        return data.getNearNoSignStatus();
+        return data.getNearNoSignStatus() && org.apache.commons.lang3.StringUtils.isNotBlank(emptyNumberShutdown.getApplyUpMemo()) && emptyNumberShutdown.getApplyUpMemo().equals("空号停机");
     }
 
     /**
