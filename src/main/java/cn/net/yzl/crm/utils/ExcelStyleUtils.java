@@ -37,7 +37,7 @@ public class ExcelStyleUtils {
 		// 头部字体名称
 		headWriteFont.setFontName("Microsoft YaHei Regular");
 		headWriteCellStyle.setWriteFont(headWriteFont);
-		headWriteCellStyle.setShrinkToFit(true);
+		headWriteCellStyle.setShrinkToFit(false);
 		// 设置下边框
 		headWriteCellStyle.setBorderBottom(BorderStyle.THIN);
 		// 设置左边框
@@ -55,7 +55,7 @@ public class ExcelStyleUtils {
 		// 内容字体大小
 		contentWriteFont.setFontHeightInPoints((short) 12);
 		contentWriteCellStyle.setWriteFont(contentWriteFont);
-		contentWriteCellStyle.setShrinkToFit(true);
+		contentWriteCellStyle.setShrinkToFit(false);
 		// 设置下边框
 		contentWriteCellStyle.setBorderBottom(BorderStyle.THIN);
 		// 设置左边框

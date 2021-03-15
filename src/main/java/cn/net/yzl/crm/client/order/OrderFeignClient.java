@@ -102,5 +102,5 @@ public interface OrderFeignClient {
 	 * @date 2021年3月9日,上午3:02:19
 	 */
 	@PostMapping("/order/v1/financialnames")
-	ComResponse<Map<String, OrderM>> queryFinancialNames(@RequestParam List<String> orderNoList);
+	ComResponse<Map<String, OrderM>> queryFinancialNames(@RequestBody List<String> orderNoList);
 }
