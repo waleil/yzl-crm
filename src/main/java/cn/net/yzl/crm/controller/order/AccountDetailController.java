@@ -2,6 +2,8 @@ package cn.net.yzl.crm.controller.order;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +55,13 @@ public class AccountDetailController {
 	public void export(@RequestBody AccountDetailIn accountDetailIn, HttpServletResponse response) throws Exception {
 		accountDetailIn.setPageNo(1);// 默认第1页
 		accountDetailIn.setPageSize(1000);// 默认每页1000条数据
+		// TODO 对账开始时间：当前时间所在的月份减去一个月
+		accountDetailIn.setSettleTimeFrom(Optional.ofNullable(accountDetailIn.getSettleTimeFrom())
+				.map(m -> m.withHour(0).withMinute(0).withSecond(0))
+				.orElse(LocalDateTime.now().minusMonths(1L).withHour(0).withMinute(0).withSecond(0)));
+		accountDetailIn.setSettleTimeTo(Optional.ofNullable(accountDetailIn.getSettleTimeFrom())
+				.map(m -> m.withHour(23).withMinute(59).withSecond(59))
+				.orElse(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59)));
 		ComResponse<Page<AccountDetailOut>> data = this.accountDetailFeignClient.queryPageList(accountDetailIn);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出账户余额明细列表异常");
