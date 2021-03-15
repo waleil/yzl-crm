@@ -101,7 +101,7 @@ public class HandInUtils{
      * @return
      */
     public Boolean customerRefusedToVisit(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
-        if (!isHandInDTO.getApplyUpMemo().equals("顾客要求不需要回访")) {
+        if (null != isHandInDTO.getApplyUpMemo() && !isHandInDTO.getApplyUpMemo().equals("顾客要求不需要回访")) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;

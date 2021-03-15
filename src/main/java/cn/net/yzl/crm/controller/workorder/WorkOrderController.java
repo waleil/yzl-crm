@@ -369,7 +369,7 @@ public class WorkOrderController {
         updateSingleAdjustDTO.setOperatorType(Constant.OPERATOR_TYPE_ARTIFICIAL);
         updateSingleAdjustDTO.setAcceptStatus(1);//人工触发 改为未接受（热线的不管自动分配还是人工分配都需要接收）
         ComResponse<Boolean> comResponse = workOrderClient.updateSingleAdjust(updateSingleAdjustDTO);
-        if(comResponse.getData()){
+        if(null != comResponse.getData() && comResponse.getData()){
             comResponse.setMessage("成功");
         }
         return comResponse;
@@ -703,6 +703,7 @@ public class WorkOrderController {
             recoveryDTO.setMemberCard(isHandInDTO.getMemberCard());
             recoveryDTO.setMemberName(isHandInDTO.getMemberName());
             recoveryDTO.setApplyUpMemo(isHandInDTO.getApplyUpMemo());
+            recoveryDTO.setStatus(2);
             workOrderClient.handIn(recoveryDTO);
             return ComResponse.success(Boolean.TRUE);
         }
@@ -750,7 +751,7 @@ public class WorkOrderController {
         }else{
             flag = Boolean.TRUE;
         }
-        if(flag || org.apache.commons.lang3.StringUtils.isNotBlank(isHandInDTO.getApplyUpMemo())){
+        if(flag){
             RecoveryDTO recoveryDTO = new RecoveryDTO();
             recoveryDTO.setStaffName(isHandInDTO.getStaffName());
             recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());
