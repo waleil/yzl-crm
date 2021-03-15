@@ -30,13 +30,14 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author wangxiao
@@ -225,25 +226,37 @@ public class DownImageInServiceImpl implements DownImageInService {
             }
             postalExcelModel.setInInfo(expressOrderInfo.getDeliverCode());
             String deliverCode = expressOrderInfo.getDeliverCode();
-//            if(StrUtil.startWith(deliverCode,"ZB")){
-//                ZBExcelModels.add(postalExcelModel);
-//            }else if (StrUtil.startWith(deliverCode,"XT")){
-//                XTExcelModels.add(postalExcelModel);
-//            }else if (StrUtil.startWith(deliverCode,"QX")){
-//                QXExcelModels.add(postalExcelModel);
-//
-//            }else if (StrUtil.startWith(deliverCode,"FB")){
-//                FBExcelModels.add(postalExcelModel);
-//            }else{
-                postalExcelModels.add(postalExcelModel);
-//            }
-        }
+            if(StrUtil.startWith(deliverCode,"ZB")){
+                ZBExcelModels.add(postalExcelModel);
+            }else if (StrUtil.startWith(deliverCode,"XT")){
+                XTExcelModels.add(postalExcelModel);
+            }else if (StrUtil.startWith(deliverCode,"QX")){
+                QXExcelModels.add(postalExcelModel);
 
+            }else if (StrUtil.startWith(deliverCode,"FB")){
+                FBExcelModels.add(postalExcelModel);
+            }else{
+                postalExcelModels.add(postalExcelModel);
+            }
+        }
+        List<ByteArrayOutputStream> outputStreams = new ArrayList<>();
+        ByteArrayOutputStream fb = createEMSExcel(FBExcelModels, "河北御芝林生物科技有限公司");
+        ByteArrayOutputStream XT = createEMSExcel(FBExcelModels, "河北御芝林网络科技有限公司");
+        ByteArrayOutputStream QX = createEMSExcel(FBExcelModels, "河北御芝林电子商务有限公司");
+        ByteArrayOutputStream FB = createEMSExcel(FBExcelModels, "石家庄御芝林网络科技有限公司");
+        ByteArrayOutputStream other = createEMSExcel(FBExcelModels, "其它");
+        outputStreams.add(fb);
+        outputStreams.add(XT);
+        outputStreams.add(QX);
+        outputStreams.add(FB);
+        outputStreams.add(other);
+
+        createZip(httpServletResponse,outputStreams);
         //系统时间
 //        Date date = new Date();
 //        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        String sysDate = simpleDateFormat.format(date);
-        log.info("EMS表格数据:{}",JsonUtil.toJsonStr(postalExcelModels));
+//        log.info("EMS表格数据:{}",JsonUtil.toJsonStr(postalExcelModels));
 //        ExcelWriter excelWriter = EasyExcel.write(httpServletResponse.getOutputStream()).build();
 //        WriteSheet ZB = EasyExcel.writerSheet(0, "河北御芝林生物科技有限公司").head(PostalExcelModel.class).build();
 //        WriteSheet XT = EasyExcel.writerSheet(1, "河北御芝林网络科技有限公司").head(PostalExcelModel.class).build();
@@ -257,8 +270,8 @@ public class DownImageInServiceImpl implements DownImageInService {
 //        excelWriter.write(postalExcelModels,other);
 //        excelWriter.finish();
         //向前端写入文件流流
-        EasyExcel.write(httpServletResponse.getOutputStream(), PostalExcelModel.class)
-                .sheet("导入模板").doWrite(postalExcelModels);
+//        EasyExcel.write(httpServletResponse.getOutputStream(), PostalExcelModel.class)
+//                .sheet("导入模板").doWrite(postalExcelModels);
     }
 
     private void handleDP(List<ExpressOrderInfo> expressOrderInfos, HttpServletResponse httpServletResponse) throws IOException{
@@ -350,5 +363,65 @@ public class DownImageInServiceImpl implements DownImageInService {
             return "0";
         }
         return NumberUtil.toStr(NumberUtil.div(money, "100"));
+    }
+
+
+    public void createZip(HttpServletResponse response,List<ByteArrayOutputStream> bosList) throws IOException {
+        //创建HttpServerResponse的输出流
+        OutputStream out=response.getOutputStream();
+        //创建写入流
+        BufferedInputStream bis;
+        //创建要写入的文件
+        File file=new File("express.zip");
+        //通过ZipOutputStream定义要写入的对象
+        ZipOutputStream zos=new ZipOutputStream(new FileOutputStream(file));
+        //调取service层写入循环excle的方法，将流输入
+        writeZos(bosList, zos);
+        zos.close();
+        //定义返回类型
+        response.setContentType("text/html; charset=UTF-8");
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode("student.zip", "UTF-8"))));
+        bis = new BufferedInputStream(new FileInputStream("student.zip"));
+        //定义byte，长度就是要转成zip文件的byte长度，避免浪费资源
+        byte[] buffer=new byte[bis.available()];
+        bis.read(buffer);
+        out.flush();
+        out.write(buffer);
+    }
+
+    public void writeZos(List<ByteArrayOutputStream> bosList, ZipOutputStream zos) throws IOException {
+        for (int i = 0; i < bosList.size(); i++) {
+            //将多个excel都转成字节流写入
+//            zos.putNextEntry(new ZipEntry(excelName.get(i)));
+            byte[] excelStream=bosList.get(i).toByteArray();
+            zos.write(excelStream);
+            //记得关闭
+            zos.closeEntry();
+        }
+    }
+
+    public ByteArrayOutputStream createYunDaExcel(List<YunDaExcelModel> yunDaExcelModels,String fileName) throws UnsupportedEncodingException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        EasyExcel.write(outputStream, YunDaExcelModel.class)
+                .sheet("导入模板").doWrite(yunDaExcelModels);
+        URLEncoder.encode(fileName, "utf-8");
+        return outputStream;
+    }
+
+    public ByteArrayOutputStream createEMSExcel(List<PostalExcelModel> yunDaExcelModels,String fileName) throws UnsupportedEncodingException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        EasyExcel.write(outputStream, PostalExcelModel.class)
+                .sheet("导入模板").doWrite(yunDaExcelModels);
+        URLEncoder.encode(fileName, "utf-8");
+        return outputStream;
+    }
+
+    public ByteArrayOutputStream createDPExcel(List<NewDPExcelModel> newDPExcelModels,String fileName) throws UnsupportedEncodingException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        EasyExcel.write(outputStream, NewDPExcelModel.class)
+                .sheet("导入模板").doWrite(newDPExcelModels);
+        URLEncoder.encode(fileName, "utf-8");
+        return outputStream;
     }
 }
