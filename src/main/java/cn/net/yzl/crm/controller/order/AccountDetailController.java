@@ -59,7 +59,7 @@ public class AccountDetailController {
 		accountDetailIn.setSettleTimeFrom(Optional.ofNullable(accountDetailIn.getSettleTimeFrom())
 				.map(m -> m.withHour(0).withMinute(0).withSecond(0))
 				.orElse(LocalDateTime.now().minusMonths(1L).withHour(0).withMinute(0).withSecond(0)));
-		accountDetailIn.setSettleTimeTo(Optional.ofNullable(accountDetailIn.getSettleTimeFrom())
+		accountDetailIn.setSettleTimeTo(Optional.ofNullable(accountDetailIn.getSettleTimeTo())
 				.map(m -> m.withHour(23).withMinute(59).withSecond(59))
 				.orElse(LocalDateTime.now().withHour(23).withMinute(59).withSecond(59)));
 		ComResponse<Page<AccountDetailOut>> data = this.accountDetailFeignClient.queryPageList(accountDetailIn);
