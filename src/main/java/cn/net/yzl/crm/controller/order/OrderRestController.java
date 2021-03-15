@@ -36,9 +36,10 @@ import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
 import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
 import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
 import cn.net.yzl.activity.model.enums.UseDiscountTypeEnum;
-import cn.net.yzl.activity.model.requestModel.CalculateRequest;
+import cn.net.yzl.activity.model.requestModel.CalculateOrderRequest;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
+import cn.net.yzl.activity.model.responseModel.CalculationOrderResponse;
 import cn.net.yzl.activity.model.responseModel.OrderSubmitResponse;
 import cn.net.yzl.activity.model.responseModel.ProductPriceResponse;
 import cn.net.yzl.common.entity.ComResponse;
@@ -76,6 +77,7 @@ import cn.net.yzl.order.enums.LeaderBoardType;
 import cn.net.yzl.order.enums.PayMode;
 import cn.net.yzl.order.enums.PayType;
 import cn.net.yzl.order.enums.RedisKeys;
+import cn.net.yzl.order.enums.WorkOrderType;
 import cn.net.yzl.order.model.db.order.OrderCouponDetail;
 import cn.net.yzl.order.model.db.order.OrderDetail;
 import cn.net.yzl.order.model.db.order.OrderM;
@@ -142,7 +144,8 @@ public class OrderRestController {
 		if (productMap.isEmpty() && mealMap.isEmpty()) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "购物车里的商品或套餐已下架。");
 		}
-		List<ProductPriceResponse> list = orderproducts.stream().map(cp -> {
+		CalculateOrderRequest request = new CalculateOrderRequest();
+		request.setCalculateProductDto(orderproducts.stream().map(cp -> {
 			if (Integer.compare(CommonConstant.MEAL_FLAG_0, cp.getProductType()) == 0) {
 				// 商品
 				ProductMainDTO product = productMap.get(cp.getProductCode());
@@ -155,23 +158,23 @@ public class OrderRestController {
 				cp.setLimitDownPrice(Long.valueOf(meal.getDiscountPrice()));// 商品最低折扣价,单位分
 				cp.setSalePrice(BigDecimal.valueOf(meal.getPriceD()).multiply(bd100).longValue());// 商品销售价,单位分
 			}
-			CalculateRequest request = new CalculateRequest();
-			request.setCalculateProductDto(cp);
-			request.setAdvertBusNo(orderin.getAdvertBusNo());
-			request.setMemberCard(orderin.getMemberCard());
-			request.setMemberLevelGrade(member.getMGradeId());
-			log.info("调用计算金额接口：{}", this.toJsonString(request));
-			return this.activityClient.calculate(request).getData();
-		}).collect(Collectors.toList());
+			return cp;
+		}).collect(Collectors.toList()));
+		request.setAdvertBusNo(orderin.getAdvertBusNo());
+		request.setMemberCard(orderin.getMemberCard());
+		request.setMemberLevelGrade(member.getMGradeId());
+		log.info("调用购物车计算金额接口：{}", this.toJsonString(request));
+		ComResponse<CalculationOrderResponse> response = this.activityClient.calculateOrder(request);
+		if (Integer.compare(ComResponse.ERROR_STATUS, response.getStatus()) == 0) {
+			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用购物车计算金额接口异常：%s", response.getMessage()));
+		}
+		CalculationOrderResponse data = response.getData();
 		// 商品数量*商品价格，然后求和，计算出订单总额
 		long totalAll = orderproducts.stream().mapToLong(m -> m.getProductCount() * m.getSalePrice()).sum();
 		// 对每一件商品经过DMC接口算出优惠价，然后求和，计算出商品优惠总价
-		double productTotal = list.stream().mapToDouble(m -> m.getProductTotal().doubleValue()).sum();
+		double productTotal = data.getOrderTotalPrice().doubleValue();
 		// 优惠券+活动优惠的总价
-		double amountCoupon = list.stream()
-				.mapToDouble(m -> Optional.ofNullable(m.getActivityDiscountPrice()).orElse(BigDecimal.ZERO)
-						.add(Optional.ofNullable(m.getCouponDiscountPrice()).orElse(BigDecimal.ZERO)).doubleValue())
-				.sum();
+		double amountCoupon = data.getOrderDiscountPrice().doubleValue();
 		double total = productTotal;
 		if (orderin.getAmountStored().compareTo(BigDecimal.ZERO) > 0) {
 			double am = orderin.getAmountStored().doubleValue();
@@ -641,7 +644,7 @@ public class OrderRestController {
 		orderm.setAdvisorNo(orderin.getAdvId());// 广告编码
 		orderm.setMemberTelphoneNo(orderin.getMemberTelphoneNo());// 顾客电话
 		// 如果工单类型是热线，并且顾客姓名为空，则用收货人姓名作为顾客姓名
-		if (Integer.compare(CommonConstant.WORK_ORDER_TYPE_1, orderin.getWorkOrderType()) == 0
+		if (Integer.compare(WorkOrderType.WORK_ORDER_TYPE_1.getType(), orderin.getWorkOrderType()) == 0
 				&& !StringUtils.hasText(orderin.getMemberName())) {
 			orderm.setMemberName(reveiverAddress.getMemberName());// 收货人姓名
 		}
@@ -1834,6 +1837,14 @@ public class OrderRestController {
 	public ComResponse<List<LeaderBoard>> queryLeaderboard(
 			@ApiParam("今日/3日/7日") @RequestParam LeaderBoardType boardType,
 			@ApiParam("1：热线，2：回访") @RequestParam int workOrderType) {
+
+		if (Integer.compare(WorkOrderType.WORK_ORDER_TYPE_1.getType(), workOrderType) == 0) {
+
+		} else if (Integer.compare(WorkOrderType.WORK_ORDER_TYPE_2.getType(), workOrderType) == 0) {
+
+		} else {
+
+		}
 		List<LeaderBoard> data = this.orderFeignClient.queryLeaderboard(boardType, workOrderType).getData();
 		if (!CollectionUtils.isEmpty(data)) {
 			List<String> staffCodes = data.stream().map(LeaderBoard::getStaffCode).collect(Collectors.toList());
