@@ -749,10 +749,10 @@ public class WorkOrderController {
                 }
             }
         }else{
-            flag = Boolean.TRUE;
+            flag = Boolean.FALSE;
         }
         if(flag){
-            RecoveryDTO recoveryDTO = new RecoveryDTO();
+            /*RecoveryDTO recoveryDTO = new RecoveryDTO();
             recoveryDTO.setStaffName(isHandInDTO.getStaffName());
             recoveryDTO.setStaffNo(isHandInDTO.getStaffNo());
             recoveryDTO.setCreateId(isHandInDTO.getStaffNo());
@@ -764,8 +764,7 @@ public class WorkOrderController {
             recoveryDTO.setDeptId(detailsByNo.getData().getDepartId());
             recoveryDTO.setDeptName(detailsByNo.getData().getDepartName());
             recoveryDTO.setStatus(CommonConstants.ONE);
-            workOrderClient.handIn(recoveryDTO);
-        }else {
+            workOrderClient.handIn(recoveryDTO);*/
             RecoveryDTO recoveryDTO = new RecoveryDTO();
             StaffImageBaseInfoDto staffImageBaseInfoDto = detailsByNo.getData();
             recoveryDTO.setCode(isHandInDTO.getCode());
@@ -775,8 +774,10 @@ public class WorkOrderController {
             recoveryDTO.setCreateId(staffImageBaseInfoDto.getStaffNo());
             recoveryDTO.setDeptId(staffImageBaseInfoDto.getDepartId());
             workOrderClient.handIn(recoveryDTO);
-           /* isHandInDTO.setApplyUpStatus(1);
-            turnRulnClient.rulesHandedIn(isHandInDTO);*/
+        }else {
+
+           isHandInDTO.setApplyUpStatus(1);
+           turnRulnClient.rulesHandedIn(isHandInDTO);
         }
         return ComResponse.success(flag);
     }
