@@ -52,6 +52,7 @@ public class AccountDetailController {
 	@PostMapping("/v1/export")
 	@ApiOperation(value = "导出账户余额明细列表", notes = "导出账户余额明细列表")
 	public void export(@RequestBody AccountDetailIn accountDetailIn, HttpServletResponse response) throws Exception {
+		// TODO 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
 		if (accountDetailIn.getSettleTimeFrom() == null) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择对账开始时间");
 		}
