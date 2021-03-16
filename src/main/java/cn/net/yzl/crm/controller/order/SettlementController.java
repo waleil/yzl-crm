@@ -1,18 +1,5 @@
 package cn.net.yzl.crm.controller.order;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
@@ -21,14 +8,16 @@ import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
 import cn.net.yzl.crm.sys.BizException;
-import cn.net.yzl.order.model.vo.order.SettlementDTO;
-import cn.net.yzl.order.model.vo.order.SettlementFlowDTO;
-import cn.net.yzl.order.model.vo.order.SettlementListReqDTO;
-import cn.net.yzl.order.model.vo.order.SettlementProductDetailDTO;
-import cn.net.yzl.order.model.vo.order.SettlementReqDTO;
+import cn.net.yzl.order.model.vo.order.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 订单结算单
@@ -117,7 +106,7 @@ public class SettlementController {
 
 	@GetMapping("v1/selectSettleProductList")
 	@ApiOperation("查询结算商品明细")
-	public ComResponse<Page<SettlementProductDetailDTO>> selectSettleProductList(
+	public ComResponse<Page<ProductDetailSettlementedResDTO>> selectSettleProductList(
 			@RequestParam(value = "settlementCode") String settlementCode,
 			@RequestParam(required = false, defaultValue = "1") Integer pageNo,
 			@RequestParam(required = false, defaultValue = "10") Integer pageSize) {
