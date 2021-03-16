@@ -191,9 +191,8 @@ public class OrderRestController {
 		}
 		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(totalAll).divide(bd100).doubleValue(), total,
 				amountCoupon, 0d, orderin.getAmountStored().doubleValue(), productTotal,
-				data.getProductPriceResponseList().stream()
-						.map(m -> new CalcOrderOut.Product(m.getProductCode(), m.getProductTotal()))
-						.collect(Collectors.toList())));
+				data.getProductPriceResponseList().stream().map(m -> new CalcOrderOut.Product(m.getProductCode(),
+						m.getProductTotal(), m.getProductLimitTotal())).collect(Collectors.toList())));
 	}
 
 	/**

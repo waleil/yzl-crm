@@ -52,5 +52,7 @@ public class CalcOrderOut {
 		private String productCode;
 		@ApiModelProperty(value = "商品优惠后的总价格，单位元")
 		private BigDecimal productTotal;
+		@ApiModelProperty(value = "商品最低折扣价，单位元")
+		private BigDecimal productLimitTotal;
 	}
 }
