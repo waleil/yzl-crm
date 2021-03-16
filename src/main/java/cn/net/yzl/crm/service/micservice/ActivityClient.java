@@ -146,7 +146,7 @@ public interface ActivityClient {
 
 	@ApiOperation(value = "校验订单金额")
 	@PostMapping("db/v1/checkOrderAmount")
-	ComResponse<List<ProductPriceResponse>> checkOrderAmount(@RequestBody CheckOrderAmountRequest request);
+	ComResponse<CalculationOrderResponse> checkOrderAmount(@RequestBody CheckOrderAmountRequest request);
 
 	@GetMapping("db/v1/launchManage/getAllLaunchManage")
 	ComResponse<List<LaunchManageDto>> getAllLaunchManage();

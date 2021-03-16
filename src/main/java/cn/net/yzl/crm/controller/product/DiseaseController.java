@@ -37,11 +37,11 @@ public class DiseaseController {
     @ApiOperation("【返回id】新增病症")
     @PostMapping("v1/insert")
     public ComResponse<?> insertDisease(@RequestBody @Valid DiseaseVo diseaseVo,HttpServletRequest request) {
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)){
+        String userNo = request.getHeader("userNo");
+        if (StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取用户id，请检查您的登录状态");
         }
-        diseaseVo.setUpdateNo(userId);
+        diseaseVo.setUpdateNo(userNo);
         return diseaseService.insertDisease(diseaseVo);
     }
 
@@ -52,15 +52,15 @@ public class DiseaseController {
             @ApiImplicitParam(name = "pid",value = "该病症的一级id,如果本身就是一级病症，则传入0",required = true,paramType = "query")
     })
     public ComResponse<?> deleteDisease(@RequestParam("id") Integer id, @RequestParam("pid")Integer pid, HttpServletRequest request) {
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)){
+        String userNo = request.getHeader("userNo");
+        if (StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取用户id，请检查您的登录状态");
         }
         if(id == null || id < 1){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
         }        //新建删除实体
         DiseaseDelVo delVo = new DiseaseDelVo();
-        delVo.setUpdateNo(request.getHeader("userId"));
+        delVo.setUpdateNo(request.getHeader("userNo"));
         delVo.setId(id);
         delVo.setPId(pid);
         return diseaseService.deleteDisease(delVo);
@@ -93,14 +93,14 @@ public class DiseaseController {
     })
     @GetMapping("v1/changeName")
     public ComResponse<?> changeName(@RequestParam("id") Integer id, @RequestParam("name") String name,HttpServletRequest request){
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)){
+        String userNo = request.getHeader("userNo");
+        if (StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取身份信息，请检查您的登录状态！");
         }
         if(id == null || id < 0){
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id格式！");
         }
-        return diseaseService.changeName(id,name,userId);
+        return diseaseService.changeName(id,name,userNo);
     }
 
     @ApiOperation(value = "根据病症查询商品信息", notes = "根据病症查询商品信息")
@@ -156,11 +156,11 @@ public class DiseaseController {
             @ApiImplicitParam(name = "memberCard",value = "顾客id",paramType = "query",required = true)
     })
     public ComResponse<List<DiseaseTreeNode>> queryTreeNode(@RequestParam("memberCard")String memberCard,HttpServletRequest request){
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)) {
+        String userNo = request.getHeader("userNo");
+        if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取当前用户登录信息，请尝试重新登陆！");
         }
-        return diseaseService.queryTreeNodeWithTemp(memberCard,userId);
+        return diseaseService.queryTreeNodeWithTemp(memberCard,userNo);
     }
 
 }

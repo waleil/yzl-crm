@@ -50,11 +50,8 @@ import cn.net.yzl.crm.client.order.OrderInvoiceClient;
 import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.order.MemberCouponDTO;
-import cn.net.yzl.crm.dto.order.MemberCouponExportDTO;
 import cn.net.yzl.crm.dto.order.MemberIntegralRecordsDTO;
-import cn.net.yzl.crm.dto.order.MemberIntegralRecordsExportDTO;
 import cn.net.yzl.crm.dto.order.MemberRedBagRecordsDTO;
-import cn.net.yzl.crm.dto.order.MemberRedBagRecordsExportDTO;
 import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.service.ActivityService;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
@@ -235,6 +232,7 @@ public class OrderInvoiceController {
 			dto.setOperationType(item.getOperationType());
 			dto.setOrderNo(item.getOrderNo());
 			dto.setStatus(item.getStatus());
+			dto.setStatusName(MemberIntegralRecordsDTO.STATUS_MAP.get(item.getStatus()));
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			OrderM order = financialNames.get(item.getOrderNo());
 			dto.setFinancialOwnerName(Optional.ofNullable(order).map(OrderM::getFinancialOwnerName).orElse("-"));
@@ -264,7 +262,7 @@ public class OrderInvoiceController {
 				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
-			excelWriter = EasyExcel.write(response.getOutputStream(), MemberIntegralRecordsExportDTO.class)
+			excelWriter = EasyExcel.write(response.getOutputStream(), MemberIntegralRecordsDTO.class)
 					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy())
 					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy()).build();
 			// 写入到同一个sheet
@@ -380,6 +378,7 @@ public class OrderInvoiceController {
 			dto.setOperationType(item.getOperationType());
 			dto.setOrderNo(item.getOrderNo());
 			dto.setStatus(item.getStatus());
+			dto.setStatusName(MemberRedBagRecordsDTO.STATUS_MAP.get(item.getStatus()));
 			dto.setReconciliationTime(Optional.ofNullable(settlementtimes.get(item.getOrderNo())).orElse(null));
 			OrderM order = financialNames.get(item.getOrderNo());
 			dto.setFinancialOwnerName(Optional.ofNullable(order).map(OrderM::getFinancialOwnerName).orElse("-"));
@@ -409,7 +408,7 @@ public class OrderInvoiceController {
 				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
-			excelWriter = EasyExcel.write(response.getOutputStream(), MemberRedBagRecordsExportDTO.class)
+			excelWriter = EasyExcel.write(response.getOutputStream(), MemberRedBagRecordsDTO.class)
 					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy())
 					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy()).build();
 			// 写入到同一个sheet
@@ -521,6 +520,7 @@ public class OrderInvoiceController {
 			dto.setMemberCard(item.getMemberCard());
 			dto.setOrderNo(item.getOrderNo());
 			dto.setStatus(item.getStatus());
+			dto.setStatusName(MemberCouponDTO.STATUS_MAP.get(item.getStatus()));
 			if (!item.getCouponDiscountRulesDto().isEmpty()) {
 				dto.setReduceAmount(item.getCouponDiscountRulesDto().get(0).getConditionFullD());
 				dto.setCouponBusNo(item.getCouponDiscountRulesDto().get(0).getCouponBusNo());
@@ -553,7 +553,7 @@ public class OrderInvoiceController {
 				String.format("attachment;filename=%s.xlsx", URLEncoder.encode(title, StandardCharsets.UTF_8.name())));
 		ExcelWriter excelWriter = null;
 		try {
-			excelWriter = EasyExcel.write(response.getOutputStream(), MemberCouponExportDTO.class)
+			excelWriter = EasyExcel.write(response.getOutputStream(), MemberCouponDTO.class)
 					.registerWriteHandler(ExcelStyleUtils.getLongestMatchColumnWidthStyleStrategy())
 					.registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy()).build();
 			// 写入到同一个sheet

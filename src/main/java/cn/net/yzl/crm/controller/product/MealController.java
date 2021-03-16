@@ -71,15 +71,15 @@ public class MealController {
 
     public ComResponse updateStatusByMealCode(@RequestBody @Valid ProductMealUpdateStatusRequestVO vo,HttpServletRequest request) {
 
-        String userId;
+        String userNo;
 
-        if(StringUtils.isBlank(userId = request.getHeader("userId"))){
+        if(StringUtils.isBlank(userNo = request.getHeader("userNo"))){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验用户身份失败，请您重新登陆！");
         }
 
         ProductMealUpdateStatusVO condition = new ProductMealUpdateStatusVO();
 
-        condition.setUpdateNo(userId);
+        condition.setUpdateNo(userNo);
 
         if (CollectionUtils.isEmpty(vo.getMealNoList())) {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), "套餐code不能为空");
@@ -168,9 +168,9 @@ public class MealController {
                 mpvo.setUpdateTime(mealVO.getMealNo()==null?null:new Date());
                 mealVO.getMealProducts().add(mpvo);
             });
-        String userId = request.getHeader("userId");
+        String userNo = request.getHeader("userNo");
 
-        if(StringUtils.isBlank(userId)){
+        if(StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员失败,请重新登录!");
         }
 
@@ -182,7 +182,7 @@ public class MealController {
 
         mealVO.setImageUrl(url);
 
-        mealVO.setUpdateNo(userId);
+        mealVO.setUpdateNo(userNo);
 
 
         return mealClient.editProductMeal(mealVO);
@@ -218,9 +218,9 @@ public class MealController {
     @ApiOperation("修改套餐售卖时间")
     ComResponse updateTimeByMealCode(@RequestBody @Valid ProductMealUpdateTimeRequestVO vo,HttpServletRequest request) {
 
-        String userId = request.getHeader("userId");
+        String userNo = request.getHeader("userNo");
 
-        if (StringUtils.isBlank(userId)) {
+        if (StringUtils.isBlank(userNo)) {
 
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员失败,请重新登录!");
 
@@ -230,7 +230,7 @@ public class MealController {
 
         BeanUtils.copyProperties(vo, updateVO);
 
-        updateVO.setUpdateNo(userId);
+        updateVO.setUpdateNo(userNo);
 
         updateVO.setUpdateTime(new Date());
 

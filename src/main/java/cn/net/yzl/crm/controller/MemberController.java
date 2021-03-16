@@ -620,7 +620,14 @@ public class MemberController {
     public ComResponse<List<ReveiverAddressDto>> getReveiverAddress(String memberCard) {
         return memberFien.getReveiverAddress(memberCard);
     }
-
+    @ApiOperation(value = "顾客收货地址-删除顾客收货地址", notes = "顾客收货地址-删除顾客收货地址")
+    @RequestMapping(value = "v1/deleteAddressById", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Int", paramType = "query")
+    })
+    public ComResponse<Boolean> deleteAddressById(@RequestParam("id") Integer id){
+        return memberFien.deleteAddressById(id);
+    }
 
 
     @ApiOperation("保存顾客购买能力")

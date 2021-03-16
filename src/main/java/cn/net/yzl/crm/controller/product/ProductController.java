@@ -96,13 +96,13 @@ ProductController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(), str);
         }
         //获取操作人id
-        String userId;
-        if(StringUtils.isBlank(userId = request.getHeader("userId"))){
+        String userNo;
+        if(StringUtils.isBlank(userNo = request.getHeader("userNo"))){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员身份失败，尝试重新登陆！");
         }
         //获取修改时间和操作人
         vo.setUpdateTime(new Date());
-        vo.setUpdateNo(userId);
+        vo.setUpdateNo(userNo);
         return productService.editProduct(vo);
     }
 
@@ -116,12 +116,12 @@ ProductController {
     @PostMapping(value = "v1/updateStatus")
     @ApiOperation("修改商品上下架状态")
     ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusRequestVO vo,HttpServletRequest request) {
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)) {
+        String userNo = request.getHeader("userNo");
+        if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户信息，请检查您的登录状态！");
         }
         ProductUpdateStatusVO update = new ProductUpdateStatusVO();
-        update.setUpdateNo(userId);
+        update.setUpdateNo(userNo);
         update.setStatus(vo.getStatus());
         update.setProductCodeList(vo.getProductCodeList());
         return productService.updateStatusByProductCode(update);
@@ -198,11 +198,11 @@ ProductController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), "商品code不能为空");
         }
         BeanUtils.copyProperties(vo, params);
-        String userId = request.getHeader("userId");
-        if(StringUtils.isBlank(userId)){
+        String userNo = request.getHeader("userNo");
+        if(StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员工编号，请检查您的登录状态！");
         }
-        params.setUpdateNo(userId);
+        params.setUpdateNo(userNo);
         return productService.updateTimeByProductCode(params);
 
     }

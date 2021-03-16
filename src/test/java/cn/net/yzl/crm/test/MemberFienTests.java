@@ -24,8 +24,8 @@ public class MemberFienTests {
 	@Test
 	public void testGetMember() {
 		try {
-			String member = "10136214";
-			System.err.println(this.memberFien.getMember(member).getData());
+			String member = "10000055";
+			System.err.println(this.memberFien.getMember(member));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

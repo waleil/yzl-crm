@@ -6,6 +6,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.service.micservice.LogisticsFien;
 import cn.net.yzl.crm.service.settlement.SettlementExpressService;
+import cn.net.yzl.crm.utils.ExcelStyleUtils;
 import cn.net.yzl.logistics.model.ExpressSettlementExcelDTO;
 import cn.net.yzl.logistics.model.vo.ExpressSettlementPageVo;
 import cn.net.yzl.logistics.settleexpresscharge.ExpressChargeSettlementDetail;
@@ -13,6 +14,7 @@ import cn.net.yzl.logistics.settleexpresscharge.SettleBillSearchVo;
 import cn.net.yzl.logistics.settleexpresscharge.SettlementDetailResult;
 import cn.net.yzl.logistics.settleexpresscharge.excel.SettlementDetailExcel;
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +118,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
                 URLEncoder.encode("结算运费订单"+sysDate+".xlsx", "utf-8"));
         //向前端写入文件流流
         EasyExcel.write(response.getOutputStream(), ExpressSettlementExcelDTO.class)
+                .registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
                 .sheet("结算运费订单").doWrite(excels);
 
     }
@@ -200,6 +203,7 @@ public class SettlementExpressServiceImpl implements SettlementExpressService {
                 URLEncoder.encode("运费结算明细"+sysDate+".xlsx", "utf-8"));
         //向前端写入文件流流
         EasyExcel.write(response.getOutputStream(), SettlementDetailExcel.class)
+                .registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
                 .sheet("运费结算明细").doWrite(excels);
     }
 }
