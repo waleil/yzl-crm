@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
@@ -97,7 +98,7 @@ ProductController {
         }
         //获取操作人id
         String userNo;
-        if(StringUtils.isBlank(userNo = request.getHeader("userNo"))){
+        if(StringUtils.isBlank(userNo = QueryIds.userNo.get())){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员身份失败，尝试重新登陆！");
         }
         //获取修改时间和操作人
@@ -116,7 +117,7 @@ ProductController {
     @PostMapping(value = "v1/updateStatus")
     @ApiOperation("修改商品上下架状态")
     ComResponse updateStatusByProductCode(@RequestBody @Valid ProductUpdateStatusRequestVO vo,HttpServletRequest request) {
-        String userNo = request.getHeader("userNo");
+        String userNo= QueryIds.userNo.get();
         if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户信息，请检查您的登录状态！");
         }
@@ -198,7 +199,7 @@ ProductController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE.getCode(), "商品code不能为空");
         }
         BeanUtils.copyProperties(vo, params);
-        String userNo = request.getHeader("userNo");
+        String userNo= QueryIds.userNo.get();
         if(StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员工编号，请检查您的登录状态！");
         }

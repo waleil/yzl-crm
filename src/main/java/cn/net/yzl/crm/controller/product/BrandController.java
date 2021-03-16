@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.product.BrandService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.BrandBean;
@@ -122,7 +123,7 @@ public class BrandController {
                 path = filePath;
                 brandVO.setBrandUrl(filePath);
             }
-            String userNo = request.getHeader("userNo");
+            String userNo= QueryIds.userNo.get();
             if (StringUtils.isBlank(userNo)) {
                 return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录状态，请尝试重新登陆！");
             }
@@ -149,7 +150,7 @@ public class BrandController {
         }
         BrandDelVO brandDelVO = new BrandDelVO();
         brandDelVO.setId(id);
-        String userNo = request.getHeader("userNo");
+        String userNo= QueryIds.userNo.get();
         if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"获取用户登录信息失败，请尝试重新登陆！");
         }
@@ -169,7 +170,7 @@ public class BrandController {
     @PostMapping("update")
     public ComResponse<Void> updateBrand(MultipartFile file, HttpServletRequest request,
                                          String name, String descri, @RequestParam(defaultValue = "0")Integer sort, Integer brandId,String url) {
-        String userNo = request.getHeader("userNo");
+        String userNo= QueryIds.userNo.get();
         //修改失败的回滚url
         String path = "";
         if (StringUtils.isBlank(userNo)) {

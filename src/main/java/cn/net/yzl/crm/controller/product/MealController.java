@@ -5,6 +5,7 @@ import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.client.product.MealClient;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.model.MealRequestVO;
 import cn.net.yzl.product.model.vo.product.dto.MealDTO;
 import cn.net.yzl.product.model.vo.product.dto.ProductMealListDTO;
@@ -73,7 +74,7 @@ public class MealController {
 
         String userNo;
 
-        if(StringUtils.isBlank(userNo = request.getHeader("userNo"))){
+        if(StringUtils.isBlank(userNo = QueryIds.userNo.get())){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验用户身份失败，请您重新登陆！");
         }
 
@@ -168,7 +169,7 @@ public class MealController {
                 mpvo.setUpdateTime(mealVO.getMealNo()==null?null:new Date());
                 mealVO.getMealProducts().add(mpvo);
             });
-        String userNo = request.getHeader("userNo");
+        String userNo= QueryIds.userNo.get();
 
         if(StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"校验操作员失败,请重新登录!");
@@ -218,7 +219,7 @@ public class MealController {
     @ApiOperation("修改套餐售卖时间")
     ComResponse updateTimeByMealCode(@RequestBody @Valid ProductMealUpdateTimeRequestVO vo,HttpServletRequest request) {
 
-        String userNo = request.getHeader("userNo");
+        String userNo= QueryIds.userNo.get();
 
         if (StringUtils.isBlank(userNo)) {
 
