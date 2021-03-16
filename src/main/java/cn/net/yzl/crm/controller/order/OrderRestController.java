@@ -165,7 +165,7 @@ public class OrderRestController {
 		request.setMemberLevelGrade(member.getMGradeId());
 		log.info("调用购物车计算金额接口：{}", this.toJsonString(request));
 		ComResponse<CalculationOrderResponse> response = this.activityClient.calculateOrder(request);
-		if (Integer.compare(ComResponse.ERROR_STATUS, response.getStatus()) == 0) {
+		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, String.format("调用购物车计算金额接口异常：%s", response.getMessage()));
 		}
 		CalculationOrderResponse data = response.getData();
