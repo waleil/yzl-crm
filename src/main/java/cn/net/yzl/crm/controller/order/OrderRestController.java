@@ -968,8 +968,11 @@ public class OrderRestController {
 		request.setMemberCard(orderin.getMemberCardNo());// 会员卡号
 		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
 		request.setMemberLevelGrade(orderin.getMemberLevelGrade());// 会员级别
-		request.setOrderNo(orderm.getOrderNo());// 订单编号
 		request.setProductTotal(orderin.getProductTotal().multiply(bd100).longValue());// 商品总额,单位分
+		request.setCouponDiscountIdForOrder(orderin.getCouponDiscountIdForOrder());// 使用的优惠券折扣ID,针对订单使用的
+		request.setOrderDiscountType(orderin.getOrderDiscountType());// 订单使用优惠方式：0=订单未使用优惠，1=优惠券，2=红包
+		request.setRedBagAmount(orderin.getRedBagAmount());// 订单使用的红包金额
+		request.setOrderNo(orderm.getOrderNo());// 订单编号
 		request.setUserNo(orderm.getStaffCode());// 操作人
 		// 只匹配购买的商品或套餐，排除赠品
 		List<OrderDetailIn> orderdetailins = orderin.getOrderDetailIns().stream()
