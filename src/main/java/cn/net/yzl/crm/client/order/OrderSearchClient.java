@@ -123,7 +123,7 @@ public interface OrderSearchClient {
     public ComResponse<Page<OrderSellDetailResDTO>> selectOrderSaleDetail(@RequestBody OrderSellDetailReqDTO dto);
 
     @ApiOperation(value = "查询顾客指定时间范围内客户退单情况")
-    @GetMapping("orderSearch/v1/hasRefundByMemberCardNo")
+    @GetMapping("/v1/hasRefundByMemberCardNo")
     public ComResponse<Boolean> hasRefundByMemberCardNo(@ApiParam("会员编号") @RequestParam("memberCarNo") String memberCarNo,
                                                         @ApiParam("开始时间") @RequestParam("startTime") String startTime,
                                                         @ApiParam("结束时间") @RequestParam("endTime") String endTime);
