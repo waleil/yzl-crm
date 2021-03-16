@@ -144,6 +144,7 @@ public class OrderRestController {
 		if (productMap.isEmpty() && mealMap.isEmpty()) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "购物车里的商品或套餐已下架。");
 		}
+		// 组装购物车计算金额参数
 		CalculateOrderRequest request = new CalculateOrderRequest();
 		request.setCalculateProductDto(orderproducts.stream().map(cp -> {
 			if (Integer.compare(CommonConstant.MEAL_FLAG_0, cp.getProductType()) == 0) {
@@ -160,9 +161,13 @@ public class OrderRestController {
 			}
 			return cp;
 		}).collect(Collectors.toList()));
-		request.setAdvertBusNo(orderin.getAdvertBusNo());
-		request.setMemberCard(orderin.getMemberCard());
+		request.setAdvertBusNo(orderin.getAdvertBusNo());// 广告业务主键
+		request.setMemberCard(orderin.getMemberCard());// 会员卡号
 		request.setMemberLevelGrade(member.getMGradeId());
+		request.setOrderDiscountType(orderin.getOrderDiscountType());// 订单使用优惠方式：0=订单未使用优惠，1=优惠券，2=红包
+		request.setCouponDiscountIdForOrder(orderin.getCouponDiscountIdForOrder());// 使用的优惠券折扣ID,针对订单使用的
+		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
+		request.setRedBagAmount(orderin.getRedBagAmount());// 订单使用的红包金额
 		log.info("调用购物车计算金额接口：{}", this.toJsonString(request));
 		ComResponse<CalculationOrderResponse> response = this.activityClient.calculateOrder(request);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(response.getCode())) {
