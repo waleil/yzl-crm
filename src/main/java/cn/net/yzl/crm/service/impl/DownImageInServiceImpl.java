@@ -244,7 +244,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         ByteArrayOutputStream XT = createEMSExcel(XTExcelModels, "河北御芝林网络科技有限公司");
         ByteArrayOutputStream QX = createEMSExcel(QXExcelModels, "河北御芝林电子商务有限公司");
         ByteArrayOutputStream fb = createEMSExcel(FBExcelModels, "石家庄御芝林网络科技有限公司");
-        ByteArrayOutputStream other = createEMSExcel(FBExcelModels, "其它");
+        ByteArrayOutputStream other = createEMSExcel(postalExcelModels, "其它");
         outputStreams.add(zb);
         outputStreams.add(XT);
         outputStreams.add(QX);
@@ -317,7 +317,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         ByteArrayOutputStream XT = createDPExcel(XTExcelModels, "河北御芝林网络科技有限公司");
         ByteArrayOutputStream QX = createDPExcel(QXExcelModels, "河北御芝林电子商务有限公司");
         ByteArrayOutputStream fb = createDPExcel(FBExcelModels, "石家庄御芝林网络科技有限公司");
-        ByteArrayOutputStream other = createDPExcel(FBExcelModels, "其它");
+        ByteArrayOutputStream other = createDPExcel(dpExcelModels, "其它");
         outputStreams.add(zb);
         outputStreams.add(XT);
         outputStreams.add(QX);
@@ -391,7 +391,7 @@ public class DownImageInServiceImpl implements DownImageInService {
         ByteArrayOutputStream XT = createYunDaExcel(XTExcelModels, "河北御芝林网络科技有限公司");
         ByteArrayOutputStream QX = createYunDaExcel(QXExcelModels, "河北御芝林电子商务有限公司");
         ByteArrayOutputStream fb = createYunDaExcel(FBExcelModels, "石家庄御芝林网络科技有限公司");
-        ByteArrayOutputStream other = createYunDaExcel(FBExcelModels, "其它");
+        ByteArrayOutputStream other = createYunDaExcel(yunDaExcelModels, "其它");
         outputStreams.add(zb);
         outputStreams.add(XT);
         outputStreams.add(QX);
@@ -452,6 +452,7 @@ public class DownImageInServiceImpl implements DownImageInService {
     public ByteArrayOutputStream createYunDaExcel(List<YunDaExcelModel> yunDaExcelModels,String fileName) throws UnsupportedEncodingException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         EasyExcel.write(outputStream, YunDaExcelModel.class)
+                .registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
                 .sheet("导入模板").doWrite(yunDaExcelModels);
         URLEncoder.encode(fileName, "utf-8");
         return outputStream;
@@ -460,6 +461,7 @@ public class DownImageInServiceImpl implements DownImageInService {
     public ByteArrayOutputStream createEMSExcel(List<PostalExcelModel> yunDaExcelModels,String fileName) throws UnsupportedEncodingException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         EasyExcel.write(outputStream, PostalExcelModel.class)
+                .registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
                 .sheet("导入模板").doWrite(yunDaExcelModels);
         URLEncoder.encode(fileName, "utf-8");
         return outputStream;
@@ -468,6 +470,7 @@ public class DownImageInServiceImpl implements DownImageInService {
     public ByteArrayOutputStream createDPExcel(List<NewDPExcelModel> newDPExcelModels,String fileName) throws UnsupportedEncodingException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         EasyExcel.write(outputStream, NewDPExcelModel.class)
+                .registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
                 .sheet("导入模板").doWrite(newDPExcelModels);
         URLEncoder.encode(fileName, "utf-8");
         return outputStream;
