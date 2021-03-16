@@ -137,6 +137,10 @@ public interface MemberFien {
 	@GetMapping("/memberAddress/v1/getReveiverAddress")
 	ComResponse<List<ReveiverAddressDto>> getReveiverAddress(@RequestParam("memberCard") String memberCard);
 
+	@ApiOperation(value = "顾客收货地址-删除顾客收货地址", notes = "顾客收货地址-删除顾客收货地址")
+	@GetMapping("/memberAddress/v1/deleteAddressById")
+	public ComResponse<Boolean> deleteAddressById(@RequestParam("id") Integer id);
+
 	/**
 	 * 顾客账户-账户冻结操作(充值,消费,退回)
 	 *
