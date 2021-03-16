@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.image.Album;
 import cn.net.yzl.crm.service.product.ImageService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
@@ -62,8 +63,8 @@ public class ImageController {
                                                   HttpServletRequest request,
                                                   @RequestParam("storeId") Integer storeId) throws IOException {
         List<ImageDTO> list = new ArrayList<>();
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)){
+        String userNo= QueryIds.userNo.get();
+        if (StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名！请检查您的登录状态！");
         }
         if (files.length == 0||files.length>15) {//开始判断
@@ -91,7 +92,7 @@ public class ImageController {
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"无法将图片上传至视频库！");
                                 }
                                 //全部通过后上传
-                                list.add(this.upload(file,request.getHeader("userId"),type,storeId));
+                                list.add(this.upload(file,QueryIds.userNo.get(),type,storeId));
                             }
                         }else if(type == 1) {//视频
                             if (size > 10<<20) {//最大10M
@@ -112,7 +113,7 @@ public class ImageController {
                                     return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"视频只能单独上传!");
                                 }
                                 //全部判断通过后开始上传
-                                list.add(this.upload(file,request.getHeader("userId"),type,storeId));
+                                list.add(this.upload(file,QueryIds.userNo.get(),type,storeId));
                             }
                         }else {
                             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"文件类型不合法！");
@@ -123,13 +124,13 @@ public class ImageController {
         return ComResponse.success(list).setMessage(fastDFSConfig.getUrl()+"/");
     }
 
-    private ImageDTO upload(MultipartFile file,String userId,Integer type,Integer storeId) throws IOException {
+    private ImageDTO upload(MultipartFile file,String userNo,Integer type,Integer storeId) throws IOException {
         ImageVO image = new ImageVO();
         StorePath storePath = fastdfsUtils.upload(file);
         String filePath = storePath.getFullPath();
         image.setUrl(filePath);
         image.setCreateTime(new Date());
-        image.setCreator(userId);
+        image.setCreator(userNo);
         image.setType(type);
         image.setImageStoreId(storeId);
         Integer id = (Integer) imageService.insert(image).getData();
@@ -144,8 +145,8 @@ public class ImageController {
     public ComResponse createAlbum(@RequestBody Album album,
                                    HttpServletRequest request){
 
-        String userId;
-        if(StringUtils.isBlank(userId=request.getHeader("userId"))){
+        String userNo;
+        if(StringUtils.isBlank(userNo=QueryIds.userNo.get())){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"无法获取操作员编号，请检查登录状态！");
         }
 
@@ -153,7 +154,7 @@ public class ImageController {
         is.setName(album.getName());
         is.setType(album.getType());
         is.setDescri(album.getDescri());
-        is.setCreateNo(userId);
+        is.setCreateNo(userNo);
         return imageService.createAlbum(is);
     }
 
@@ -182,21 +183,21 @@ public class ImageController {
     @ApiOperation("删除图片")
     @GetMapping("v1/deleteById")
     public ComResponse deleteById(@RequestParam("id") Integer id,HttpServletRequest request){
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)) {
+        String userNo= QueryIds.userNo.get();
+        if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名，请检查您的登录状态！");
         }
-        return imageService.deleteById(id,userId);
+        return imageService.deleteById(id,userNo);
     }
 
     @ApiOperation("删除图片库")
     @GetMapping("v1/deleteStoreById")
     public ComResponse deleteStoreById(@RequestParam("id") Integer id,HttpServletRequest request) {
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)) {
+        String userNo= QueryIds.userNo.get();
+        if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"非法的用户名，请检查您的登录状态！");
         }
-        return imageService.deleteStoreById(id,userId);
+        return imageService.deleteStoreById(id,userNo);
     }
 
     @PostMapping("uploadWithOutStore")
@@ -211,9 +212,9 @@ public class ImageController {
             return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"类型参数传递错误！");
         }
 
-        String userId = request.getHeader("userId");
+        String userNo= QueryIds.userNo.get();
 
-        if(StringUtils.isBlank(userId)){
+        if(StringUtils.isBlank(userNo)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"获取登录状态失败，请尝试重新登陆！");
         }
 

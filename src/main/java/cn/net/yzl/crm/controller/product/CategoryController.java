@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.product.CategoryService;
 import cn.net.yzl.product.model.db.Category;
 import cn.net.yzl.product.model.vo.category.CategoryDelVO;
@@ -46,22 +47,22 @@ public class CategoryController {
     @ApiOperation(value = "添加分类")
     @PostMapping("insertCategory")
     public ComResponse<?> insertCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)) {
+        String userNo= QueryIds.userNo.get();
+        if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
         }
-        categoryTO.setUpdateNo(userId);
+        categoryTO.setUpdateNo(userNo);
         return categoryService.insertCategory(categoryTO);
     }
 
     @ApiOperation(value = "修改分类信息")
     @PostMapping("updateCategory")
     public ComResponse<?> updateCategory(@RequestBody @Valid CategoryTO categoryTO,HttpServletRequest request) {
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)) {
+        String userNo= QueryIds.userNo.get();
+        if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
         }
-        categoryTO.setUpdateNo(userId);
+        categoryTO.setUpdateNo(userNo);
         return categoryService.updateCategory(categoryTO);
     }
 
@@ -69,8 +70,12 @@ public class CategoryController {
     @GetMapping("deleteCategory")
     @ApiImplicitParam(name = "id",value = "id",paramType = "query",required = true)
     public ComResponse<?> deleteCategory(@RequestParam("id") Integer id, HttpServletRequest request) {
+        String userNo= QueryIds.userNo.get();
+        if (StringUtils.isBlank(userNo)) {
+            return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
+        }
         CategoryDelVO categoryDelVO = new CategoryDelVO();
-        categoryDelVO.setUpdateNo(request.getHeader("userId"));
+        categoryDelVO.setUpdateNo(QueryIds.userNo.get());
         categoryDelVO.setId(id);
         return categoryService.deleteCategory(categoryDelVO);
     }
@@ -90,11 +95,11 @@ public class CategoryController {
             if(id == null || id < 1){
                 return ComResponse.fail(ResponseCodeEnums.PARAMS_ERROR_CODE.getCode(),"非法的id类型！");
             }
-            String userId = request.getHeader("userId");
-            if(StringUtils.isBlank(userId)){
+            String userNo= QueryIds.userNo.get();
+            if(StringUtils.isBlank(userNo)){
                 return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆!");
             }
-            return categoryService.changeCategoryStatus(flag,id,userId);
+            return categoryService.changeCategoryStatus(flag,id,userNo);
     }
 
     @ApiOperation(value = "修改分类移动端展示状态")
@@ -108,7 +113,7 @@ public class CategoryController {
                                                              HttpServletRequest request) {
 
 
-            return categoryService.changeCategoryAppStatus(flag,id,request.getHeader("userId"));
+            return categoryService.changeCategoryAppStatus(flag,id,QueryIds.userNo.get());
     }
 
     @ApiOperation(value = "通过pid查询分类列表")

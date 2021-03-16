@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.product;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.product.BrandService;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import cn.net.yzl.product.model.db.BrandBean;
@@ -122,11 +123,11 @@ public class BrandController {
                 path = filePath;
                 brandVO.setBrandUrl(filePath);
             }
-            String userId = request.getHeader("userId");
-            if (StringUtils.isBlank(userId)) {
+            String userNo= QueryIds.userNo.get();
+            if (StringUtils.isBlank(userNo)) {
                 return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录状态，请尝试重新登陆！");
             }
-            brandVO.setUpdateNo(userId);
+            brandVO.setUpdateNo(userNo);
             brandVO.setName(name);
             brandVO.setDescri(descri);
             brandVO.setSort(sort);
@@ -149,11 +150,11 @@ public class BrandController {
         }
         BrandDelVO brandDelVO = new BrandDelVO();
         brandDelVO.setId(id);
-        String userId = request.getHeader("userId");
-        if (StringUtils.isBlank(userId)) {
+        String userNo= QueryIds.userNo.get();
+        if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"获取用户登录信息失败，请尝试重新登陆！");
         }
-        brandDelVO.setUpdateNo(userId);
+        brandDelVO.setUpdateNo(userNo);
         return brandService.deleteBrandById(brandDelVO);
     }
 
@@ -169,10 +170,10 @@ public class BrandController {
     @PostMapping("update")
     public ComResponse<Void> updateBrand(MultipartFile file, HttpServletRequest request,
                                          String name, String descri, @RequestParam(defaultValue = "0")Integer sort, Integer brandId,String url) {
-        String userId = request.getHeader("userId");
+        String userNo= QueryIds.userNo.get();
         //修改失败的回滚url
         String path = "";
-        if (StringUtils.isBlank(userId)) {
+        if (StringUtils.isBlank(userNo)) {
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE.getCode(),"无法获取用户登录信息，请尝试重新登陆！");
         }
         if (StringUtils.isBlank(name)){
@@ -211,7 +212,7 @@ public class BrandController {
                 path = filePath;
                 brandVO.setBrandUrl(filePath);
             }
-            brandVO.setUpdateNo(userId);
+            brandVO.setUpdateNo(userNo);
             brandVO.setName(name);
             brandVO.setDescri(descri);
             brandVO.setSort(sort);
