@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.file;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.crm.config.FastDFSConfig;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.utils.FastdfsUtils;
 import com.alibaba.nacos.common.utils.StringUtils;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
@@ -34,7 +35,7 @@ public class FileController {
     @ApiImplicitParam(name = "file", value = "需要上传的Excel", required = true, dataType = "MultipartFile")
     public ComResponse upload(MultipartFile file, HttpServletRequest request) throws IOException {
 
-        String userId = request.getHeader("userId");
+        String userId = QueryIds.userNo.get();
 
         if(StringUtils.isEmpty(userId)){
             return ComResponse.fail(ResponseCodeEnums.LOGIN_ERROR_CODE,"获取登录状态失败，请尝试重新登陆！");
