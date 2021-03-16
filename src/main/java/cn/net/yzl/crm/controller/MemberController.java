@@ -68,6 +68,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Api(tags = "顾客管理")
 @RestController
@@ -337,7 +338,7 @@ public class MemberController {
         List<WorkOrderFlowVO> collect = workOrderFlowVOList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
                 -> new TreeSet<>(Comparator.comparing(WorkOrderFlowVO::getStaffNo))), ArrayList::new));
         memberServiceJourneryDto.setStaffNum(collect.size());
-        List list = new ArrayList<MemberServiceJournery>();
+        List<MemberServiceJournery> list = new ArrayList();
         // 从订单获取顾客的消费情况
         workOrderFlowVOList.forEach(workOrderFlowVO -> {
             Date endTime = workOrderFlowVO.getEndTime(); // 开始时间
@@ -356,7 +357,11 @@ public class MemberController {
             list.add(memberServiceJournery);
 
         });
-        memberServiceJourneryDto.setMemberServiceJourneryList(list);
+        //按开始时间倒序排序
+        List<MemberServiceJournery> descList = list.stream().sorted(Comparator.comparing(MemberServiceJournery::getStartTime).reversed()).collect(Collectors.toList());
+
+
+        memberServiceJourneryDto.setMemberServiceJourneryList(descList);
         return ComResponse.success(memberServiceJourneryDto);
     }
 
