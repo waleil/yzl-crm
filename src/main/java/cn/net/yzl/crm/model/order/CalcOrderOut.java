@@ -1,5 +1,9 @@
 package cn.net.yzl.crm.model.order;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.net.yzl.activity.model.responseModel.ProductPriceResponse;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -34,4 +38,7 @@ public class CalcOrderOut {
 	private Double amountStored = 0d;
 	@ApiModelProperty(value = "DMC接口返回的优惠金额 单位元", required = false)
 	private Double productTotal = 0d;
+	@ApiModelProperty(value = "订单商品明细")
+	private List<ProductPriceResponse> products = new ArrayList<>(0);
+
 }
