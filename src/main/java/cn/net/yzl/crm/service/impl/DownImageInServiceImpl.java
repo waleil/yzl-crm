@@ -33,9 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -136,18 +134,22 @@ public class DownImageInServiceImpl implements DownImageInService {
     }
 
     @Override
-    public ComResponse<Integer> getExpressExportCount(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo){
+    public ComResponse<Map<String,Long>> getExpressExportCount(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo){
         String expressNo = outStoreOrderInfoParamVo.getExpressNo();
         if(!("DEPPON".equals(expressNo) || "YUNDA".equals(expressNo) || "EMS".equals(expressNo)
                 || "sjzyj".equals(expressNo) || "bdyj".equals(expressNo))){
             return ComResponse.fail(ResponseCodeEnums.ERROR.getCode(),"快递公司请选择韵达、德邦、邮政！");
         }
+        long l = System.currentTimeMillis();
+        outStoreOrderInfoParamVo.setTime(l);
         ComResponse<List<ExpressOrderInfo>> senderExpressInfo = removeStockFeignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
         List<ExpressOrderInfo> data = senderExpressInfo.getData();
         if(CollectionUtils.isEmpty(data)){
             return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),"您选择的快递公司无未打印数据。");
         }else {
-            return ComResponse.success(200,1,"导出无快递单号和未打印数据共"+data.size()+"条!",data.size());
+            Map<String,Long> map = new HashMap<>();
+            map.put("time",l);
+            return ComResponse.success(200,1,"导出无快递单号和未打印数据共"+data.size()+"条!",map);
         }
 
     }
