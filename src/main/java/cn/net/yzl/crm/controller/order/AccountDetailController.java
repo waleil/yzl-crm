@@ -63,8 +63,6 @@ public class AccountDetailController {
 		}
 		accountDetailIn.setPageNo(1);// 默认第1页
 		accountDetailIn.setPageSize(1000);// 默认每页1000条数据
-		accountDetailIn.setSettleTimeFrom(accountDetailIn.getSettleTimeFrom().withHour(0).withMinute(0).withSecond(0));
-		accountDetailIn.setSettleTimeTo(accountDetailIn.getSettleTimeTo().withHour(23).withMinute(59).withSecond(59));
 		ComResponse<Page<AccountDetailOut>> data = this.accountDetailFeignClient.queryPageList(accountDetailIn);
 		if (!ResponseCodeEnums.SUCCESS_CODE.getCode().equals(data.getCode())) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "导出账户余额明细列表异常");
