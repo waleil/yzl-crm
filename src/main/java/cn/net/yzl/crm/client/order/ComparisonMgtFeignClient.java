@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
@@ -79,5 +78,5 @@ public interface ComparisonMgtFeignClient {
 	 * @date 2021年3月9日,上午3:03:55
 	 */
 	@PostMapping("/comparisonmgt/v1/settlementtimes")
-	ComResponse<Map<String, Date>> querySettlementtimes(@RequestParam List<String> orderNoList);
+	ComResponse<Map<String, Date>> querySettlementtimes(@RequestBody List<String> orderNoList);
 }

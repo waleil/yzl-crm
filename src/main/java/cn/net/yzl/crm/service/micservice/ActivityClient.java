@@ -2,6 +2,7 @@ package cn.net.yzl.crm.service.micservice;
 
 import java.util.List;
 
+import cn.net.yzl.activity.model.dto.MemberRedBagDto;
 import cn.net.yzl.crm.dto.order.MemberCouponInfoDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import cn.net.yzl.activity.model.requestModel.AccountHistoryRequest;
 import cn.net.yzl.activity.model.requestModel.AccountRequest;
 import cn.net.yzl.activity.model.requestModel.AccountWithOutPageRequest;
+import cn.net.yzl.activity.model.requestModel.CalculateOrderRequest;
 import cn.net.yzl.activity.model.requestModel.CalculateRequest;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.ListAccountRequest;
@@ -21,6 +23,7 @@ import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
 import cn.net.yzl.activity.model.requestModel.ProductDiscountRequest;
 import cn.net.yzl.activity.model.requestModel.ProductListDiscountRequest;
 import cn.net.yzl.activity.model.requestModel.RejectionOrderRequest;
+import cn.net.yzl.activity.model.responseModel.CalculationOrderResponse;
 import cn.net.yzl.activity.model.responseModel.MemberAccountHistoryResponse;
 import cn.net.yzl.activity.model.responseModel.MemberAccountResponse;
 import cn.net.yzl.activity.model.responseModel.MemberCouponResponse;
@@ -130,9 +133,20 @@ public interface ActivityClient {
 	@PostMapping("db/v1/calculate")
 	ComResponse<ProductPriceResponse> calculate(@RequestBody CalculateRequest request);
 
+	/**
+	 * 购物车计算金额
+	 * 
+	 * @param request {@link CalculateOrderRequest}
+	 * @return {@link CalculationOrderResponse}
+	 * @author zhangweiwei
+	 * @date 2021年3月15日,下午4:48:46
+	 */
+	@PostMapping("db/v1/calculateOrder")
+	ComResponse<CalculationOrderResponse> calculateOrder(@RequestBody CalculateOrderRequest request);
+
 	@ApiOperation(value = "校验订单金额")
 	@PostMapping("db/v1/checkOrderAmount")
-	ComResponse<List<ProductPriceResponse>> checkOrderAmount(@RequestBody CheckOrderAmountRequest request);
+	ComResponse<CalculationOrderResponse> checkOrderAmount(@RequestBody CheckOrderAmountRequest request);
 
 	@GetMapping("db/v1/launchManage/getAllLaunchManage")
 	ComResponse<List<LaunchManageDto>> getAllLaunchManage();
@@ -187,14 +201,19 @@ public interface ActivityClient {
 	 */
 	@PostMapping("/db/v1/orderSubmit")
 	ComResponse<OrderSubmitResponse> orderSubmit(@RequestBody OrderSubmitRequest request);
+
 	/**
 	 * 提交订单送积分和优惠券
 	 *
-	 * @param  memberCards
+	 * @param memberCards
 	 * @return {@link OrderSubmitResponse}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午5:08:19
 	 */
 	@PostMapping("/db/v1/getAccountByMemberCards")
 	ComResponse<List<MemberCouponInfoDTO>> getAccountByMemberCards(@RequestBody List<String> memberCards);
+
+	@ApiOperation(value = "根据顾客卡号获取顾客红包信息")
+	@GetMapping("db/v1/memberRedBag/getDtoByMemberCard")
+	ComResponse<MemberRedBagDto> getDtoByMemberCard(@RequestParam("memberCard") String memberCard);
 }

@@ -56,6 +56,9 @@ public class MemberCustomerJourneyDto implements Serializable {
     @ApiModelProperty("首次呼入明细")
     private MemberFirstCallDetailsDTO memberFirstCallDetailsDTO;
 
+    @ApiModelProperty("顾客备注")
+    private String memberMemo;
+
 
 
 }

@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import cn.net.yzl.activity.model.dto.MemberRedBagDto;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.GeneralResult;
 import cn.net.yzl.common.entity.Page;
@@ -619,7 +620,14 @@ public class MemberController {
     public ComResponse<List<ReveiverAddressDto>> getReveiverAddress(String memberCard) {
         return memberFien.getReveiverAddress(memberCard);
     }
-
+    @ApiOperation(value = "顾客收货地址-删除顾客收货地址", notes = "顾客收货地址-删除顾客收货地址")
+    @RequestMapping(value = "v1/deleteAddressById", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "Int", paramType = "query")
+    })
+    public ComResponse<Boolean> deleteAddressById(@RequestParam("id") Integer id){
+        return memberFien.deleteAddressById(id);
+    }
 
 
     @ApiOperation("保存顾客购买能力")
@@ -786,6 +794,13 @@ private ProductClient productClient;
     public ComResponse<Boolean> dealWorkOrderUpdateMemberData(@RequestBody @Validated  MemberWorkOrderInfoVO workOrderInfoVO) {
         ComResponse<Boolean> result = memberFien.dealWorkOrderUpdateMemberData(workOrderInfoVO);
         return result;
+    }
+
+
+    @ApiOperation(value = "根据顾客卡号获取顾客红包信息")
+    @GetMapping("/v1/memberRedBag/getDtoByMemberCard")
+    public ComResponse<MemberRedBagDto> getDtoByMemberCard(@RequestParam("memberCard") String memberCard) {
+        return activityClient.getDtoByMemberCard(memberCard);
     }
 
 
