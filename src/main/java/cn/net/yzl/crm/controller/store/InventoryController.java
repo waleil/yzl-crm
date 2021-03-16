@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.store;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.crm.client.store.InventoryFeginService;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.service.InventoryService;
 import cn.net.yzl.model.dto.InventoryDto;
 import cn.net.yzl.model.dto.InventoryProductDto;
@@ -41,9 +42,9 @@ public class InventoryController {
 
     @ApiOperation(value = "新增盘点",notes = "新增盘点")
     @PostMapping("v1/insertInventory")
-    public ComResponse insertInventory(@RequestBody InventoryVo inventoryVo, HttpServletRequest httpServletRequest){
+    public ComResponse insertInventory(@RequestBody InventoryVo inventoryVo){
         //员工编号
-        String userNo = httpServletRequest.getHeader("userNo");
+        String userNo = QueryIds.userNo.get();
         if (inventoryVo != null){
             inventoryVo.setCreator(userNo);
         }
@@ -72,8 +73,8 @@ public class InventoryController {
 
     @ApiOperation(value = "修改盘点商品库存数据",notes = "修改盘点商品库存数据")
     @PostMapping("v1/updateInventoryProduct")
-    public ComResponse updateInventoryProduct(@RequestBody InventoryAllProductVo inventoryAllProductVo,HttpServletRequest httpServletRequest){
-        String userNo = httpServletRequest.getHeader("userNo");
+    public ComResponse updateInventoryProduct(@RequestBody InventoryAllProductVo inventoryAllProductVo){
+        String userNo = QueryIds.userNo.get();
         if (inventoryAllProductVo != null){
             inventoryAllProductVo.setUpdator(userNo);
         }
