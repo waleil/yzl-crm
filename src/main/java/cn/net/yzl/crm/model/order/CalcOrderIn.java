@@ -36,6 +36,8 @@ public class CalcOrderIn {
 	private Integer orderDiscountType;
 	@ApiModelProperty(value = "订单使用的红包金额", required = false)
 	private BigDecimal redBagAmount;
+	@ApiModelProperty(value = "会员级别", required = false)
+	private Integer memberLevelGrade;
 	@ApiModelProperty(value = "商品相关信息", required = true)
 	private List<CalculateOrderProductDto> calculateProductDtos = new ArrayList<>(0);
 

@@ -58,8 +58,8 @@ public class HandInUtils{
         Date time = calendar.getTime();
         String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
         CustomerNearSignOrderStatusDTO data = orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData();
-        if(StringUtils.isEmpty(data)){
-            return Boolean.TRUE;
+        if(null == data){
+            return Boolean.FALSE;
         }
 
         return data.getNearNoSignStatus() && org.apache.commons.lang3.StringUtils.isNotBlank(emptyNumberShutdown.getApplyUpMemo()) && emptyNumberShutdown.getApplyUpMemo().equals("空号停机");
@@ -76,7 +76,7 @@ public class HandInUtils{
         String paramsValue = wORCBean.getParamsValue();
         emptyNumberShutdown.setParamValue(paramsValue);
         ComResponse<Boolean> booleanComResponse = turnRulnClient.callInfoCount(emptyNumberShutdown);
-        if (!booleanComResponse.getData()) {
+        if (null == booleanComResponse.getData() && !booleanComResponse.getData()) {
             return Boolean.FALSE;
         }
         Date date = new Date();
@@ -90,7 +90,11 @@ public class HandInUtils{
         calendar.add(Calendar.MONTH, -Integer.valueOf(split[2]));
         Date time = calendar.getTime();
         String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
-        return orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData().getNearNoContinuityShoppingStatus();
+        CustomerNearSignOrderStatusDTO data = orderSearchClient.getSignOrderStatus(emptyNumberShutdown.getMemberCard(), startDate, endDate).getData();
+        if(null == data){
+            return Boolean.FALSE;
+        }
+        return data.getNearNoContinuityShoppingStatus();
     }
 
     /**
@@ -101,10 +105,10 @@ public class HandInUtils{
      * @return
      */
     public Boolean customerRefusedToVisit(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
-        if (null != isHandInDTO.getApplyUpMemo() && !isHandInDTO.getApplyUpMemo().equals("顾客要求不需要回访")) {
-            return Boolean.FALSE;
+        if (null != isHandInDTO.getApplyUpMemo() && isHandInDTO.getApplyUpMemo().equals("顾客要求不需要回访")) {
+            return Boolean.TRUE;
         }
-        return Boolean.TRUE;
+        return Boolean.FALSE;
     }
 
     /**
@@ -115,8 +119,11 @@ public class HandInUtils{
      */
     public Boolean customerRefund(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
         ComResponse<Boolean> booleanComResponse = orderSearchClient.hasRefundByMemberCardNo(isHandInDTO.getMemberCard(), DateFormatUtil.dateToString(MonggoDateHelper.getStartTime(), "yyyy-MM-dd HH:mm:ss"), DateFormatUtil.dateToString(MonggoDateHelper.getEndTime(CommonConstants.THREE), "yyyy-MM-dd HH:mm:ss"));
+        if(null == booleanComResponse.getData()){
+            return Boolean.FALSE;
+        }
         Boolean aBoolean = booleanComResponse.getData();
-        return StringUtils.isEmpty(aBoolean) ? false : aBoolean;
+        return StringUtils.isEmpty(aBoolean) ? Boolean.FALSE : aBoolean;
     }
 
     /**
@@ -138,7 +145,11 @@ public class HandInUtils{
         calendar.add(Calendar.MONTH, -Integer.valueOf(split[0]));
         Date time = calendar.getTime();
         String startDate = DateFormatUtil.dateToString(time, DateFormatUtil.UTIL_FORMAT);
-        return orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), startDate, endDate).getData().getNearNoSignStatus();
+        CustomerNearSignOrderStatusDTO data = orderSearchClient.getSignOrderStatus(isHandInDTO.getMemberCard(), startDate, endDate).getData();
+        if(null == data){
+            return Boolean.FALSE;
+        }
+        return data.getNearNoSignStatus();
     }
 
     /**

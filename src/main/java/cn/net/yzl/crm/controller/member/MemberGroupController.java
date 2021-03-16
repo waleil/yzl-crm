@@ -4,6 +4,7 @@ import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
 import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.DateHelper;
+import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.customer.dto.CrowdGroupDTO;
 import cn.net.yzl.crm.customer.dto.crowdgroup.GroupRefMember;
 import cn.net.yzl.crm.customer.dto.label.MemberLabelDto;
@@ -42,12 +43,11 @@ public class MemberGroupController {
 
     @ApiOperation("保存顾客圈选")
     @PostMapping("/v1/saveMemberCrowdGroup")
-    public ComResponse saveMemberCrowdGroup(@RequestBody MemberCrowdGroupDTO memberCrowdGroup,
-                                            HttpServletRequest request) {
+    public ComResponse saveMemberCrowdGroup(@RequestBody MemberCrowdGroupDTO memberCrowdGroup) {
         if (memberCrowdGroup == null)
             throw new BizException(ResponseCodeEnums.PARAMS_EMPTY_ERROR_CODE);
         //获取操作人id
-        String userId= request.getHeader("userId");
+        String userId= QueryIds.userNo.get();
         member_crowd_group member_group = new member_crowd_group();
         member_group.setAge(memberCrowdGroup.getAge());
         member_group.setEmail(memberCrowdGroup.getEmail());
@@ -198,13 +198,12 @@ public class MemberGroupController {
     }
     @ApiOperation("修改圈选规则状态")
     @PostMapping("/v1/updateStatus")
-    public ComResponse updateMemberCrowdGroupStatus(@RequestBody @Valid UpdateCrowdStatus updateCrowdStatus,
-                                                    HttpServletRequest request){
+    public ComResponse updateMemberCrowdGroupStatus(@RequestBody @Valid UpdateCrowdStatus updateCrowdStatus){
         UpdateCrowdStatusVO vo = new UpdateCrowdStatusVO();
         vo.set_id(updateCrowdStatus.get_id());
         vo.setEnable(updateCrowdStatus.getEnable());
         //获取操作人id
-        String userId= request.getHeader("userId");
+        String userId= QueryIds.userNo.get();
         vo.setUpdate_code(userId);
         return memberGroupFeign.updateCustomerCrowdGroupStatus(vo);
     }
