@@ -119,12 +119,6 @@ public class OrderRestController {
 		if (!StringUtils.hasText(orderin.getMemberCard())) {
 			return ComResponse.fail(ResponseCodeEnums.ERROR, "顾客卡号不能为空。");
 		}
-		// 按顾客号查询顾客信息
-		Member member = this.memberFien.getMember(orderin.getMemberCard()).getData();
-		if (member == null) {
-			log.error("热线工单-购物车-提交订单>>找不到该顾客[{}]信息", orderin.getMemberCard());
-			return ComResponse.fail(ResponseCodeEnums.ERROR, "找不到该顾客信息。");
-		}
 		// 只匹配购买的商品或套餐，排除赠品
 		List<CalculateOrderProductDto> orderproducts = orderin.getCalculateProductDtos().stream()
 				.filter(p -> Integer.compare(CommonConstant.GIFT_FLAG_0, p.getGiftFlag()) == 0)
@@ -163,7 +157,7 @@ public class OrderRestController {
 		}).collect(Collectors.toList()));
 		request.setAdvertBusNo(orderin.getAdvertBusNo());// 广告业务主键
 		request.setMemberCard(orderin.getMemberCard());// 会员卡号
-		request.setMemberLevelGrade(member.getMGradeId());
+		request.setMemberLevelGrade(orderin.getMemberLevelGrade());// 会员级别
 		request.setOrderDiscountType(orderin.getOrderDiscountType());// 订单使用优惠方式：0=订单未使用优惠，1=优惠券，2=红包
 		request.setCouponDiscountIdForOrder(orderin.getCouponDiscountIdForOrder());// 使用的优惠券折扣ID,针对订单使用的
 		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
@@ -321,7 +315,7 @@ public class OrderRestController {
 		orderm.setFinancialOwner(depart.getFinanceDepartId());// 下单坐席财务归属部门id
 		orderm.setFinancialOwnerName(depart.getFinanceDepartName());// 下单坐席财务归属部门名称
 		// 组装校验订单金额参数
-		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin, member);
+		CheckOrderAmountRequest checkOrderAmountRequest = this.getCheckOrderAmountRequest(orderin);
 		log.info("调用校验订单金额接口：{}", this.toJsonString(checkOrderAmountRequest));
 		// 调用校验订单金额接口
 		ComResponse<CalculationOrderResponse> ppresponse = this.activityClient
@@ -699,7 +693,7 @@ public class OrderRestController {
 		log.info("订单信息: {}", this.toJsonString(orderm));
 		log.info("订单明细信息: {}", this.toJsonString(orderdetailList));
 		// 组装提交订单送积分和优惠券参数
-		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, member, orderm, productPriceMap);
+		OrderSubmitRequest orderSubmitRequest = this.getOrderSubmitRequest(orderin, orderm, productPriceMap);
 		log.info("调用提交订单送积分和优惠券接口：{}", this.toJsonString(orderSubmitRequest));
 		// 提交订单送积分和优惠券
 		ComResponse<OrderSubmitResponse> orderSubmit = this.activityClient.orderSubmit(orderSubmitRequest);
@@ -892,17 +886,16 @@ public class OrderRestController {
 	 * 组装校验订单金额接口参数
 	 * 
 	 * @param orderin {@link OrderIn}
-	 * @param member  {@link Member}
 	 * @return {@link CheckOrderAmountRequest}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午3:47:29
 	 */
-	private CheckOrderAmountRequest getCheckOrderAmountRequest(OrderIn orderin, Member member) {
+	private CheckOrderAmountRequest getCheckOrderAmountRequest(OrderIn orderin) {
 		CheckOrderAmountRequest request = new CheckOrderAmountRequest();
 		request.setAdvertBusNo(orderin.getAdvertBusNo());// 广告业务主键
 		request.setCouponDiscountIdForOrder(orderin.getCouponDiscountIdForOrder());// 使用的优惠券折扣ID,针对订单使用的
 		request.setMemberCard(orderin.getMemberCardNo());// 会员卡号
-		request.setMemberLevelGrade(member.getMGradeId());// 会员级别
+		request.setMemberLevelGrade(orderin.getMemberLevelGrade());// 会员级别
 		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
 		request.setProductTotal(orderin.getProductTotal().multiply(bd100).longValue());// 商品总额，订单中所有商品,单位分
 		request.setOrderDiscountType(orderin.getOrderDiscountType());// 订单使用优惠方式：0=订单未使用优惠，1=优惠券，2=红包
@@ -962,20 +955,19 @@ public class OrderRestController {
 	 * 组装提交订单送积分和优惠券接口参数
 	 * 
 	 * @param orderin         {@link OrderIn}
-	 * @param member          {@link Member}
 	 * @param orderm          {@link OrderM}
 	 * @param productPriceMap {@link ProductPriceResponse}
 	 * @return {@link OrderSubmitRequest}
 	 * @author zhangweiwei
 	 * @date 2021年2月21日,上午9:52:00
 	 */
-	private OrderSubmitRequest getOrderSubmitRequest(OrderIn orderin, Member member, OrderM orderm,
+	private OrderSubmitRequest getOrderSubmitRequest(OrderIn orderin, OrderM orderm,
 			Map<String, ProductPriceResponse> productPriceMap) {
 		OrderSubmitRequest request = new OrderSubmitRequest();
 		request.setAdvertBusNo(orderin.getAdvertBusNo());// 广告业务主键
 		request.setMemberCard(orderin.getMemberCardNo());// 会员卡号
 		request.setMemberCouponIdForOrder(orderin.getMemberCouponIdForOrder());// 使用的优惠券ID,针对订单使用的
-		request.setMemberLevelGrade(member.getMGradeId());// 会员级别
+		request.setMemberLevelGrade(orderin.getMemberLevelGrade());// 会员级别
 		request.setOrderNo(orderm.getOrderNo());// 订单编号
 		request.setProductTotal(orderin.getProductTotal().multiply(bd100).longValue());// 商品总额,单位分
 		request.setUserNo(orderm.getStaffCode());// 操作人
