@@ -2,6 +2,7 @@ package cn.net.yzl.crm.test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -417,5 +418,13 @@ public class SimpleTests {
 		Object b = new Integer("2");
 		System.err.println(((Number) a).longValue());
 		System.err.println(((Number) b).longValue());
+	}
+
+	@Test
+	public void testDuration() {
+		Duration between = Duration.between(
+				LocalDateTime.parse("2021-03-01 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+				LocalDateTime.parse("2021-03-30 23:59:59", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+		System.err.println(between.toDays());
 	}
 }
