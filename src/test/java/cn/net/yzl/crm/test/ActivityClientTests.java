@@ -14,6 +14,7 @@ import cn.net.yzl.activity.model.dto.OrderSubmitProductDto;
 import cn.net.yzl.activity.model.enums.ActivityTypeEnum;
 import cn.net.yzl.activity.model.enums.DiscountTypeEnum;
 import cn.net.yzl.activity.model.enums.UseDiscountTypeEnum;
+import cn.net.yzl.activity.model.requestModel.CalculateOrderRequest;
 import cn.net.yzl.activity.model.requestModel.CheckOrderAmountRequest;
 import cn.net.yzl.activity.model.requestModel.OrderSubmitRequest;
 import cn.net.yzl.crm.service.micservice.ActivityClient;
@@ -100,6 +101,16 @@ public class ActivityClientTests {
 
 			System.err.println(this.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
 			System.err.println(this.activityClient.orderSubmit(request).getData());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCalculateOrder() {
+		try {
+			CalculateOrderRequest request = new CalculateOrderRequest();
+			System.err.println(this.activityClient.calculateOrder(request));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
