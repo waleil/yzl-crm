@@ -21,7 +21,7 @@ public class StoreFeginServiceTests {
 	@Test
 	public void testSelectStoreListPage() {
 		try {
-			System.err.println(this.storeFeginService.selectStoreListPage(1, 10, null, null, null, null));
+			System.err.println(this.storeFeginService.selectStoreListPage(1, 10, null, null, null, 1));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
