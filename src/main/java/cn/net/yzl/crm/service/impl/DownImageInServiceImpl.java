@@ -154,6 +154,7 @@ public class DownImageInServiceImpl implements DownImageInService {
 
     }
 
+    @Override
     public void exportExpressPrintInfo(OutStoreOrderInfoParamVo outStoreOrderInfoParamVo, HttpServletResponse httpServletResponse) throws IOException {
         String expressNo = outStoreOrderInfoParamVo.getExpressNo();
         ComResponse<List<ExpressOrderInfo>> senderExpressInfo = removeStockFeignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
