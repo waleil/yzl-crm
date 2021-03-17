@@ -171,10 +171,7 @@ public class OrderRestController {
 		// 商品数量*商品价格，然后求和，计算出订单总额
 		long totalAll = orderproducts.stream().mapToLong(m -> m.getProductCount() * m.getSalePrice()).sum();
 		// 对每一件商品经过DMC接口算出优惠价，然后求和，计算出商品优惠总价
-		double productTotal = data.getOrderTotalPrice().doubleValue();
-		// 优惠券+活动优惠的总价
-		double amountCoupon = data.getOrderDiscountPrice().doubleValue();
-		double total = productTotal;
+		double total = data.getOrderTotalPrice().doubleValue();
 		if (orderin.getAmountStored().compareTo(BigDecimal.ZERO) > 0) {
 			double am = orderin.getAmountStored().doubleValue();
 			if (Double.compare(total, am) >= 0) {
@@ -183,9 +180,9 @@ public class OrderRestController {
 				total = 0;
 			}
 		}
-		return ComResponse
-				.success(new CalcOrderOut(BigDecimal.valueOf(totalAll).divide(bd100).doubleValue(), total, amountCoupon,
-						0d, orderin.getAmountStored().doubleValue(), productTotal, data.getProductPriceResponseList()));
+		return ComResponse.success(new CalcOrderOut(BigDecimal.valueOf(totalAll).divide(bd100), total,
+				data.getOrderDiscountPrice(), 0d, orderin.getAmountStored(), data.getOrderTotalPrice(),
+				data.getOrderLimitTotal(), data.getProductPriceResponseList()));
 	}
 
 	/**

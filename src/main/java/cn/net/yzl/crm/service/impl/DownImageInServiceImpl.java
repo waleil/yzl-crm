@@ -144,12 +144,25 @@ public class DownImageInServiceImpl implements DownImageInService {
 //        outStoreOrderInfoParamVo.setTime(l);
         ComResponse<List<ExpressOrderInfo>> senderExpressInfo = removeStockFeignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
         List<ExpressOrderInfo> data = senderExpressInfo.getData();
-        if(CollectionUtils.isEmpty(data)){
-            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),"您选择的快递公司无未打印数据。");
-        }else {
+        int i =0;
+        if(!CollectionUtils.isEmpty(data)){
+            if("YUNDA".equals(expressNo)){
+                for (ExpressOrderInfo datum : data) {
+                    if (datum.getIfProxyCollect()) {
+                        i++;
+                    }
+                }
+                if(i==0){
+                    return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),"您选择的快递公司无未打印数据。");
+                }
+            }else{
+                i=data.size();
+            }
             Map<String,Long> map = new HashMap<>();
             map.put("time",l);
-            return ComResponse.success(200,1,"导出无快递单号和未打印数据共"+data.size()+"条!",map);
+            return ComResponse.success(200,1,"导出无快递单号和未打印数据共"+i+"条!",map);
+        }else{
+            return ComResponse.fail(ResponseCodeEnums.NO_DATA_CODE.getCode(),"您选择的快递公司无未打印数据。");
         }
 
     }
@@ -218,15 +231,16 @@ public class DownImageInServiceImpl implements DownImageInService {
             postalExcelModel.setRemark(expressOrderInfo.getProductName());
 
             String payType = expressOrderInfo.getPayType();
-            if("1".equals(payType)) {
 
-                postalExcelModel.setAgentMoney("是");
+//            if(expressOrderInfo.getIfProxyCollect()) {
+
+                postalExcelModel.setAgentMoney(expressOrderInfo.getIfProxyCollect()?"是":"否");
 //                postalExcelModel.setReceivableMoney(expressOrderInfo.getCash());
                 postalExcelModel.setReceivableMoney(handleMoney(expressOrderInfo.getCash()));
-            }else{
-                postalExcelModel.setAgentMoney("否");
-                postalExcelModel.setReceivableMoney("0");
-            }
+//            }else{
+//                postalExcelModel.setAgentMoney("否");
+//                postalExcelModel.setReceivableMoney("0");
+//            }
             postalExcelModel.setInInfo(expressOrderInfo.getDeliverCode());
             String deliverCode = expressOrderInfo.getDeliverCode();
             if(StrUtil.startWith(deliverCode,"ZB")){
@@ -298,7 +312,6 @@ public class DownImageInServiceImpl implements DownImageInService {
             dpExcelModel.setProductName(expressOrderInfo.getProductName());
             dpExcelModel.setProxyReturnMoney("三日退");
             dpExcelModel.setProxyMoney(handleMoney(expressOrderInfo.getCash()));
-//            dpExcelModel.setOpenName();
             dpExcelModel.setProxyAccount(expressOrderInfo.getMonthAccount());
             dpExcelModel.setOpenName(expressOrderInfo.getFinancialOwner());
             String deliverCode = expressOrderInfo.getDeliverCode();
@@ -359,6 +372,9 @@ public class DownImageInServiceImpl implements DownImageInService {
             return;
         }
         for (ExpressOrderInfo expressOrderInfo : expressOrderInfos) {
+            if(!expressOrderInfo.getIfProxyCollect()){
+                continue;
+            }
             YunDaExcelModel yunDaExcelModel = new YunDaExcelModel();
             yunDaExcelModel.setExpressNum(expressOrderInfo.getDeliverCode());
             yunDaExcelModel.setOprName(expressOrderInfo.getOprName());
@@ -441,18 +457,31 @@ public class DownImageInServiceImpl implements DownImageInService {
         out.write(buffer);
     }
 
-    public void writeZos(List<ByteArrayOutputStream> bosList, ZipOutputStream zos,List<String> fileNames) throws IOException {
-        for (int i = 0; i < bosList.size(); i++) {
-            //将多个excel都转成字节流写入
-            zos.putNextEntry(new ZipEntry(fileNames.get(i)));
-            byte[] excelStream=bosList.get(i).toByteArray();
-            zos.write(excelStream);
-            //记得关闭
-            zos.closeEntry();
+    public void writeZos(List<ByteArrayOutputStream> bosList, ZipOutputStream zos,List<String> fileNames) {
+        try {
+            for (int i = 0; i < bosList.size(); i++) {
+                ByteArrayOutputStream outputStream = bosList.get(i);
+                if(outputStream == null){
+                    continue;
+                }
+                //将多个excel都转成字节流写入
+                zos.putNextEntry(new ZipEntry(fileNames.get(i)));
+                byte[] excelStream= outputStream.toByteArray();
+                zos.write(excelStream);
+                //记得关闭
+                zos.closeEntry();
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+            log.info("导出快递异常:{}",e);
         }
+
     }
 
     public ByteArrayOutputStream createYunDaExcel(List<YunDaExcelModel> yunDaExcelModels,String fileName) throws UnsupportedEncodingException {
+        if(CollectionUtils.isEmpty(yunDaExcelModels)){
+            return null;
+        }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         EasyExcel.write(outputStream, YunDaExcelModel.class)
                 .registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
@@ -461,17 +490,23 @@ public class DownImageInServiceImpl implements DownImageInService {
         return outputStream;
     }
 
-    public ByteArrayOutputStream createEMSExcel(List<PostalExcelModel> yunDaExcelModels,String fileName) throws UnsupportedEncodingException {
+    public ByteArrayOutputStream createEMSExcel(List<PostalExcelModel> postalExcelModels,String fileName) throws UnsupportedEncodingException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        if(CollectionUtils.isEmpty(postalExcelModels)){
+            return null;
+        }
         EasyExcel.write(outputStream, PostalExcelModel.class)
                 .registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
-                .sheet("导入模板").doWrite(yunDaExcelModels);
+                .sheet("导入模板").doWrite(postalExcelModels);
         URLEncoder.encode(fileName, "utf-8");
         return outputStream;
     }
 
     public ByteArrayOutputStream createDPExcel(List<NewDPExcelModel> newDPExcelModels,String fileName) throws UnsupportedEncodingException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        if(CollectionUtils.isEmpty(newDPExcelModels)){
+            return null;
+        }
         EasyExcel.write(outputStream, NewDPExcelModel.class)
                 .registerWriteHandler(ExcelStyleUtils.getHorizontalCellStyleStrategy())
                 .sheet("导入模板").doWrite(newDPExcelModels);

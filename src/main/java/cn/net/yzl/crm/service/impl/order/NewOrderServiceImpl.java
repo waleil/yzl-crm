@@ -595,7 +595,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 		}
 		if(StringUtils.isNullOrEmpty(storeRes.getData())){
 			log.info("新建订单，为顾客卡号：{} 创建订单失败，原因找不到发货仓",member.getMemberCard());
-			return null;
+			return Collections.emptyList();
 		}
 		products.forEach(map -> {
 			OrderDetail orderDetail = new OrderDetail();
