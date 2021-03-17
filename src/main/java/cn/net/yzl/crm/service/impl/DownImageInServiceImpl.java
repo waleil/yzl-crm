@@ -433,49 +433,59 @@ public class DownImageInServiceImpl implements DownImageInService {
     }
 
 
-    public void createZip(HttpServletResponse response,List<ByteArrayOutputStream> bosList,List<String> fileNames,String zipName) throws IOException {
-        //创建HttpServerResponse的输出流
-        OutputStream out=response.getOutputStream();
-        //创建写入流
-        BufferedInputStream bis;
-        //创建要写入的文件
-        File file=new File(zipName+".zip");
-        //通过ZipOutputStream定义要写入的对象
-        ZipOutputStream zos=new ZipOutputStream(new FileOutputStream(file));
-        //调取service层写入循环excle的方法，将流输入
-        writeZos(bosList, zos,fileNames);
-        zos.close();
-        //定义返回类型
-        response.setContentType("text/html; charset=UTF-8");
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode(zipName+".zip", "UTF-8"))));
-        bis = new BufferedInputStream(new FileInputStream(zipName+".zip"));
-        //定义byte，长度就是要转成zip文件的byte长度，避免浪费资源
-        byte[] buffer=new byte[bis.available()];
-        bis.read(buffer);
-        out.flush();
-        out.write(buffer);
-    }
-
-    public void writeZos(List<ByteArrayOutputStream> bosList, ZipOutputStream zos,List<String> fileNames) {
+    public void createZip(HttpServletResponse response,List<ByteArrayOutputStream> bosList,List<String> fileNames,String zipName) {
+        ZipOutputStream zos= null;
         try {
-            for (int i = 0; i < bosList.size(); i++) {
-                ByteArrayOutputStream outputStream = bosList.get(i);
-                if(outputStream == null){
-                    continue;
-                }
-                //将多个excel都转成字节流写入
-                zos.putNextEntry(new ZipEntry(fileNames.get(i)));
-                byte[] excelStream= outputStream.toByteArray();
-                zos.write(excelStream);
-                //记得关闭
-                zos.closeEntry();
-            }
+            //创建HttpServerResponse的输出流
+            OutputStream out=response.getOutputStream();
+            //创建写入流
+            BufferedInputStream bis;
+            //创建要写入的文件
+            File file=new File(zipName+".zip");
+            //通过ZipOutputStream定义要写入的对象
+            zos=new ZipOutputStream(new FileOutputStream(file));
+            //调取写入循环excle的方法，将流输入
+            writeZos(bosList, zos,fileNames);
+            //定义返回类型
+            response.setContentType("text/html; charset=UTF-8");
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename=".concat(String.valueOf(URLEncoder.encode(zipName+".zip", "UTF-8"))));
+            bis = new BufferedInputStream(new FileInputStream(zipName+".zip"));
+            //定义byte，长度就是要转成zip文件的byte长度，避免浪费资源
+            byte[] buffer=new byte[bis.available()];
+            bis.read(buffer);
+            out.flush();
+            out.write(buffer);
         }catch (IOException e){
             e.printStackTrace();
             log.info("导出快递异常:{}",e);
+        }finally {
+            try {
+                if(zos != null){
+                    zos.close();
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+                log.info("导出快递异常:{}",e);
+            }
+
         }
 
+    }
+
+    public void writeZos(List<ByteArrayOutputStream> bosList, ZipOutputStream zos,List<String> fileNames) throws IOException{
+        for (int i = 0; i < bosList.size(); i++) {
+            ByteArrayOutputStream outputStream = bosList.get(i);
+            if(outputStream == null){
+                continue;
+            }
+            //将多个excel都转成字节流写入
+            zos.putNextEntry(new ZipEntry(fileNames.get(i)));
+            byte[] excelStream= outputStream.toByteArray();
+            zos.write(excelStream);
+            //记得关闭
+            zos.closeEntry();
+        }
     }
 
     public ByteArrayOutputStream createYunDaExcel(List<YunDaExcelModel> yunDaExcelModels,String fileName) throws UnsupportedEncodingException {
