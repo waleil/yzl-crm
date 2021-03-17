@@ -67,7 +67,7 @@ public interface SettlementFein {
 
 	@GetMapping("v1/selectSettleProductList")
 	@ApiOperation("查询结算商品明细")
-	public ComResponse<Page<ProductDetailSettlementedResDTO>> selectSettleProductList(
+	public ComResponse<Page<SettlementProductDetailDTO>> selectSettleProductList(
 			@RequestParam(value = "settlementCode") String settlementCode,
 			@RequestParam(required = false, defaultValue = "1") Integer pageNo,
 			@RequestParam(required = false, defaultValue = "10") Integer pageSize);
