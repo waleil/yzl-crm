@@ -77,7 +77,7 @@ public class ComparisonMgtController {
 	@PostMapping("/v1/exporttype1list")
 	@ApiOperation(value = "导出待对账订单列表", notes = "导出待对账订单列表")
 	public void exportType1List(@RequestBody CompareOrderIn orderin, HttpServletResponse response) throws Exception {
-		// XXX 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		// XXX 为了保障系统性能稳定性，导出的最大时间限制为1个月，请重新选择查询范围。
 		if (orderin.getDateTimeFrom() == null) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择签收开始时间");
 		}
@@ -85,7 +85,7 @@ public class ComparisonMgtController {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择签收结束时间");
 		}
 		if (Duration.between(orderin.getDateTimeFrom(), orderin.getDateTimeTo()).toDays() > 31L) {
-			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。");
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制为1个月，请重新选择查询范围。");
 		}
 		orderin.setPageNo(1);// 默认第1页
 		orderin.setPageSize(1000);// 默认每页1000条数据
@@ -134,7 +134,7 @@ public class ComparisonMgtController {
 	@PostMapping("/v1/exporttype2list")
 	@ApiOperation(value = "导出已对账订单列表", notes = "导出已对账订单列表")
 	public void exportType2List(@RequestBody CompareOrderIn orderin, HttpServletResponse response) throws Exception {
-		// XXX 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		// XXX 为了保障系统性能稳定性，导出的最大时间限制为1个月，请重新选择查询范围。
 		if (orderin.getDateTimeFrom() == null) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择签收开始时间");
 		}
@@ -142,7 +142,7 @@ public class ComparisonMgtController {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择签收结束时间");
 		}
 		if (Duration.between(orderin.getDateTimeFrom(), orderin.getDateTimeTo()).toDays() > 31L) {
-			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。");
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制为1个月，请重新选择查询范围。");
 		}
 		orderin.setPageNo(1);// 默认第1页
 		orderin.setPageSize(1000);// 默认每页1000条数据
