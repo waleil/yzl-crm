@@ -357,11 +357,4 @@ public class StaffController {
     public ComResponse<StaffChangeRecordDto> getStaffChangeRecordById(@NotNull @ApiParam(value="员工变动编号")  Integer id) {
         return ehrStaffClient.getStaffChangeRecordById(id);
     }
-
-    @ApiOperation(value = "模糊查询员工列表",notes = "模糊查询员工列表")
-    @PostMapping(value = "/getListByParams")
-    public ComResponse<Page<EhrStaff>> getListByParams(@ApiParam("员工对象参数") @RequestBody StaffQueryDto staffQueryDto ){
-        return ehrStaffClient.getStaffListByPage(staffQueryDto);
-    }
-
 }
