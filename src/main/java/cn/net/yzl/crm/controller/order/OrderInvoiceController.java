@@ -245,7 +245,7 @@ public class OrderInvoiceController {
 	@PostMapping("v1/exportMemberIntegralRecords")
 	public void exportMemberIntegralRecords(@RequestBody AccountRequest request, HttpServletResponse response)
 			throws Exception {
-		// TODO 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		// XXX 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
 		if (request.getBeginTime() == null) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择开始时间");
 		}
@@ -403,7 +403,7 @@ public class OrderInvoiceController {
 	@PostMapping("v1/exportMemberRedBagRecords")
 	public void exportMemberRedBagRecords(@RequestBody AccountRequest request, HttpServletResponse response)
 			throws Exception {
-		// TODO 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		// XXX 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
 		if (request.getBeginTime() == null) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择开始时间");
 		}
@@ -560,7 +560,7 @@ public class OrderInvoiceController {
 	@ApiOperation(value = "顾客优惠券明细表——导出")
 	@PostMapping("v1/exportMemberCoupon")
 	public void exportMemberCoupon(@RequestBody AccountRequest request, HttpServletResponse response) throws Exception {
-		// TODO 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		// XXX 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
 		if (request.getBeginTime() == null) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择开始时间");
 		}
