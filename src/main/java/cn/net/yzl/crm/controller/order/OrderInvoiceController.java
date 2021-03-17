@@ -3,8 +3,10 @@ package cn.net.yzl.crm.controller.order;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +49,6 @@ import cn.net.yzl.common.util.AssemblerResultUtil;
 import cn.net.yzl.crm.client.order.ComparisonMgtFeignClient;
 import cn.net.yzl.crm.client.order.OrderFeignClient;
 import cn.net.yzl.crm.client.order.OrderInvoiceClient;
-import cn.net.yzl.crm.client.order.SettlementFein;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.dto.order.MemberCouponDTO;
 import cn.net.yzl.crm.dto.order.MemberIntegralRecordsDTO;
@@ -89,8 +90,6 @@ public class OrderInvoiceController {
 	private ActivityService activityService;
 	@Autowired
 	private ActivityClient activityClient;
-	@Autowired
-	private SettlementFein settlementFein;
 	@Autowired
 	private MemberFien memberFien;
 	@Resource
@@ -246,7 +245,19 @@ public class OrderInvoiceController {
 	@PostMapping("v1/exportMemberIntegralRecords")
 	public void exportMemberIntegralRecords(@RequestBody AccountRequest request, HttpServletResponse response)
 			throws Exception {
-		this.formatParams(request);
+		// TODO 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		if (request.getBeginTime() == null) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择开始时间");
+		}
+		if (request.getEndTime() == null) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择结束时间");
+		}
+		if (Duration
+				.between(LocalDateTime.ofInstant(request.getBeginTime().toInstant(), ZoneId.systemDefault()),
+						LocalDateTime.ofInstant(request.getEndTime().toInstant(), ZoneId.systemDefault()))
+				.toDays() > 31L) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。");
+		}
 		request.setPageNo(1);// 默认第1页
 		request.setPageSize(1000);// 默认每页1000条数据
 		ComResponse<Page<MemberIntegralRecordsDTO>> data = this.getMemberIntegralRecords(request);
@@ -392,7 +403,19 @@ public class OrderInvoiceController {
 	@PostMapping("v1/exportMemberRedBagRecords")
 	public void exportMemberRedBagRecords(@RequestBody AccountRequest request, HttpServletResponse response)
 			throws Exception {
-		this.formatParams(request);
+		// TODO 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		if (request.getBeginTime() == null) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择开始时间");
+		}
+		if (request.getEndTime() == null) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择结束时间");
+		}
+		if (Duration
+				.between(LocalDateTime.ofInstant(request.getBeginTime().toInstant(), ZoneId.systemDefault()),
+						LocalDateTime.ofInstant(request.getEndTime().toInstant(), ZoneId.systemDefault()))
+				.toDays() > 31L) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。");
+		}
 		request.setPageNo(1);// 默认第1页
 		request.setPageSize(1000);// 默认每页1000条数据
 		ComResponse<Page<MemberRedBagRecordsDTO>> data = this.getMemberRedBagRecords(request);
@@ -537,7 +560,19 @@ public class OrderInvoiceController {
 	@ApiOperation(value = "顾客优惠券明细表——导出")
 	@PostMapping("v1/exportMemberCoupon")
 	public void exportMemberCoupon(@RequestBody AccountRequest request, HttpServletResponse response) throws Exception {
-		this.formatParams(request);
+		// TODO 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		if (request.getBeginTime() == null) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择开始时间");
+		}
+		if (request.getEndTime() == null) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择结束时间");
+		}
+		if (Duration
+				.between(LocalDateTime.ofInstant(request.getBeginTime().toInstant(), ZoneId.systemDefault()),
+						LocalDateTime.ofInstant(request.getEndTime().toInstant(), ZoneId.systemDefault()))
+				.toDays() > 31L) {
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。");
+		}
 		request.setPageNo(1);// 默认第1页
 		request.setPageSize(1000);// 默认每页1000条数据
 		ComResponse<Page<MemberCouponDTO>> data = this.getMemberCoupon(request);
@@ -579,19 +614,6 @@ public class OrderInvoiceController {
 			if (excelWriter != null) {
 				excelWriter.finish();
 			}
-		}
-	}
-
-	private void formatParams(AccountRequest request) {
-		// 起止时间：当前时间所在的月份减去一个月
-		if (null == request.getBeginTime() && null == request.getEndTime()) {
-			Calendar c = Calendar.getInstance();
-			Date thisDate = new Date();
-			c.setTime(thisDate);
-			c.add(Calendar.MONTH, -1);
-			Date y = c.getTime();
-			request.setBeginTime(y);
-			request.setEndTime(thisDate);
 		}
 	}
 
