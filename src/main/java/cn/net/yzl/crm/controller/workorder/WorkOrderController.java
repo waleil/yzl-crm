@@ -3,6 +3,7 @@ package cn.net.yzl.crm.controller.workorder;
 import cn.hutool.json.JSONUtil;
 import cn.net.yzl.common.entity.ComResponse;
 import cn.net.yzl.common.entity.Page;
+import cn.net.yzl.common.util.DateFormatUtil;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.common.util.YLoggerUtil;
 import cn.net.yzl.crm.client.product.ProductClient;
@@ -121,6 +122,21 @@ public class WorkOrderController {
             productNames += "," + workOrderBean.getFirstBuyProductCode()+","+workOrderBean.getLastBuyProductCode();
             workOrderBean.setFirstBuyProductCode("");
             workOrderBean.setLastBuyProductCode("");
+            //时间判断重新赋值
+            Date lastOrderTime = workOrderBean.getLastOrderTime();
+            if(null != lastOrderTime){
+                String yyyy = DateFormatUtil.dateToString(lastOrderTime, DateFormatUtil.YEAR_FORMAT);
+                if(Constant.YRAR_YYYY.equals(yyyy)){
+                    workOrderBean.setLastOrderTime(null);
+                }
+            }
+            Date lastCallTime = workOrderBean.getLastCallTime();
+            if(null != lastCallTime){
+                String yyyy = DateFormatUtil.dateToString(lastCallTime, DateFormatUtil.YEAR_FORMAT);
+                if(Constant.YRAR_YYYY.equals(yyyy)){
+                    workOrderBean.setLastCallTime(null);
+                }
+            }
             //赋值会员级别
             this.getMgradeCodeName(workOrderBean);
         }
