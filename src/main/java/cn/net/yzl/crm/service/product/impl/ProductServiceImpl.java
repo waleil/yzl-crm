@@ -77,23 +77,9 @@ public class ProductServiceImpl implements ProductService {
     public ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(String diseaseName) {
         ComResponse<List<ProductAtlasDTO>> listComResponse = productClient.queryProductListAtlasByDiseaseName(diseaseName);
         //添加fastDFSUrl
-        if(!CollectionUtils.isEmpty(listComResponse.getData())) {
-            List<ProductAtlasDTO> data = listComResponse.getData();
-            data.stream().forEach(d->{
-                if (!CollectionUtils.isEmpty(d.getProductAtlasResult())) {
-                    List<Map<Integer, List<ProductAtlasBean>>> productAtlasResult = d.getProductAtlasResult();
-                    productAtlasResult.stream().forEach(map->{
-                        if(!map.isEmpty()){
-                            map.forEach((k,v)->{
-                                if (!CollectionUtils.isEmpty(v)){
-                                    v.stream().forEach(bean ->{
-                                        bean.setFastDFSUrl(StringUtils.isNotBlank(bean.getImageUrl())?fastDFSConfig.getUrl():null);
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
+        if(!CollectionUtils.isEmpty(listComResponse.getData())){
+            listComResponse.getData().stream().forEach(s->{
+                s.setFastDFSUrl(fastDFSConfig.getUrl());
             });
         }
         return listComResponse;
