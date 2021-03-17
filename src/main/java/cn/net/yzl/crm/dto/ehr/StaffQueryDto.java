@@ -1,6 +1,7 @@
 package cn.net.yzl.crm.dto.ehr;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,8 @@ public class StaffQueryDto extends PageDto {
     private String params;
     @ApiModelProperty("岗位id")
     private Integer postId;
+    @ApiModelProperty("岗位ids")
+    private List<Integer> postIds;
     @ApiModelProperty("部门id")
     private Integer departId;
     @ApiModelProperty("在岗状态")

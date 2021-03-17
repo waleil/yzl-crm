@@ -7,6 +7,7 @@ import cn.net.yzl.crm.config.FastDFSConfig;
 import cn.net.yzl.crm.service.product.ProductService;
 import cn.net.yzl.product.model.vo.product.dto.*;
 import cn.net.yzl.product.model.vo.product.vo.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -71,7 +72,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(String diseaseName) {
-        return productClient.queryProductListAtlasByDiseaseName(diseaseName);
+        ComResponse<List<ProductAtlasDTO>> listComResponse = productClient.queryProductListAtlasByDiseaseName(diseaseName);
+        //添加fastDFSUrl
+        if(!CollectionUtils.isEmpty(listComResponse.getData())){
+            listComResponse.getData().stream().forEach(s->{
+                s.setFastDFSUrl(fastDFSConfig.getUrl());
+            });
+        }
+        return listComResponse;
     }
 
     @Override

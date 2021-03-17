@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import cn.net.yzl.crm.client.order.OrderSearchClient;
 
 /**
+ * 单元测试类
  * 
  * @author zhangweiwei
  * @date 2021年3月17日,上午12:00:29

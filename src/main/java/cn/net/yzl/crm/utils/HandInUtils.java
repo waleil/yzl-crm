@@ -45,6 +45,9 @@ public class HandInUtils{
      * @return
      */
     public Boolean emptyNumberShutdown(IsHandInDTO emptyNumberShutdown, WorkOrderRuleConfigBean wORCBean) {
+        if (null != emptyNumberShutdown.getApplyUpMemo() && emptyNumberShutdown.getApplyUpMemo().equals("空号停机")) {
+            return Boolean.TRUE;
+        }
         String paramsValue = wORCBean.getParamsValue();
         Date date = new Date();
         String endDate = DateFormatUtil.dateToString(date, DateFormatUtil.UTIL_FORMAT);
@@ -76,7 +79,7 @@ public class HandInUtils{
         String paramsValue = wORCBean.getParamsValue();
         emptyNumberShutdown.setParamValue(paramsValue);
         ComResponse<Boolean> booleanComResponse = turnRulnClient.callInfoCount(emptyNumberShutdown);
-        if (null == booleanComResponse.getData() && !booleanComResponse.getData()) {
+        if (null == booleanComResponse.getData() || !booleanComResponse.getData()) {
             return Boolean.FALSE;
         }
         Date date = new Date();
@@ -118,7 +121,20 @@ public class HandInUtils{
      * @return
      */
     public Boolean customerRefund(IsHandInDTO isHandInDTO, WorkOrderRuleConfigBean wORCBean) {
-        ComResponse<Boolean> booleanComResponse = orderSearchClient.hasRefundByMemberCardNo(isHandInDTO.getMemberCard(), DateFormatUtil.dateToString(MonggoDateHelper.getStartTime(), "yyyy-MM-dd HH:mm:ss"), DateFormatUtil.dateToString(MonggoDateHelper.getEndTime(CommonConstants.THREE), "yyyy-MM-dd HH:mm:ss"));
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.DAY_OF_YEAR, -3);
+        instance.set(11, 0);
+        instance.set(12, 0);
+        instance.set(13, 0);
+        instance.set(14, 0);
+        Date time = instance.getTime();
+        instance.setTime(new Date());
+        instance.set(11, 23);
+        instance.set(12, 59);
+        instance.set(13, 59);
+        instance.set(14, 999);
+        Date time1 = instance.getTime();
+        ComResponse<Boolean> booleanComResponse = orderSearchClient.hasRefundByMemberCardNo(isHandInDTO.getMemberCard(),DateFormatUtil.dateToString(time,"yyyy-MM-dd HH:mm:ss"),DateFormatUtil.dateToString(time1,"yyyy-MM-dd HH:mm:ss"));
         if(null == booleanComResponse.getData()){
             return Boolean.FALSE;
         }
