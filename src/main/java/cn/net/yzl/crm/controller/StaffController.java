@@ -6,8 +6,23 @@ import cn.net.yzl.common.enums.ResponseCodeEnums;
 import cn.net.yzl.common.util.JsonUtil;
 import cn.net.yzl.crm.config.QueryIds;
 import cn.net.yzl.crm.constant.EhrParamEnum;
-import cn.net.yzl.crm.dto.ehr.*;
-import cn.net.yzl.crm.dto.staff.*;
+import cn.net.yzl.crm.dto.ehr.EhrDepartDto;
+import cn.net.yzl.crm.dto.ehr.EhrPostDto;
+import cn.net.yzl.crm.dto.ehr.EhrPostLevelDto;
+import cn.net.yzl.crm.dto.ehr.EhrRobedQueryDto;
+import cn.net.yzl.crm.dto.ehr.EhrStaff;
+import cn.net.yzl.crm.dto.ehr.MarketTargetDto;
+import cn.net.yzl.crm.dto.ehr.StaffQueryDto;
+import cn.net.yzl.crm.dto.ehr.StaffScheduleDetailDto;
+import cn.net.yzl.crm.dto.ehr.StaffScheduleInfoDto;
+import cn.net.yzl.crm.dto.ehr.StaffScheduleQueryDto;
+import cn.net.yzl.crm.dto.ehr.StaffTrainDto;
+import cn.net.yzl.crm.dto.ehr.SysDictDto;
+import cn.net.yzl.crm.dto.staff.CallnfoCriteriaTO;
+import cn.net.yzl.crm.dto.staff.OrderCriteriaDto;
+import cn.net.yzl.crm.dto.staff.StaffCallRecord;
+import cn.net.yzl.crm.dto.staff.StaffChangeRecordDto;
+import cn.net.yzl.crm.dto.staff.StaffImageBaseInfoDto;
 import cn.net.yzl.crm.model.StaffDetail;
 import cn.net.yzl.crm.service.StaffService;
 import cn.net.yzl.crm.service.micservice.EhrStaffClient;
@@ -19,14 +34,19 @@ import cn.net.yzl.order.model.vo.order.OderListResDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "员工管理")
 @RestController
@@ -338,5 +358,10 @@ public class StaffController {
         return ehrStaffClient.getStaffChangeRecordById(id);
     }
 
+    @ApiOperation(value = "模糊查询员工列表",notes = "模糊查询员工列表")
+    @PostMapping(value = "/getListByParams")
+    public ComResponse<Page<EhrStaff>> getListByParams(@ApiParam("员工对象参数") @RequestBody StaffQueryDto staffQueryDto ){
+        return ehrStaffClient.getStaffListByPage(staffQueryDto);
+    }
 
 }
