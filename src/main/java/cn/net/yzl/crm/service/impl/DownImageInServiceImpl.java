@@ -141,7 +141,7 @@ public class DownImageInServiceImpl implements DownImageInService {
             return ComResponse.fail(ResponseCodeEnums.ERROR.getCode(),"快递公司请选择韵达、德邦、邮政！");
         }
         long l = System.currentTimeMillis();
-        outStoreOrderInfoParamVo.setTime(l);
+//        outStoreOrderInfoParamVo.setTime(l);
         ComResponse<List<ExpressOrderInfo>> senderExpressInfo = removeStockFeignService.getSenderExpressInfo(outStoreOrderInfoParamVo);
         List<ExpressOrderInfo> data = senderExpressInfo.getData();
         if(CollectionUtils.isEmpty(data)){
