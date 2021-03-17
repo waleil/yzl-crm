@@ -52,7 +52,7 @@ public class AccountDetailController {
 	@PostMapping("/v1/export")
 	@ApiOperation(value = "导出账户余额明细列表", notes = "导出账户余额明细列表")
 	public void export(@RequestBody AccountDetailIn accountDetailIn, HttpServletResponse response) throws Exception {
-		// XXX 为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。
+		// XXX 为了保障系统性能稳定性，导出的最大时间限制为1个月，请重新选择查询范围。
 		if (accountDetailIn.getSettleTimeFrom() == null) {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择对账开始时间");
 		}
@@ -60,7 +60,7 @@ public class AccountDetailController {
 			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "请选择对账结束时间");
 		}
 		if (Duration.between(accountDetailIn.getSettleTimeFrom(), accountDetailIn.getSettleTimeTo()).toDays() > 31L) {
-			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制时间为1个月，请重新选择查询范围。");
+			throw new BizException(ResponseCodeEnums.ERROR.getCode(), "为了保障系统性能稳定性，导出的最大时间限制为1个月，请重新选择查询范围。");
 		}
 		accountDetailIn.setPageNo(1);// 默认第1页
 		accountDetailIn.setPageSize(1000);// 默认每页1000条数据
