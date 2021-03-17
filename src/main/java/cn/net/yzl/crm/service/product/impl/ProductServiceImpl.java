@@ -76,6 +76,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ComResponse<List<ProductAtlasDTO>> queryProductListAtlasByDiseaseName(String diseaseName) {
         ComResponse<List<ProductAtlasDTO>> listComResponse = productClient.queryProductListAtlasByDiseaseName(diseaseName);
+        //添加fastDFSUrl
         if(!CollectionUtils.isEmpty(listComResponse.getData())) {
             List<ProductAtlasDTO> data = listComResponse.getData();
             data.stream().forEach(d->{
