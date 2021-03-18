@@ -189,7 +189,7 @@ public class NewOrderServiceImpl implements INewOrderService {
 			// 校验库存
 			reduceVOS.forEach(map -> {
 				OrderTempProduct product = product4OrderDTOMap.get(map.getProductCode());
-				if (map.getNum() > product.getStock()) {
+				 if (product.getStock() != -1 && map.getNum() > product.getStock()) {
 					throw new BizException(ResponseCodeEnums.RESUME_EXIST_ERROR_CODE.getCode(),
 							"库存不足，商品名称：" + product.getProductName());
 				}
